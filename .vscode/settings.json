@@ -1,0 +1,39 @@
+{
+    "cSpell.words": [
+        "pylint",
+        "pylintrc",
+        "rcfile",
+        "mypy",
+        "ignf"
+    ],
+    // On définit la docstring de base comme étant celle de google
+    "autoDocstring.docstringFormat": "google",
+    // COMMITS PROPRES
+    // On ne garde qu'une et une seule ligne en fin de fichier
+    "files.trimFinalNewlines": true,
+    "files.insertFinalNewline": true,
+    // On vire tous les espaces en fin de ligne
+    "files.trimTrailingWhitespace": true,
+    // Fin de ligne
+    "files.eol": "\n",
+    "cSpell.language": "en,fr",
+    // PYTHON : formatage et linter
+    "python.languageServer": "Pylance",
+    "python.analysis.extraPaths": [
+        "./ignf_gpf_api",
+    ],
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": true,
+    "[python]": {
+        "editor.formatOnSave": true,
+    },
+    "python.formatting.provider": "black",
+    // ASSOCIATIONS DE FICHIERS
+    "files.associations": {
+        // .pylintrc est au format .ini
+        ".pylintrc": "ini",
+        // .flake8 est au format .ini
+        ".flake8": "ini",
+    },
+}
