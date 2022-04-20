@@ -1,0 +1,22 @@
+name: Checks
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Checks
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install "black<23" pylint==2.13.7 mypy==0.942
+    - name: "Analyse code with black"
+      run: black --diff --check ignf_gpf_api
+    - name: "Analyse code with pylint"
+      run: pylint --rcfile=.pylintrc ignf_gpf_api --recursive=y
+    - name: "Analyse code with mypy"
+      run: mypy --strict ignf_gpf_api
