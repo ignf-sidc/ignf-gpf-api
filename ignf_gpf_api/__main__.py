@@ -1,7 +1,7 @@
 """API Python pour simplifier l'utilisation de l'API Entrepôt Géoplateforme."""
 
 
-def main():
+def main() -> None:
     print("Hello!")
 
 
