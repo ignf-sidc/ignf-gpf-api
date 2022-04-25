@@ -21,3 +21,17 @@ black
 ```sh
 mypy ignf_gpf_api
 ```
+
+### Publication sur PyPI
+
+Publication sur TestPyPI :
+
+```
+flit --repository testpypi publish
+```
+
+Publication sur PyPI :
+
+```
+flit --repository pypi publish
+```
