@@ -42,6 +42,6 @@ jobs:
     - name: Install dependencies
       run: pip install --upgrade pip setuptools flit
     - name: Build and publish
-      run: flit publish
+      run: flit publish --pypirc .pypirc --repository testpypi
       env:
         FLIT_PASSWORD: ${{ secrets.TESTPYPI_TOKEN }}

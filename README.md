@@ -49,11 +49,11 @@ export FLIT_PASSWORD=<token>
 Publication sur TestPyPI :
 
 ```
-flit --repository testpypi publish
+flit publish --pypirc .pypirc --repository testpypi
 ```
 
 Publication sur PyPI :
 
 ```
-flit --repository pypi publish
+flit publish --pypirc .pypirc --repository pypi
 ```
