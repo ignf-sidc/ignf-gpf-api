@@ -1,5 +1,9 @@
-name: Check Quality
-on: [pull_request]
+name: CI Dev
+on:
+  push:
+    branches: [dev]
+    tags:
+      - 't*'
 
 jobs:
   tests:
@@ -24,3 +28,20 @@ jobs:
       run: mypy --strict ignf_gpf_api tests
     - name: "Run unit tests"
       run: python3 -m unittest discover -b -p *TestCase.py
+
+  publish:
+    name: Publish to PyPi
+    needs: [tests]
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: pip install --upgrade pip setuptools flit
+    - name: Build and publish
+      run: flit publish
+      env:
+        FLIT_PASSWORD: ${{ secrets.TESTPYPI_TOKEN }}
