@@ -2,27 +2,49 @@
 
 ## Développement
 
-### Lancement de pylint
+### Mise en place de l'environnement de développement
+
+Mise à jour de pip et virtualenv
 
 ```sh
-pylint --rcfile=.pylintrc ignf_gpf_api --recursive=y
+python3 -m pip install --user --upgrade pip virtualenv setuptools
 ```
 
-
-### Lancement de black
+Création d'un environnement isolé
 
 ```sh
-black
+python3 -m venv env
 ```
 
-
-### Lancement de pylint
+Activation de l'environnement
 
 ```sh
-mypy ignf_gpf_api
+source env/bin/activate
+```
+
+Installation basiques
+
+```sh
+python3 -m pip install --upgrade pip setuptools flit
+```
+
+Installation de toutes les dépendances
+
+```sh
+python3 -m flit install --extras test
+```
+
+### Vérifications qualité
+
+```sh
+./check.sh
 ```
 
 ### Publication sur PyPI
+
+```sh
+export FLIT_PASSWORD=<token>
+```
 
 Publication sur TestPyPI :
 
