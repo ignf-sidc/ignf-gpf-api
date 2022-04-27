@@ -1,0 +1,39 @@
+{
+	"workflow": {
+		"steps": [
+			// Étape n°1 : intégration de l'archive livrée
+			{
+				"name": "intégration-archive-livrée",
+				"actions": [
+					{
+						// On crée une exécution de traitement
+						"type": "processing-execution",
+						"parameters": {
+							// On récupère l'id de l'exécution nommée "Intégration d'archives livrées"
+							"processing": "{store_entity.upload.infos._id [INFOS(name=Intégration d'archives livrées)]}",
+							"inputs": {
+								"upload": [
+									// On récupère l'id de la livraison associée à cette DPSG
+									"{store_entity.upload.infos._id [TAGS(dpsg={param.dpsg})]}"
+								]
+							},
+							"output": {
+								"stored_data": {
+									// On crée une nouvelle donnée stockée nommée selon le titre indiqué dans la DPSG
+									"name": "{dpsg.options.titre}"
+								}
+							},
+							"parameters": {}
+						},
+						// Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+						"tags": {
+							// On récupère le paramètre "dpsg"
+							"dpsg": "{param.dpsg}"
+						},
+						"overloaded_parameters": []
+					}
+				]
+			}
+		]
+	}
+}
