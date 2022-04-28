@@ -57,7 +57,6 @@ class Authentifier(metaclass=Singleton):
                 headers={
                     "content-type": "application/x-www-form-urlencoded",
                 },
-                verify=False,
             )
             if cAnswer.status_code == HTTPStatus.OK:
                 self.__last_token = Token(cAnswer.json())

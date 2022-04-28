@@ -66,7 +66,3 @@ class ConfigTestCase(unittest.TestCase):
         cConfig_2 = Config()
         # Ca doit être les mêmes
         self.assertEqual(cConfig_1, cConfig_2)
-
-
-if __name__ == "__main__":
-    unittest.main(buffer=True)  # buffer=True permet de masquer les print()
