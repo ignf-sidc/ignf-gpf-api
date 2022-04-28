@@ -1,5 +1,55 @@
 # ignf-gpf-api
 
+## Utilisation
+
+### Comme exécutable
+
+Créez un fichier `config.ini` avec :
+
+```ini
+[store_authentification]
+# L'rl de récupération du token d'authentification (cf. doc)
+token_url=https://qlf-iam-gpf.ign.fr/auth/realms/master/protocol/openid-connect/token
+# Votre login
+login=LOGIN
+# Votre mot de passe
+password=PASSWORD
+
+[store_api]
+# L'url d'entrée de l'API (cf. doc)
+root_url=https://plage-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/api/v1
+# L'identifiant de votre entrepôt
+datastore=DATASTORE_ID_TO_MODIFY
+```
+
+Vérifiez que l'identification est fonctionnelle :
+
+```sh
+# config.ini est directement trouvé s'il set dans le dossier de travail
+python -m ignf_gpf_api auth
+# Sinon indiquez le chemin
+python -m ignf_gpf_api --ini /autre/chemin/config.ini auth
+```
+
+Cela devrait renvoyer :
+
+```
+Authentification réussie.
+```
+
+Affichez la configuration :
+
+```sh
+# Toute la configuration
+python -m ignf_gpf_api config
+# Une section
+python -m ignf_gpf_api config -s store_authentification
+# Une option d'une section
+python -m ignf_gpf_api config -s store_authentification -o password
+```
+
+### Comme librairie
+
 ## Développement
 
 ### Mise en place de l'environnement de développement
