@@ -8,7 +8,7 @@ Créez un fichier `config.ini` avec :
 
 ```ini
 [store_authentification]
-# L'rl de récupération du token d'authentification (cf. doc)
+# L'url de récupération du token d'authentification (cf. doc)
 token_url=https://qlf-iam-gpf.ign.fr/auth/realms/master/protocol/openid-connect/token
 # Votre login
 login=LOGIN
@@ -46,6 +46,12 @@ python -m ignf_gpf_api config
 python -m ignf_gpf_api config -s store_authentification
 # Une option d'une section
 python -m ignf_gpf_api config -s store_authentification -o password
+```
+
+Envoyer des données :
+
+```
+python -m ignf_gpf_api upload -f tests/_data/test_datasets/test_datasets_vector.json
 ```
 
 ### Comme librairie

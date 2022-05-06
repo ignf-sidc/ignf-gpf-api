@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "EPSG",
         "ignf",
         "mypy",
         "pylint",
@@ -47,4 +48,13 @@
         // .flake8 est au format .ini
         ".flake8": "ini",
     },
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "*TestCase.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true,
 }

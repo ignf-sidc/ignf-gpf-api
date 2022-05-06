@@ -1,4 +1,4 @@
-from ignf_gpf_api.Error import GpfApiError
+from ignf_gpf_api.Errors import GpfApiError
 
 
 class AuthentificationError(GpfApiError):

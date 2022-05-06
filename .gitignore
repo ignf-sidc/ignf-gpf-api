@@ -131,3 +131,4 @@ dmypy.json
 # Fichier de config personnel
 config.ini
 test.ini
+test.py
