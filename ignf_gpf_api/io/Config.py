@@ -14,7 +14,8 @@ class Config(metaclass=Singleton):
         __ini_file_path (string) : chemin vers le fichier de configuration BaGI
     """
 
-    ini_file_path = Path(__file__).parent.parent / "conf" / "default.ini"
+    conf_dir_path = Path(__file__).parent.parent / "conf"
+    ini_file_path = conf_dir_path / "default.ini"
 
     def __init__(self) -> None:
         """Constructeur
@@ -27,9 +28,9 @@ class Config(metaclass=Singleton):
         if not Config.ini_file_path.exists():
             raise ConfigReaderError("Fichier de configuration par défaut {ConfigReader.ini_file_path} non trouvé.")
 
-        self.__config_parser = configparser.ConfigParser()
-        with Config.ini_file_path.open(encoding="UTF-8") as fIni:
-            self.__config_parser.read_file(fIni)
+        self.__config_parser: configparser.ConfigParser = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+        with Config.ini_file_path.open(encoding="UTF-8") as f_ini:
+            self.__config_parser.read_file(f_ini)
 
     def set_output_manager(self, output_manager: Any) -> None:
         self.__output_manager = output_manager
@@ -100,3 +101,11 @@ class Config(metaclass=Singleton):
             bool: la valeur du paramètre
         """
         return self.__config_parser.getboolean(section, option, fallback=fallback)  # type: ignore
+
+    def get_temp(self) -> Path:
+        """Récupère le chemin racine du dossier temporaire à utiliser.
+
+        Returns:
+            Path: chemin racine du dossier temporaire à utiliser
+        """
+        return Path(self.get("miscellaneous", "tmp_workdir"))

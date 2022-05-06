@@ -19,7 +19,7 @@ class GpfApiError(Exception):
         return self.__message
 
     def __repr__(self) -> str:
-        return f"GpfApiError({self.__message})"
+        return f"{self.__class__.__name__}({self.__message})"
 
     @property
     def message(self) -> str:
