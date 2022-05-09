@@ -1,9 +1,12 @@
 from pathlib import Path
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.TagInterface import TagInterface
+from ignf_gpf_api.store.CommentInterface import CommentInterface
+from ignf_gpf_api.store.SharingInterface import SharingInterface
 
 
-class Upload(StoreEntity):
+class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
     """Classe Python représentant l'entité Upload (livraison)."""
 
     _entity_name = "upload"

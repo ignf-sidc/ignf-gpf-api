@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>104</x>
+      <y>584</y>
+      <w>168</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>io:Config
+--
+read(filenames)
+get(section, option): str
+get_temp()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>104</x>
+      <y>472</y>
+      <w>168</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>io::OutputManager
+--
+debug(message)
+info(message)
+warning(message)
+error(message)
+critical(message)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>104</x>
+      <y>672</y>
+      <w>168</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>io:ApiRequester
+--
+route_request()
+url_request()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1312</x>
+      <y>864</y>
+      <w>168</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>io:DescriptorFileReader
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1312</x>
+      <y>960</y>
+      <w>168</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>io:Dataset
+--
+data_dirs: List[Path]
+upload_infos: Dict[str, str]
+comments: List[str]
+tags: Dict[str, str]
+data_files: Dict[Path, str]
+md5_files: List[Path]
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1392</x>
+      <y>888</y>
+      <w>112</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>est composé de
+m2=1..n</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>584</x>
+      <y>472</y>
+      <w>152</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>helper:FileHelper
+--
+read()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>584</x>
+      <y>552</y>
+      <w>248</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>helper:JsonHelper
+--
+load(json_path)
+loads(str_data)
+validate_json(json_path, schema_path)
+validate_json(json_data, schema_data)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>312</x>
+      <y>584</y>
+      <w>192</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>auth:Authentifier
+--
+get_access_token_string(): str
+get_http_header(): Dict[str, str]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>312</x>
+      <y>472</y>
+      <w>192</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>auth:Token
+--
+is_valid(): bool
+get_access_string(): str</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>448</x>
+      <y>840</y>
+      <w>192</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>/store:StoreEntity/
+--
+api_create(data)
+api_get(id)
+api_list(infos, tags)
+filter_dict_from_str(s_filters)
+--
+api_delete()
+api_add_tag(key, value)
+api_add_comment(comment)
+api_list_events()
+api_edit_event(id, comment)
+api_delete_event(id)
+--
+to_json(): str
+__str__(): str</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>728</x>
+      <y>888</y>
+      <w>232</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>store:Upload
+--
+api_push_data_file(file_path, api_path)
+api_push_md5_file(file_path)
+api_open()
+api_close()
+--
+api_add_check()
+api_list_checks()
+api_add_sharing()
+api_list_sharings()
+api_delete_sharing()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>632</x>
+      <y>968</y>
+      <w>112</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;120.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1056</x>
+      <y>976</y>
+      <w>136</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>action:UploadAction
+--
+create_upload()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>952</x>
+      <y>984</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>crée
+m2=0..1</panel_attributes>
+    <additional_attributes>130.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1184</x>
+      <y>984</y>
+      <w>144</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>charge
+m2=1</panel_attributes>
+    <additional_attributes>10.0;20.0;160.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>1104</y>
+      <w>176</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>store:ProcessingExecution
+--
+api_get_logs()
+api_launch()
+api_abort()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>384</x>
+      <y>1104</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>store:Processing
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>240</x>
+      <y>1104</y>
+      <w>128</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>store:StoredData
+--
+api_list_sharings()
+api_add_sharing()
+api_delete_sharing()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>712</x>
+      <y>1104</y>
+      <w>128</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>store:Configuration
+--
+api_list_offerings()
+api_add_offering()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>856</x>
+      <y>1104</y>
+      <w>128</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>store:Offering
+--
+api_edit()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>96</x>
+      <y>1104</y>
+      <w>128</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>store:Check
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>152</x>
+      <y>1032</y>
+      <w>352</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>420.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>304</x>
+      <y>1032</y>
+      <w>224</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>260.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>1032</y>
+      <w>112</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>120.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>544</x>
+      <y>1032</y>
+      <w>80</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>568</x>
+      <y>1032</y>
+      <w>224</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;260.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>592</x>
+      <y>1032</y>
+      <w>344</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;410.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>400</x>
+      <y>520</y>
+      <w>72</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>recupère
+m2=0..1</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>1264</y>
+      <w>192</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>/store:TagInterface/
+--
+get_tag(key)
+api_add_tags(tag_data)
+api_delete_tags(tag_keys)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>432</x>
+      <y>1264</y>
+      <w>240</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>/store:CommentInterface/
+--
+api_add_comment(comment_data)
+api_list_comments()
+api_edit_comment(id, comment_data)
+api_remove_comment(id)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>712</x>
+      <y>1264</y>
+      <w>240</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>/store:SharingInterface/
+--
+api_add_sharings(datastore_ids)
+api_list_sharings()
+api_remove_sharings(datastore_ids)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -9,6 +9,7 @@
         "pypirc",
         "rcfile",
         "setuptools",
+        "sharings",
         "testpypi",
         "venv",
         "virtualenv"

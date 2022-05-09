@@ -2,11 +2,10 @@ import json
 import unittest
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.store.Errors import StoreEntityError
 
 
 class StoreEntityTestCase(unittest.TestCase):
-    """Tests StoreEntityTestCase class.
+    """Tests StoreEntity class.
 
     cmd : python3 -m unittest -b tests.store.StoreEntityTestCase
     """
@@ -30,10 +29,6 @@ class StoreEntityTestCase(unittest.TestCase):
         self.assertEqual(o_store_entity.id, "123456789")
         # Le getter "get_store_properties" est ok
         self.assertDictEqual(o_store_entity.get_store_properties(), d_api_data)
-        # Le getter "get_tag_value" est ok
-        self.assertEqual(o_store_entity.get_tag_value("tag_key"), "tag_value")
-        with self.assertRaises(StoreEntityError):
-            o_store_entity.get_tag_value("tag_not_existing")
         # Le getter "to_json" est ok
         s_json = o_store_entity.to_json()
         self.assertIsInstance(s_json, str)

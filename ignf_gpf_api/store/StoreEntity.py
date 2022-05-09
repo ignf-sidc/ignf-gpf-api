@@ -50,46 +50,9 @@ class StoreEntity(ABC):
         """
         return self._store_api_dict
 
-    def get_tag_value(self, tag_name: str) -> str:
-        """Récupère la valeur d'un tag à partir de son nom
-        Args:
-            tag_name (str): nom du tag souhaité
-        Raises :
-            StoreEntityError : si le tag n'existe pas
-        """
-        # On vérifie que l'entité a bien une propriété tags
-        if "tags" in self._store_api_dict:
-            if tag_name in self._store_api_dict["tags"]:
-                return str(self._store_api_dict["tags"][tag_name])
-
-        # Cas où l'entité ne possède pas ce nom de tag (ou pas de tag du tout)
-        s_error_message = f"L'entité {self.__class__.__name__} {self.id} ne possède pas de tag {tag_name}"
-        Config().om.error(s_error_message)
-        raise StoreEntityError(s_error_message)
-
     ##############################################################
     # Fonction d'interface avec l'API
     ##############################################################
-
-    @classmethod
-    def api_get(cls: Type[T], id_: str) -> T:
-        """Récupère une entité depuis l'API.
-
-        Args:
-            id_ (var): identifiant de l'entité
-
-        Returns:
-            StoreEntity: l'entité instanciée correspondante
-        """
-        # Génération du nom de la route
-        s_route = f"{cls._entity_name}_get"
-        # Requête
-        o_response = ApiRequester().route_request(
-            s_route,
-            route_params={cls._entity_name: id_},
-        )
-        # Instanciation
-        return cls(o_response.json())
 
     @classmethod
     def api_create(cls: Type[T], data: Optional[Dict[str, Any]]) -> T:
@@ -108,6 +71,26 @@ class StoreEntity(ABC):
             s_route,
             method=ApiRequester.POST,
             data=data,
+        )
+        # Instanciation
+        return cls(o_response.json())
+
+    @classmethod
+    def api_get(cls: Type[T], id_: str) -> T:
+        """Récupère une entité depuis l'API.
+
+        Args:
+            id_ (var): identifiant de l'entité
+
+        Returns:
+            StoreEntity: l'entité instanciée correspondante
+        """
+        # Génération du nom de la route
+        s_route = f"{cls._entity_name}_get"
+        # Requête
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={cls._entity_name: id_},
         )
         # Instanciation
         return cls(o_response.json())
@@ -144,34 +127,16 @@ class StoreEntity(ABC):
         return [cls(x) for x in o_response.json()]
 
     def api_delete(self) -> None:
-        """Supprime l'entité dans l'API."""
+        """Supprime l'entité de l'API."""
         raise NotImplementedError("StoreEntity.api_delete")
 
-    def api_add_tag(self, key: str, value: str) -> None:
-        """Ajout un tag à l'entité correspondante dans l'API.
-
-        Args:
-            key (str): clé du tag
-            value (str): valuer du tag
-        """
-        raise NotImplementedError("StoreEntity.api_add_tag")
-
-    def api_add_comment(self, key: str, value: str) -> None:
-        """Ajout un tag à l'entité correspondante dans l'API.
-
-        Args:
-            key (str): clé du tag
-            value (str): valuer du tag
-        """
-        raise NotImplementedError("StoreEntity.api_add_tag")
-
     @staticmethod
-    def filter_dict_from_str(filters_str: Optional[str]) -> Dict[str, str]:
+    def filter_dict_from_str(s_filters: Optional[str]) -> Dict[str, str]:
         """Les filtres de store_entities basés sur les tags ou les propriétés sont écrits sous la forme name=value,name=value
         Cette fonction transforme une liste de tags sous cette forme en dictionnaire de la forme {"name":"value","name":"value"}
 
         Args:
-            filters_str (Optional[str]): liste de filtres ayant la forme : name=value,name=value
+            s_filters (Optional[str]): liste de filtres ayant la forme : name=value,name=value
         Returns:
             Dict[str, str]: dictionnaire ayant la forme {"name":"value","name":"value"}
         Raises:
@@ -179,9 +144,9 @@ class StoreEntity(ABC):
         """
         # Dictionnaire résultat
         d_filter: Dict[str, str] = {}
-        if filters_str is not None:
+        if s_filters is not None:
             # On extrait les filtres séparés par une virgule
-            l_filter = filters_str.split(",")
+            l_filter = s_filters.split(",")
 
             # Pour chaque filtre
             for s_filter in l_filter:
