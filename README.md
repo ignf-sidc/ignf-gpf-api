@@ -60,6 +60,12 @@ python -m ignf_gpf_api upload -f tests/_data/test_datasets/test_datasets_vector.
 
 ### Mise en place de l'environnement de développement
 
+Si nécessaire, installation système
+
+```sh
+sudo apt install python3 python3-pip python3-venv
+```
+
 Mise à jour de pip et virtualenv
 
 ```sh
@@ -78,7 +84,7 @@ Activation de l'environnement
 source env/bin/activate
 ```
 
-Installation basiques
+Installation basique
 
 ```sh
 python3 -m pip install --upgrade pip setuptools flit

@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>104</x>
-      <y>584</y>
+      <x>136</x>
+      <y>240</y>
       <w>168</w>
       <h>72</h>
     </coordinates>
@@ -19,8 +19,8 @@ get_temp()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>104</x>
-      <y>472</y>
+      <x>136</x>
+      <y>128</y>
       <w>168</w>
       <h>96</h>
     </coordinates>
@@ -37,8 +37,8 @@ critical(message)
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>104</x>
-      <y>672</y>
+      <x>136</x>
+      <y>328</y>
       <w>168</w>
       <h>64</h>
     </coordinates>
@@ -51,8 +51,8 @@ url_request()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1312</x>
-      <y>864</y>
+      <x>1248</x>
+      <y>400</y>
       <w>168</w>
       <h>32</h>
     </coordinates>
@@ -64,8 +64,8 @@ url_request()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1312</x>
-      <y>960</y>
+      <x>1248</x>
+      <y>496</y>
       <w>168</w>
       <h>112</h>
     </coordinates>
@@ -83,8 +83,8 @@ md5_files: List[Path]
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1392</x>
-      <y>888</y>
+      <x>1328</x>
+      <y>424</y>
       <w>112</w>
       <h>88</h>
     </coordinates>
@@ -95,8 +95,8 @@ m2=1..n</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>584</x>
-      <y>472</y>
+      <x>616</x>
+      <y>128</y>
       <w>152</w>
       <h>64</h>
     </coordinates>
@@ -108,8 +108,8 @@ read()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>584</x>
-      <y>552</y>
+      <x>616</x>
+      <y>208</y>
       <w>248</w>
       <h>88</h>
     </coordinates>
@@ -124,8 +124,8 @@ validate_json(json_data, schema_data)</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>312</x>
-      <y>584</y>
+      <x>344</x>
+      <y>240</y>
       <w>192</w>
       <h>56</h>
     </coordinates>
@@ -138,8 +138,8 @@ get_http_header(): Dict[str, str]</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>312</x>
-      <y>472</y>
+      <x>344</x>
+      <y>128</y>
       <w>192</w>
       <h>56</h>
     </coordinates>
@@ -152,36 +152,10 @@ get_access_string(): str</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>448</x>
-      <y>840</y>
-      <w>192</w>
-      <h>200</h>
-    </coordinates>
-    <panel_attributes>/store:StoreEntity/
---
-api_create(data)
-api_get(id)
-api_list(infos, tags)
-filter_dict_from_str(s_filters)
---
-api_delete()
-api_add_tag(key, value)
-api_add_comment(comment)
-api_list_events()
-api_edit_event(id, comment)
-api_delete_event(id)
---
-to_json(): str
-__str__(): str</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>728</x>
-      <y>888</y>
+      <x>664</x>
+      <y>448</y>
       <w>232</w>
-      <h>152</h>
+      <h>112</h>
     </coordinates>
     <panel_attributes>store:Upload
 --
@@ -191,17 +165,14 @@ api_open()
 api_close()
 --
 api_add_check()
-api_list_checks()
-api_add_sharing()
-api_list_sharings()
-api_delete_sharing()</panel_attributes>
+api_list_checks()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>632</x>
-      <y>968</y>
+      <x>568</x>
+      <y>504</y>
       <w>112</w>
       <h>24</h>
     </coordinates>
@@ -211,22 +182,28 @@ api_delete_sharing()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1056</x>
-      <y>976</y>
+      <x>992</x>
+      <y>464</y>
       <w>136</w>
-      <h>40</h>
+      <h>128</h>
     </coordinates>
     <panel_attributes>action:UploadAction
 --
-create_upload()
+run()
+__create_upload()
+__add_tags()
+__add_comments()
+__push_data_files()
+__push_md5_files()
+__close()
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>952</x>
-      <y>984</y>
+      <x>888</x>
+      <y>520</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
@@ -237,8 +214,8 @@ m2=0..1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1184</x>
-      <y>984</y>
+      <x>1120</x>
+      <y>520</y>
       <w>144</w>
       <h>40</h>
     </coordinates>
@@ -249,8 +226,8 @@ m2=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>520</x>
-      <y>1104</y>
+      <x>72</x>
+      <y>608</y>
       <w>176</w>
       <h>80</h>
     </coordinates>
@@ -264,8 +241,8 @@ api_abort()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>384</x>
-      <y>1104</y>
+      <x>152</x>
+      <y>424</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
@@ -277,8 +254,8 @@ api_abort()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>240</x>
-      <y>1104</y>
+      <x>376</x>
+      <y>640</y>
       <w>128</w>
       <h>72</h>
     </coordinates>
@@ -292,8 +269,8 @@ api_delete_sharing()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>712</x>
-      <y>1104</y>
+      <x>528</x>
+      <y>640</y>
       <w>128</w>
       <h>72</h>
     </coordinates>
@@ -306,8 +283,8 @@ api_add_offering()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>856</x>
-      <y>1104</y>
+      <x>680</x>
+      <y>640</y>
       <w>128</w>
       <h>72</h>
     </coordinates>
@@ -319,10 +296,10 @@ api_edit()</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>96</x>
-      <y>1104</y>
-      <w>128</w>
-      <h>72</h>
+      <x>152</x>
+      <y>488</y>
+      <w>120</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>store:Check
 --
@@ -332,74 +309,74 @@ api_edit()</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>152</x>
-      <y>1032</y>
-      <w>352</w>
-      <h>88</h>
+      <x>264</x>
+      <y>496</y>
+      <w>136</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>420.0;10.0;10.0;90.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>304</x>
-      <y>1032</y>
-      <w>224</w>
-      <h>88</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>260.0;10.0;10.0;90.0</additional_attributes>
+    <additional_attributes>150.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>440</x>
-      <y>1032</y>
-      <w>112</w>
-      <h>88</h>
+      <y>544</y>
+      <w>24</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>120.0;10.0;10.0;90.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>544</x>
-      <y>1032</y>
-      <w>80</w>
-      <h>88</h>
+      <x>264</x>
+      <y>432</y>
+      <w>136</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;80.0;90.0</additional_attributes>
+    <additional_attributes>150.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>568</x>
-      <y>1032</y>
-      <w>224</w>
-      <h>88</h>
+      <x>152</x>
+      <y>528</y>
+      <w>248</w>
+      <h>96</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;260.0;90.0</additional_attributes>
+    <additional_attributes>290.0;10.0;10.0;100.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>592</x>
-      <y>1032</y>
-      <w>344</w>
-      <h>88</h>
+      <x>504</x>
+      <y>544</y>
+      <w>104</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;410.0;90.0</additional_attributes>
+    <additional_attributes>10.0;10.0;110.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>400</x>
-      <y>520</y>
+      <x>528</x>
+      <y>544</y>
+      <w>232</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;270.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>432</x>
+      <y>176</y>
       <w>72</w>
       <h>80</h>
     </coordinates>
@@ -410,50 +387,22 @@ m2=0..1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>208</x>
-      <y>1264</y>
+      <x>384</x>
+      <y>408</y>
       <w>192</w>
-      <h>72</h>
+      <h>144</h>
     </coordinates>
-    <panel_attributes>/store:TagInterface/
+    <panel_attributes>/store:StoreEntity/
 --
-get_tag(key)
-api_add_tags(tag_data)
-api_delete_tags(tag_keys)
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>432</x>
-      <y>1264</y>
-      <w>240</w>
-      <h>88</h>
-    </coordinates>
-    <panel_attributes>/store:CommentInterface/
+api_create(data)
+api_get(id)
+api_list(infos, tags)
+filter_dict_from_str(s_filters)
 --
-api_add_comment(comment_data)
-api_list_comments()
-api_edit_comment(id, comment_data)
-api_remove_comment(id)
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>712</x>
-      <y>1264</y>
-      <w>240</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>/store:SharingInterface/
+api_delete()
 --
-api_add_sharings(datastore_ids)
-api_list_sharings()
-api_remove_sharings(datastore_ids)
-</panel_attributes>
+to_json(): str
+__str__(): str</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>
