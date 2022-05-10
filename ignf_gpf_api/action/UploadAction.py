@@ -26,8 +26,9 @@ class UploadAction:
         # On suit le comporte donnée en paramètre ou à défaut celui de la config
         self.__behavior: str = behavior if behavior is not None else Config().get("upload_creation", "behavior_if_exists")
 
-    def create_upload(self) -> Upload:
-        """Crée la livraison décrite dans le dataset et livre les données avant de retourner la liste de livraison.
+    def run(self) -> Upload:
+        """Crée la livraison décrite dans le dataset et livre les données avant de
+        retourner la livraisons crée.
 
         Returns:
             Upload: livraison créée

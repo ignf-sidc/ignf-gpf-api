@@ -154,7 +154,7 @@ def upload(o_args: argparse.Namespace) -> None:
         o_dfu = DescriptorFileReader(p_file)
         for o_dataset in o_dfu.datasets:
             o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
-            o_upload = o_ua.create_upload()
+            o_upload = o_ua.run()
             print(f"{o_upload} créée avec succès.")
     elif o_args.id is not None:
         o_upload = Upload.api_get(o_args.id)
