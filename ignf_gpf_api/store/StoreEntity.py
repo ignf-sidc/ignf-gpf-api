@@ -18,9 +18,9 @@ class StoreEntity(ABC):
 
     # ATTRIBUTS DE CLASSE (* => Attribut à écraser par les classes filles)
     # (*) Nom "technique" de l'entité (pour compléter le nom des routes par exemple)
-    _entity_name: str = ""
+    _entity_name: str = "store_entity"
     # (*) Nom "utilisateur" de l'entité (pour afficher une message par exemple)
-    _entity_title: str = ""
+    _entity_title: str = "Entité Abstraite"
 
     def __init__(self, store_api_dict: Dict[str, Any]) -> None:
         """Constructeur. On récupère l'id et le reste des données.
