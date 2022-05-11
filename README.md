@@ -51,7 +51,7 @@ python -m ignf_gpf_api config -s store_authentification -o password
 Envoyer des données :
 
 ```
-python -m ignf_gpf_api upload -f tests/_data/test_datasets/test_datasets_vector.json
+python -m ignf_gpf_api upload -f tests/_data/test_datasets/1_test_datasets_vector.json
 ```
 
 ### Comme librairie

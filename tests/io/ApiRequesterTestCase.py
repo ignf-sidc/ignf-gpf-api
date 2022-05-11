@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Tuple
 import unittest
 from unittest.mock import patch
+import requests
 import requests_mock
 
 from ignf_gpf_api.io.Config import Config
@@ -54,39 +55,45 @@ class ApiRequesterTestCase(unittest.TestCase):
         # On ne mock plus la classe d'authentification
         cls.o_mock_authentifier.stop()
 
-    def test_api_request_ok(self) -> None:
-        """Test de api_request quand la route existe."""
-        # Instanciation du request helper
-        o_request_helper = ApiRequester()
+    def test_route_request_ok(self) -> None:
+        """Test de route_request quand la route existe."""
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.post("http://test.com/")
+            o_api_response = requests.request("POST", "http://test.com/")
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
         # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_request_helper, "url_request", return_value=None) as o_mock_request:
+        with patch.object(o_api_requester, "url_request", return_value=o_api_response) as o_mock_request:
             # On effectue une requête
-            o_request_helper.route_request("test_create", {"id": 42}, ApiRequester.POST, params=self.param, data=self.data, files=self.files)
+            o_fct_response = o_api_requester.route_request("test_create", {"id": 42}, ApiRequester.POST, params=self.param, data=self.data, files=self.files)
             # Vérification sur o_mock_request
             s_url = "https://api.test.io/api/v1/datastores/TEST_DATASTORE/create/42"
             o_mock_request.assert_called_once_with(s_url, ApiRequester.POST, self.param, self.data, self.files)
+            # Vérification sur la réponse renvoyée par la fonction : ça doit être celle renvoyée par url_request
+            self.assertEqual(o_fct_response, o_api_response)
 
-    def test_api_request_ko(self) -> None:
-        """Test de api_request quand la route n'existe pas."""
-        # Instanciation du request helper
-        o_request_helper = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+    def test_route_request_ko(self) -> None:
+        """Test de route_request quand la route n'existe pas."""
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On veut vérifier que l'exception RouteNotFoundError est levée avec le bon nom de route non trouvée
         with self.assertRaises(RouteNotFoundError) as o_arc:
             # On effectue une requête
-            o_request_helper.route_request("non_existing")
+            o_api_requester.route_request("non_existing")
         # Vérifications
         self.assertEqual(o_arc.exception.route_name, "non_existing")
 
     def test_request_get(self) -> None:
         """Test de request dans le cadre d'une requête get."""
-        # Instanciation du request helper
-        o_request_helper = ApiRequester()
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
         # On mock...
         with requests_mock.Mocker() as o_mock:
             # Une requête réussie
             o_mock.get(self.url, json=self.response)
             # On effectue une requête
-            o_response = o_request_helper.url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
+            o_response = o_api_requester.url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
             # Vérification sur la réponse
             self.assertDictEqual(o_response.json(), self.response)
             # On a dû faire une requête
@@ -104,14 +111,14 @@ class ApiRequesterTestCase(unittest.TestCase):
 
     def test_request_post(self) -> None:
         """Test de request dans le cadre d'une requête post."""
-        # Instanciation du request helper
-        o_request_helper = ApiRequester()
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
         # On mock...
         with requests_mock.Mocker() as o_mock:
             # Une requête réussie
             o_mock.post(self.url, json=self.response)
             # On effectue une requête
-            o_response = o_request_helper.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+            o_response = o_api_requester.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # Vérification sur la réponse
             self.assertDictEqual(o_response.json(), self.response)
             # On a dû faire une requête
@@ -129,8 +136,8 @@ class ApiRequesterTestCase(unittest.TestCase):
 
     def test_request_internal_server_error(self) -> None:
         """Test de request dans le cadre de 3 erreurs internes de suite."""
-        # Instanciation du request helper
-        o_request_helper = ApiRequester()
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
         # On mock...
         with requests_mock.Mocker() as o_mock:
             # Une requête non réussie
@@ -146,7 +153,7 @@ class ApiRequesterTestCase(unittest.TestCase):
             # On s'attend à une exception
             with self.assertRaises(GpfApiError) as o_arc:
                 # On effectue une requête
-                o_request_helper.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+                o_api_requester.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
             self.assertEqual(o_arc.exception.message, "L'exécution d'une requête a échoué après 3 tentatives")
             # On a dû faire 4 requêtes
