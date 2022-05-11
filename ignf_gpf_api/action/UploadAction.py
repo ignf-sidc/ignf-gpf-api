@@ -61,17 +61,20 @@ class UploadAction:
             # On sort en erreur si demandé
             if self.__behavior == "STOP":
                 raise GpfApiError(f"Impossible de créer la livraison, une livraison identique {o_upload} existe déjà.")
-            # On supprime la livraison si demandé
-            if self.__behavior == "DELETE":
-                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée.")
+            # On recrée la livraison si demandé
+            elif self.__behavior == "DELETE":
+                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréer")
                 o_upload.api_delete()
-            # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
-            Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va reprendre et la compléter.")
-            self.__upload = o_upload
+                # on en crée un nouveau
+                self.__upload = Upload.api_create(self.__dataset.upload_infos)
+            else:
+                # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
+                Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va reprendre et la compléter.")
+                self.__upload = o_upload
         else:
             # Si l'upload est nul, on en crée un nouveau
             self.__upload = Upload.api_create(self.__dataset.upload_infos)
-            Config().om.info(f"Livraison {o_upload} créée avec succès.")
+            Config().om.info(f"Livraison {self.__upload} créée avec succès.")
 
     def __add_tags(self) -> None:
         """Ajout les tags."""
