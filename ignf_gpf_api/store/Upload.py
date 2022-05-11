@@ -1,9 +1,14 @@
 from pathlib import Path
+from io import TextIOWrapper
+import mimetypes
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.TagInterface import TagInterface
 from ignf_gpf_api.store.CommentInterface import CommentInterface
 from ignf_gpf_api.store.SharingInterface import SharingInterface
+from ignf_gpf_api.io.ApiRequester import ApiRequester
+
+# from typing import Any, Dict, List, Optional, Type, TypeVar
 
 
 class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
@@ -19,7 +24,16 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
             file_path (Path): chemin local vers le fichier à envoyer
             api_path (str): dossier distant où déposer le fichier
         """
-        raise NotImplementedError("Upload.api_push_data_file")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_push_data"
+
+        # Ouverture du fichier et remplissage du tuple de fichier
+        o_mimetype = mimetypes.guess_type(file_path)[0]
+        with file_path.open("rb") as o_file_binary:
+            o_tuple_file = (file_path.name, TextIOWrapper(o_file_binary), o_mimetype)
+
+        # Requête
+        ApiRequester().route_request(s_route, method=ApiRequester.POST, route_params={self._entity_name: self.id}, data={"path": api_path}, files=[o_tuple_file])
 
     def api_push_md5_file(self, file_path: Path) -> None:
         """Envoie un fichier md5 à la livraison.
@@ -31,8 +45,14 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
 
     def api_open(self) -> None:
         """Ouvre une livraison."""
-        raise NotImplementedError("Upload.api_open")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_open"
+        # Requête
+        ApiRequester().route_request(s_route, method=ApiRequester.POST, route_params={self._entity_name: self.id})
 
     def api_close(self) -> None:
         """Ferme une livraison."""
-        raise NotImplementedError("Upload.api_close")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_close"
+        # Requête
+        ApiRequester().route_request(s_route, method=ApiRequester.POST, route_params={self._entity_name: self.id})
