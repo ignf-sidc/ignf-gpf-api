@@ -12,7 +12,7 @@ black ignf_gpf_api tests
 code+=$?
 echo
 
-# Lancement de pylint
+# Lancement de mypy
 mypy --strict ignf_gpf_api tests
 code+=$?
 echo
