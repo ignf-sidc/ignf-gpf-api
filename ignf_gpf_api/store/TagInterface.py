@@ -2,40 +2,58 @@ from typing import Dict, List
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
 class TagInterface(StoreEntity):
-    """Interface de StoreEntity pour gérer les tags."""
+    """Interface de StoreEntity pour gérer les étiquettes (tags)."""
 
-    def get_tag(self, tag_name: str) -> str:
+    def get_tag(self, s_tag_name: str) -> str:
         """Récupère la valeur d'un tag à partir de son nom
         Args:
-            tag_name (str): nom du tag souhaité
+            s_tag_name (str): nom du tag souhaité
         Raises :
             StoreEntityError : si le tag n'existe pas
         """
         # On vérifie que l'entité a bien une propriété tags
         if "tags" in self._store_api_dict:
-            if tag_name in self._store_api_dict["tags"]:
-                return str(self._store_api_dict["tags"][tag_name])
+            if s_tag_name in self._store_api_dict["tags"]:
+                return str(self._store_api_dict["tags"][s_tag_name])
 
         # Cas où l'entité ne possède pas ce nom de tag (ou pas de tag du tout)
-        s_error_message = f"L'entité {self.__class__.__name__} {self.id} ne possède pas de tag {tag_name}"
+        s_error_message = f"L'entité {self.__class__.__name__} {self.id} ne possède pas de tag {s_tag_name}"
         Config().om.error(s_error_message)
         raise StoreEntityError(s_error_message)
 
-    def api_add_tags(self, tag_data: Dict[str, str]) -> None:
+    def api_add_tags(self, d_tag_data: Dict[str, str]) -> None:
         """Ajout des tags à l'entité dans l'API.
 
         Args:
-            tag_data (Dict[str, str]): liste des clés/valeurs à ajouter
+            d_tag_data (Dict[str, str]): liste des clés/valeurs à ajouter
         """
-        raise NotImplementedError("TagInterface.api_add_tags")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_add_tags"
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+            data=d_tag_data,
+        )
 
-    def api_remove_tags(self, tag_keys: List[str]) -> None:
+    def api_remove_tags(self, l_tag_keys: List[str]) -> None:
         """Supprime des tags de l'entité.
 
         Args:
-            tag_keys (List[str]): liste des clés des tags à supprimer
+            l_tag_keys (List[str]): liste des clés des tags à supprimer
         """
-        raise NotImplementedError("TagInterface.api_remove_tags")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_delete_tags"
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.DELETE,
+            route_params={self._entity_name: self.id},
+            # dans les paramètres (params), on met en clé "tag[]" et en valeur la liste des tags :
+            params={"tags[]": l_tag_keys},
+        )
