@@ -78,18 +78,36 @@ class UploadAction:
 
     def __add_tags(self) -> None:
         """Ajout les tags."""
+        if self.__upload is not None and self.__dataset.tags is not None:
+            self.__upload.api_add_tags(self.__dataset.tags)
+            Config().om.info(f"Livraion {self.__upload}: les tag ont été ajoutés avec succès.")
 
     def __add_comments(self) -> None:
         """Ajout les commentaires."""
+        if self.__upload is not None:
+            for s_comment in self.__dataset.comments:
+                self.__upload.api_add_comment({"text": s_comment})
+            Config().om.info(f"Livraion {self.__upload}: les commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:
         """Envoie les fichiers de données."""
+        if self.__upload is not None:
+            for file_path, api_path in self.__dataset.data_files.items():
+                self.__upload.api_push_data_file(file_path, api_path)
+            Config().om.info(f"Livraion {self.__upload}: les fichiers ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
         """Envoie les fichiers md5."""
+        if self.__upload is not None:
+            for file_path in self.__dataset.md5_files:
+                self.__upload.api_push_md5_file(file_path)
+            Config().om.info(f"Livraion {self.__upload}: les fichiers md5 ont été ajoutés avec succès.")
 
     def __close(self) -> None:
         """Ferme la livraison."""
+        if self.__upload is not None:
+            self.__upload.api_close()
+            Config().om.info(f"Livraison {self.__upload} créée avec succès")
 
     def __find(self) -> Optional[Upload]:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
