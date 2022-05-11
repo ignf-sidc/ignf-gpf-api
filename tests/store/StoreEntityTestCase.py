@@ -87,3 +87,14 @@ class StoreEntityTestCase(unittest.TestCase):
 
     def test_api_delete(self) -> None:
         "Vérifie le bon fonctionnement de api_delete."
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+            # On effectue la suppression d'une entité
+            # On instancie une entité à supprimer
+            o_store_entity = StoreEntity({"_id": "id_à_supprimer"})
+            # On appelle la fonction api_delete
+            o_store_entity.api_delete()
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with("store_entity_delete", route_params={"store_entity": "id_à_supprimer"}, method=ApiRequester.DELETE)
