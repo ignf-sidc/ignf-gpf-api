@@ -109,7 +109,7 @@ class ApiRequester(metaclass=Singleton):
             i_nb_attempts += 1
             try:
                 # Execution de la requête
-                r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=d_proxies, files=files)
+                r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=d_proxies, files=files)  # type:ignore
 
                 # Vérification du résultat...
                 if r.status_code >= 200 and r.status_code < 300:
