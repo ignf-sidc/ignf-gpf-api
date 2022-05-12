@@ -1,6 +1,4 @@
 from pathlib import Path
-from io import TextIOWrapper
-import mimetypes
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.TagInterface import TagInterface
@@ -28,12 +26,17 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         s_route = f"{self._entity_name}_push_data"
 
         # Ouverture du fichier et remplissage du tuple de fichier
-        o_mimetype = mimetypes.guess_type(file_path)[0]
         with file_path.open("rb") as o_file_binary:
-            o_tuple_file = (file_path.name, TextIOWrapper(o_file_binary), o_mimetype)
-
+            o_tuple_file = (file_path.name, o_file_binary)
+            o_dict_files = {"file": o_tuple_file}
         # Requête
-        ApiRequester().route_request(s_route, method=ApiRequester.POST, route_params={self._entity_name: self.id}, data={"path": api_path}, files=[o_tuple_file])
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+            params={"path": api_path},
+            files=o_dict_files,
+        )
 
     def api_push_md5_file(self, file_path: Path) -> None:
         """Envoie un fichier md5 à la livraison.
@@ -41,18 +44,41 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         Args:
             file_path (Path): chemin local vers le fichier à envoyer
         """
-        raise NotImplementedError("Upload.api_push_md5_file")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_push_md5"
+
+        # Ouverture du fichier et remplissage du tuple de fichier
+        with file_path.open("rb") as o_file_binary:
+            o_tuple_file = (file_path.name, o_file_binary)
+            o_dict_files = {"file": o_tuple_file}
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+            files=o_dict_files,
+        )
 
     def api_open(self) -> None:
         """Ouvre une livraison."""
         # Génération du nom de la route
         s_route = f"{self._entity_name}_open"
+
         # Requête
-        ApiRequester().route_request(s_route, method=ApiRequester.POST, route_params={self._entity_name: self.id})
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+        )
 
     def api_close(self) -> None:
         """Ferme une livraison."""
         # Génération du nom de la route
         s_route = f"{self._entity_name}_close"
+
         # Requête
-        ApiRequester().route_request(s_route, method=ApiRequester.POST, route_params={self._entity_name: self.id})
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+        )
