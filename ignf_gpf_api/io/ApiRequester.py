@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
-from io import TextIOWrapper
+from io import BufferedReader
 import time
 import traceback
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 import requests
 
 from ignf_gpf_api.Errors import GpfApiError
@@ -36,7 +36,7 @@ class ApiRequester(metaclass=Singleton):
         method: str = "GET",
         params: Optional[Dict[str, Any]] = None,
         data: Optional[Dict[str, Any]] = None,
-        files: Optional[List[Tuple[str, TextIOWrapper, str]]] = None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader]]] = None,
     ) -> requests.Response:
         """Exécute une requête à l'API à partir du nom d'une route.
 
@@ -46,7 +46,7 @@ class ApiRequester(metaclass=Singleton):
             params (Optional[Dict[str, Any]], optional): Paramètres optionnels de l'URL. Defaults to None.
             method (str, optional): méthode de la requête. Defaults to "GET".
             data (Optional[Dict[str, Any]], optional): Données de la requête. Defaults to None.
-            files (Optional[List[Tuple[Any]]], optional): Liste des fichiers à envoyer [('fichier.ext', File, 'mimetype')]. Default to None.
+            files (Optional[Dict[str, Tuple[Any]]], optional): Liste des fichiers à envoyer {"file":('fichier.ext', File)}. Default to None.
 
         Raises:
             RouteNotFoundError: levée si la route demandée n'est pas définie dans les paramètres
@@ -83,7 +83,7 @@ class ApiRequester(metaclass=Singleton):
         method: str = "GET",
         params: Optional[Dict[str, Any]] = None,
         data: Optional[Dict[str, Any]] = None,
-        files: Optional[List[Tuple[str, TextIOWrapper, str]]] = None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader]]] = None,
     ) -> requests.Response:
         """Effectue une requête à l'API à partir d'une url. La retente plusieurs fois s'il y a un problème.
 
@@ -92,7 +92,7 @@ class ApiRequester(metaclass=Singleton):
             method (str, optional): méthode de la requête. Defaults to "GET".
             params (Optional[Dict[str, Any]], optional): paramètres. Defaults to None.
             data (Optional[Dict[str, Any]], optional): données. Defaults to None.
-            files (Optional[List[Tuple[Any]]], optional): fichiers. Defaults to None.
+            files (Optional[Dict[str, Tuple[Any]]], optional): fichiers. Defaults to None.
 
         Returns:
             requests.Response: réponse si succès
