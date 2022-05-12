@@ -62,7 +62,7 @@ class UploadAction:
             if self.__behavior == "STOP":
                 raise GpfApiError(f"Impossible de créer la livraison, une livraison identique {o_upload} existe déjà.")
             # On recrée la livraison si demandé
-            elif self.__behavior == "DELETE":
+            if self.__behavior == "DELETE":
                 Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréer")
                 o_upload.api_delete()
                 # on en crée un nouveau
@@ -92,15 +92,15 @@ class UploadAction:
     def __push_data_files(self) -> None:
         """Envoie les fichiers de données."""
         if self.__upload is not None:
-            for file_path, api_path in self.__dataset.data_files.items():
-                self.__upload.api_push_data_file(file_path, api_path)
+            for p_file_path, s_api_path in self.__dataset.data_files.items():
+                self.__upload.api_push_data_file(p_file_path, s_api_path)
             Config().om.info(f"Livraion {self.__upload}: les fichiers ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
         """Envoie les fichiers md5."""
         if self.__upload is not None:
-            for file_path in self.__dataset.md5_files:
-                self.__upload.api_push_md5_file(file_path)
+            for p_file_path in self.__dataset.md5_files:
+                self.__upload.api_push_md5_file(p_file_path)
             Config().om.info(f"Livraion {self.__upload}: les fichiers md5 ont été ajoutés avec succès.")
 
     def __close(self) -> None:
