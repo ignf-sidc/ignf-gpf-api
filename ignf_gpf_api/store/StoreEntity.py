@@ -128,9 +128,9 @@ class StoreEntity(ABC):
 
     def api_delete(self) -> None:
         """Supprime l'entité de l'API."""
-        s_route = f"{self._entity_name}_delete"
+        # s_route = f"{self._entity_name}_delete"
         # Requête
-        ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
+        # ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
 
     @staticmethod
     def filter_dict_from_str(s_filters: Optional[str]) -> Dict[str, str]:
