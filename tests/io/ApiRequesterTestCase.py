@@ -32,7 +32,9 @@ class ApiRequesterTestCase(unittest.TestCase):
     param = {
         "param_key_1": "value_1",
         "param_key_2": 2,
+        "param_keys[]": ["pk1", "pk2", "pk3"],
     }
+    encoded_param = "?param_key_1=value_1&param_key_2=2&param_keys%5B%5D=pk1&param_keys%5B%5D=pk2&param_keys%5B%5D=pk3"
     data = {
         "data_key_1": "value_1",
         "data_key_2": 2,
@@ -101,8 +103,7 @@ class ApiRequesterTestCase(unittest.TestCase):
             # Vérifications sur l'historique (enfin ici y'a une requête...)
             o_history = o_mock.request_history
             # Requête 1 : vérification de l'url
-            s_param = "?param_key_1=value_1&param_key_2=2"
-            self.assertEqual(o_history[0].url, self.url + s_param, "check url")
+            self.assertEqual(o_history[0].url, self.url + self.encoded_param, "check url")
             # Requête 1 : vérification du type
             self.assertEqual(o_history[0].method.lower(), "get", "method == get")
             # Requête 1 : vérification du corps de requête
@@ -126,8 +127,7 @@ class ApiRequesterTestCase(unittest.TestCase):
             # Vérifications sur l'historique (enfin ici y'a une requête...)
             o_history = o_mock.request_history
             # Requête 1 : vérification de l'url
-            s_param = "?param_key_1=value_1&param_key_2=2"
-            self.assertEqual(o_history[0].url, self.url + s_param, "check url")
+            self.assertEqual(o_history[0].url, self.url + self.encoded_param, "check url")
             # Requête 1 : vérification du type
             self.assertEqual(o_history[0].method.lower(), "post", "method == post")
             # Requête 1 : vérification du corps de requête
