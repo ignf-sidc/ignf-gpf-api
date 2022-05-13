@@ -195,10 +195,10 @@ class UploadActionTestCase(unittest.TestCase):
         )
 
         # mode stop mais avec doublon => ça plante
-        return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})]
+        l_return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})]
         self.run_args(
             behavior="STOP",
-            return_value_api_list=return_value_api_list,
+            return_value_api_list=l_return_value_api_list,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
@@ -208,7 +208,7 @@ class UploadActionTestCase(unittest.TestCase):
             api_create=True,
             api_delete=False,
             run_fail=True,
-            message_exception=f"Impossible de créer la livraison, une livraison identique {return_value_api_list[0]} existe déjà.",
+            message_exception=f"Impossible de créer la livraison, une livraison identique {l_return_value_api_list[0]} existe déjà.",
         )
         # mode DELETE mais avec doublon => suppression mais OK
         self.run_args(
@@ -241,10 +241,10 @@ class UploadActionTestCase(unittest.TestCase):
         )
 
         # mode CONTINUE mais avec doublon (fermé) => ça plante
-        return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "CLOSE"})]
+        l_return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "CLOSE"})]
         self.run_args(
             behavior="CONTINUE",
-            return_value_api_list=return_value_api_list,
+            return_value_api_list=l_return_value_api_list,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
@@ -254,5 +254,5 @@ class UploadActionTestCase(unittest.TestCase):
             api_create=False,
             api_delete=False,
             run_fail=True,
-            message_exception=f"Impossible de continué, la livraison {return_value_api_list[0]} est fermée.",
+            message_exception=f"Impossible de continué, la livraison {l_return_value_api_list[0]} est fermée.",
         )
