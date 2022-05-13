@@ -43,7 +43,7 @@ class DescriptorFileReader:
         # Vérification de l'existence des répertoires décrits dans le fichier
         self.__validate_pathes()
         # Vérification de l'existence des répertoires décrits dans le fichier et fabrication des chemins absolus à partir des chemins relatifs
-        # self.__instantiate_datasets()
+        self.__instantiate_datasets()
 
     def __validate_pathes(self) -> None:
         """Vérifie si les répertoires existent (s'interrompt si l'un d'entre eux n'existe pas).
