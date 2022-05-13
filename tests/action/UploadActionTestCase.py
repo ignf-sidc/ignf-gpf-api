@@ -53,6 +53,7 @@ class UploadActionTestCase(unittest.TestCase):
 
         def create(d_dict: Dict[str, Any]) -> Upload:
             print("new creation")
+            d_dict["status"] = "OPEN"
             return Upload(d_dict)
 
         def config_get(a: str, b: str) -> Optional[str]:  # pylint:disable=invalid-name,unused-argument
@@ -62,7 +63,9 @@ class UploadActionTestCase(unittest.TestCase):
                 return ""
             if b == "behavior_if_exists":
                 return "STOP"
-            return None
+            if b == "open_status":
+                return "OPEN"
+            raise Exception("cas non prévu", a, b)
 
         with patch.object(Upload, "api_list", return_value=return_value_api_list) as o_mock_api_list, \
             patch.object(Upload, "api_create", wraps=create) as o_mock_api_create, \
@@ -191,7 +194,7 @@ class UploadActionTestCase(unittest.TestCase):
         # mode stop mais avec doublon => ça plante
         self.run_args(
             behavior="STOP",
-            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant"})],
+            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})],
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
@@ -205,7 +208,7 @@ class UploadActionTestCase(unittest.TestCase):
         # mode DELETE mais avec doublon => suppression mais OK
         self.run_args(
             behavior="DELETE",
-            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant"})],
+            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})],
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
@@ -220,7 +223,7 @@ class UploadActionTestCase(unittest.TestCase):
         # mode CONTINUE mais avec doublon => pas suppression ni création
         self.run_args(
             behavior="CONTINUE",
-            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant"})],
+            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})],
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
