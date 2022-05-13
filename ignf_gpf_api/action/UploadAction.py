@@ -94,7 +94,7 @@ class UploadAction:
         if self.__upload is not None:
             for p_file_path, s_api_path in self.__dataset.data_files.items():
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
-            Config().om.info(f"Livraion {self.__upload}: les fichiers ont été ajoutés avec succès.")
+            Config().om.info(f"Livraion {self.__upload}: les fichiers de données ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
         """Envoie les fichiers md5."""
