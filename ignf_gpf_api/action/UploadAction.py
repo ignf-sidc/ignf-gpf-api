@@ -63,7 +63,7 @@ class UploadAction:
                 raise GpfApiError(f"Impossible de créer la livraison, une livraison identique {o_upload} existe déjà.")
             # On recrée la livraison si demandé
             if self.__behavior == "DELETE":
-                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréer")
+                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée")
                 o_upload.api_delete()
                 # on en crée un nouveau
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
