@@ -132,6 +132,18 @@ class StoreEntity(ABC):
         # Requête
         ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
 
+    def api_update(self) -> None:
+        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API."""
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_get"
+        # Requête
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+        )
+        # Mise à jour du stockage local
+        self._store_api_dict = o_response.json()
+
     @staticmethod
     def filter_dict_from_str(s_filters: Optional[str]) -> Dict[str, str]:
         """Les filtres de store_entities basés sur les tags ou les propriétés sont écrits sous la forme name=value,name=value
