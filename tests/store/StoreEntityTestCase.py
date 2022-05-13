@@ -98,3 +98,28 @@ class StoreEntityTestCase(unittest.TestCase):
             o_store_entity.api_delete()
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with("store_entity_delete", route_params={"store_entity": "id_à_supprimer"}, method=ApiRequester.DELETE)
+
+    def test_api_update(self) -> None:
+        "Vérifie le bon fonctionnement de api_update."
+        # Infos de l'entité avant la maj et après
+        d_old_data = {"_id": "id_à_maj", "name": "ancien nom"}
+        d_new_data = {"_id": "id_à_maj", "name": "nouveau nom"}
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.post("http://test.com/", json=d_new_data)
+            o_response = requests.request("POST", "http://test.com/")
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+            # On effectue la suppression d'une entité
+            # On instancie une entité à mettre à jour
+            o_store_entity = StoreEntity(d_old_data)
+            # Les info de l'entité sont celles à mettre à jour
+            self.assertDictEqual(o_store_entity.get_store_properties(), d_old_data)
+            # On appelle la fonction api_update
+            o_store_entity.api_update()
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with("store_entity_get", route_params={"store_entity": "id_à_maj"})
+            # Vérification que les infos de l'entité sont maj
+            self.assertDictEqual(o_store_entity.get_store_properties(), d_new_data)
