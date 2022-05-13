@@ -2,7 +2,7 @@
     "datasets": [
         {
             "data_dirs": [
-                "1_jeu_test_vecteur/data"
+                "1_test_datasets_vector/data"
             ],
             "upload_infos": {
                 "description": "Jeu test vecteur",
