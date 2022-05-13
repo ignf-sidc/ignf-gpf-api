@@ -69,6 +69,9 @@ class UploadAction:
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
             else:
                 # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
+                # cas livraison fermé : on plante
+                if not o_upload.is_open():
+                    raise GpfApiError(f"Impossible de continué, la livraison {o_upload} est fermée.")
                 Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va reprendre et la compléter.")
                 self.__upload = o_upload
         else:
