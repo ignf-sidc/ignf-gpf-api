@@ -15,10 +15,9 @@ class TagInterface(StoreEntity):
         Raises :
             StoreEntityError : si le tag n'existe pas
         """
-        # On vérifie que l'entité a bien une propriété tags
-        if "tags" in self._store_api_dict:
-            if s_tag_name in self._store_api_dict["tags"]:
-                return str(self._store_api_dict["tags"][s_tag_name])
+        # On vérifie que l'entité a bien une propriété tags et le tag souhaité
+        if "tags" in self._store_api_dict and s_tag_name in self._store_api_dict["tags"]:
+            return str(self._store_api_dict["tags"][s_tag_name])
 
         # Cas où l'entité ne possède pas ce nom de tag (ou pas de tag du tout)
         s_error_message = f"L'entité {self.__class__.__name__} {self.id} ne possède pas de tag {s_tag_name}"
