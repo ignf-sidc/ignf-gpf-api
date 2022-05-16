@@ -66,6 +66,11 @@ class StoreEntityTestCase(unittest.TestCase):
 
     def test_api_create(self) -> None:
         "Vérifie le bon fonctionnement de api_create."
+        # on créé un store entity dans l'api (avec un dictionnaire)
+        # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
+        # 1/ on vérifie l'appel ApiRequester.route_request
+        # 2/ on vérifie l'objet instancié
+
         # Instanciation d'une fausse réponse HTTP
         with requests_mock.Mocker() as o_mock:
             o_mock.post("http://test.com/", json={"_id": "123456789"})
@@ -87,6 +92,10 @@ class StoreEntityTestCase(unittest.TestCase):
 
     def test_api_delete(self) -> None:
         "Vérifie le bon fonctionnement de api_delete."
+        # on créé une instance puis on la supprime
+        # 1/ on vérifie l'appel ApiRequester.route_request
+        # 2/ avec le mock, pas besoin de vérifier que l'instance (SUR l'api) n'existe plus
+
         # Instanciation du ApiRequester
         o_api_requester = ApiRequester()
         # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
