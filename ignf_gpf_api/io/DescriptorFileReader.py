@@ -13,6 +13,7 @@ class DescriptorFileReader:
     Attributes :
         __descriptor_dict (Optional[Dict[Any, Any]]) : contenu du fichier descriptif
         __datasets (List[Dataset]): liste des datasets contenus dans le fichier descripteur de livraison
+        __parent_folder(path): path du dossier parent des données
     """
 
     def __init__(self, descriptor_file_path: Path) -> None:
@@ -62,8 +63,8 @@ class DescriptorFileReader:
                         l_liste_folder_non_valide.append(str(p_folder_path))
             # si à la fin du parcours des dossiers la liste n'est pas vide, on leve une erreur:
             if l_liste_folder_non_valide:
-                print("liste des dossiers en erreurs:")
-                print(l_liste_folder_non_valide)
+                # affiche la liste des dossiers non valides
+                Config().om.error("Liste des dossiers en erreur : \n  * {}".format("\n  * ".join(l_liste_folder_non_valide)))
                 raise GpfApiError("la commande de vérification des répertoires a trouvée des erreurs.")
 
     def __instantiate_datasets(self) -> None:
