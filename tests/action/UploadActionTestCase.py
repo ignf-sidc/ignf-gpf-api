@@ -256,3 +256,64 @@ class UploadActionTestCase(unittest.TestCase):
             run_fail=True,
             message_exception=f"Impossible de continué, la livraison {l_return_value_api_list[0]} est fermée.",
         )
+
+    def test_api_tree_not_empty(self) -> None:
+        """Vérifie le bon fonctionnement de api_tree si ce n'est pas vide."""
+        # Arborescence en entrée
+        l_tree: List[Dict[str, Any]] = [
+            {
+                "name": "data",
+                "children": [
+                    {
+                        "name": "toto",
+                        "children": [
+                            {
+                                "name": "titi",
+                                "children": [
+                                    {
+                                        "name": "fichier_2.pdf",
+                                        "size": 467717,
+                                        "extension": ".pdf",
+                                        "type": "file",
+                                    }
+                                ],
+                                "size": 467717,
+                                "type": "directory",
+                            },
+                            {
+                                "name": "fichier_1.pdf",
+                                "size": 300000,
+                                "extension": ".pdf",
+                                "type": "file",
+                            },
+                        ],
+                        "size": 767717,
+                        "type": "directory",
+                    }
+                ],
+                "size": 767717,
+                "type": "directory",
+            },
+            {"name": "md5sum.md5", "size": 78, "extension": ".md5", "type": "file"},
+        ]
+        # Valeurs attendues
+        d_files_wanted: Dict[str, int] = {
+            "data/toto/titi/fichier_2.pdf": 467717,
+            "data/toto/fichier_1.pdf": 300000,
+            "md5sum.md5": 78,
+        }
+        # Parsing
+        d_files = UploadAction.parse_tree(l_tree)
+        # Vérification
+        self.assertDictEqual(d_files, d_files_wanted)
+
+    def test_api_tree_empty(self) -> None:
+        """Vérifie le bon fonctionnement de api_tree si c'est vide."""
+        # Arborescence en entrée
+        l_tree: List[Dict[str, Any]] = []
+        # Valeurs attendues
+        d_files_wanted: Dict[str, int] = {}
+        # Parsing
+        d_files = UploadAction.parse_tree(l_tree)
+        # Vérification
+        self.assertDictEqual(d_files, d_files_wanted)
