@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any, Dict, List
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.TagInterface import TagInterface
@@ -99,3 +100,18 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         if "status" not in self._store_api_dict:
             raise StoreEntityError("Impossible de récupérer le status de l'upload")
         return bool(Config().get("upload_status", "open_status") == self["status"])
+
+    def api_tree(self) -> List[Dict[str, Any]]:
+        """Récupère l'arborescence d'une livraison."""
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_tree"
+
+        # Requête
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+        )
+
+        # Retour de l'arborescence
+        l_tree: List[Dict[str, Any]] = o_response.json()
+        return l_tree

@@ -1,6 +1,9 @@
 import unittest
 from unittest.mock import patch, mock_open
 from pathlib import Path
+import requests
+
+import requests_mock
 
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.ApiRequester import ApiRequester
@@ -99,3 +102,21 @@ class UploadTestCase(unittest.TestCase):
                 o_mock_request.assert_called_once_with("upload_close", method=ApiRequester.POST, route_params={"upload": "id_à_fermer"})
                 # Vérification de l'appel à api_update
                 o_mock_api_update.assert_called_once()
+
+    def test_api_tree(self) -> None:
+        "Vérifie le bon fonctionnement de api_tree."
+        l_tree_wanted = [{"key_1": "value_1", "key_2": "value_2"}]
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.post("http://test.com/", json=l_tree_wanted)
+            o_response = requests.request("POST", "http://test.com/")
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
+            # On instancie un upload
+            o_upload = Upload({"_id": "identifiant"})
+            # On appelle api_tree
+            l_tree = o_upload.api_tree()
+            # Vérification sur o_mock_request (route upload_tree avec comme params de route l'id)
+            o_mock_request.assert_called_once_with("upload_tree", route_params={"upload": "identifiant"})
+            # Vérifications sur l_tree
+            self.assertEqual(l_tree, l_tree_wanted)
