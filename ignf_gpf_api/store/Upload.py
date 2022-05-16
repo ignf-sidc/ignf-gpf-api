@@ -4,6 +4,7 @@ from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.TagInterface import TagInterface
 from ignf_gpf_api.store.CommentInterface import CommentInterface
 from ignf_gpf_api.store.SharingInterface import SharingInterface
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
 
@@ -21,7 +22,21 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
             file_path (Path): chemin local vers le fichier à envoyer
             api_path (str): dossier distant où déposer le fichier
         """
-        raise NotImplementedError("Upload.api_push_data_file")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_push_data"
+
+        # Ouverture du fichier et remplissage du tuple de fichier
+        with file_path.open("rb") as o_file_binary:
+            o_tuple_file = (file_path.name, o_file_binary)
+            o_dict_files = {"file": o_tuple_file}
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+            params={"path": api_path},
+            files=o_dict_files,
+        )
 
     def api_push_md5_file(self, file_path: Path) -> None:
         """Envoie un fichier md5 à la livraison.
@@ -29,15 +44,50 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         Args:
             file_path (Path): chemin local vers le fichier à envoyer
         """
-        raise NotImplementedError("Upload.api_push_md5_file")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_push_md5"
+
+        # Ouverture du fichier et remplissage du tuple de fichier
+        with file_path.open("rb") as o_file_binary:
+            o_tuple_file = (file_path.name, o_file_binary)
+            o_dict_files = {"file": o_tuple_file}
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+            files=o_dict_files,
+        )
 
     def api_open(self) -> None:
         """Ouvre une livraison."""
-        raise NotImplementedError("Upload.api_open")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_open"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+        )
+
+        # Mise à jour du stockage local (_store_api_dict)
+        self.api_update()
 
     def api_close(self) -> None:
         """Ferme une livraison."""
-        raise NotImplementedError("Upload.api_close")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_close"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+        )
+
+        # Mise à jour du stockage local (_store_api_dict)
+        self.api_update()
 
     def is_open(self) -> bool:
         """Test si la livraison est ouverte
