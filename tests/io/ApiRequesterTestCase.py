@@ -1,8 +1,8 @@
 from http import HTTPStatus
-from io import TextIOWrapper
+from io import BufferedReader
 import json
 from pathlib import Path
-from typing import List, Tuple
+from typing import Dict, Tuple
 import unittest
 from unittest.mock import patch
 import requests
@@ -39,7 +39,7 @@ class ApiRequesterTestCase(unittest.TestCase):
         "data_key_1": "value_1",
         "data_key_2": 2,
     }
-    files: List[Tuple[str, TextIOWrapper, str]] = []
+    files: Dict[str, Tuple[str, BufferedReader]] = {}
     response = {"key": "value"}
 
     @classmethod
