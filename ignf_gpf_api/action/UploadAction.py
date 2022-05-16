@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 
 from ignf_gpf_api.Errors import GpfApiError
@@ -137,3 +137,35 @@ class UploadAction:
             return l_uploads[0]
         # sinon on retourne None
         return None
+
+    @staticmethod
+    def parse_tree(tree: List[Dict[str, Any]], prefix: str = "") -> Dict[str, int]:
+        """Parse l'arborescence renvoyée par l'API en un dictionnaire associant le chemin de chaque fichier à sa taille.
+        L'objectif est de permettre de facilement identifier quel sont les fichiers à (re)livrer.
+        Args:
+            tree (List[Dict[str, Any]]): arborescence à parser
+            prefix (str): pré-fixe du chemin
+        Returns:
+            Dict[str, int]: liste des fichiers envoyés et leur taille
+        """
+        # Création du dictionnaire pour stocker les fichiers et leur taille
+        d_files: Dict[str, int] = {}
+        # Parcours de l'arborescence
+        for d_element in tree:
+            # On complète le chemin
+            if prefix != "":
+                s_chemin = f"{prefix}/{d_element['name']}"
+            else:
+                s_chemin = str(d_element["name"])
+            # Fichier ou dossier ?
+            if d_element["type"] == "file":
+                # Fichier, on l'ajoute à notre dictionnaire
+                d_files[s_chemin] = int(d_element["size"])
+            elif d_element["type"] == "directory":
+                # Dossier, on itère dessus avec le nom du dossier comme préfixe
+                d_subfiles = UploadAction.parse_tree(d_element["children"], prefix=s_chemin)
+                # On fusionne ces fichiers à notre dict principal
+                d_files = {**d_files, **d_subfiles}
+            else:
+                raise GpfApiError(f"Type d'élément rencontré dans l'arborescence '{d_element['type']}' non géré. Contacter le support.")
+        return d_files
