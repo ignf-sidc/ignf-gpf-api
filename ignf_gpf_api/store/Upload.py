@@ -5,12 +5,13 @@ from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.TagInterface import TagInterface
 from ignf_gpf_api.store.CommentInterface import CommentInterface
 from ignf_gpf_api.store.SharingInterface import SharingInterface
+from ignf_gpf_api.store.EventInterface import EventInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
 
 
-class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
+class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, StoreEntity):
     """Classe Python représentant l'entité Upload (livraison)."""
 
     _entity_name = "upload"
@@ -115,3 +116,19 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         # Retour de l'arborescence
         l_tree: List[Dict[str, Any]] = o_response.json()
         return l_tree
+
+    def api_list_checks(self) -> Dict[str, List[Dict[str, Any]]]:
+        """Liste les vérification (check) lancé sur cette livraison.
+
+        Returns:
+            Dict[str, List[Dict[str, Any]]]: liste des vérifications demandées (asked), en cours (in_progress), passées (passed) et en échec (failed)
+        """
+        raise NotImplementedError("Upload.api_list_check")
+
+    def api_run_checks(self, check_ids: List[str]) -> None:
+        """Lance des vérifications (check) sur cette livraison.
+
+        Args:
+            check_ids (List[str]): Liste des identifiants des Vérifications à lancer
+        """
+        raise NotImplementedError(f"Upload.api_list_check({check_ids})")

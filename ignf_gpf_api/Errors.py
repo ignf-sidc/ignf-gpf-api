@@ -3,7 +3,6 @@ class GpfApiError(Exception):
 
     Attributes:
         __message (str): message décrivant le problème
-
     """
 
     def __init__(self, message: str) -> None:
