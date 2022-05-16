@@ -9,26 +9,26 @@
                         // On crée une exécution de traitement
                         "type": "processing-execution",
                         "parameters": {
-                            // On récupère l'id de l'exécution nommée "Intégration de données vecteur livrées en base"
-                            "processing": "{store_entity.upload.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
                             "inputs": {
                                 "upload": [
-                                    // On récupère l'id de la livraison associée à cette DPSG
-                                    "{store_entity.upload.infos._id [TAGS(dpsg={param.dpsg})]}"
+                                    // On récupère l'id de la livraison associée à cette demande
+                                    "{store_entity.upload.infos._id [TAGS(demande={param.demande})]}"
                                 ]
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle donnée stockée nommée "base intermédiaire"
-                                    "name": "base intermédiaire"
+                                    // On crée une nouvelle donnée stockée nommée "Base intermédiaire" (qui sera également taguée)
+                                    "name": "Base intermédiaire"
                                 }
                             },
                             "parameters": {}
                         },
                         // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
                         "tags": {
-                            // On récupère le paramètre "dpsg"
-                            "dpsg": "{param.dpsg}"
+                            // On récupère le paramètre "demande"
+                            "demande": "{param.demande}"
                         },
                         "overloaded_parameters": []
                     }
@@ -36,32 +36,32 @@
             },
             // Étape n°2 : création de la pyramide vecteur
             {
-                "name": "intégration-archive-livrée",
+                "name": "création-pyramide",
                 "actions": [
                     {
                         // On crée une exécution de traitement
                         "type": "processing-execution",
                         "parameters": {
-                            // On récupère l'id de l'exécution nommée "Création d'une pyramide vecteur"
-                            "processing": "{store_entity.upload.infos._id [INFOS(name=Création d'une pyramide vecteur)]}",
+                            // On récupère l'id du traitement nommé "Création d'une pyramide vecteur"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Création d'une pyramide vecteur)]}",
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la stored_data créée à l'étape précédente
-                                    "{store_entity.stored_data.infos._id [INFOS(name=base intermédiaire) TAGS(dpsg={param.dpsg})]}"
+                                    "{store_entity.stored_data.infos._id [INFOS(name=base intermédiaire) TAGS(demande={param.demande})]}"
                                 ]
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle donnée stockée nommée "pyramide vecteur"
-                                    "name": "pyramide vecteur"
+                                    // On crée une nouvelle donnée stockée nommée "Pyramide vecteur" (qui sera également taguée)
+                                    "name": "Pyramide vecteur"
                                 }
                             },
                             "parameters": {}
                         },
                         // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
                         "tags": {
-                            // On récupère le paramètre "dpsg"
-                            "dpsg": "{param.dpsg}"
+                            // On récupère le paramètre "demande"
+                            "demande": "{param.demande}"
                         },
                         "overloaded_parameters": []
                     }
