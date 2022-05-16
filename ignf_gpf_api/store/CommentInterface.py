@@ -15,7 +15,11 @@ class CommentInterface(StoreEntity):
         # Génération du nom de la route
         s_route = f"{self._entity_name}_add_comment"
         # Requête "get"
-        ApiRequester().route_request(s_route, route_params={self._entity_name: self.id}, data=comment_data)
+        ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+            data=comment_data,
+        )
 
     def api_list_comments(self) -> List[Dict[str, Any]]:
         """Liste les commentaires de l'entité.
