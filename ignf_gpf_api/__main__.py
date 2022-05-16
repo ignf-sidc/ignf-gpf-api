@@ -6,7 +6,8 @@ import sys
 import argparse
 import traceback
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import List, Optional, Sequence
+import shutil
 
 import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
@@ -38,6 +39,8 @@ def main() -> None:
         config(o_args)
     elif o_args.task == "upload":
         upload(o_args)
+    elif o_args.task == "dataset":
+        dataset(o_args)
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -69,6 +72,10 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser_auth.add_argument("--tags", "-t", type=str, default=None, help="Filter les livraisons selon les tags")
     o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si la livraison existe déjà")
     o_parser_auth.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
+    # Parser pour dataset
+    o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
+    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à enregistrer")
+    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier descriptor à créer")
     return o_parser.parse_args(args)
 
 
@@ -155,7 +162,7 @@ def upload(o_args: argparse.Namespace) -> None:
         for o_dataset in o_dfu.datasets:
             o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
             o_upload = o_ua.run()
-            print(f"{o_upload} créée avec succès.")
+            print(f"Livraison {o_upload} créée avec succès.")
     elif o_args.id is not None:
         o_upload = Upload.api_get(o_args.id)
         print(o_upload)
@@ -165,6 +172,31 @@ def upload(o_args: argparse.Namespace) -> None:
         l_uploads = Upload.api_list(infos_filter=d_infos_filter, tags_filter=d_tags_filter)
         for o_upload in l_uploads:
             print(o_upload)
+
+
+def dataset(o_args: argparse.Namespace) -> None:
+    """List les jeux de données test proposés et si demandé en export un.
+
+    Args:
+        o_args (argparse.Namespace): paramètres utilisateurs
+    """
+    p_root = Path(__file__).parent.parent / "tests" / "_data" / "test_datasets"
+    if o_args.name is not None:
+        print(f"Exportation du jeux de donnée '{o_args.name}'...")
+        p_output = Path(o_args.file) if o_args.file is not None else Path(f"{o_args.name}.json")
+        print(f"Chemin de sortie : {p_output}")
+        # Copie du fichier JSON
+        p_from = p_root / f"{o_args.name}.json"
+        shutil.copy(p_from, p_output)
+        # Copie du répertoire
+        shutil.copytree(p_from.with_suffix(""), p_output.with_suffix(""))
+        print("Exportation terminée.")
+    else:
+        l_children: List[str] = []
+        for p_child in p_root.iterdir():
+            if p_child.is_dir():
+                l_children.append(p_child.name)
+        print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
 
 
 if __name__ == "__main__":

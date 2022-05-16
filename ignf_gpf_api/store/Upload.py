@@ -5,6 +5,8 @@ from ignf_gpf_api.store.TagInterface import TagInterface
 from ignf_gpf_api.store.CommentInterface import CommentInterface
 from ignf_gpf_api.store.SharingInterface import SharingInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
+from ignf_gpf_api.io.Config import Config
+from ignf_gpf_api.store.Errors import StoreEntityError
 
 
 class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
@@ -86,3 +88,14 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
 
         # Mise à jour du stockage local (_store_api_dict)
         self.api_update()
+
+    def is_open(self) -> bool:
+        """Test si la livraison est ouverte
+
+        Returns:
+            bool: si livraison ouverte
+        """
+        self.api_update()
+        if "status" not in self._store_api_dict:
+            raise StoreEntityError("Impossible de récupérer le status de l'upload")
+        return bool(Config().get("upload_status", "open_status") == self["status"])
