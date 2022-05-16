@@ -28,7 +28,7 @@
     // PYTHON : formatage et linter
     "python.languageServer": "Pylance",
     "python.analysis.extraPaths": [
-        "./ignf_gpf_api",
+        ".",
     ],
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
