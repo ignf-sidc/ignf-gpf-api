@@ -50,6 +50,14 @@ class StoreEntity(ABC):
         """
         return self._store_api_dict
 
+    @classmethod
+    def entity_name(cls) -> str:
+        return cls._entity_name
+
+    @classmethod
+    def entity_title(cls) -> str:
+        return cls._entity_title
+
     ##############################################################
     # Fonction d'interface avec l'API
     ##############################################################
