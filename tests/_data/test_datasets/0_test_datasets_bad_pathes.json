@@ -2,7 +2,10 @@
     "datasets": [
         {
             "data_dirs": [
-                "not/existing"
+                "not/existing1",
+                "not/existing2",
+                "not/existing3"
+
             ],
             "upload_infos": {
                 "description": "Jeu test avec données non existantes",
