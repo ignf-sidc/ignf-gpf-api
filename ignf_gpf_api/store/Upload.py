@@ -6,8 +6,6 @@ from ignf_gpf_api.store.CommentInterface import CommentInterface
 from ignf_gpf_api.store.SharingInterface import SharingInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 
-# from typing import Any, Dict, List, Optional, Type, TypeVar
-
 
 class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
     """Classe Python représentant l'entité Upload (livraison)."""
@@ -71,6 +69,9 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
             route_params={self._entity_name: self.id},
         )
 
+        # Mise à jour du stockage local (_store_api_dict)
+        self.api_update()
+
     def api_close(self) -> None:
         """Ferme une livraison."""
         # Génération du nom de la route
@@ -82,3 +83,6 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
             method=ApiRequester.POST,
             route_params={self._entity_name: self.id},
         )
+
+        # Mise à jour du stockage local (_store_api_dict)
+        self.api_update()
