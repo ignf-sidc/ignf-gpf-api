@@ -5,8 +5,6 @@ import requests_mock
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.CommentInterface import CommentInterface
 
-# from ignf_gpf_api.store.CommentInterface import CommentInterface
-
 
 class CommentInterfaceTestCase(unittest.TestCase):
     """Tests CommentInterface class.
