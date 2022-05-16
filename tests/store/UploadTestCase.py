@@ -73,10 +73,14 @@ class UploadTestCase(unittest.TestCase):
             # On effectue l'ouverture d'une livraison
             # On instancie une livraison à ouvrir
             o_upload_2_open = Upload({"_id": "id_à_ouvrir"})
-            # On appelle la fonction api_open
-            o_upload_2_open.api_open()
-            # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("upload_open", method=ApiRequester.POST, route_params={"upload": "id_à_ouvrir"})
+            # On mock la fonction api_update
+            with patch.object(o_upload_2_open, "api_update", return_value=None) as o_mock_api_update:
+                # On appelle la fonction api_open
+                o_upload_2_open.api_open()
+                # Vérification sur o_mock_request
+                o_mock_request.assert_called_once_with("upload_open", method=ApiRequester.POST, route_params={"upload": "id_à_ouvrir"})
+                # Vérification de l'appel à api_update
+                o_mock_api_update.assert_called_once()
 
     def test_api_close(self) -> None:
         "Vérifie le bon fonctionnement de api_close."
@@ -87,7 +91,11 @@ class UploadTestCase(unittest.TestCase):
             # On effectue la fermeture d'une livraison
             # On instancie une livraison à fermer
             o_upload_2_close = Upload({"_id": "id_à_fermer"})
-            # On appelle la fonction api_open
-            o_upload_2_close.api_close()
-            # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("upload_close", method=ApiRequester.POST, route_params={"upload": "id_à_fermer"})
+            # On mock la fonction api_update
+            with patch.object(o_upload_2_close, "api_update", return_value=None) as o_mock_api_update:
+                # On appelle la fonction api_close
+                o_upload_2_close.api_close()
+                # Vérification sur o_mock_request
+                o_mock_request.assert_called_once_with("upload_close", method=ApiRequester.POST, route_params={"upload": "id_à_fermer"})
+                # Vérification de l'appel à api_update
+                o_mock_api_update.assert_called_once()
