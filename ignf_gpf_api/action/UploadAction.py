@@ -23,7 +23,7 @@ class UploadAction:
     def __init__(self, dataset: Dataset, behavior: Optional[str] = None) -> None:
         self.__dataset: Dataset = dataset
         self.__upload: Optional[Upload] = None
-        # On suit le comporte donnée en paramètre ou à défaut celui de la config
+        # On suit le comportement donnée en paramètre ou à défaut celui de la config
         self.__behavior: str = behavior if behavior is not None else Config().get("upload_creation", "behavior_if_exists")
 
     def run(self) -> Upload:
@@ -59,17 +59,17 @@ class UploadAction:
         # S'il n'est pas null
         if o_upload is not None:
             # On sort en erreur si demandé
-            if self.__behavior == "STOP":
+            if self.__behavior == self.BEHAVIOR_STOP:
                 raise GpfApiError(f"Impossible de créer la livraison, une livraison identique {o_upload} existe déjà.")
             # On recrée la livraison si demandé
-            if self.__behavior == "DELETE":
+            if self.__behavior == self.BEHAVIOR_DELETE:
                 Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée")
                 o_upload.api_delete()
                 # on en crée un nouveau
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
             else:
-                # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
-                # cas livraison fermé : on plante
+                # Sinon on continue avec cet upload pour le compléter (behavior == self.BEHAVIOR_CONTINUE)
+                # cas livraison fermée : on plante
                 if not o_upload.is_open():
                     raise GpfApiError(f"Impossible de continué, la livraison {o_upload} est fermée.")
                 Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va reprendre et la compléter.")
@@ -93,17 +93,48 @@ class UploadAction:
             Config().om.info(f"Livraion {self.__upload}: les commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:
-        """Envoie les fichiers de données."""
+        """Envoie les fichiers de données (listés dans le dataset)."""
         if self.__upload is not None:
+            # lister les fichiers uploadés de l'entrepot et récupérer leur taille (sur l'entrepot)
+            l_arborescence = self.__upload.api_tree()
+            d_destination_taille = UploadAction.parse_tree(l_arborescence)
+
             for p_file_path, s_api_path in self.__dataset.data_files.items():
+                # regarder si le fichier du dataset est deja dans la liste des fichiers uploadés sur l'entrepot
+                # NB: sur l'entrepot, tous les fichiers "data" sont dans le dossier parent "data"
+                s_data_api_path = f"data/{s_api_path}"
+                if s_data_api_path in d_destination_taille:
+                    # le fichier est deja livré, on check sa taille :
+                    if d_destination_taille[s_data_api_path] == p_file_path.stat().st_size:
+                        continue
+                    # sinon, il faut supprimer le fichier uploadé si le mode Append n'est pas disponible
+                    # TODO supprimer le fichier uploadé
+
+                # sinon, on doit livrer le fichier
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
+
             Config().om.info(f"Livraion {self.__upload}: les fichiers de données ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
-        """Envoie les fichiers md5."""
+        """Envoie les fichiers md5 (listés dans le dataset)."""
         if self.__upload is not None:
+            # lister les fichiers md5 uploadés de l'entrepot et récupérer leur taille (sur l'entrepot)
+            l_arborescence = self.__upload.api_tree()
+            d_destination_taille = UploadAction.parse_tree(l_arborescence)
+
             for p_file_path in self.__dataset.md5_files:
+                # regarder si le fichier du dataset est deja dans la liste des fichiers uploadés sur l'entrepot
+                # NB: sur l'entrepot, tous les fichiers md5 sont à la racine
+                if p_file_path.name in d_destination_taille:
+                    # le fichier est deja livré, on check sa taille :
+                    if d_destination_taille[p_file_path.name] == p_file_path.stat().st_size:
+                        continue
+                    # sinon, il faut supprimer le fichier uploadé si le mode Append n'est pas disponible
+                    # TODO supprimer le fichier uploadé
+
+                # sinon, on doit livrer le fichier
                 self.__upload.api_push_md5_file(p_file_path)
+
             Config().om.info(f"Livraion {self.__upload}: les fichiers md5 ont été ajoutés avec succès.")
 
     def __close(self) -> None:
@@ -143,10 +174,10 @@ class UploadAction:
         """Parse l'arborescence renvoyée par l'API en un dictionnaire associant le chemin de chaque fichier à sa taille.
         L'objectif est de permettre de facilement identifier quel sont les fichiers à (re)livrer.
         Args:
-            tree (List[Dict[str, Any]]): arborescence à parser
+            tree (List[Dict[str, Any]]): arborescence à parser (coté destination sur l'API)
             prefix (str): pré-fixe du chemin
         Returns:
-            Dict[str, int]: liste des fichiers envoyés et leur taille
+            Dict[str, int]: liste des fichiers déjà sur la Destination et leur taille
         """
         # Création du dictionnaire pour stocker les fichiers et leur taille
         d_files: Dict[str, int] = {}
