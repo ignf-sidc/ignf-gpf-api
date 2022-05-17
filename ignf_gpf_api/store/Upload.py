@@ -45,7 +45,16 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         Args:
             api_path (str): chemin distant vers le fichier à supprimer
         """
-        raise NotImplementedError(f"Upload.api_delete_data_file({api_path})")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_delete_data"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.DELETE,
+            route_params={self._entity_name: self.id},
+            params={"path": api_path},
+        )
 
     def api_push_md5_file(self, file_path: Path) -> None:
         """Envoie un fichier md5 à la livraison.
@@ -74,7 +83,16 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         Args:
             api_path (str): chemin distant vers le fichier à supprimer
         """
-        raise NotImplementedError(f"Upload.api_delete_md5_file({api_path})")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_delete_md5"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.DELETE,
+            route_params={self._entity_name: self.id},
+            params={"path": api_path},
+        )
 
     def api_open(self) -> None:
         """Ouvre une livraison."""
