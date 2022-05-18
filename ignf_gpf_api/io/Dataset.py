@@ -25,7 +25,7 @@ class Dataset:
             p_root_dir (Path): Chemin racine à partir duquel sont défini les data_dirs
         """
         # Définition des attributs
-        self.__data_dirs: List[Path] = d_dataset["data_dirs"]  # Chemins relatifs
+        self.__data_dirs: List[Path] = [Path(i) for i in d_dataset["data_dirs"]]  # Chemins relatifs
         self.__upload_infos: Dict[str, str] = d_dataset["upload_infos"]
         self.__comments: List[str] = d_dataset["comments"]
         self.__tags: Dict[str, str] = d_dataset["tags"]
@@ -54,6 +54,7 @@ class Dataset:
         S'il existe, rien n'est fait.
         """
         p_abs_root_dir = self.__root_dir.absolute()
+        s_pattern = Config().get("upload_creation", "md5_pattern")
 
         # On parcourt le dictionnaire des répertoires
         for p_dir in self.__data_dirs:
@@ -63,15 +64,14 @@ class Dataset:
             # On teste si le fichier md5 existe, sinon on le crée
             if not p_md5_dir_suf.exists():
                 Config().om.info(f"Le fichier md5 {p_md5_dir_suf.relative_to(self.__root_dir)} n'existe pas, il va être créé")
-                d_md5 = {}
 
                 # On parcourt les fichiers pour remplir un dictionnaire temporaire
+                d_md5 = {}
                 for p_file in self.__data_files:
                     if p_md5_dir in p_file.parents:
                         p_file_trunc = p_file.relative_to(self.__root_dir)
-                        d_md5[p_file] = self.__file_md5_hash(p_file_trunc)
+                        d_md5[p_file_trunc] = self.__file_md5_hash(p_file)
 
-                s_pattern = Config().get("upload_creation", "md5_pattern")
                 # A la fin on rempli le fichier .md5
                 with open(p_md5_dir_suf, "w", encoding="utf-8") as o_md5_file:
                     for p_file, s_md5 in d_md5.items():
@@ -126,7 +126,7 @@ class Dataset:
                 # Création du chemin relatif pour l'API
                 p_api = p_rep_elt.relative_to(self.__root_dir)
                 # Remplissage du dictionnaire __data_files
-                self.__data_files[p_rep_elt] = str(p_api)
+                self.__data_files[p_rep_elt] = str(p_api.parent)
 
     def __file_md5_hash(self, file_path: Path) -> str:
         """
@@ -139,7 +139,7 @@ class Dataset:
             str: clef md5 du fichier
         """
         s_file_hash = hashlib.md5()
-        with open(file_path, "rb") as o_file:
+        with file_path.open("rb") as o_file:
             for o_chunk in iter(lambda: o_file.read(4096), b""):
                 s_file_hash.update(o_chunk)
         return s_file_hash.hexdigest()
