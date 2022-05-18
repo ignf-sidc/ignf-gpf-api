@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from ignf_gpf_api.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.io.Config import Config
@@ -35,7 +35,7 @@ class Workflow:
         Raises:
             WorkflowExecutionError: est levée si un problème apparaît pendant l'exécution du workflow
         """
-        Config().om.info("Lancement de l'étape {}".format(step_name))
+        Config().om.info(f"Lancement de l'étape {step_name}")
         # Récupération de l'étape dans la définition de workflow
         d_step_definition = self.__get_step_definition(step_name)
         # initialisation des actions parentes
@@ -43,7 +43,7 @@ class Workflow:
         # Pour chaque action définie dans le workflow, instanciation de l'objet Action puis création sur l'entrepôt
         for d_action_raw in d_step_definition["actions"]:
             # création de l'action
-            o_action = ActionAbstract.generate("{}/{}".format(step_name, d_action_raw["type"]), d_action_raw, l_parentes)
+            o_action = ActionAbstract.generate(f"{step_name}/{d_action_raw['type']}", d_action_raw, l_parentes)
             # résolution
             o_action.resolve()
             # exécution de l'action :
@@ -59,11 +59,11 @@ class Workflow:
             WorkflowExecutionError: est levée si l'étape n'existe pas dans le workflow
         """
         # Recherche de l'étape correspondante
-        for step in self.__raw_definition_dict["workflow"]["steps"]:
-            if step["name"] == step_name:
-                return dict(step)
+        for o_step in self.__raw_definition_dict["workflow"]["steps"]:
+            if o_step["name"] == step_name:
+                return dict(o_step)
 
         # Si on passe la boucle, c'est que l'étape n'existe pas dans la définition du workflow
-        s_error_message = "L'étape {} n'est pas définie dans le workflow {}".format(step_name, self.__name)
+        s_error_message = f"L'étape {step_name} n'est pas définie dans le workflow {self.__name}"
         Config().om.error(s_error_message)
-        raise Exception(s_error_message)  # TODO : personnaliser le massage
+        raise Exception(s_error_message)  # TODO : personnaliser le erreur
