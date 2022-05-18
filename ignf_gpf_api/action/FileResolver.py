@@ -3,6 +3,7 @@ from typing import Dict, Pattern
 from pathlib import Path
 from ignf_gpf_api.action.AbstractResolver import AbstractResolver
 from ignf_gpf_api.action.Errors import ResolveFileError
+from ignf_gpf_api.action.Errors import UnknowFileError
 from ignf_gpf_api.io.Config import Config
 
 
@@ -103,7 +104,7 @@ class FileResolver(AbstractResolver):
         # On cherche les résolutions à effectuer
         o_result = FileResolver._file_regex.search(s_to_solve)
         if o_result is None:
-            raise ResolverError(self.name, s_to_solve)
+            raise ResolveFileError(self.name, s_to_solve)
         d_groups = o_result.groupdict()
         if d_groups["resolver_type"] == "str":
             s_result = str(self.__resolve_str(d_groups["resolver_file"]))
@@ -112,5 +113,5 @@ class FileResolver(AbstractResolver):
         elif d_groups["resolver_type"] == "dict":
             s_result = str(self.__resolve_dict(d_groups["resolver_file"]))
         else:
-            print("cas non traité")
+            raise UnknowFileError(s_to_solve, "type inconnu")
         return s_result
