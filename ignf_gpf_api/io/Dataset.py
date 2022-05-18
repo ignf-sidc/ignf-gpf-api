@@ -77,6 +77,9 @@ class Dataset:
                     for p_file, s_md5 in d_md5.items():
                         o_md5_file.write(f"{s_pattern}\n".format(md5_key=s_md5, file_path=p_file))
 
+            # Enfin, on l'ajoute à la liste des fichiers md5
+            self.__md5_files.append(p_md5_dir_suf)
+
     @property
     def data_dirs(self) -> List[Path]:
         return self.__data_dirs
