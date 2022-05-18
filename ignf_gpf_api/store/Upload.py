@@ -30,14 +30,14 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         with file_path.open("rb") as o_file_binary:
             o_tuple_file = (file_path.name, o_file_binary)
             o_dict_files = {"file": o_tuple_file}
-        # Requête
-        ApiRequester().route_request(
-            s_route,
-            method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
-            params={"path": api_path},
-            files=o_dict_files,
-        )
+            # Requête
+            ApiRequester().route_request(
+                s_route,
+                method=ApiRequester.POST,
+                route_params={self._entity_name: self.id},
+                params={"path": api_path},
+                files=o_dict_files,
+            )
 
     def api_delete_data_file(self, api_path: str) -> None:
         """Supprime un fichier de donnée de la livraison.
@@ -69,13 +69,13 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         with file_path.open("rb") as o_file_binary:
             o_tuple_file = (file_path.name, o_file_binary)
             o_dict_files = {"file": o_tuple_file}
-        # Requête
-        ApiRequester().route_request(
-            s_route,
-            method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
-            files=o_dict_files,
-        )
+            # Requête
+            ApiRequester().route_request(
+                s_route,
+                method=ApiRequester.POST,
+                route_params={self._entity_name: self.id},
+                files=o_dict_files,
+            )
 
     def api_delete_md5_file(self, api_path: str) -> None:
         """Supprime un fichier md5 de la livraison.
