@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>296</x>
+      <y>520</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>store:Upload
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>352</x>
+      <y>216</y>
+      <w>248</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>290.0;10.0;290.0;320.0;10.0;320.0;10.0;380.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>520</y>
+      <w>128</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>store:StoredData
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>712</x>
+      <y>520</y>
+      <w>128</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>store:Configuration
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>216</y>
+      <w>24</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;380.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>216</y>
+      <w>216</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;320.0;250.0;320.0;250.0;380.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>920</x>
+      <y>240</y>
+      <w>192</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>/store:TagInterface/
+--
+api_add_tags(tag_data)
+api_delete_tags(tag_keys)
+--
+get_tag(key)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>648</x>
+      <y>240</y>
+      <w>240</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>/store:CommentInterface/
+--
+api_add_comment(comment_data)
+api_list_comments()
+api_edit_comment(id, comment_data)
+api_remove_comment(id)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>280</x>
+      <y>240</y>
+      <w>240</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>/store:SharingInterface/
+--
+api_add_sharings(datastore_ids)
+api_list_sharings()
+api_remove_sharings(datastore_ids)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>480</x>
+      <y>184</y>
+      <w>192</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>/store:StoreEntity/
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>304</x>
+      <y>304</y>
+      <w>24</w>
+      <h>232</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;270.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>304</x>
+      <y>304</y>
+      <w>248</w>
+      <h>232</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;170.0;290.0;170.0;290.0;270.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>816</x>
+      <y>320</y>
+      <w>24</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=orange</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;250.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>616</x>
+      <y>304</y>
+      <w>376</w>
+      <h>232</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=orange</panel_attributes>
+    <additional_attributes>450.0;10.0;450.0;240.0;10.0;240.0;10.0;270.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>392</x>
+      <y>320</y>
+      <w>448</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=orange</panel_attributes>
+    <additional_attributes>540.0;10.0;540.0;220.0;10.0;220.0;10.0;250.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1144</x>
+      <y>240</y>
+      <w>128</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>/store:EventInterface/
+--
+api_events()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>816</x>
+      <y>280</y>
+      <w>376</w>
+      <h>256</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=orange</panel_attributes>
+    <additional_attributes>450.0;10.0;450.0;270.0;10.0;270.0;10.0;300.0</additional_attributes>
+  </element>
+</diagram>

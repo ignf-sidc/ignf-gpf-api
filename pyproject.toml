@@ -21,6 +21,11 @@ dependencies = [
     "requests >=2.6",
     "configparser",
     "types-requests",
+    "jsonschema",
+    "jsonc-parser",
+    "beartype",
+    "toml",
+    "types-toml",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +34,7 @@ test = [
     "pylint==2.13",
     "mypy==0.942",
     "requests_mock",
+    "coverage",
 ]
 doc = ["sphinx"]
 
@@ -42,3 +48,6 @@ realpython = "ignf_gpf_api.__main__:main"
 [tool.black]
 line-length = 200
 force-exclude = '(\.git|\.vscode|\.toml$)'
+
+[tool.coverage.run]
+omit = ["*/tests/*", "ignf_gpf_api/io/OutputManager.py", "*/__main__.py", "*/__init__.py"]

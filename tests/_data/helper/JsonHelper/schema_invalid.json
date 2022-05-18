@@ -1,0 +1,21 @@
+{
+    "$id": "/schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "Schéma invalide d'un JSON avec un nom et un titre",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type_": "string",
+            "title": "Nom"
+        },
+        "title": {
+            "type_": "string",
+            "title": "titre"
+        }
+    },
+    "required": [
+        "name",
+        "title"
+    ],
+    "additionalProperties": "false"
+}
