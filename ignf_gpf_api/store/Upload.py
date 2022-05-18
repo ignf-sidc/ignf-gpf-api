@@ -25,11 +25,13 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         """
         # Génération du nom de la route
         s_route = f"{self._entity_name}_push_data"
+        # Récupération du nom de la clé pour le fichier
+        s_file_key = Config().get("upload_creation", "push_data_file_key")
 
         # Ouverture du fichier et remplissage du tuple de fichier
         with file_path.open("rb") as o_file_binary:
             o_tuple_file = (file_path.name, o_file_binary)
-            o_dict_files = {"file": o_tuple_file}
+            o_dict_files = {s_file_key: o_tuple_file}
             # Requête
             ApiRequester().route_request(
                 s_route,
@@ -64,11 +66,13 @@ class Upload(TagInterface, CommentInterface, SharingInterface, StoreEntity):
         """
         # Génération du nom de la route
         s_route = f"{self._entity_name}_push_md5"
+        # Récupération du nom de la clé pour le fichier
+        s_file_key = Config().get("upload_creation", "push_md5_file_key")
 
         # Ouverture du fichier et remplissage du tuple de fichier
         with file_path.open("rb") as o_file_binary:
             o_tuple_file = (file_path.name, o_file_binary)
-            o_dict_files = {"file": o_tuple_file}
+            o_dict_files = {s_file_key: o_tuple_file}
             # Requête
             ApiRequester().route_request(
                 s_route,

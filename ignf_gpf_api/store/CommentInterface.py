@@ -17,6 +17,7 @@ class CommentInterface(StoreEntity):
         # Requête "get"
         ApiRequester().route_request(
             s_route,
+            method=ApiRequester.POST,
             route_params={self._entity_name: self.id},
             data=comment_data,
         )
