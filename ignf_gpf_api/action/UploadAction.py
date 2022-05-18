@@ -108,11 +108,11 @@ class UploadAction:
                     if d_destination_taille[s_data_api_path] == p_file_path.stat().st_size:
                         # le fichier a été complètement téléversé. On passe au fichier suivant.
                         continue
-                    else:
-                        # le fichier n'a pas été téléversé en totalité.
-                        # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié uploadé.
-                        self.__upload.api_delete_data_file(s_data_api_path)
-                        # Sinon reprendre le téléversement (!)
+
+                    # le fichier n'a pas été téléversé en totalité.
+                    # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié uploadé.
+                    # Sinon il faudra reprendre le téléversement (!)
+                    self.__upload.api_delete_data_file(s_data_api_path)
 
                 # sinon, on doit livrer le fichier
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
@@ -135,11 +135,11 @@ class UploadAction:
                     if d_destination_taille[s_api_path] == p_file_path.stat().st_size:
                         # le fichier a été complètement téléversé. On passe au fichier suivant.
                         continue
-                    else:
-                        # le fichier n'a pas été téléversé en totalité.
-                        # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié uploadé.
-                        self.__upload.api_delete_data_file(s_api_path)
-                        # Sinon reprendre le téléversement (!)
+
+                    # le fichier n'a pas été téléversé en totalité.
+                    # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié uploadé.
+                    # Sinon il faudra reprendre le téléversement (!)
+                    self.__upload.api_delete_data_file(s_api_path)
 
                 # sinon, on doit livrer le fichier
                 self.__upload.api_push_md5_file(p_file_path)
