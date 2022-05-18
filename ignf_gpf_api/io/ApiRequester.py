@@ -98,8 +98,7 @@ class ApiRequester(metaclass=Singleton):
             requests.Response: réponse si succès
         """
         # Définition du header
-        d_headers = Authentifier().get_http_header(json_content_type=True)
-        # Définition des proxies
+        d_headers = Authentifier().get_http_header(json_content_type=files is None)
         d_proxies = {
             "http": None,
             "https": None,
