@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
 import json
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional
+from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
 
 from ignf_gpf_api.action.GlobalResolver import GlobalResolver
+from ignf_gpf_api.action.OfferingAction import OfferingAction
+from ignf_gpf_api.action.ProcessingExecutionAction import ProcessingExecutionAction
 from ignf_gpf_api.io.Config import Config
 
 
@@ -48,10 +51,21 @@ class ActionAbstract(ABC):
         """lancement de l'exécution de l'action"""
 
     @staticmethod
-    def generate(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None):
+    def generate(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> "ActionAbstract":
+        """génération de la bonne action selon le type
+
+        Args:
+            workflow_name (str): non du workflow
+            definition_dict (Dict[str, Any]): dictionnaire définissant l'action
+            parent_action (Optional[&quot;ActionAbstract&quot;], optional): action précédente (si étape à plusieurs action). Defaults to None.
+
+        Returns:
+            ActionAbstract: instance permettant de lancer l'action
+        """
         if definition_dict["type"] == "processing-execution":
             return ProcessingExecutionAction(workflow_name, definition_dict, parent_action)
         if definition_dict["type"] == "configuration":
             return ConfigurationAction(workflow_name, definition_dict, parent_action)
         if definition_dict["type"] == "offering":
             return OfferingAction(workflow_name, definition_dict, parent_action)
+        raise Exception("aucune correspondance pour ce type")
