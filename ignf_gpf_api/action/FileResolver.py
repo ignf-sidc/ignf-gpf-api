@@ -1,5 +1,9 @@
+import re, json
+from typing import Dict, Pattern
+from pathlib import Path
 from ignf_gpf_api.action.AbstractResolver import AbstractResolver
-from ignf_gpf_api.action.Errors import ResolverError
+from ignf_gpf_api.action.Errors import ResolveFileError
+from ignf_gpf_api.io.Config import Config
 
 
 class FileResolver(AbstractResolver):
@@ -23,5 +27,90 @@ class FileResolver(AbstractResolver):
         __name (str): nom de code du resolver
     """
 
+    _file_regex = re.compile(Config().get("workflow_resolution_regex", "file_regex"))
+
+    def __resolve_str(self, s_path: str) -> str:
+        """fonction privé qui se charge d'extraire une string d'un fichier texte
+           on valide que le contenu est bien un texte
+        Args:
+            s_path (str): string du path du fichier à ouvrir
+
+        Returns:
+            str: texte contenu dans le fichier
+        """
+        p_path_text = Path(s_path)
+        if p_path_text.exists():
+            s_result = str(p_path_text.read_text(encoding="UTF-8").rstrip("\n"))
+        else:
+            raise ResolveFileError("fichier_string", f"le fichier {p_path_text} n'existe pas")
+        return s_result
+
+    def __resolve_list(self, s_path: str) -> str:
+        """fonction privé qui se charge d'extraire une string d'un fichier contenant une liste
+           on valide que le contenu est bien une liste
+
+        Args:
+            s_path (str): string du path du fichier à ouvrir
+        Returns:
+            str: liste contenu dans le fichier
+        """
+        p_path_list = Path(s_path)
+        if p_path_list.exists():
+            s_data = str(p_path_list.read_text(encoding="UTF-8").rstrip("\n"))
+            # on vérifie que cela est bien une liste
+            if not isinstance(s_data.strip("][").split(", "), list):
+                print("ce nest pas une liste")
+        else:
+            raise ResolveFileError("fichier_liste", f"le fichier {p_path_list} n'existe pas")
+        return s_data
+
+    def __resolve_dict(self, s_path: str) -> str:
+        """fonction privé qui se charge d'extraire une string d'un fichier contenant un dictionnaire
+           on valide que le contenu est bien un dictionnaire
+
+        Args:
+            s_path (str): string du path du fichier à ouvrir
+
+        Returns:
+            str: dictionnaire contenu dans le fichier
+        """
+        p_path_dict = Path(s_path)
+        if p_path_dict.exists():
+            s_data = str(p_path_dict.read_text(encoding="UTF-8").rstrip("\n"))
+            # on vérifie que cela est bien un dictionnaire
+            if not isinstance(json.loads(s_data), dict):
+                # le programme emet une erreur
+                print("ce nest pas un dictionnaire")
+        else:
+            raise ResolveFileError("fichier_dict", f"le fichier {p_path_dict} n'existe pas")
+        return s_data
+
     def resolve(self, s_to_solve: str) -> str:
-        raise ResolverError(self.name, s_to_solve)
+        """Fonction permettant de renvoyer sous forme de string la resolution
+        des paramètres de fichier passées en entrée.
+
+        Args:
+            s_to_solve (str): string dont on extrait l'information du type de l'information contenu dans
+            le document et le path du fichier
+
+        Raises:
+            ResolverError: si le type n'est pas reconnu
+
+        Returns:
+            str: le contenu du fichier en entrée sous forme de string
+        """
+        s_result = ""
+        # On cherche les résolutions à effectuer
+        o_result = FileResolver._file_regex.search(s_to_solve)
+        if o_result is None:
+            raise ResolverError(self.name, s_to_solve)
+        d_groups = o_result.groupdict()
+        if d_groups["resolver_type"] == "str":
+            s_result = str(self.__resolve_str(d_groups["resolver_file"]))
+        elif d_groups["resolver_type"] == "list":
+            s_result = str(self.__resolve_list(d_groups["resolver_file"]))
+        elif d_groups["resolver_type"] == "dict":
+            s_result = str(self.__resolve_dict(d_groups["resolver_file"]))
+        else:
+            print("cas non traité")
+        return s_result
