@@ -70,7 +70,7 @@ class DescriptorFileReader:
     def __instantiate_datasets(self) -> None:
         """Instancie les datasets."""
         if self.__descriptor_dict is not None:
-            self.__datasets = [Dataset(i) for i in self.__descriptor_dict["datasets"]]
+            self.__datasets = [Dataset(i, self.__parent_folder) for i in self.__descriptor_dict["datasets"]]
 
     @property
     def datasets(self) -> List[Dataset]:
