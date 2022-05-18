@@ -12,7 +12,7 @@ from ignf_gpf_api.auth.Errors import AuthentificationError
 
 
 class AuthentifierTestCase(unittest.TestCase):
-    """Tests ConfigTestCase class.
+    """Tests Authentifier class.
 
     cmd : python3 -m unittest -b tests.auth.AuthentifierTestCase
     """
@@ -29,8 +29,8 @@ class AuthentifierTestCase(unittest.TestCase):
         # On détruit le Singleton Config
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
-        cConfig = Config()
-        cConfig.read(AuthentifierTestCase.config_path / "config_test_authentifier.ini")
+        o_config = Config()
+        o_config.read(AuthentifierTestCase.config_path / "test_authentifier.ini")
 
     def setUp(self) -> None:
         # On détruit le singleton Authentifier
@@ -44,29 +44,29 @@ class AuthentifierTestCase(unittest.TestCase):
     def test_get_access_token_string_ok(self) -> None:
         """Vérifie le bon fonctionnement de get_access_token_string dans un cas normal."""
         # On mock...
-        with requests_mock.Mocker() as cMock:
+        with requests_mock.Mocker() as o_mock:
             # Une authentification réussie
-            cMock.post(AuthentifierTestCase.url, json=AuthentifierTestCase.valid_token)
+            o_mock.post(AuthentifierTestCase.url, json=AuthentifierTestCase.valid_token)
             # On tente de récupérer un token...
-            sToken = Authentifier().get_access_token_string()
+            s_token = Authentifier().get_access_token_string()
             # Il doit être ok
-            self.assertEqual(sToken, "test_token")
+            self.assertEqual(s_token, "test_token")
             # On a dû faire une requête
-            self.assertEqual(cMock.call_count, 1, "cMock.call_count == 1")
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
             # Vérifications sur l'historique (enfin ici y'a une requête...)
-            cHistory = cMock.request_history
+            o_history = o_mock.request_history
             # Requête 1 : vérification du type
-            self.assertEqual(cHistory[0].method.lower(), "post", "method == post")
+            self.assertEqual(o_history[0].method.lower(), "post", "method == post")
             # Requête 1 : vérification du text
-            sText = "grant_type=password&username=TEST_LOGIN&password=TEST_PASSWORD&client_id=TEST_CLIENT_ID"
-            self.assertEqual(cHistory[0].text, sText, "check text")
+            s_text = "grant_type=password&username=TEST_LOGIN&password=TEST_PASSWORD&client_id=TEST_CLIENT_ID"
+            self.assertEqual(o_history[0].text, s_text, "check text")
 
     def test_get_access_token_string_2_attempts(self) -> None:
         """Vérifie le bon fonctionnement de get_access_token_string si plusieurs tentatives."""
         # On mock...
-        with requests_mock.Mocker() as cMock:
+        with requests_mock.Mocker() as o_mock:
             # Deux erreurs puis une authentification réussie
-            cMock.post(
+            o_mock.post(
                 AuthentifierTestCase.url,
                 [
                     {"status_code": HTTPStatus.INTERNAL_SERVER_ERROR},
@@ -75,18 +75,18 @@ class AuthentifierTestCase(unittest.TestCase):
                 ],
             )
             # On tente de récupérer un token...
-            sToken = Authentifier().get_access_token_string()
+            s_token = Authentifier().get_access_token_string()
             # Il doit être ok
-            self.assertEqual(sToken, "test_token")
+            self.assertEqual(s_token, "test_token")
             # On a dû faire 3 requêtes
-            self.assertEqual(cMock.call_count, 3, "cMock.call_count == 3")
+            self.assertEqual(o_mock.call_count, 3, "o_mock.call_count == 3")
 
     def test_get_access_token_string_too_much_attempts(self) -> None:
         """Vérifie le bon fonctionnement de get_access_token_string si trop de tentatives."""
         # On mock...
-        with requests_mock.Mocker() as cMock:
+        with requests_mock.Mocker() as o_mock:
             # Trop d'erreurs
-            cMock.post(
+            o_mock.post(
                 AuthentifierTestCase.url,
                 [
                     {"status_code": HTTPStatus.INTERNAL_SERVER_ERROR},
@@ -96,18 +96,18 @@ class AuthentifierTestCase(unittest.TestCase):
                 ],
             )
             # On s'attend à une exception
-            with self.assertRaises(AuthentificationError) as cArc:
+            with self.assertRaises(AuthentificationError) as o_arc:
                 # On tente de récupérer un token...
                 Authentifier().get_access_token_string()
             # On doit avoir un message d'erreur
-            self.assertEqual(cArc.exception.message, "La récupération du jeton d'authentification a échoué après 3 tentatives")
+            self.assertEqual(o_arc.exception.message, "La récupération du jeton d'authentification a échoué après 3 tentatives")
             # On a dû faire 4 requêtes
-            self.assertEqual(cMock.call_count, 4, "cMock.call_count == 4")
+            self.assertEqual(o_mock.call_count, 4, "o_mock.call_count == 4")
 
     def test_get_http_header(self) -> None:
         """Vérifie le bon fonctionnement de test_get_http_header."""
         # On mock get_access_token_string qui est déjà testée
-        with patch.object(Authentifier, "get_access_token_string", return_value="test_token") as c_mock_method:
+        with patch.object(Authentifier, "get_access_token_string", return_value="test_token") as o_mock_method:
             d_http_header_default = Authentifier().get_http_header()
             d_http_header_false = Authentifier().get_http_header(json_content_type=False)
             d_http_header_true = Authentifier().get_http_header(json_content_type=True)
@@ -125,8 +125,8 @@ class AuthentifierTestCase(unittest.TestCase):
         # La clé "" vaut ""
         self.assertEqual(d_http_header_true["content-type"], "application/json")
 
-        # Vérifications c_mock_method
+        # Vérifications o_mock_method
         # La fonction a été appelée
-        self.assertTrue(c_mock_method.called)
+        self.assertTrue(o_mock_method.called)
         # Et ce 3 fois
-        self.assertEqual(c_mock_method.call_count, 3)
+        self.assertEqual(o_mock_method.call_count, 3)

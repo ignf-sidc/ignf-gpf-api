@@ -1,21 +1,23 @@
-#! /usr/bin/env python3
-
-# cSpell:ignore BDTOPO
-
 import configparser
 from pathlib import Path
 import unittest
 
 from ignf_gpf_api.io.Config import Config
 
+# pylint:disable=protected-access
+
 
 class ConfigTestCase(unittest.TestCase):
     """Tests ConfigTestCase class.
 
-    cmd : python3 -m unittest -b ignf_gpf_api.tests.io.ConfigTestCase
+    cmd : python3 -m unittest -b tests.io.ConfigTestCase
     """
 
     config_path = Path(__file__).parent.parent / "_config"
+
+    def setUp(self) -> None:
+        # On détruit le singleton Config
+        Config._instance = None
 
     def test_get_parser(self) -> None:
         """Vérifie le bon fonctionnement de get_parser."""
@@ -24,17 +26,17 @@ class ConfigTestCase(unittest.TestCase):
 
     def test_read(self) -> None:
         """Vérifie le bon fonctionnement de read."""
-        cParser = Config().get_parser()
+        o_parser = Config().get_parser()
         # On vérifie que l'on a les valeurs par défaut
-        self.assertEqual(cParser.get("store_authentification", "login"), "LOGIN_TO_MODIFY")
-        self.assertEqual(cParser.get("store_authentification", "password"), "PASSWORD_TO_MODIFY")
-        self.assertEqual(cParser.get("store_api", "datastore"), "DATASTORE_ID_TO_MODIFY")
+        self.assertEqual(o_parser.get("store_authentification", "login"), "LOGIN_TO_MODIFY")
+        self.assertEqual(o_parser.get("store_authentification", "password"), "PASSWORD_TO_MODIFY")
+        self.assertEqual(o_parser.get("store_api", "datastore"), "DATASTORE_ID_TO_MODIFY")
         # On ouvre le nouveau fichier
         Config().read(ConfigTestCase.config_path / "test_overload.ini")
         # On vérifie que l'on a les nouvelles valeurs
-        self.assertEqual(cParser.get("store_authentification", "login"), "TEST_LOGIN")
-        self.assertEqual(cParser.get("store_authentification", "password"), "TEST_PASSWORD")
-        self.assertEqual(cParser.get("store_api", "datastore"), "TEST_DATASTORE")
+        self.assertEqual(o_parser.get("store_authentification", "login"), "TEST_LOGIN")
+        self.assertEqual(o_parser.get("store_authentification", "password"), "TEST_PASSWORD")
+        self.assertEqual(o_parser.get("store_api", "datastore"), "TEST_DATASTORE")
 
     def test_get(self) -> None:
         """Vérifie le bon fonctionnement de get, get_int, get_float et get_bool."""
@@ -58,11 +60,15 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEqual(Config().get_float("test_value_type", "not_existing", fallback=4.2), 4.2)
         self.assertEqual(Config().get_bool("test_value_type", "not_existing", fallback=True), True)
 
+    def test_get_temp(self) -> None:
+        """Vérifie le bon fonctionnement de get_temp."""
+        self.assertEqual(Config().get_temp(), Path("/tmp"))
+
     def test_same_instance(self) -> None:
         """Même instance."""
         # Première instance
-        cConfig_1 = Config()
+        o_config_1 = Config()
         # Deuxième instance
-        cConfig_2 = Config()
+        o_config_2 = Config()
         # Ca doit être les mêmes
-        self.assertEqual(cConfig_1, cConfig_2)
+        self.assertEqual(o_config_1, o_config_2)

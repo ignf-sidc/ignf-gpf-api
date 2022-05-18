@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from typing import Any, Dict, Union
 
 
@@ -23,7 +21,7 @@ class SingleInstance(type):
         Returns:
             object: objet instancié
         """
-        _id = args[0]
-        if _id not in cls._instance:
-            cls._instance[_id] = super().__call__(*args, **kwargs)
-        return cls._instance[_id]
+        id_ = args[0]
+        if id_ not in cls._instance:
+            cls._instance[id_] = super().__call__(*args, **kwargs)
+        return cls._instance[id_]

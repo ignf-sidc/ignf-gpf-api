@@ -8,7 +8,7 @@ Créez un fichier `config.ini` avec :
 
 ```ini
 [store_authentification]
-# L'rl de récupération du token d'authentification (cf. doc)
+# L'url de récupération du token d'authentification (cf. doc)
 token_url=https://qlf-iam-gpf.ign.fr/auth/realms/master/protocol/openid-connect/token
 # Votre login
 login=LOGIN
@@ -48,11 +48,23 @@ python -m ignf_gpf_api config -s store_authentification
 python -m ignf_gpf_api config -s store_authentification -o password
 ```
 
+Envoyer des données :
+
+```
+python -m ignf_gpf_api upload -f tests/_data/test_datasets/1_test_datasets_vector.json
+```
+
 ### Comme librairie
 
 ## Développement
 
 ### Mise en place de l'environnement de développement
+
+Si nécessaire, installation système
+
+```sh
+sudo apt install python3 python3-pip python3-venv
+```
 
 Mise à jour de pip et virtualenv
 
@@ -72,7 +84,7 @@ Activation de l'environnement
 source env/bin/activate
 ```
 
-Installation basiques
+Installation basique
 
 ```sh
 python3 -m pip install --upgrade pip setuptools flit

@@ -1,0 +1,47 @@
+name: CI Prod
+on:
+  push:
+    branches: [prod]
+    tags:
+      - 'v*'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: Checks
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip setuptools flit
+        flit install --extras test
+    - name: "Analyse code with black"
+      run: black --diff --check ignf_gpf_api tests
+    - name: "Analyse code with pylint"
+      run: pylint --rcfile=.pylintrc ignf_gpf_api --recursive=y
+    - name: "Analyse tests with pylint"
+      run: pylint --rcfile=.pylintrc tests --recursive=y
+    - name: "Analyse code with mypy"
+      run: mypy --strict ignf_gpf_api tests
+    - name: "Run unit tests"
+      run: coverage run -m unittest discover -b -p *TestCase.py
+
+  publish:
+    name: Publish to PyPi
+    needs: [tests]
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: pip install --upgrade pip setuptools flit
+    - name: Build and publish
+      run: flit publish --pypirc .pypirc --repository pypi
+      env:
+        FLIT_PASSWORD: ${{ secrets.PYPI_TOKEN }}

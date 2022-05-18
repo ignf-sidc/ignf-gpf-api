@@ -43,10 +43,10 @@ class Authentifier(metaclass=Singleton):
         Raises :
             Exception : liée à la requête http, levée si la récupération de jeton au bout de nb_attempts tentatives
         """
-        cAnswer = None
+        o_response = None
         try:
             # Requête Keycloak de récupération du jeton
-            cAnswer = requests.post(
+            o_response = requests.post(
                 self.__token_url,
                 data={
                     "grant_type": "password",
@@ -58,12 +58,12 @@ class Authentifier(metaclass=Singleton):
                     "content-type": "application/x-www-form-urlencoded",
                 },
             )
-            if cAnswer.status_code == HTTPStatus.OK:
-                self.__last_token = Token(cAnswer.json())
+            if o_response.status_code == HTTPStatus.OK:
+                self.__last_token = Token(o_response.json())
             else:
-                raise requests.exceptions.HTTPError(f"Code retour authentification KeyCloak = {cAnswer.status_code}")
+                raise requests.exceptions.HTTPError(f"Code retour authentification KeyCloak = {o_response.status_code}")
 
-        except Exception as eError:
+        except Exception as e_error:
             Config().om.warning("La récupération du jeton d'authentification a échoué...")
             # Affiche la pile d'exécution
             Config().om.debug(traceback.format_exc())
@@ -74,7 +74,7 @@ class Authentifier(metaclass=Singleton):
             # Le nombre de tentatives est atteint : comme dirait Jim, this is the end...
             else:
                 Config().om.error(f"La récupération du jeton d'authentification a échoué après {self.__nb_attempts} tentatives")
-                raise eError
+                raise e_error
 
     def get_access_token_string(self) -> str:
         """Retourne le jeton d'authentification sous forme de chaîne de caractères
@@ -87,10 +87,10 @@ class Authentifier(metaclass=Singleton):
             while (self.__last_token is None) or (self.__last_token.is_valid() is False):
                 self.__request_new_token(self.__nb_attempts)
             return self.__last_token.get_access_string()
-        except Exception as eError:
+        except Exception as e_error:
             s_error_message = f"La récupération du jeton d'authentification a échoué après {self.__nb_attempts} tentatives"
             Config().om.error(s_error_message)
-            raise AuthentificationError(s_error_message) from eError
+            raise AuthentificationError(s_error_message) from e_error
 
     def get_http_header(self, json_content_type: bool = False) -> Dict[str, str]:
         """Renvoie une entête http d'authentification à destination de KeyCloak et consommable par une requête via le module requests
