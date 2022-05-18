@@ -75,19 +75,19 @@
                         "type": "configuration",
                         "parameters": {
                             "type": "WMTS-TMS",
-                            "name": "WFS Générique {param.dpsg}",
-                            "layer_name": "wfs_{dpsg.id}",
+                            "name": "WFS Générique {param.demande}",
+                            "layer_name": "wfs_{demande.id}",
                             "type_infos": {
                                 "title": "TITRE",
                                 "abstract": "RÉSUMÉ",
                                 "used_data": [
-                                    "{store_entity.stored_data.infos._id [INFOS(name=pyramide vecteur), TAGS(dpsg={param.dpsg})]}"
+                                    "{store_entity.stored_data.infos._id [INFOS(name=pyramide vecteur), TAGS(demande={param.demande})]}"
                                 ]
                             }
                         },
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "dpsg": "{param.dpsg}"
+                            "demande": "{param.demande}"
                         },
                         "overloaded_parameters": []
                     }
@@ -100,7 +100,7 @@
                     {
                         "type": "offering",
                         "url_parameters": {
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=WFS Générique {param.dpsg}), TAGS(dpsg={param.dpsg})]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=WFS Générique {param.demande}), TAGS(demande={param.demande})]}"
                         },
                         "parameters": {
                             "visibility": "PRIVATE",
