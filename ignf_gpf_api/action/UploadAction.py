@@ -106,9 +106,13 @@ class UploadAction:
                 if s_data_api_path in d_destination_taille:
                     # le fichier est deja livré, on check sa taille :
                     if d_destination_taille[s_data_api_path] == p_file_path.stat().st_size:
+                        # le fichier a été complètement téléversé. On passe au fichier suivant.
                         continue
-                    # sinon, il faut supprimer le fichier uploadé si le mode Append n'est pas disponible
-                    # TODO supprimer le fichier uploadé
+                    else:
+                        # le fichier n'a pas été téléversé en totalité.
+                        # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié uploadé.
+                        self.__upload.api_delete_data_file(s_data_api_path)
+                        # Sinon reprendre le téléversement (!)
 
                 # sinon, on doit livrer le fichier
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
@@ -125,12 +129,17 @@ class UploadAction:
             for p_file_path in self.__dataset.md5_files:
                 # regarder si le fichier du dataset est deja dans la liste des fichiers uploadés sur l'entrepot
                 # NB: sur l'entrepot, tous les fichiers md5 sont à la racine
-                if p_file_path.name in d_destination_taille:
+                s_api_path = p_file_path.name
+                if s_api_path in d_destination_taille:
                     # le fichier est deja livré, on check sa taille :
-                    if d_destination_taille[p_file_path.name] == p_file_path.stat().st_size:
+                    if d_destination_taille[s_api_path] == p_file_path.stat().st_size:
+                        # le fichier a été complètement téléversé. On passe au fichier suivant.
                         continue
-                    # sinon, il faut supprimer le fichier uploadé si le mode Append n'est pas disponible
-                    # TODO supprimer le fichier uploadé
+                    else:
+                        # le fichier n'a pas été téléversé en totalité.
+                        # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié uploadé.
+                        self.__upload.api_delete_data_file(s_api_path)
+                        # Sinon reprendre le téléversement (!)
 
                 # sinon, on doit livrer le fichier
                 self.__upload.api_push_md5_file(p_file_path)
