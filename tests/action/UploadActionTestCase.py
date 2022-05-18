@@ -11,6 +11,8 @@ from ignf_gpf_api.Errors import GpfApiError
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
 # pylint:disable=too-many-branches
+# pylint:disable=dangerous-default-value
+# pylint:disable=too-many-statements
 # fmt: off
 # (on désactive le formatage en attendant Python 3.10 et la possibilité de mettre des parenthèses pour gérer le multi with proprement)
 
@@ -20,6 +22,9 @@ class UploadActionTestCase(unittest.TestCase):
 
     cmd : python3 -m unittest -b tests.action.UploadActionTestCase
     """
+
+    # constante afin de savoir si un fichier téléversé est entièrement téléversé ou pas.
+    SIZE_OK = 10000
 
     def run_args(
         self,
@@ -35,40 +40,45 @@ class UploadActionTestCase(unittest.TestCase):
         tags: Dict[str, str],
         comments: List[str],
         message_exception: Optional[str] = None,
+        files_on_api: Dict[str, int] = {},
+        nb_data_files_on_api_ok: int = 0,
+        nb_md5_files_on_api_ok: int = 0,
     ) -> None:
         """Lance le test UploadAction.run selon un cas de figure. Faire varier les paramètres permet de jouer sur le cas testé.
-
         Args:
             behavior (Optional[str]): mode lorsque la livraison existe déjà
-            return_value_api_list (List[Upload]): liste des upload retourné par le mock de Upload.api_list
-            param_list_api (Dict[str, Dict[str, str]]): paramètres avec les quels sont appelé le mock de Upload.api_list
+            return_value_api_list (List[Upload]): liste des uploads retournés par le mock de Upload.api_list
+            param_list_api (Dict[str, Dict[str, str]]): paramètres avec lesquels est appelé le mock de Upload.api_list
             api_create (bool): vérification de l'exécution de Upload.api_create (True => api_create exécuté; False => api_create non exécuté)
             api_delete (bool): vérification de l'exécution de Upload.api_delete (True => api_delete exécuté; False => api_delete non exécuté)
             run_fail (bool): vérification de l'exécution avec erreur de UploadAction.run (True => run plant; False => run s'exécute sans erreur)
             data_files (Dict[Path, str]): fichiers de données
-            md5_files (List[Path]): fichier de md5
-            upload_infos (Dict[str, Any]): information de la livraison
-            tags (Dict[str, str]): tag à ajouté à la livraison
-            comments (List[str]): commentaire à ajouté à la livraison
+            md5_files (List[Path]): fichiers de md5
+            upload_infos (Dict[str, Any]): informations de la livraison
+            tags (Dict[str, str]): tags à ajouter à la livraison
+            comments (List[str]): commentaires à ajouter à la livraison
             message_exception (Optional[str]): si run_fail==True le message d'erreur attendu
+            files_on_api (Dict[str, int]): liste des fichiers déjà livrés sur l'API et leur taille (SIZE_OK si ok)
+            nb_data_files_on_api_ok (int): nombre fichiers de données déjà livrés sur l'API et à ne pas re-livrer
+            nb_md5_files_on_api_ok (int): nombre fichiers de clé déjà livrés sur l'API et à ne pas re-livrer
         """
 
         def create(d_dict: Dict[str, Any]) -> Upload:
             print("new creation")
             d_dict["status"] = "OPEN"
             return Upload(d_dict)
-
         def config_get(a: str, b: str) -> Optional[str]:  # pylint:disable=invalid-name,unused-argument
-            if b == "uniqueness_constraint_upload_infos":
-                return "name"
-            if b == "uniqueness_constraint_tags":
-                return ""
-            if b == "behavior_if_exists":
-                return "STOP"
-            if b == "open_status":
-                return "OPEN"
+            if a == "upload_creation":
+                if b == "uniqueness_constraint_upload_infos":
+                    return "name"
+                if b == "uniqueness_constraint_tags":
+                    return ""
+                if b == "behavior_if_exists":
+                    return "STOP"
+            if a == "upload_status":
+                if b == "open_status":
+                    return "OPEN"
             raise Exception("cas non prévu", a, b)
-
         with patch.object(Upload, "api_list", return_value=return_value_api_list) as o_mock_api_list, \
             patch.object(Upload, "api_create", wraps=create) as o_mock_api_create, \
             patch.object(Upload, "api_close", MagicMock()) as o_mock_close, \
@@ -77,9 +87,14 @@ class UploadActionTestCase(unittest.TestCase):
             patch.object(Upload, "api_add_comment", MagicMock()) as o_mock_api_add_comment, \
             patch.object(Upload, "api_push_data_file", MagicMock()) as o_mock_api_push_data_file, \
             patch.object(Upload, "api_push_md5_file", MagicMock()) as o_mock_api_push_md5_file, \
+            patch.object(Upload, "api_tree", MagicMock()) as o_mock_api_tree, \
+            patch.object(UploadAction, "parse_tree", return_value=files_on_api) as o_mock_parse_tree, \
             patch.object(Upload, "api_update", return_value=None), \
+            patch.object(Path, "stat") as o_mock_path_stat, \
             patch.object(Config, "get", wraps=config_get) \
         :
+            # Mock de la fonction stat
+            o_mock_path_stat.return_value.st_size = self.SIZE_OK
             # création du dataset
             o_mock_dataset = MagicMock()
             o_mock_dataset.data_files = data_files
@@ -95,46 +110,50 @@ class UploadActionTestCase(unittest.TestCase):
                 self.assertEqual(o_arc.exception.message, message_exception)
                 return
             o_ua.run()
-
             # vérif de o_mock_api_list
             o_mock_api_list.assert_called_once_with(**param_list_api)
-
             # vérif de o_mock_api_create
             if api_create:
                 o_mock_api_create.assert_called_once_with(upload_infos)
             else:
                 o_mock_api_create.assert_not_called()
-
             # vérif de o_mock_api_delete
             if api_delete:
                 o_mock_api_delete.assert_called_once_with()
             else:
                 o_mock_api_delete.assert_not_called()
-
             # vérif de o_mock_api_add_tags
             if tags is not None:
                 o_mock_api_add_tags.assert_called_once_with(tags)
             else:
                 o_mock_api_add_tags.assert_not_called()
-
             # vérif de o_mock_api_add_comment
             if comments is not None:
-                assert o_mock_api_add_comment.call_count == len(comments)
+                self.assertEqual(o_mock_api_add_comment.call_count, len(comments))
                 for s_comment in comments:
                     o_mock_api_add_comment.assert_any_call({"text": s_comment})
             else:
                 o_mock_api_add_comment.assert_not_called()
-
             # vérif de o_mock_api_push_data_file
-            assert o_mock_api_push_data_file.call_count == len(data_files)
+            # appelée une fois par fichiers à livrer moins le nb de fichiers déjà livrés
+            self.assertEqual(o_mock_api_push_data_file.call_count, len(data_files) - nb_data_files_on_api_ok)
+            # appelée selon le Path des fichiers à livrer
             for p_file_path, s_api_path in data_files.items():
-                o_mock_api_push_data_file.assert_any_call(p_file_path, s_api_path)
-
+                # S'il ne sont pas déjà livrés et avec la bonne taille
+                if files_on_api.get(f"data/{s_api_path}") != self.SIZE_OK:
+                    o_mock_api_push_data_file.assert_any_call(p_file_path, s_api_path)
             # vérif de o_mock_api_push_md5_file
-            assert o_mock_api_push_md5_file.call_count == len(md5_files)
+            # appelée une fois par fichiers à livrer moins le nb de fichiers déjà livrés
+            self.assertEqual(o_mock_api_push_md5_file.call_count, len(md5_files) - nb_md5_files_on_api_ok)
+            # appelée selon le Path des fichiers à livrer
             for p_file_path in md5_files:
-                o_mock_api_push_md5_file.assert_any_call(p_file_path)
-
+                # S'il ne sont pas déjà livrés et avec la bonne taille
+                if files_on_api.get(p_file_path.name) != self.SIZE_OK:
+                    o_mock_api_push_md5_file.assert_any_call(p_file_path)
+            # vérif de o_mock_api_tree (appelée par UploadAction.__push_data_files et UploadAction.__push_md5_files)
+            self.assertEqual(o_mock_api_tree.call_count, 2)
+            # vérif de o_mock_parse_tree (appelée par UploadAction.__push_data_files et UploadAction.__push_md5_files)
+            self.assertEqual(o_mock_parse_tree.call_count, 2)
             # vérif de o_mock_close
             o_mock_close.assert_called_once_with()
 
