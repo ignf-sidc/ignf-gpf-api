@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import json
 from typing import Any, Dict, Optional
 from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
+from ignf_gpf_api.action.Errors import StepActionError
 
 from ignf_gpf_api.action.GlobalResolver import GlobalResolver
 from ignf_gpf_api.action.OfferingAction import OfferingAction
@@ -68,4 +69,4 @@ class ActionAbstract(ABC):
             return ConfigurationAction(workflow_name, definition_dict, parent_action)
         if definition_dict["type"] == "offering":
             return OfferingAction(workflow_name, definition_dict, parent_action)
-        raise Exception("aucune correspondance pour ce type")
+        raise StepActionError(f"Aucune correspondance pour ce type d'action : {definition_dict['type']}")

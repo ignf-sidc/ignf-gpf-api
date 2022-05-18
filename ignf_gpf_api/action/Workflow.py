@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from ignf_gpf_api.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.action.Errors import WorkflowError
 from ignf_gpf_api.io.Config import Config
 
 
@@ -66,4 +67,4 @@ class Workflow:
         # Si on passe la boucle, c'est que l'étape n'existe pas dans la définition du workflow
         s_error_message = f"L'étape {step_name} n'est pas définie dans le workflow {self.__name}"
         Config().om.error(s_error_message)
-        raise Exception(s_error_message)  # TODO : personnaliser le erreur
+        raise WorkflowError(s_error_message)
