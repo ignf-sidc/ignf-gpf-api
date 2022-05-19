@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
 import json
 from typing import Any, Dict, Optional
-from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
-from ignf_gpf_api.action.Errors import StepActionError
 
+from ignf_gpf_api.action.Errors import StepActionError
 from ignf_gpf_api.action.GlobalResolver import GlobalResolver
-from ignf_gpf_api.action.OfferingAction import OfferingAction
-from ignf_gpf_api.action.ProcessingExecutionAction import ProcessingExecutionAction
 from ignf_gpf_api.io.Config import Config
 
 
@@ -51,6 +48,8 @@ class ActionAbstract(ABC):
     def run(self) -> None:
         """lancement de l'exécution de l'action"""
 
+    # désactivation des imports en haut de page => problème d'import circulaire
+    # pylint:disable=import-outside-toplevel
     @staticmethod
     def generate(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> "ActionAbstract":
         """génération de la bonne action selon le type
@@ -64,9 +63,16 @@ class ActionAbstract(ABC):
             ActionAbstract: instance permettant de lancer l'action
         """
         if definition_dict["type"] == "processing-execution":
-            return ProcessingExecutionAction(workflow_name, definition_dict, parent_action)
+
+            import ignf_gpf_api.action.ProcessingExecutionAction
+
+            return ignf_gpf_api.action.ProcessingExecutionAction.ProcessingExecutionAction(workflow_name, definition_dict, parent_action)
         if definition_dict["type"] == "configuration":
-            return ConfigurationAction(workflow_name, definition_dict, parent_action)
+            import ignf_gpf_api.action.ConfigurationAction
+
+            return ignf_gpf_api.action.ConfigurationAction.ConfigurationAction(workflow_name, definition_dict, parent_action)
         if definition_dict["type"] == "offering":
-            return OfferingAction(workflow_name, definition_dict, parent_action)
+            import ignf_gpf_api.action.OfferingAction
+
+            return ignf_gpf_api.action.OfferingAction.OfferingAction(workflow_name, definition_dict, parent_action)
         raise StepActionError(f"Aucune correspondance pour ce type d'action : {definition_dict['type']}")
