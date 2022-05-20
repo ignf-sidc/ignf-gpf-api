@@ -92,13 +92,13 @@ class WorkflowTestCase(unittest.TestCase):
 
         Args:
             expected_type (Type[&quot;ActionAbstract&quot;]): type de la classe attendu en sortie de la fonction
-            name (str): nom du workflow
+            name (str): nom du contexte du workflow
             dico_def (Dict[str, Any]): dictionnaire de l'action
             parent (Optional[&quot;ActionAbstract&quot;], optional): parent de l'action. Defaults to None.
         """
         # mock des fonction __init__ des classes action généré
-        def new_init(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None) -> None:
-            print ("new - ", workflow_name, definition_dict, parent_action)
+        def new_init(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None) -> None:
+            print ("new - ", workflow_context, definition_dict, parent_action)
         d_mock={}
 
         with patch.object(ProcessingExecutionAction, "__init__",  wraps=new_init) as d_mock["ProcessingExecutionAction"], \
