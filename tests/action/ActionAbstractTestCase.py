@@ -1,13 +1,9 @@
 import json
-from typing import Any, Dict, Optional, Type
 import unittest
 from unittest.mock import patch, MagicMock
 
 from ignf_gpf_api.action.ActionAbstract import ActionAbstract
-from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
 from ignf_gpf_api.action.GlobalResolver import GlobalResolver
-from ignf_gpf_api.action.OfferingAction import OfferingAction
-from ignf_gpf_api.action.ProcessingExecutionAction import ProcessingExecutionAction
 
 
 # pylint:disable=too-many-arguments
@@ -65,50 +61,3 @@ class ActionAbstractTestCase(unittest.TestCase):
             o_action.resolve()
             assert o_action.definition_dict == d_resolved_dico
             o_mock_resolve.assert_called_once_with(str(json.dumps(d_definition)))
-
-    def run_generation(self, expected_type: Type["ActionAbstract"], name: str, dico_def: Dict[str, Any], parent: Optional["ActionAbstract"] = None) -> None:
-        """lancement de la commande de génération
-
-        Args:
-            expected_type (Type[&quot;ActionAbstract&quot;]): type de la classe attendu en sortie de la fonction
-            name (str): nom du workflow
-            dico_def (Dict[str, Any]): dictionnaire de l'action
-            parent (Optional[&quot;ActionAbstract&quot;], optional): parent de l'action. Defaults to None.
-        """
-        # mock des fonction __init__ des classes action généré
-        def new_init(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> None:
-            print ("new - ", workflow_name, definition_dict, parent_action)
-        d_mock={}
-
-        with patch.object(ProcessingExecutionAction, "__init__",  wraps=new_init) as d_mock["ProcessingExecutionAction"], \
-            patch.object(ConfigurationAction, "__init__",  wraps=new_init) as d_mock["ConfigurationAction"], \
-            patch.object(OfferingAction, "__init__",  wraps=new_init) as d_mock["OfferingAction"]:
-
-            # exécution
-            o_action_generated = ActionAbstract.generate(name, dico_def, parent)
-            # testes
-            assert type(o_action_generated) == expected_type
-
-            for s_class_name, o_mock in d_mock.items():
-                if expected_type.__name__ == s_class_name:
-                    o_mock.assert_called_once_with(name, dico_def, parent)
-                else:
-                    o_mock.assert_not_called()
-
-    def test_generate(self) -> None:
-        """test de generate
-        """
-        # mock pour les parents
-        o_mock_parent = MagicMock()
-
-        # test type processing-execution
-        self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, None)
-        self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, o_mock_parent)
-
-        # test type configuration
-        self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, None)
-        self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, o_mock_parent)
-
-        # test type offering
-        self.run_generation(OfferingAction, "name", {"type": "offering"}, None)
-        self.run_generation(OfferingAction, "name", {"type": "offering"}, o_mock_parent)

@@ -50,32 +50,3 @@ class ActionAbstract(ABC):
     @abstractmethod
     def run(self) -> None:
         """lancement de l'exécution de l'action"""
-
-    # désactivation des imports en haut de page => problème d'import circulaire
-    # pylint:disable=import-outside-toplevel
-    @staticmethod
-    def generate(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> "ActionAbstract":
-        """génération de la bonne action selon le type
-
-        Args:
-            workflow_name (str): non du workflow
-            definition_dict (Dict[str, Any]): dictionnaire définissant l'action
-            parent_action (Optional[&quot;ActionAbstract&quot;], optional): action précédente (si étape à plusieurs action). Defaults to None.
-
-        Returns:
-            ActionAbstract: instance permettant de lancer l'action
-        """
-        if definition_dict["type"] == "processing-execution":
-
-            import ignf_gpf_api.action.ProcessingExecutionAction
-
-            return ignf_gpf_api.action.ProcessingExecutionAction.ProcessingExecutionAction(workflow_name, definition_dict, parent_action)
-        if definition_dict["type"] == "configuration":
-            import ignf_gpf_api.action.ConfigurationAction
-
-            return ignf_gpf_api.action.ConfigurationAction.ConfigurationAction(workflow_name, definition_dict, parent_action)
-        if definition_dict["type"] == "offering":
-            import ignf_gpf_api.action.OfferingAction
-
-            return ignf_gpf_api.action.OfferingAction.OfferingAction(workflow_name, definition_dict, parent_action)
-        raise StepActionError(f"Aucune correspondance pour ce type d'action : {definition_dict['type']}")
