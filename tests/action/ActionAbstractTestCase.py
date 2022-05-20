@@ -26,12 +26,12 @@ class ActionAbstractTestCase(unittest.TestCase):
     """
 
 
-    def test_workflow_name(self) -> None:
-        """test de workflow_name
+    def test_workflow_context(self) -> None:
+        """test de workflow_context
         """
         d_definition ={"test": "val"}
         o_action = ConcreteAction("nom", d_definition, None)
-        assert "nom" == o_action.workflow_name
+        assert "nom" == o_action.workflow_context
 
     def test_definition_dict(self) -> None:
         """test de definition_dict
