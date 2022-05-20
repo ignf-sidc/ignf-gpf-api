@@ -42,7 +42,10 @@ class ActionAbstract(ABC):
         # lancement des résolveurs
         s_resolved_definition = GlobalResolver().resolve(s_definition)
         # on repasse en json
-        self.__definition_dict = json.loads(s_resolved_definition)
+        try:
+            self.__definition_dict = json.loads(s_resolved_definition)
+        except json.decoder.JSONDecodeError e_json:
+            raise StepActionError("Action ({self.workflow_context}) non valide après résolution : {e_json}") from e_json
 
     @abstractmethod
     def run(self) -> None:

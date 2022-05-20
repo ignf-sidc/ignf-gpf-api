@@ -24,7 +24,7 @@ class WorkflowTestCase(unittest.TestCase):
         """
         d_workflow ={"test": "val"}
         o_workflow = Workflow("nom", d_workflow)
-        assert d_workflow == o_workflow.get_raw_dict()
+        self.assertDictEqual(d_workflow, o_workflow.get_raw_dict())
 
     def test_run_step(self) -> None:
         """test de run_step
@@ -55,8 +55,8 @@ class WorkflowTestCase(unittest.TestCase):
         o_workflow = Workflow("nom", d_workflow)
         # l'étape n'existe pas : ça plante.
         with self.assertRaises(WorkflowError) as o_arc:
-            o_workflow.run_step("n existe pas")
-        self.assertEqual(o_arc.exception.message, "L'étape n existe pas n'est pas définie dans le workflow nom")
+            o_workflow.run_step("existe_pas")
+        self.assertEqual(o_arc.exception.message, "L'étape existe_pas n'est pas définie dans le workflow nom")
 
         o_mock_action = MagicMock()
         o_mock_action.resolve.return_value = None
@@ -76,8 +76,8 @@ class WorkflowTestCase(unittest.TestCase):
 
             # test pour 2 actions
             o_workflow.run_step("mise-en-base2")
-            assert o_mock_action_generate.call_count == 2
+            self.assertEqual(o_mock_action_generate.call_count, 2)
             o_mock_action_generate.assert_any_call('mise-en-base2/action2-1', {'type': 'action2-1'}, None)
             o_mock_action_generate.assert_any_call('mise-en-base2/action2-2', {'type': 'action2-2'}, o_mock_action)
-            assert o_mock_action.resolve.call_count == 2
-            assert o_mock_action.run.call_count == 2
+            self.assertEqual(o_mock_action.resolve.call_count, 2)
+            self.assertEqual(o_mock_action.run.call_count, 2)
