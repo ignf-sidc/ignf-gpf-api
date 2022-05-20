@@ -1,9 +1,14 @@
+from typing import Any, Dict, Optional, Type
 import unittest
 from unittest.mock import patch, MagicMock
-from ignf_gpf_api.action.ActionAbstract import ActionAbstract
-from ignf_gpf_api.action.Errors import WorkflowError
 
+from ignf_gpf_api.action.Errors import WorkflowError
 from ignf_gpf_api.action.Workflow import Workflow
+
+from ignf_gpf_api.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
+from ignf_gpf_api.action.OfferingAction import OfferingAction
+from ignf_gpf_api.action.ProcessingExecutionAction import ProcessingExecutionAction
 
 
 # pylint:disable=too-many-arguments
@@ -61,8 +66,8 @@ class WorkflowTestCase(unittest.TestCase):
         o_mock_action = MagicMock()
         o_mock_action.resolve.return_value = None
         o_mock_action.run.return_value = None
-        # on mock ActionAbstract
-        with patch.object(ActionAbstract, "generate", return_value=o_mock_action) as o_mock_action_generate :
+        # on mock Workflow.generate
+        with patch.object(Workflow, "generate", return_value=o_mock_action) as o_mock_action_generate :
             # test pour une action
             o_workflow.run_step("mise-en-base")
             o_mock_action.run.assert_called_once()
@@ -81,3 +86,50 @@ class WorkflowTestCase(unittest.TestCase):
             o_mock_action_generate.assert_any_call('mise-en-base2/action2-2', {'type': 'action2-2'}, o_mock_action)
             self.assertEqual(o_mock_action.resolve.call_count, 2)
             self.assertEqual(o_mock_action.run.call_count, 2)
+
+    def run_generation(self, expected_type: Type[ActionAbstract], name: str, dico_def: Dict[str, Any], parent: Optional[ActionAbstract] = None) -> None:
+        """lancement de la commande de génération
+
+        Args:
+            expected_type (Type[&quot;ActionAbstract&quot;]): type de la classe attendu en sortie de la fonction
+            name (str): nom du workflow
+            dico_def (Dict[str, Any]): dictionnaire de l'action
+            parent (Optional[&quot;ActionAbstract&quot;], optional): parent de l'action. Defaults to None.
+        """
+        # mock des fonction __init__ des classes action généré
+        def new_init(workflow_name: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None) -> None:
+            print ("new - ", workflow_name, definition_dict, parent_action)
+        d_mock={}
+
+        with patch.object(ProcessingExecutionAction, "__init__",  wraps=new_init) as d_mock["ProcessingExecutionAction"], \
+            patch.object(ConfigurationAction, "__init__",  wraps=new_init) as d_mock["ConfigurationAction"], \
+            patch.object(OfferingAction, "__init__",  wraps=new_init) as d_mock["OfferingAction"]:
+
+            # exécution
+            o_action_generated = Workflow.generate(name, dico_def, parent)
+            # testes
+            assert type(o_action_generated) == expected_type
+
+            for s_class_name, o_mock in d_mock.items():
+                if expected_type.__name__ == s_class_name:
+                    o_mock.assert_called_once_with(name, dico_def, parent)
+                else:
+                    o_mock.assert_not_called()
+
+    def test_generate(self) -> None:
+        """test de generate
+        """
+        # mock pour les parents
+        o_mock_parent = MagicMock()
+
+        # test type processing-execution
+        self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, None)
+        self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, o_mock_parent)
+
+        # test type configuration
+        self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, None)
+        self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, o_mock_parent)
+
+        # test type offering
+        self.run_generation(OfferingAction, "name", {"type": "offering"}, None)
+        self.run_generation(OfferingAction, "name", {"type": "offering"}, o_mock_parent)
