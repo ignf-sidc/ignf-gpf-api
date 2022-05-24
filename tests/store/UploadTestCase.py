@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import patch, mock_open
 from pathlib import Path
+from typing import Any, Dict, List
 import requests
+
 
 import requests_mock
 from ignf_gpf_api.io.Config import Config
@@ -171,3 +173,21 @@ class UploadTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with("upload_tree", route_params={"upload": "identifiant"})
             # Vérifications sur l_tree
             self.assertEqual(l_tree, l_tree_wanted)
+
+    def test_api_list_checks(self) -> None:
+        "Vérifie le bon fonctionnement de api_list_checks."
+        d_list_checks_wanted: Dict[str, List[Dict[str, Any]]] = {"key_1": [], "key_2": []}
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.post("http://test.com/", json=d_list_checks_wanted)
+            o_response = requests.request("POST", "http://test.com/")
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
+            # On instancie un upload
+            o_upload = Upload({"_id": "identifiant"})
+            # On appelle api_list_checks
+            d_list_checks = o_upload.api_list_checks()
+            # Vérification sur o_mock_request (route api_list_checks avec comme params de route l'id)
+            o_mock_request.assert_called_once_with("upload_list_checks", route_params={"upload": "identifiant"})
+            # Vérifications sur list_checks
+            self.assertEqual(d_list_checks, d_list_checks_wanted)
