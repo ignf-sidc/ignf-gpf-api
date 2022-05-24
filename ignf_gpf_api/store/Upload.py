@@ -161,7 +161,18 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, S
         Returns:
             Dict[str, List[Dict[str, Any]]]: liste des vérifications demandées (asked), en cours (in_progress), passées (passed) et en échec (failed)
         """
-        raise NotImplementedError("Upload.api_list_check")
+
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_list_checks"
+
+        # Requête
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+        )
+
+        d_list_checks: Dict[str, List[Dict[str, Any]]] = o_response.json()
+        return d_list_checks
 
     def api_run_checks(self, check_ids: List[str]) -> None:
         """Lance des vérifications (check) sur cette livraison.
