@@ -1,5 +1,5 @@
-import re, json
-from typing import Dict, Pattern
+import re
+import json
 from pathlib import Path
 from ignf_gpf_api.action.AbstractResolver import AbstractResolver
 from ignf_gpf_api.action.Errors import ResolveFileError
