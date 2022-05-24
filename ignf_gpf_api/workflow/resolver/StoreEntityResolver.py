@@ -1,9 +1,9 @@
 import re
 from typing import Dict, Optional, Pattern, Type
 
-from ignf_gpf_api.action.AbstractResolver import AbstractResolver
-from ignf_gpf_api.action.Errors import NotEntityFoundError, ResolverError
-from ignf_gpf_api.action.GlobalResolver import GlobalResolver
+from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
+from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverError
+from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.store.Processing import Processing
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.TagInterface import TagInterface
@@ -54,7 +54,7 @@ class StoreEntityResolver(AbstractResolver):
         l_entities = self.__key_to_cls[s_entity_type].api_list(infos_filter=d_filter_infos, tags_filter=d_filter_tags)
         # Si on a aucune entité trouvée
         if len(l_entities) == 0:
-            raise NotEntityFoundError(self.name, s_to_solve)
+            raise NoEntityFoundError(self.name, s_to_solve)
         # Sinon on regarde ce qu'on doit envoyer
         o_entity = l_entities[0]
         s_selected_field = d_groups["selected_field"]

@@ -1,4 +1,4 @@
-from ignf_gpf_api.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 
 
 class ConfigurationAction(ActionAbstract):

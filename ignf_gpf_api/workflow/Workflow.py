@@ -1,11 +1,11 @@
 from typing import Any, Dict, Optional
 
-from ignf_gpf_api.action.ActionAbstract import ActionAbstract
-from ignf_gpf_api.action.Errors import WorkflowError
+from ignf_gpf_api.workflow.Errors import WorkflowError
 from ignf_gpf_api.io.Config import Config
-from ignf_gpf_api.action.ProcessingExecutionAction import ProcessingExecutionAction
-from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
-from ignf_gpf_api.action.OfferingAction import OfferingAction
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
+from ignf_gpf_api.workflow.action.ConfigurationAction import ConfigurationAction
+from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
 
 
 class Workflow:

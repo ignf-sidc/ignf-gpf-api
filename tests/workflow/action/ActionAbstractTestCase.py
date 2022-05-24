@@ -2,8 +2,8 @@ import json
 import unittest
 from unittest.mock import patch, MagicMock
 
-from ignf_gpf_api.action.ActionAbstract import ActionAbstract
-from ignf_gpf_api.action.GlobalResolver import GlobalResolver
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 
 
 # classe temporaire pour les test : ActionAbstract est abstraite
