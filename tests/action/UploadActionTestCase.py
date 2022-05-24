@@ -11,6 +11,7 @@ from ignf_gpf_api.Errors import GpfApiError
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
 # pylint:disable=too-many-branches
+# pylint:disable=protected-access
 # fmt: off
 # (on désactive le formatage en attendant Python 3.10 et la possibilité de mettre des parenthèses pour gérer le multi with proprement)
 
@@ -20,6 +21,21 @@ class UploadActionTestCase(unittest.TestCase):
 
     cmd : python3 -m unittest -b tests.action.UploadActionTestCase
     """
+
+    config_path = Path(__file__).parent.parent / "_config"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        # On détruit le Singleton Config
+        Config._instance = None
+        # On charge une config spéciale pour les tests d'upload
+        o_config = Config()
+        o_config.read(UploadActionTestCase.config_path / "test_upload.ini")
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        # On détruit le Singleton Config
+        Config._instance = None
 
     def run_args(
         self,
@@ -256,6 +272,50 @@ class UploadActionTestCase(unittest.TestCase):
             run_fail=True,
             message_exception=f"Impossible de continué, la livraison {l_return_value_api_list[0]} est fermée.",
         )
+
+    def test_monitor_until_end_ok(self) -> None:
+        """Vérifie le bon fonctionnement de monitor_until_end si à la fin c'est ok."""
+        # 2 réponses possibles pour api_list_checks : il faut attendre ou c'est tout ok
+        d_list_checks_wait = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
+        d_list_checks_ok = {"asked": [],"in_progress": [],"passed": [{},{}],"failed": []}
+        # On instancie un faux Dataset et un UploadAction à tester
+        o_mock_dataset = MagicMock()
+        o_ua = UploadAction(o_mock_dataset)
+        # On patch la fonction api_list_checks de l'upload
+        # elle renvoie une liste avec des traitements en attente 2 fois puis une liste avec que des succès
+        l_returns = [d_list_checks_wait, d_list_checks_wait, d_list_checks_ok]
+        with patch.object(Upload, "api_list_checks", side_effect=l_returns) as o_mock_list_checks:
+            # On instancie un Upload et on le défini comme attribut privée de UploadAction
+            o_upload = Upload({"_id": "id_upload_monitor"})
+            o_ua._UploadAction__upload = o_upload  # type: ignore
+            # On effectue le monitoring
+            b_result = o_ua.monitor_until_end()
+            # Vérification sur o_mock_list_checks : a dû être appelé 3 fois
+            self.assertEqual(o_mock_list_checks.call_count, 3)
+            # Vérifications sur b_result : doit être finalement ok
+            self.assertTrue(b_result)
+
+    def test_monitor_until_end_ko(self) -> None:
+        """Vérifie le bon fonctionnement de monitor_until_end si à la fin c'est ko."""
+        # 2 réponses possibles pour api_list_checks : il faut attendre ou il y a un pb
+        d_list_checks_wait = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
+        d_list_checks_ko = {"asked": [],"in_progress": [],"passed": [{}],"failed": [{}]}
+        # On instancie un faux Dataset et un UploadAction à tester
+        o_mock_dataset = MagicMock()
+        o_ua = UploadAction(o_mock_dataset)
+        # On patch la fonction api_list_checks de l'upload
+        # elle renvoie une liste avec des traitements en attente 2 fois puis une liste avec des erreurs
+        l_returns = [d_list_checks_wait, d_list_checks_wait, d_list_checks_ko]
+        with patch.object(Upload, "api_list_checks", side_effect=l_returns) as o_mock_list_checks:
+            # On instancie un Upload et on le défini comme attribut privée de UploadAction
+            o_upload = Upload({"_id": "id_upload_monitor"})
+            o_ua._UploadAction__upload = o_upload  # type: ignore
+            # On effectue le monitoring
+            b_result = o_ua.monitor_until_end()
+            # Vérification sur o_mock_list_checks : a dû être appelé 3 fois
+            self.assertEqual(o_mock_list_checks.call_count, 3)
+            # Vérifications sur b_result : doit être finalement ko
+            self.assertFalse(b_result)
 
     def test_api_tree_not_empty(self) -> None:
         """Vérifie le bon fonctionnement de api_tree si ce n'est pas vide."""
