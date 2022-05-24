@@ -2,11 +2,11 @@
     "datasets": [
         {
             "data_dirs": [
-                "1_test_datasets_vector/data"
+                "CANTON"
             ],
             "upload_infos": {
                 "description": "Jeu test vecteur",
-                "name": "ADMIN-EXPRESS_2-3__SHP_WGS84G_FRA_2100-03-16",
+                "name": "TEST_DATASET_CANTON",
                 "srs": "EPSG:4326",
                 "type": "VECTOR"
             },
