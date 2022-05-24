@@ -12,7 +12,7 @@ import shutil
 import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
-from ignf_gpf_api.action.UploadAction import UploadAction
+from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload

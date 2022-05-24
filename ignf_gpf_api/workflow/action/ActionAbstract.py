@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import json
 from typing import Any, Dict, Optional
 
-from ignf_gpf_api.action.Errors import StepActionError
-from ignf_gpf_api.action.GlobalResolver import GlobalResolver
+from ignf_gpf_api.workflow.Errors import StepActionError
+from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.io.Config import Config
 
 
