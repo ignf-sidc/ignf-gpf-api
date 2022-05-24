@@ -37,7 +37,7 @@ class ResolverNotFoundError(GpfApiError):
         return f"{self.__class__.__name__}({self.__resolver_name})"
 
 
-class NotEntityFoundError(GpfApiError):
+class NoEntityFoundError(GpfApiError):
     """Classe d'erreur pour le résolveur StoreEntityResolver quand aucune entité n'est trouvée.
 
     Attributes:
@@ -54,11 +54,3 @@ class NotEntityFoundError(GpfApiError):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__resolver_name}, {self.__to_solve})"
-
-
-class WorkflowError(GpfApiError):
-    """Classe d'erreur pour le workflow"""
-
-
-class StepActionError(GpfApiError):
-    """Classe d'erreur pour le workflow"""

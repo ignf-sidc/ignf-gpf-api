@@ -2,13 +2,13 @@ from typing import Any, Dict, Optional, Type
 import unittest
 from unittest.mock import patch, MagicMock
 
-from ignf_gpf_api.action.Errors import WorkflowError
-from ignf_gpf_api.action.Workflow import Workflow
+from ignf_gpf_api.workflow.Errors import WorkflowError
+from ignf_gpf_api.workflow.Workflow import Workflow
 
-from ignf_gpf_api.action.ActionAbstract import ActionAbstract
-from ignf_gpf_api.action.ConfigurationAction import ConfigurationAction
-from ignf_gpf_api.action.OfferingAction import OfferingAction
-from ignf_gpf_api.action.ProcessingExecutionAction import ProcessingExecutionAction
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.workflow.action.ConfigurationAction import ConfigurationAction
+from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
+from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
 
 
 class WorkflowTestCase(unittest.TestCase):
