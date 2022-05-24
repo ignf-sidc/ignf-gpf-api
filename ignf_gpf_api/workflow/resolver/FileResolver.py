@@ -1,5 +1,5 @@
-from ignf_gpf_api.action.AbstractResolver import AbstractResolver
-from ignf_gpf_api.action.Errors import ResolverError
+from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
+from ignf_gpf_api.workflow.resolver.Errors import ResolverError
 
 
 class FileResolver(AbstractResolver):

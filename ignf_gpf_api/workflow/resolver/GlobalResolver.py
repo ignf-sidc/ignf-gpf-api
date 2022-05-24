@@ -2,8 +2,8 @@ import re
 from typing import Dict, Pattern
 
 from ignf_gpf_api.pattern.Singleton import Singleton
-from ignf_gpf_api.action.AbstractResolver import AbstractResolver
-from ignf_gpf_api.action.Errors import ResolverNotFoundError
+from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
+from ignf_gpf_api.workflow.resolver.Errors import ResolverNotFoundError
 from ignf_gpf_api.io.Config import Config
 
 
