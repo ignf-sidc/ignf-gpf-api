@@ -82,7 +82,7 @@ class UnknowFileError(GpfApiError):
     """
 
     def __init__(self, resolver_name: str, to_solve: str) -> None:
-        s_message = f"Erreur de traitement d'un fichier (résolveur '{resolver_name}') avec la chaîne '{to_solve}'."
+        s_message = f"Erreur de traitement d'un fichier (résolveur '{resolver_name}') type de fichier non connu: '{to_solve} '."
         super().__init__(s_message)
         self.__resolver_name = resolver_name
         self.__to_solve = to_solve
