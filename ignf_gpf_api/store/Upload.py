@@ -6,12 +6,13 @@ from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
 from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
 from ignf_gpf_api.store.interface.EventInterface import EventInterface
+from ignf_gpf_api.store.interface.PartialEditInterface import PartialEditInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
 
 
-class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, StoreEntity):
+class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, PartialEditInterface, StoreEntity):
     """Classe Python représentant l'entité Upload (livraison)."""
 
     _entity_name = "upload"
@@ -161,7 +162,18 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, S
         Returns:
             Dict[str, List[Dict[str, Any]]]: liste des vérifications demandées (asked), en cours (in_progress), passées (passed) et en échec (failed)
         """
-        raise NotImplementedError("Upload.api_list_check")
+
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_list_checks"
+
+        # Requête
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+        )
+
+        d_list_checks: Dict[str, List[Dict[str, Any]]] = o_response.json()
+        return d_list_checks
 
     def api_run_checks(self, check_ids: List[str]) -> None:
         """Lance des vérifications (check) sur cette livraison.
@@ -169,4 +181,13 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, S
         Args:
             check_ids (List[str]): Liste des identifiants des Vérifications à lancer
         """
-        raise NotImplementedError(f"Upload.api_list_check({check_ids})")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_run_checks"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+            method=ApiRequester.POST,
+            data=check_ids,
+        )
