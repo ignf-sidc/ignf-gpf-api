@@ -1,7 +1,8 @@
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.interface.PartialEditInterface import PartialEditInterface
 
 
-class Offering(StoreEntity):
+class Offering(PartialEditInterface, StoreEntity):
     """Classe Python représentant l'entité Offering (offre)."""
 
     _entity_name = "offering"
