@@ -4,7 +4,7 @@ import unittest
 class SharingInterfaceTestCase(unittest.TestCase):
     """Tests SharingInterface class.
 
-    cmd : python3 -m unittest -b tests.store.SharingInterfaceTestCase
+    cmd : python3 -m unittest -b tests.store.interface.SharingInterfaceTestCase
     """
 
     def test_api_add_sharings(self) -> None:

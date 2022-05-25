@@ -6,7 +6,7 @@ from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverEr
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.store.Processing import Processing
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.store.TagInterface import TagInterface
+from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Config import Config
 

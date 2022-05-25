@@ -2,10 +2,10 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.store.TagInterface import TagInterface
-from ignf_gpf_api.store.CommentInterface import CommentInterface
-from ignf_gpf_api.store.SharingInterface import SharingInterface
-from ignf_gpf_api.store.EventInterface import EventInterface
+from ignf_gpf_api.store.interface.TagInterface import TagInterface
+from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
+from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
+from ignf_gpf_api.store.interface.EventInterface import EventInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
