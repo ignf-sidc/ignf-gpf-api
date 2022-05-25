@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from ignf_gpf_api.action.UploadAction import UploadAction
+from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.Errors import GpfApiError
