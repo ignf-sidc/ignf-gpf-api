@@ -3,6 +3,7 @@
         "EPSG",
         "ignf",
         "mypy",
+        "pathes",
         "pylint",
         "pylintrc",
         "pypi",

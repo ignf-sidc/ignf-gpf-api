@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include ignf_gpf_api/py.typed
+include ignf_gpf_api/conf/*
+include tests/_conf/*
+include tests/_data/*
