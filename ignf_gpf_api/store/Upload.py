@@ -6,12 +6,13 @@ from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
 from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
 from ignf_gpf_api.store.interface.EventInterface import EventInterface
+from ignf_gpf_api.store.interface.PartialEditInterface import PartialEditInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
 
 
-class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, StoreEntity):
+class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, PartialEditInterface, StoreEntity):
     """Classe Python représentant l'entité Upload (livraison)."""
 
     _entity_name = "upload"
