@@ -2,14 +2,14 @@ import unittest
 from unittest.mock import patch
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
-from ignf_gpf_api.store.TagInterface import TagInterface
+from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Errors import StoreEntityError
 
 
 class TagInterfaceTestCase(unittest.TestCase):
     """Tests TagInterface class.
 
-    cmd : python3 -m unittest -b tests.store.TagInterfaceTestCase
+    cmd : python3 -m unittest -b tests.store.interface.TagInterfaceTestCase
     """
 
     def test_init_getters(self) -> None:
