@@ -11,6 +11,7 @@
         "setuptools",
         "sharings",
         "testpypi",
+        "UNPUBLISHING",
         "venv",
         "virtualenv"
     ],
