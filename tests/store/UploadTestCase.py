@@ -191,3 +191,16 @@ class UploadTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with("upload_list_checks", route_params={"upload": "identifiant"})
             # Vérifications sur list_checks
             self.assertEqual(d_list_checks, d_list_checks_wanted)
+
+    def test_api_run_checks(self) -> None:
+        "Vérifie le bon fonctionnement de api_run_checks."
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
+            # On instancie une livraison
+            o_upload_run_checks = Upload({"_id": "id"})
+            # liste des ids à verifier
+            l_list_checks_ids: List[Any] = ["id1", "id2"]
+            # On appelle la fonction api_run_checks
+            o_upload_run_checks.api_run_checks(l_list_checks_ids)
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with("upload_run_checks", method=ApiRequester.POST, route_params={"upload": "id"}, data=["id1", "id2"])
