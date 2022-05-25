@@ -9,13 +9,17 @@ from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
 
 
+# pylint:disable=too-many-arguments
+# pylint:disable=too-many-locals
+# pylint:disable=too-many-branches
+# fmt: off
 class ProcessingExecutionActionTestCase(unittest.TestCase):
     """Tests UploadAction class.
 
     cmd : python3 -m unittest -b tests.workflow.action.ProcessingExecutionActionTestCase
     """
 
-    def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List],  s_type_output: str) -> None:
+    def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]],  s_type_output: str) -> None:
         """lancement de ProcessingExecutionAction.run selon param
 
         Args:
@@ -49,12 +53,10 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
         o_mock_stored_data.api_add_comment.return_value = None
 
         # suppression de la mise en page forcé pour le with
-        # fmt: off
         with patch.object(Upload, "api_get", return_value=o_mock_upload) as o_mock_processing_upload_api_get, \
             patch.object(StoredData, "api_get", return_value=o_mock_stored_data) as o_mock_processing_store_data_api_get, \
             patch.object(ProcessingExecution, "api_create", return_value=o_mock_precession) as o_mock_processing_execution_api_create \
         :
-            # fmt: on
             # on lance l'exécution de run
             o_pea.run()
 
