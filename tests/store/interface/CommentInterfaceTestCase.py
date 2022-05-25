@@ -3,13 +3,13 @@ from unittest.mock import patch
 import requests
 import requests_mock
 from ignf_gpf_api.io.ApiRequester import ApiRequester
-from ignf_gpf_api.store.CommentInterface import CommentInterface
+from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
 
 
 class CommentInterfaceTestCase(unittest.TestCase):
     """Tests CommentInterface class.
 
-    cmd : python3 -m unittest -b tests.store.CommentInterfaceTestCase
+    cmd : python3 -m unittest -b tests.store.interface.CommentInterfaceTestCase
     """
 
     def test_api_add_comment(self) -> None:
