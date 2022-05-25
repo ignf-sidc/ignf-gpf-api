@@ -180,4 +180,13 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, S
         Args:
             check_ids (List[str]): Liste des identifiants des Vérifications à lancer
         """
-        raise NotImplementedError(f"Upload.api_list_check({check_ids})")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_run_checks"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+            method=ApiRequester.POST,
+            data=check_ids,
+        )
