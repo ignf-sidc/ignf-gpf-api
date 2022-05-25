@@ -83,28 +83,28 @@ class UploadAction:
         """Ajout les tags."""
         if self.__upload is not None and self.__dataset.tags is not None:
             self.__upload.api_add_tags(self.__dataset.tags)
-            Config().om.info(f"Livraion {self.__upload}: les tag ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.tags)} tags ont été ajoutés avec succès.")
 
     def __add_comments(self) -> None:
         """Ajout les commentaires."""
         if self.__upload is not None:
             for s_comment in self.__dataset.comments:
                 self.__upload.api_add_comment({"text": s_comment})
-            Config().om.info(f"Livraion {self.__upload}: les commentaires ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:
         """Envoie les fichiers de données."""
         if self.__upload is not None:
             for p_file_path, s_api_path in self.__dataset.data_files.items():
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
-            Config().om.info(f"Livraion {self.__upload}: les fichiers de données ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.data_files)} fichiers de données ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
         """Envoie les fichiers md5."""
         if self.__upload is not None:
             for p_file_path in self.__dataset.md5_files:
                 self.__upload.api_push_md5_file(p_file_path)
-            Config().om.info(f"Livraion {self.__upload}: les fichiers md5 ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.md5_files)} fichiers md5 ont été ajoutés avec succès.")
 
     def __close(self) -> None:
         """Ferme la livraison."""

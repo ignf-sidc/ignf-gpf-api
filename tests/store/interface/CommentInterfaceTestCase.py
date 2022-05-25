@@ -24,7 +24,12 @@ class CommentInterfaceTestCase(unittest.TestCase):
             # On appelle la fonction api_add_comment
             o_comment_interface.api_add_comment({"text": "comment"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_add_comment", route_params={"store_entity": "id_entité"}, data={"text": "comment"})
+            o_mock_request.assert_called_once_with(
+                "store_entity_add_comment",
+                route_params={"store_entity": "id_entité"},
+                data={"text": "comment"},
+                method=ApiRequester.POST,
+            )
 
     def test_api_list_comments(self) -> None:
         "Vérifie le bon fonctionnement de api_list_comments."
@@ -49,7 +54,10 @@ class CommentInterfaceTestCase(unittest.TestCase):
             o_comment_interface = CommentInterface({"_id": "id_entité"})
             l_data_recupere = o_comment_interface.api_list_comments()
             # on vérifie que route_request est appelé correctement
-            o_mock_request.assert_called_once_with("store_entity_list_comment", route_params={"store_entity": "id_entité"})
+            o_mock_request.assert_called_once_with(
+                "store_entity_list_comment",
+                route_params={"store_entity": "id_entité"},
+            )
             # on vérifie la similitude des données retournées
             self.assertEqual(l_data, l_data_recupere)
 
@@ -65,7 +73,12 @@ class CommentInterfaceTestCase(unittest.TestCase):
             # On appelle la fonction api_add_comment
             o_comment_interface.api_edit_comment("id_comment", {"id_text": "test"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_edit_comment", route_params={"store_entity": "id_entité", "comment": "id_comment"}, data={"id_text": "test"}, method=ApiRequester.PUT)
+            o_mock_request.assert_called_once_with(
+                "store_entity_edit_comment",
+                route_params={"store_entity": "id_entité", "comment": "id_comment"},
+                data={"id_text": "test"},
+                method=ApiRequester.PUT,
+            )
 
     def test_api_remove_comment(self) -> None:
         "Vérifie le bon fonctionnement de api_remove_comment."
@@ -79,4 +92,8 @@ class CommentInterfaceTestCase(unittest.TestCase):
             # On appelle la fonction api_remove_comment
             o_comment_interface.api_remove_comment("id_comment")
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_remove_comment", route_params={"store_entity": "id_entité", "comment": "id_comment"}, method=ApiRequester.DELETE)
+            o_mock_request.assert_called_once_with(
+                "store_entity_remove_comment",
+                route_params={"store_entity": "id_entité", "comment": "id_comment"},
+                method=ApiRequester.DELETE,
+            )
