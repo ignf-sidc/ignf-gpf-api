@@ -179,7 +179,7 @@ class UploadTestCase(unittest.TestCase):
         d_list_checks_wanted: Dict[str, List[Dict[str, Any]]] = {"key_1": [], "key_2": []}
         # Instanciation d'une fausse réponse HTTP
         with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json=d_list_checks_wanted)
+            o_mock.get("http://test.com/", json=d_list_checks_wanted)
             o_response = requests.request("GET", "http://test.com/")
         # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
