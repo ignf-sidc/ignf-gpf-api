@@ -1,0 +1,3150 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2022-03-07T13:21:09.660Z",
+  "__export_source": "insomnia.importers:v0.1.0",
+  "resources": [
+    {
+      "_id": "req_authentication_XmaX7lO2",
+      "parentId": "__WORKSPACE_ID__",
+      "url": "https://iam-ign-qa.cegedim.cloud/auth/realms/demo/protocol/openid-connect/token",
+      "name": "Récupération de token",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "grant_type",
+            "value": "password"
+          },
+          {
+            "name": "client_id",
+            "value": "guichet"
+          },
+          {
+            "name": "username",
+            "value": "<login>"
+          },
+          {
+            "name": "password",
+            "value": "<password>"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/x-www-form-urlencoded",
+          "description": "",
+          "id": "pair_00000000"
+        }
+      ],
+      "authentication": {},
+      "_type": "request"
+    },
+    {
+      "_type": "workspace",
+      "_id": "__WORKSPACE_ID__",
+      "parentId": null,
+      "name": "API Entrepôt Bêta 1.9",
+      "description": "Documentation de l'API REST de l'Entrepôt Bêta\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Base environment",
+      "data": {
+        "base_url": "{{ scheme }}://{{ host }}{{ base_path }}"
+      },
+      "_type": "environment",
+      "_id": "__BASE_ENVIRONMENT_ID__"
+    },
+    {
+      "parentId": "__BASE_ENVIRONMENT_ID__",
+      "name": "OpenAPI env",
+      "data": {
+        "scheme": "https",
+        "base_path": "/api/v1",
+        "host": "plage-geotuileur.ccs-ign-plage.ccs.cegedim.cloud",
+        "bearerToken": "{% response 'body', 'req_authentication_XmaX7lO2', 'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'when-expired', 86400 %}"
+      },
+      "_type": "environment",
+      "_id": "env___BASE_ENVIRONMENT_ID___sub"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Catalogues",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__3fb59423",
+      "_type": "request_group",
+      "description": "Diffusion des datastores, communautés, livraisons et données stockées publique de la plateforme\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Utilisateurs",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__c661b3bc",
+      "_type": "request_group",
+      "description": "Gestion des utlisateurs\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Communautés",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__c133489e",
+      "_type": "request_group",
+      "description": "Gestion des communautés\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Entrepôt",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__c349c0bc",
+      "_type": "request_group",
+      "description": "Vision globale d'un entrepôt\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Fichiers communs",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__5692e0ba",
+      "_type": "request_group",
+      "description": "Gestion des fichiers communs à tous les entrepôts (TMS...)\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Livraisons et vérifications",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__227c18ee",
+      "_type": "request_group",
+      "description": "Gestion de la livraison de données brutes sur la plateforme et de leur vérification\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Traitements",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__9474c4e3",
+      "_type": "request_group",
+      "description": "Le traitement permet la transformation de données. Chaque traitement correspond à un travail particulier. Le traitement est le seul moyen d'obtenir des données stockées.\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Données stockées",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__d0c06be9",
+      "_type": "request_group",
+      "description": "Gestion des données pérennes de l'entrepôt, utilisables par les serveurs de diffusion\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Configurations et publications",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__563c6861",
+      "_type": "request_group",
+      "description": "Les configurations et leur publication permettent de rendre accessibles les données pérennes via les serveurs de diffusion\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Annexes",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__db58c921",
+      "_type": "request_group",
+      "description": "Gestion des annexes, documents individuels stockés de manière pérenne, potentiellement liés aux données stockées\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Accès administrateur",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__d16570a2",
+      "_type": "request_group",
+      "description": "API uniquement accessible aux utilisateurs administrateurs\n"
+    },
+    {
+      "parentId": "__WORKSPACE_ID__",
+      "name": "Accès orchestrateur",
+      "environment": {},
+      "_id": "fld___WORKSPACE_ID__df6311f2",
+      "_type": "request_group",
+      "description": "API uniquement accessible aux utilisateurs orchestrateurs\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__3fb59423",
+      "name": "Récupère la liste des communautés publiques",
+      "url": "{{ base_url }}/catalogs/communities",
+      "body": {},
+      "parameters": [
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e3607561",
+      "method": "GET",
+      "description": "Une communauté publique est visible via le catalogue mais la rejoindre nécessite une action d'un gestionnaire de cette communauté\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__3fb59423",
+      "name": "Liste des uploads accessibles",
+      "url": "{{ base_url }}/catalogs/uploads",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__0abf91fe",
+      "method": "GET",
+      "description": "Récupère la liste des uploads de statut 'Fermée' ou 'En cours de vérification' dont l'attribut visibility est 'public' ou 'referenced'.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__3fb59423",
+      "name": "Liste des stored_data accessibles",
+      "url": "{{ base_url }}/catalogs/stored_data",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e82d6c19",
+      "method": "GET",
+      "description": "Récupère la liste des stored_data dont l'attribut visibility est 'public' et 'referenced', et en statut 'Générée' ou 'En cours de modification'.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__3fb59423",
+      "name": "Liste des offerings accessibles",
+      "url": "{{ base_url }}/catalogs/offerings",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e3246044",
+      "method": "GET",
+      "description": "Récupère la liste des offerings actuellement publiées dont l'attribut visibility est 'public' et 'referenced'.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__5692e0ba",
+      "name": "Récupère la liste des TMS",
+      "url": "{{ base_url }}/statics/tms",
+      "body": {},
+      "parameters": [
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__f67fd9d7",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__5692e0ba",
+      "name": "Récupère les informations sur un TMS",
+      "url": "{{ base_url }}/statics/tms/{{ tms }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__19b423c3",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__5692e0ba",
+      "name": "Télécharge le TMS",
+      "url": "{{ base_url }}/statics/tms/{{ tms }}/file",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__7ff0f160",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c661b3bc",
+      "name": "Récupère les informations sur l'utilisateur authentifié",
+      "url": "{{ base_url }}/users/me",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__0702f31d",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c661b3bc",
+      "name": "Désinscrit l'utilisateur authentifié d'une communauté",
+      "url": "{{ base_url }}/users/me/communities/{{ community }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__b6cee7f0",
+      "method": "DELETE"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère une liste de stockages",
+      "url": "{{ base_url }}/administrator/storages",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__622af96d",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Ajoute un stockage",
+      "url": "{{ base_url }}/administrator/storages",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"type\": \"string\",\n  \"tags\": [\n    \"string\"\n  ],\n  \"name\": \"string\",\n  \"type_infos\": null\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__be9b8853",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère un stockage",
+      "url": "{{ base_url }}/administrator/storages/{{ storage }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__14e2127e",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie un stockage",
+      "url": "{{ base_url }}/administrator/storages/{{ storage }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tags\": [\n    \"string\"\n  ],\n  \"name\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__9b040662",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère une liste de points d'accès",
+      "url": "{{ base_url }}/administrator/endpoints",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__8900323c",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Ajoute un point d'accès",
+      "url": "{{ base_url }}/administrator/endpoints",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"type\": \"string\",\n  \"urls\": [\n    \"string\"\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__04418204",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère un point d'accès",
+      "url": "{{ base_url }}/administrator/endpoints/{{ endpoint }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__2dc71978",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie un point d'accès",
+      "url": "{{ base_url }}/administrator/endpoints/{{ endpoint }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"urls\": [\n    \"string\"\n  ],\n  \"name\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__f2c45e57",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Liste des entrepôts",
+      "url": "{{ base_url }}/administrator/datastores",
+      "body": {},
+      "parameters": [
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__eeb8d086",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Ajoute un entrepôt",
+      "url": "{{ base_url }}/administrator/datastores",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"community\": \"string\",\n  \"processings\": [\n    \"string\"\n  ],\n  \"checks\": [\n    \"string\"\n  ],\n  \"storages\": {\n    \"data\": [\n      {\n        \"quota\": 0,\n        \"storage\": \"string\"\n      }\n    ],\n    \"uploads\": {\n      \"quota\": 0,\n      \"storage\": \"string\"\n    },\n    \"annexes\": {\n      \"quota\": 0,\n      \"storage\": \"string\"\n    }\n  },\n  \"endpoints\": [\n    {\n      \"quota\": 0,\n      \"endpoint\": \"string\"\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__23741a65",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère un entrepôt",
+      "url": "{{ base_url }}/administrator/datastores/{{ datastore }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__005dc0a1",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie un entrepôt",
+      "url": "{{ base_url }}/administrator/datastores/{{ datastore }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"active\": true,\n  \"processings\": [\n    \"string\"\n  ],\n  \"checks\": [\n    \"string\"\n  ],\n  \"storages\": {\n    \"data\": [\n      {\n        \"quota\": 0,\n        \"storage\": \"string\"\n      }\n    ],\n    \"uploads\": {\n      \"quota\": 0,\n      \"storage\": \"string\"\n    },\n    \"annexes\": {\n      \"quota\": 0,\n      \"storage\": \"string\"\n    }\n  },\n  \"endpoints\": [\n    {\n      \"quota\": 0,\n      \"endpoint\": \"string\"\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__95745dd3",
+      "method": "PATCH",
+      "description": "Permet de redéfinir les stockages, traitements, vérifications et endpoints utilisables dans l'entrepôt ainsi que de l'activer ou le désactiver\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Liste des communautés",
+      "url": "{{ base_url }}/administrator/communities",
+      "body": {},
+      "parameters": [
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__b5f53a71",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Ajoute une communauté",
+      "url": "{{ base_url }}/administrator/communities",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"technical_name\": \"string\",\n  \"public\": true,\n  \"contact\": \"string\",\n  \"supervisor\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__3c2c1aa2",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère une communauté",
+      "url": "{{ base_url }}/administrator/communities/{{ community }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__c5a5a630",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie une communauté",
+      "url": "{{ base_url }}/administrator/communities/{{ community }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"supervisor\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__fa4f9999",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Supprime la communauté",
+      "url": "{{ base_url }}/administrator/communities/{{ community }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__3b059f0d",
+      "method": "DELETE",
+      "description": "la communauté ne doit plus posséder d'entrepôt et de permissions.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Liste des traitements",
+      "url": "{{ base_url }}/administrator/processings",
+      "body": {},
+      "parameters": [
+        {
+          "name": "input_upload_type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "input_stored_data_type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "output_upload_type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "output_stored_data_type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "orchestrator_job_name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e480cdd2",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Ajoute un traitement",
+      "url": "{{ base_url }}/administrator/processings",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"orchestrator_job_name\": \"string\",\n  \"input_types\": {\n    \"upload\": [\n      \"string\"\n    ],\n    \"stored_data\": [\n      \"string\"\n    ]\n  },\n  \"required_checks\": [\n    \"string\"\n  ],\n  \"output_type\": null,\n  \"parameters\": [\n    {\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"constraints\": {},\n      \"mandatory\": true,\n      \"default_value\": null\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__798f0d47",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère un traitement",
+      "url": "{{ base_url }}/administrator/processings/{{ processing }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__506969fc",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie un traitement entièrement",
+      "url": "{{ base_url }}/administrator/processings/{{ processing }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"orchestrator_job_name\": \"string\",\n  \"input_types\": {\n    \"upload\": [\n      \"string\"\n    ],\n    \"stored_data\": [\n      \"string\"\n    ]\n  },\n  \"required_checks\": [\n    \"string\"\n  ],\n  \"output_type\": null,\n  \"parameters\": [\n    {\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"constraints\": {},\n      \"mandatory\": true,\n      \"default_value\": null\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__8fe1a406",
+      "method": "PUT",
+      "description": "La modification complète est toujours possible, même si le traitement a déjà été utilisé.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie un traitement",
+      "url": "{{ base_url }}/administrator/processings/{{ processing }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"orchestrator_job_name\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__4f16c327",
+      "method": "PATCH",
+      "description": "Modifie partiellement le traitement, sur le nom, la description et le nom du job orchestrateur\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Supprime le traitement",
+      "url": "{{ base_url }}/administrator/processings/{{ processing }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e8faa09f",
+      "method": "DELETE",
+      "description": "Seul un traitement qui n'est plus lié à aucune exécution peut être supprimé.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère les logs complets d'une exécution de traitement",
+      "url": "{{ base_url }}/administrator/processings/executions/{{ execution }}/logs",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__ef2772a1",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Liste des vérifications",
+      "url": "{{ base_url }}/administrator/checks",
+      "body": {},
+      "parameters": [
+        {
+          "name": "default_upload_check",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__aa91e454",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Ajoute une vérification",
+      "url": "{{ base_url }}/administrator/checks",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"orchestrator_job_name\": \"string\",\n  \"default_uploads_check\": [\n    \"string\"\n  ],\n  \"description\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__0585896e",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère une vérification",
+      "url": "{{ base_url }}/administrator/checks/{{ check }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__76dc659d",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Modifie une vérification",
+      "url": "{{ base_url }}/administrator/checks/{{ check }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"default_uploads_check\": [\n    \"string\"\n  ],\n  \"description\": \"string\",\n  \"orchestrator_job_name\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__4cc78ed4",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Supprime la vérification",
+      "url": "{{ base_url }}/administrator/checks/{{ check }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e62ec6a7",
+      "method": "DELETE",
+      "description": "Seule une vérification qui n'est plus liée à aucune exécution peut être supprimée\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d16570a2",
+      "name": "Récupère les logs complets d'une exécution de vérification",
+      "url": "{{ base_url }}/administrator/checks/executions/{{ execution }}/logs",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__f33deae8",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Récupère les informations sur un TMS",
+      "url": "{{ base_url }}/orchestrator/tms/{{ tms }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__96d78398",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Récupère les informations internes sur une livraison",
+      "url": "{{ base_url }}/orchestrator/uploads/{{ upload }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__67b4b08e",
+      "method": "GET",
+      "description": "Les orchestrateurs ont besoin d'avoir des informations internes comme le chemin de stockage pour pouvoir manipuler les fichiers déposés. L'instance d'exécution de la requête n'est pas précisée, l'utilisateur administrateur ou orchestrateur y a de toute manière accès.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Modifie la taille de la livraison",
+      "url": "{{ base_url }}/orchestrator/uploads/{{ upload }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"size\": 0,\n  \"extent\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__ec825f3e",
+      "method": "PATCH",
+      "description": "La taille de la livraison est calculée par l'orchestrateur et est transmise à l'entrepôt via cette API. La taille comprend les données, les métadonnées et les annexes\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Récupère les informations internes sur une donnée",
+      "url": "{{ base_url }}/orchestrator/stored_data/{{ stored_data }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__8062a174",
+      "method": "GET",
+      "description": "Les orchestrateurs ont besoin d'avoir des informations internes comme le stockage détaillé pour pouvoir écrire les données transformées. L'instance d'exécution de la requête n'est pas précisée, l'utilisateur administrateur ou orchestrateur y a de toute manière accès.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Modifie les informations de la donnée",
+      "url": "{{ base_url }}/orchestrator/stored_data/{{ stored_data }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"size\": 0,\n  \"srs\": \"string\",\n  \"extent\": \"string\",\n  \"type_infos\": null\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__469fe8c0",
+      "method": "PATCH",
+      "description": "Lors du calcul de la donnée, plusieurs informations qui doivent être connues des utilisateurs et de l'entrepôt vont être précisées. La taille et l'étendue de la donnée, la taille des annexes, la dépendance à d'autres données (cĥaînage et pyramide à la demande). Ces informations en sont pas forcément toutes transmises en un appel.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Récupère les informations sur une exécution de vérification",
+      "url": "{{ base_url }}/orchestrator/checks/executions/{{ execution }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__116c2b4b",
+      "method": "GET",
+      "description": "Les orchestrateurs ont besoin d'avoir des informations sur une exécution pour connaître le travail à faire.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Signale la prise en charge ou la fin de l'exécution sur l'orchestrateur",
+      "url": "{{ base_url }}/orchestrator/checks/executions/{{ execution }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "null"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__d5664444",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Récupère les informations sur une exécution de traitement",
+      "url": "{{ base_url }}/orchestrator/processings/executions/{{ execution }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__f8ecbb7b",
+      "method": "GET",
+      "description": "Les orchestrateurs ont besoin d'avoir des informations sur une exécution pour connaître le travail à faire.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__df6311f2",
+      "name": "Signale la prise en charge ou la fin de l'exécution sur l'orchestrateur",
+      "url": "{{ base_url }}/orchestrator/processings/executions/{{ execution }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "null"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__eb3da21d",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c133489e",
+      "name": "Récupère les informations sur la communauté",
+      "url": "{{ base_url }}/communities/{{ community }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__af9fbd10",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c133489e",
+      "name": "Modifie l'adresse de contact de la communauté et son aspect public. Seul le superviseur de la communauté peut le faire.",
+      "url": "{{ base_url }}/communities/{{ community }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"public\": true,\n  \"contact\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__961c08db",
+      "method": "PATCH"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c133489e",
+      "name": "Liste les utilisateurs d'une communauté",
+      "url": "{{ base_url }}/communities/{{ community }}/users",
+      "body": {},
+      "parameters": [
+        {
+          "name": "community_rights",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "uploads_rights",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "broadcast_rights",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "processings_rights",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "stored_data_rights",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "datastore_rights",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__ab3c4e39",
+      "method": "GET",
+      "description": "Seul un gestionnaire de la communauté peut accéder à ces informations.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c133489e",
+      "name": "Désinscrit un utilisateur d'une communauté",
+      "url": "{{ base_url }}/communities/{{ community }}/users/{{ user }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__18a24391",
+      "method": "DELETE",
+      "description": "Seul un gestionnaire de la communauté peut désinscrire un utilisateur.  Le superviseur d'une communauté ne peut pas être désinscrit.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c133489e",
+      "name": "Modifie les droits d'un utilisateur appartenant à la communauté ou l'ajoute",
+      "url": "{{ base_url }}/communities/{{ community }}/users/{{ user }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"community_rights\": true,\n  \"uploads_rights\": true,\n  \"processings_rights\": true,\n  \"stored_data_rights\": true,\n  \"datastore_rights\": true,\n  \"broadcast_rights\": true\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__559a9d81",
+      "method": "PUT",
+      "description": "Seul un gestionnaire de la communauté peut modifier les droits d'un utilisateur ou en ajouter un. Les droits du superviseur ne peuvent pas être modifiés\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__c349c0bc",
+      "name": "Récupère toutes les informations sur l'entrepôt",
+      "url": "{{ base_url }}/datastores/{{ datastore }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__d711340f",
+      "method": "GET",
+      "description": "On voit le nom de l'entrepôt, les quotas de stockage et les quotas sur les points d'accès.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère une liste de livraisons",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads",
+      "body": {},
+      "parameters": [
+        {
+          "name": "owned",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "shared",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "tags",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "status",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "lon",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "lat",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "sort",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "before",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "after",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__bba84cab",
+      "method": "GET",
+      "description": "Les livraisons de la liste sont utilisables par l'entrepôt Il est possible de filtrer selon le type de livraison, l'aspect partagé ou propriétaire\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Déclare une nouvelle livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"description\": \"string\",\n  \"name\": \"string\",\n  \"type\": \"string\",\n  \"srs\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__8035ceb7",
+      "method": "POST",
+      "description": "Afin de déposer de nouvelles données, on crée une livraison.  Ce dépôt devra contenir une donnée cohérente (en coordonnées, en type...) Il sera alors possible de téléverser des fichiers (données, métadonnées et documents annexes) via l'API en HTTP ou en FTP.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère les informations sur une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__eb33f766",
+      "method": "GET",
+      "description": "La livraison demandée doit appartenir à l'entrepôt, être partagée avec cet entrepôt ou être publique. Les informations visibles seront alors différentes selon le cas.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Supprime la livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a456087a",
+      "method": "DELETE",
+      "description": "Permet la suppression des fichiers téléversés de la plateforme. Pour être supprimée, une livraison  doit être ouverte ou fermée, et ne pas être en entrée d'un traitement en attente ou en cours. La suppression effective est une action potentiellement longue, la livraison sera alors en statut \"En cours de suppression\" le temps de la réalisation.\nUne fois supprimée, une livraison n'apparaît plus dans les listes et ne peut plus être utilisée. Cependant, on garde les informations en base et la possibilité d'y accéder par un GET individuel pour conserver l'historique des données ou des configurations. Elle est alors en statut \"Supprimée\". Régulièrement,  on supprimera complètement les livraisons qui ne sont plus en entrée d'aucune exécution de traitement.\nToutes les exécutions dont la livraison était en sortie sont supprimées.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Modifie le nom ou la visibilité de la livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "null"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__8ba445f7",
+      "method": "PATCH",
+      "description": "Seul le nom de la livraison, sa description et sa visibilité sont modifiables, et uniquement par le propriétaire. Les autres informations, comme le type de la livraison, sont figées.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère les événements sur une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/events",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__fb1ff310",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère la description du contenu de la livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/tree",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__5d106711",
+      "method": "GET",
+      "description": "L'arborescence décrite contient les noms des dossiers et fichiers ainsi que les tailles\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Téléverse un fichier de signatures MD5",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/md5",
+      "body": {
+        "mimeType": "multipart/form-data"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e266d612",
+      "method": "POST",
+      "description": "Les fichiers MD5 sont déposés à la racine de la livraison et doivent avoir l'extension '.md5'.  Les fichiers sont des listes au format texte.  Chaque ligne est de la forme <signature> <chemin du fichier>.  Le chemin est en relatif par rapport à la racine de la livraison (où le fichier MD5 est déposé)\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Supprime un fichier de signatures MD5 d'une donnée livrée.",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/md5",
+      "body": {},
+      "parameters": [
+        {
+          "name": "path",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__b6f8b6f4",
+      "method": "DELETE",
+      "description": "Une livraison doit être ouverte pour permettre la suppression.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Téléverse un fichier de données",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/data",
+      "body": {
+        "mimeType": "multipart/form-data"
+      },
+      "parameters": [
+        {
+          "name": "path",
+          "disabled": true,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__858100aa",
+      "method": "POST",
+      "description": "Une livraison doit être ouverte pour permettre la livraison.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Supprime un fichier de données d'une donnée livrée.",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/data",
+      "body": {},
+      "parameters": [
+        {
+          "name": "path",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__fe2d96d1",
+      "method": "DELETE",
+      "description": "Une livraison doit être ouverte pour permettre la suppression.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Ajoute des étiquettes à la livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/tags",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e0b08ace",
+      "method": "POST",
+      "description": "Les étiquettes sont des paires clé-valeur qui peuvent être utlisées dans les recherches filtrées.  Seul le propriétaire peut ajouter des étiquettes sur ses données.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Supprime des étiquettes de la livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/tags",
+      "body": {},
+      "parameters": [
+        {
+          "name": "tags",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__d486f211",
+      "method": "DELETE",
+      "description": "La suppression ne requiert que les clés à enlever.  Seul le propriétaire peut supprimer des étiquettes sur ses données.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Ajoute un commentaire sur une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/comments",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"text\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__1d18595d",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère les commentaires sur une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/comments",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__2954e3f2",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Modifie le texte d'un commentaire",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/comments/{{ comment }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"text\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__b1946c96",
+      "method": "PUT",
+      "description": "Seuls ses propres commentaires peuvent être modifiés\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Supprime un commentaire sur une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/comments/{{ comment }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__647006e4",
+      "method": "DELETE",
+      "description": "Seuls ses propres commentaires peuvent être supprimés\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Demande l'ouverture d'une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/open",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__21d4fd62",
+      "method": "POST",
+      "description": "Seule une livraison fermée, sans vérifications en cours et qui n'est pas en entrée d'un traitement lancé peut être ouverte. Toutes les vérifications passées (en succès ou en échec) sont oubliées. La livraison redevient accessible en écriture (en FTP ou HTTP)\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Demande la fermeture d'une livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/close",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__354f5136",
+      "method": "POST",
+      "description": "Une fois fermée, la livraison n'est plus accesible en écriture. Des vérifications peuvent être lancées et des traitements peuvent l'utiliser en entrée.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère les listes des vérifications passées, en cours et en échec",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/checks",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a8f0a6b3",
+      "method": "GET",
+      "description": "Pour être utilisée en entrée d'un traitement, une livraison doit avoir passé avec succès certaines vérifications.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Lance des vérifications sur la livraison",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/checks",
+      "body": {
+        "mimeType": "application/json",
+        "text": "[\n  \"string\"\n]"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__516ee7b0",
+      "method": "POST",
+      "description": "La livraison demandée doit appartenir à l'entrepôt. Par défaut, les vérifications standard et de type sont lancées  mais on peut préciser des vérifications supplémentaires à effectuer. Celles ci sont exécutées en parallèle. Celles déjà en cours ou passées ne sont pas relancées. La livraison doit être fermée. Seul le propriétaire de la livraison peut lancer des vérifications\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Voir les partages la livraison avec d'autres entrepôts",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/sharings",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__85e93237",
+      "method": "GET",
+      "description": "Quand une livraison est partagée avec un entrepôt, ce dernier la voit apparaître dans ses listes de données disponibles et peut l'utiliser en entrée de ses traitements. Il voit toutes les  informations utiles à son utilisation comme la projection. Il ne voit cependant pas les paramètres de connexion FTP.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Partage la livraison avec d'autres entrepôts",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/sharings",
+      "body": {
+        "mimeType": "application/json",
+        "text": "[\n  \"string\"\n]"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__1cd478c2",
+      "method": "POST",
+      "description": "Quand une livraison est partagée avec un entrepôt, ce dernier la voit apparaître dans ses listes de données disponibles et peut l'utiliser en entrée de ses traitements. Il voit toutes les  informations utiles à son utilisation comme la projection. Il ne voit cependant pas les paramètres de connexion FTP. Seul le propriétaire de la livraison peut ajouter des partages\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Supprime des partages de la livraison avec d'autres entrepôt",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/uploads/{{ upload }}/sharings",
+      "body": {},
+      "parameters": [
+        {
+          "name": "datastores",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e16957ee",
+      "method": "DELETE",
+      "description": "La suppression d'un partage n'empêche pas les traitements en cours mais supprime ceux qui n'auraient pas été encore lancés par l'entrepôt perdant le partage. Seul le propriétaire d'une livraison peut supprimer des partages\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère la liste des vérifications disponibles",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/checks",
+      "body": {},
+      "parameters": [
+        {
+          "name": "default_upload_check",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__4e68ea6c",
+      "method": "GET",
+      "description": "Pour être utilisée en entrée d'un traitement,  une livraison doit avoir passé avec succès certaines vérifications. Ces dernières sont propres à l'entrepôt\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère les informations sur une vérification",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/checks/{{ check }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__094697e5",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère la liste des vérifications en cours",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/checks/executions",
+      "body": {},
+      "parameters": [
+        {
+          "name": "check",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "status",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "before",
+          "disabled": true,
+          "value": "2022-03-07T13:21:09.657Z"
+        },
+        {
+          "name": "after",
+          "disabled": true,
+          "value": "2022-03-07T13:21:09.657Z"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__44d66272",
+      "method": "GET",
+      "description": "Les vérifications en cours peuvent être annulées.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère l'exécution d'une vérification",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/checks/executions/{{ execution }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__0fc6b1a1",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Annule l'exécution d'une vérification",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/checks/executions/{{ execution }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__3834a22f",
+      "method": "DELETE",
+      "description": "Une annulation ne modifiant pas une livraison, il suffit d'arrêter le processus de vérification. L'exécution de la vérification est supprimée. La vérification n'étant pas terminée, la livraison n'est pas considéré comme vérifiée.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__227c18ee",
+      "name": "Récupère les logs d'une exécution de vérification",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/checks/executions/{{ execution }}/logs",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__044957b7",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Récupère la liste des traitements disponibles",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings",
+      "body": {},
+      "parameters": [
+        {
+          "name": "name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a962de5d",
+      "method": "GET",
+      "description": "Les traitements disponibles sont ceux qui peuvent être utilisés dans l'entrepôt pour générer des données. Chacun a ses spécificités : types de données en entrée, vérifications requises pour l'utilisation de livraisons, types de données en sortie\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Récupère les informations sur un traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/{{ processing }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__6858bc27",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Récupère la liste des traitements réalisés, en cours ou à venir",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions",
+      "body": {},
+      "parameters": [
+        {
+          "name": "processing",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "status",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "input_upload",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "output_upload",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "input_stored_data",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "output_stored_data",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "before",
+          "disabled": true,
+          "value": "2022-03-07T13:21:09.658Z"
+        },
+        {
+          "name": "after",
+          "disabled": true,
+          "value": "2022-03-07T13:21:09.658Z"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__74adced1",
+      "method": "GET",
+      "description": "Les traitements en cours ou à venir peuvent être annulés.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Créer une nouvelle exécution d'un traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"processing\": \"string\",\n  \"inputs\": {\n    \"upload\": [\n      \"string\"\n    ],\n    \"stored_data\": [\n      \"string\"\n    ]\n  },\n  \"output\": null,\n  \"parameters\": {}\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__b0a64c27",
+      "method": "POST",
+      "description": "Tant qu'elle n'a pas été lancée, les données en entrée et en sortie ne sont pas verrouillées et peuvent être supprimées  (entraînant ainsi la suppression de l'exécution). En sortie, si un identifiant de donnée est précisé, celle-ci doit exister, être une livraison ou une donnée, et respecter le type de donnée de sortie du traitement. Si un nom est précisé, une nouvelle livraison ou donnée est créée, typée comme précisé par le traitement.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Récupère l'exécution d'un traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions/{{ execution }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__2b6aee8d",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Supprime l'exécution d'un traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions/{{ execution }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__b9109002",
+      "method": "DELETE",
+      "description": "Seule une exécution de traitement en statut \"Créée\" peut être supprimée.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Récupère les logs d'une exécution de traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions/{{ execution }}/logs",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__6f5197b5",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Lancement de l'exécution d'un traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions/{{ execution }}/launch",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__aa4b3528",
+      "method": "POST",
+      "description": "Lancer une exécution va bloquer les données en entrée et celle en sortie. Il ne sera plus possible de les supprimer L'exécution sera en attente tant que la donnée de sortie est en cours de modification par une autre exécution.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__9474c4e3",
+      "name": "Annulation de l'exécution d'un traitement",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/processings/executions/{{ execution }}/abort",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__1c86a78e",
+      "method": "POST",
+      "description": "L'annulation d'une exécution créée n'a aucun effet, une exécution en attente repasse en statut \"Créée\" et les entrées et sortie sont déverrouillées. Si elle est en cours, le travail est arrêté et le résultat partiel est nettoyé. Le statut sera alors \"Annulée\"\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Récupère une liste de données",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data",
+      "body": {},
+      "parameters": [
+        {
+          "name": "owned",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "shared",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "tags",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "status",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "lon",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "lat",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "sort",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "before",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "after",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__c2795add",
+      "method": "GET",
+      "description": "Les données de la liste sont utilisables par l'entrepôt Il est possible de filtrer selon le type de donnée, l'aspect partagé ou propriétaire\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Récupère les informations sur une donnée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__4ce2042b",
+      "method": "GET",
+      "description": "La donnée demandée doit appartenir à l'entrepôt, être partagée avec cet entrepôt ou être publique. Les informations visibles seront alors différentes selon le cas.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Supprime la donnée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__4b736285",
+      "method": "DELETE",
+      "description": "Permet la suppression des données sur les espaces de stockage de la plateforme.  Pour être supprimée, une donnée doit être 'générée', ne pas être en entrée  d'un traitement en attente ou en cours, et ne pas être référencée par une configuration. La donnée passe alors en statut \"DELETED\".\nUne fois supprimée, une donnée n'apparaît plus dans les listes et ne peut plus être utilisée. Cependant, on garde les informations en base et la possibilité d'y accéder par un GET individuel pour conserver l'historique des données ou des configurations. Elle est alors en statut \"DELETED\".\nLa suppression d'une donnée alias se contente de supprimer définitivement l'entité dans le référentiel\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Modifie le nom ou la visibilité de la donnée, ou la donnée référencée pour un alias",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"visibility\": \"PRIVATE\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__32c7ac0b",
+      "method": "PATCH",
+      "description": "Seul le nom de la donnée et sa visibilité sont modifiables, et uniquement par le propriétaire. Les autres informations, comme le type de la donnée, sont figées pour une donnée.\nDans le cas d'un alias, ou peut modifier l'identifiant de la donnée référencée (qui ne doit pas être celui d'une donnée alias)\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Récupère les événements sur une donnée stockée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/events",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__fb5a624b",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Voir les partages la donnée avec d'autres entrepôts",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/sharings",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__1c7ff284",
+      "method": "GET",
+      "description": "Quand une donnée est partagée avec un entrepôt, ce dernier la voit apparaître dans ses listes de données disponibles et peut l'utiliser en entrée de ses traitements. Il voit toutes les  informations utiles à son utilisation comme la projection. Il ne voit cependant pas les commentaires.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Partage la donnée avec d'autres entrepôts",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/sharings",
+      "body": {
+        "mimeType": "application/json",
+        "text": "[\n  \"string\"\n]"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__00187cfc",
+      "method": "POST",
+      "description": "Quand une donnée est partagée avec un entrepôt, ce dernier la voit apparaître dans ses listes de données disponibles et peut l'utiliser en entrée de ses traitements. Il voit toutes les  informations utiles à son utilisation comme la projection. Il ne voit cependant pas les commentaires. Seul le propriétaire de la donnée peut ajouter des partages\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Supprime des partages de la donnée avec d'autres entrepôt",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/sharings",
+      "body": {},
+      "parameters": [
+        {
+          "name": "datastores",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__3f116fa4",
+      "method": "DELETE",
+      "description": "La suppression d'un partage n'empêche pas les traitements en cours mais supprime ceux qui n'auraient pas encore été lancés par l'entrepôt perdant le partage. Seul le propriétaire d'une donnée peut supprimer des partages.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Ajoute des étiquettes à la donnée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/tags",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a6de67e9",
+      "method": "POST",
+      "description": "Les étiquettes sont des paires clé-valeur qui peuvent être utilisées dans les recherches filtrées.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Supprime des étiquettes de la donnée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/tags",
+      "body": {},
+      "parameters": [
+        {
+          "name": "tags",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__57334250",
+      "method": "DELETE",
+      "description": "La suppression ne requiert que les clés à enlever.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Ajoute un commentaire sur une donnée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/comments",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"text\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__c6210fc4",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Récupère les commentaires sur une donnée stockée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/comments",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__98cd79bf",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Modifie le texte d'un commentaire",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/comments/{{ comment }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"text\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__2352849a",
+      "method": "PUT",
+      "description": "Seul l'auteur d'un commentaire peut en modifier le contenu\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__d0c06be9",
+      "name": "Supprime un commentaire sur une donnée",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/stored_data/{{ stored_data }}/comments/{{ comment }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__70b431c7",
+      "method": "DELETE",
+      "description": "Seul l'auteur d'un commentaire peut le supprimer\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Récupère une liste d'annexes",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes",
+      "body": {},
+      "parameters": [
+        {
+          "name": "mime_type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "path",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "tags",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__2e63d271",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Téléverse une nouvelle annexe",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes",
+      "body": {
+        "mimeType": "multipart/form-data"
+      },
+      "parameters": [
+        {
+          "name": "paths",
+          "disabled": false,
+          "value": "string"
+        },
+        {
+          "name": "published",
+          "disabled": true,
+          "value": "true"
+        },
+        {
+          "name": "tags",
+          "disabled": true,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__14e5a82e",
+      "method": "POST",
+      "description": "Les chemins fournis (contenant le nom de fichier), utilisés pour la diffusion de l'annexe, doivent être unique au sein de l'entrepôt.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Publie des annexes",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes/publication",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tags\": [\n    \"string\"\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__98908149",
+      "method": "POST",
+      "description": "Il est possible de publier des annexes selon leurs étiquettes\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Dépublie des annexes",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes/unpublication",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tags\": [\n    \"string\"\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__08b4deaf",
+      "method": "POST",
+      "description": "Il est possible de dépublier des annexes selon leurs étiquettes\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Récupère les informations sur une annexe",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes/{{ annexe }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__25016f43",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Modifie les informations d'une annexe déjà existante",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes/{{ annexe }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tags\": [\n    \"string\"\n  ],\n  \"published\": true,\n  \"paths\": [\n    \"string\"\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__7fe871cb",
+      "method": "PATCH",
+      "description": "Seules les étiquettes et l'état de publication peuvent être modifiées\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Modifie une annexe déjà existante",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes/{{ annexe }}",
+      "body": {
+        "mimeType": "multipart/form-data"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a9509ee9",
+      "method": "PUT",
+      "description": "Le path (nom de fichier compris) reste forcément le même.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__db58c921",
+      "name": "Supprime l'annexe",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/annexes/{{ annexe }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__c26c48b8",
+      "method": "DELETE"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère une liste de configurations",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "layer_name",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "stored_data",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "status",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "tags",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "sort",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "before",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "after",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__1b34b3dd",
+      "method": "GET",
+      "description": "Les configurations de la liste sont utilisables par l'entrepôt.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Crée une nouvelle configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"type\": \"string\",\n  \"name\": \"string\",\n  \"layer_name\": \"string\",\n  \"type_infos\": null,\n  \"metadata\": [\n    {\n      \"format\": \"string\",\n      \"url\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"attribution\": {\n    \"title\": \"string\",\n    \"url\": \"string\",\n    \"logo\": {\n      \"format\": \"string\",\n      \"url\": \"string\",\n      \"width\": 0,\n      \"height\": 0\n    }\n  }\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__c8ab76bc",
+      "method": "POST",
+      "description": "Tant que la configuration n'a pas été publiée, cela reste des informations sans existence sur les serveurs de diffusion\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère les informations sur une configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__11f4a8fa",
+      "method": "GET",
+      "description": "La configuration demandée doit appartenir à l'entrepôt.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Supprime la configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__1943ac70",
+      "method": "DELETE",
+      "description": "La suppression d'une configuration est possible si elle n'est disponible sur aucun endpoint et qu'il n'y a pas de publication en cours.  Comme il n'y a pas de données à supprimer, la suppression est immédiate\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Modifie la configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"string\",\n  \"type_infos\": null,\n  \"metadata\": [\n    {\n      \"format\": \"string\",\n      \"url\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"attribution\": {\n    \"title\": \"string\",\n    \"url\": \"string\",\n    \"logo\": {\n      \"format\": \"string\",\n      \"url\": \"string\",\n      \"width\": 0,\n      \"height\": 0\n    }\n  }\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e38a029b",
+      "method": "PUT",
+      "description": "Si la configuration est liée à des offerings en cours de publication, la modification n'est pas possible. Si la configuration est liée à des offerings publiés, les modifications sont répercutées  sur les serveurs de diffusion. Le layername et le type ne sont pas modifiable.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère les publications de la configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/offerings",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a278294b",
+      "method": "GET",
+      "description": "Pour qu'une configuration ait une réalité sur un serveur de diffusion (et ainsi rendre accesible la donnée),  elle doit avoir des offres liées\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Demande la publication",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/offerings",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"visibility\": \"PRIVATE\",\n  \"endpoint\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__5b34b9d6",
+      "method": "POST",
+      "description": "Pour qu'une configuration ait une réalité sur un serveur de diffusion (et ainsi rendre accesible la donnée),  on doit la publier, c'est à dire créer un offering\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère les événements sur une configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/events",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__37bef8ea",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Ajoute un commentaire sur une configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/comments",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"text\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__94c2b14f",
+      "method": "POST"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère les commentaires sur une configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/comments",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__5e428d2e",
+      "method": "GET"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Modifie le texte d'un commentaire",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/comments/{{ comment }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"text\": \"string\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__ba6a406c",
+      "method": "PUT",
+      "description": "Seul l'auteur d'un commentaire peut en modifier le contenu\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Supprime un commentaire sur une configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/comments/{{ comment }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__467cef58",
+      "method": "DELETE",
+      "description": "Seul l'auteur d'un commentaire ou le responsable de l'entrepôt peut le supprimer\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Ajoute des étiquettes à la configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/tags",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__e9107438",
+      "method": "POST",
+      "description": "Les étiquettes sont des paires clé-valeur qui peuvent être utlisées dans les recherches filtrées. Si une clé existe déjà, la valeur est modifiée\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Supprime des étiquettes de la configuration",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/configurations/{{ configuration }}/tags",
+      "body": {},
+      "parameters": [
+        {
+          "name": "tags",
+          "disabled": false,
+          "value": "string"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__9b4f2dd3",
+      "method": "DELETE",
+      "description": "La suppression ne requiert que les clés à enlever.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère une liste des offres",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/offerings",
+      "body": {},
+      "parameters": [
+        {
+          "name": "type",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "endpoint",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "status",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "stored_data",
+          "disabled": true,
+          "value": "string"
+        },
+        {
+          "name": "page",
+          "disabled": true,
+          "value": "0"
+        },
+        {
+          "name": "limit",
+          "disabled": true,
+          "value": "10"
+        }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__a94603b9",
+      "method": "GET",
+      "description": "Les offres de la liste sont utilisables par l'entrepôt. Il est possible de filtrer selon le type de diffusion\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Récupère les informations sur l'offre",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/offerings/{{ offering }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__4de5c871",
+      "method": "GET",
+      "description": "Il est possible de modifier la visibilité d'une offre afin qu'elle apparaisse dans les catalogues ou qu'on puisse donner des permissions, ou au contraire qu'elle en disparaisse. On peut également désactiver une offre pour en couper la consommation rapidement, sans déconfigurer les permissions\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Demande la dépublication",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/offerings/{{ offering }}",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__aebf5df1",
+      "method": "DELETE",
+      "description": "Supprimer une offre revient à demander la dépublication. Cela peut prendre du temps, le statut de l'offre \"En cours de dépublication\" permet de retenir la suppresion en cours.\nDans le cas de la suppression d'une offre externe (non liée à une ressource mais contenant un layer_name), l'offre est directement supprimée, sans notion de dépublication.\n"
+    },
+    {
+      "parentId": "fld___WORKSPACE_ID__563c6861",
+      "name": "Change la visibilité ou la disponibilité de l'offre",
+      "url": "{{ base_url }}/datastores/{{ datastore }}/offerings/{{ offering }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"visibility\": \"PRIVATE\"\n}"
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{bearerToken}}",
+        "prefix": ""
+      },
+      "_type": "request",
+      "_id": "req___WORKSPACE_ID__fa13e87f",
+      "method": "PATCH",
+      "description": "Il est possible de modifier la visibilité d'une offre afin qu'elle apparaisse dans les catalogues ou qu'on puisse donner des permissions, ou au contraire qu'elle en disparaisse. On peut également désactiver une offre pour en couper la consommation rapidement, sans déconfigurer les permissions\n"
+    }
+  ]
+}
