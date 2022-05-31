@@ -1,5 +1,7 @@
-from pyclbr import Function
-from typing import Any, Dict, Optional
+import time
+from typing import Any, Callable, Dict, Optional
+
+from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.workflow.Errors import StepActionError
@@ -90,17 +92,41 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def monitoring_until_end(self, callback: Optional[Function] = None) -> Optional[bool]:
+    def monitoring_until_end(self, callback: Optional[Callable[[str], None]] = None) -> Optional[bool]:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
         La fonction callback indiquée est exécutée en prenant en paramètre la différence de log entre deux vérifications.
 
         Args:
-            callback (Optional[Function], optional): fonction de callback à exécuter avec la différence de log entre deux vérifications. Defaults to None.
+            callback (Optional[Callable[[str], None]], optional): fonction de callback à exécuter avec la différence de log entre deux vérifications. Defaults to None.
 
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
         """
-        raise NotImplementedError("ProcessingExecutionAction.monitoring_until_end")
+        i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
+        # s_check_message_pattern = Config().get("processing_execution", "check_message_pattern")
+        Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
+        if self.__processing_execution is None:
+            raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
+        while self.__processing_execution.get_store_properties()["status"] not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+            # On récupère met à jour __processing_execution
+            self.__processing_execution.api_update()
+            # appel de la fonction affichant les logs
+            if callback is not None:
+                callback(self.__processing_execution.api_logs())
+            # affichage message suivi
+            Config().om.info(f"Le traitement {self.__processing_execution} a été interrompu.")
+            # On attend le temps demandé
+            time.sleep(i_nb_sec_between_check)
+        # Si on est sorti c'est que c'est fini
+        # répartition des cas :
+        if self.__processing_execution.get_store_properties()["status"] == ProcessingExecution.STATUS_ABORTED:
+            Config().om.info(f"Le traitement {self.__processing_execution} a été interrompu.")
+            return None
+        if self.__processing_execution.get_store_properties()["status"] == ProcessingExecution.STATUS_SUCCESS:
+            Config().om.info(f"Le traitement {self.__processing_execution} s'est bien passé.")
+            return True
+        Config().om.warning(f"Le traitement {self.__processing_execution} s'est terminé en erreur.")
+        return False
 
     @property
     def processing_execution(self) -> Optional[ProcessingExecution]:
