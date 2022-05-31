@@ -1,6 +1,5 @@
-import sys
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 
 from ignf_gpf_api.Errors import GpfApiError
@@ -141,8 +140,16 @@ class UploadAction:
         # sinon on retourne None
         return None
 
-    def monitor_until_end(self) -> Optional[bool]:
-        """Attend que chaque vérification soit terminée (en erreur ou en échec) avant de rendre la main."""
+    def monitor_until_end(self, callback: Optional[Callable[[str], None]] = None) -> Optional[bool]:
+        """Attend que chaque vérification soit terminée (en erreur ou en échec) avant de rendre la main.
+        La fonction callback indiquée est exécutée en prenant en paramètre un message de suivi du nombre de vérifications par statuts.
+
+        Args:
+            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi. Defaults to None.
+
+        Returns:
+            Optional[bool]: True si toutes les vérifications sont ok, sinon False
+        """
         i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
         s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
         b_success: Optional[bool] = None
@@ -154,15 +161,15 @@ class UploadAction:
                 # On peut déterminer b_success s'il n'y en a plus en attente et en cours
                 if len(d_checks["asked"]) == len(d_checks["in_progress"]) == 0:
                     b_success = len(d_checks["failed"]) == 0
-                # On affiche un rapport
+                # On affiche un rapport via la fonction de callback précisée
                 s_message = s_check_message_pattern.format(
                     nb_asked=len(d_checks["asked"]),
                     nb_in_progress=len(d_checks["in_progress"]),
                     nb_passed=len(d_checks["passed"]),
                     nb_failed=len(d_checks["failed"]),
                 )
-                sys.stdout.write(f"{s_message}\r")
-                sys.stdout.flush()
+                if callback is not None:
+                    callback(s_message)
                 # On attend le temps demandé
                 time.sleep(i_nb_sec_between_check)
             # Si on est sorti c'est que c'est tout bon
