@@ -2,6 +2,7 @@ from pyclbr import Function
 from typing import Any, Dict, Optional
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
+from ignf_gpf_api.workflow.Errors import StepActionError
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.store.Upload import Upload
 
@@ -39,19 +40,55 @@ class ProcessingExecutionAction(ActionAbstract):
         """Création du ProcessingExecution sur l'API à partir des paramètres de définition de l'action.
         Récupération des attributs processing_execution et Upload/StoredData.
         """
-        raise NotImplementedError("ProcessingExecutionAction.__create_processing_execution")
+        # création de la ProcessingExecution
+        self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["parameters"])
+
+        d_info = self.__processing_execution.get_store_properties()["output"]
+        if "upload" in d_info:
+            # récupération de l'upload
+            self.__upload = Upload.api_get(d_info["upload"]["_id"])
+        elif "stored_data" in d_info:
+            # récupération de la stored_data
+            self.__stored_data = StoredData.api_get(d_info["stored_data"]["_id"])
+        else:
+            raise StepActionError(f"Aucune correspondance pour {d_info.keys()}")
 
     def __add_tags(self) -> None:
         """Ajout des tags sur l'Upload ou la StoredData en sortie du ProcessingExecution."""
-        raise NotImplementedError("ProcessingExecutionAction.__add_tags")
+        if "tags" not in self.definition_dict or self.definition_dict["tags"] == {}:
+            # cas on a pas de tag ou vide: on ne fait rien
+            return
+        # on ajoute le tag
+        if self.__upload is not None:
+            self.__upload.api_add_tags(self.definition_dict["tags"])
+        elif self.__stored_data is not None:
+            self.__stored_data.api_add_tags(self.definition_dict["tags"])
+        else:
+            # on a pas de stored_data ni de upload
+            raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les tags")
 
     def __add_comments(self) -> None:
         """Ajout des commentaires sur l'Upload ou la StoredData en sortie du ProcessingExecution."""
-        raise NotImplementedError("ProcessingExecutionAction.__add_comments")
+        if "comments" not in self.definition_dict:
+            # cas on a pas de commentaires : on ne fait rien
+            return
+        # on ajoute le commentaires
+        if self.__upload is not None:
+            for s_comment in self.definition_dict["comments"]:
+                self.__upload.api_add_comment({"text": s_comment})
+        elif self.__stored_data is not None:
+            for s_comment in self.definition_dict["comments"]:
+                self.__stored_data.api_add_comment({"text": s_comment})
+        else:
+            # on a pas de stored_data ni de upload
+            raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les commentaires")
 
     def __launch(self) -> None:
         """Lancement de la ProcessingExecution."""
-        raise NotImplementedError("ProcessingExecutionAction.__launch")
+        if self.__processing_execution is not None:
+            self.__processing_execution.api_launch()
+        else:
+            raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
     def monitoring_until_end(self, callback: Optional[Function] = None) -> Optional[bool]:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.

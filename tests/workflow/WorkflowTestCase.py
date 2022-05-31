@@ -14,7 +14,7 @@ from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExe
 class WorkflowTestCase(unittest.TestCase):
     """Tests UploadAction class.
 
-    cmd : python3 -m unittest -b tests.action.WorkflowTestCase
+    cmd : python3 -m unittest -b tests.workflow.WorkflowTestCase
     """
 
     def test_get_raw_dict(self) -> None:
