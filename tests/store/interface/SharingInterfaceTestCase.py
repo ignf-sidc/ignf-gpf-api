@@ -27,7 +27,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with(
                 "store_entity_add_sharings",
                 route_params={"store_entity": "id_entité"},
-                data={"text": "string"},
+                data=["_id"],
                 method=ApiRequester.POST,
             )
 
@@ -75,6 +75,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with(
                 "store_entity_remove_sharings",
-                route_params={"store_entity": "id_entité", "last_event": "id_entité"},
+                route_params={"store_entity": "id_entité"},
+                params={"datastores[]": ["_id"]},
                 method=ApiRequester.DELETE,
             )
