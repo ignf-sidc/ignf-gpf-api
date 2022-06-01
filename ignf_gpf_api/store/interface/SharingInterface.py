@@ -22,7 +22,6 @@ class SharingInterface(StoreEntity):
             route_params={self._entity_name: self.id},
             data=datastore_ids,
         )
-        raise NotImplementedError("SharingInterface.api_add_sharings")
 
     def api_list_sharings(self) -> List[Dict[str, str]]:
         """Liste les datastore avec lesquels l'entité est partagée.
@@ -53,6 +52,6 @@ class SharingInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.DELETE,
-            route_params={self._entity_name: self.id, "last_event": datastore_ids},
+            route_params={self._entity_name: self.id},
+            params={"datastores[]": datastore_ids},
         )
-        raise NotImplementedError("SharingInterface.api_remove_sharings")
