@@ -25,9 +25,9 @@ class SharingInterfaceTestCase(unittest.TestCase):
             o_sharing_interface.api_add_sharings(["_id"])
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with(
-                "store_entity_add_comment",
+                "store_entity_add_sharings",
                 route_params={"store_entity": "id_entité"},
-                data={"text": "comment"},
+                data={"text": "string"},
                 method=ApiRequester.POST,
             )
 
@@ -36,10 +36,10 @@ class SharingInterfaceTestCase(unittest.TestCase):
         l_data = [
             {
                 "_id": "string",
-                "creation": "2022-05-12T07:48:42.123Z",
-                "last_modification": "2022-05-12T07:48:42.123Z",
+                "creation": "2022-06-01T08:24:26.754Z",
+                "last_modification": "2022-06-01T10:00:00.754Z",
                 "text": "string",
-                "author": {"_id": "string", "last_name": "string", "first_name": "string"},
+                "initiator": {"_id": "string", "last_name": "string", "first_name": "string"},
             }
         ]
         # Instanciation d'une fausse réponse HTTP
@@ -55,7 +55,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             l_data_recupere = o_sharing_interface.api_list_sharings()
             # on vérifie que route_request est appelé correctement
             o_mock_request.assert_called_once_with(
-                "store_entity_list_comment",
+                "store_entity_list_sharings",
                 route_params={"store_entity": "id_entité"},
             )
             # on vérifie la similitude des données retournées
