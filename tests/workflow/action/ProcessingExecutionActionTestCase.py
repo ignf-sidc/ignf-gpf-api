@@ -1,7 +1,8 @@
 from typing import Any, Dict, List, Optional
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import PropertyMock, call, patch, MagicMock
+from ignf_gpf_api.io.Config import Config
 
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
@@ -20,7 +21,7 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
     """
 
     def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]],  s_type_output: str) -> None:
-        """lancement de ProcessingExecutionAction.run selon param
+        """lancement +test de ProcessingExecutionAction.run selon param
 
         Args:
             tags (Optional[Dict[str, Any]]): dict des tags ou None
@@ -124,3 +125,58 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
             self.run_args({"tag1": "val1"}, ["comm1"], s_type_output)
             ## 2 tag + 4 commentaire
             self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_type_output)
+
+    def monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool) -> None:
+        """lancement + test de ProcessingExecutionAction.monitoring_until_end() selon param
+
+        Args:
+            s_status_end (str): status de fin
+            b_waits (bool): si on a des status intermédiaire
+            b_callback (bool): si on a une fonction callback
+        """
+
+        if b_waits:
+            l_status = [ProcessingExecution.STATUS_CREATED,ProcessingExecution.STATUS_WAITING, ProcessingExecution.STATUS_PROGRESS]
+        else:
+            l_status = []
+        if b_callback:
+            f_callback = MagicMock()
+        else:
+            f_callback = None
+
+        # mock de o_mock_processing_execution
+        o_mock_processing_execution = MagicMock(name="test")
+        o_mock_processing_execution.get_store_properties.side_effect = [{"status": el} for el in l_status] + [{"status": s_status_end}]*3
+        o_mock_processing_execution.api_logs.return_value = "mes logs"
+        o_mock_processing_execution.api_update.return_value = None
+
+        with patch.object(ProcessingExecutionAction, "processing_execution", new_callable=PropertyMock) as o_mock_pe, \
+            patch.object(Config, "get_int", return_value=0) :
+            o_mock_pe.return_value = o_mock_processing_execution
+
+            # initialisation de ProcessingExecutionAction
+            o_pea = ProcessingExecutionAction("contexte", {})
+            s_return = o_pea.monitoring_until_end(f_callback)
+
+            # vérification valeur de sortie
+            self.assertEqual(s_return, s_status_end)
+
+            # vérification de l'attente
+            ## update
+            self.assertEqual(o_mock_processing_execution.api_update.call_count, len(l_status))
+            ##log + callback
+            if f_callback is not None:
+                self.assertEqual(o_mock_processing_execution.api_logs.call_count, len(l_status)+1)
+                self.assertEqual(f_callback.call_count, len(l_status)+1)
+                self.assertEqual(f_callback.mock_calls, [call("mes logs", el) for el in l_status+[s_status_end]])
+            else:
+                o_mock_processing_execution.api_logs.assert_not_called()
+
+    def test_monitoring_until_end(self)-> None:
+        """test de test_monitoring_until_end"""
+        s_status_end =  ProcessingExecution.STATUS_SUCCESS
+        for s_status_end in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+            self.monitoring_until_end_args(s_status_end, False, False)
+            self.monitoring_until_end_args(s_status_end, True, False)
+            self.monitoring_until_end_args(s_status_end, True, True)
+            self.monitoring_until_end_args(s_status_end, False, True)
