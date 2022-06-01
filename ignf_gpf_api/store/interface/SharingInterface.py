@@ -47,4 +47,12 @@ class SharingInterface(StoreEntity):
         Args:
             datastore_ids (List[str]): liste des identifiants des datastore avec qui arrêter de partager l'entité
         """
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_remove_sharings"
+        # Requête "delete"
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.DELETE,
+            route_params={self._entity_name: self.id, "last_event": datastore_ids},
+        )
         raise NotImplementedError("SharingInterface.api_remove_sharings")
