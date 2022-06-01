@@ -19,10 +19,10 @@ from ignf_gpf_api.Errors import GpfApiError
 class UploadActionTestCase(unittest.TestCase):
     """Tests UploadAction class.
 
-    cmd : python3 -m unittest -b tests.action.UploadActionTestCase
+    cmd : python3 -m unittest -b tests.workflow.action.UploadActionTestCase
     """
 
-    config_path = Path(__file__).parent.parent / "_config"
+    config_path = Path(__file__).parent.parent.parent / "_config"
 
     @classmethod
     def setUpClass(cls) -> None:
