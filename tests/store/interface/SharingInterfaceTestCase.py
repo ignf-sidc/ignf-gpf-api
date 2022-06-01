@@ -1,7 +1,7 @@
 import unittest
+from unittest.mock import patch
 import requests
 import requests_mock
-from unittest.mock import patch
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
 
