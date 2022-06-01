@@ -2,7 +2,7 @@
     "datasets": [
         {
             "data_dirs": [
-                "2_test_datasets_bad_md5/data"
+                "CANTON"
             ],
             "upload_infos": {
                 "description": "Jeu test vecteur avec dse clefs md5 toutes pourries.",
