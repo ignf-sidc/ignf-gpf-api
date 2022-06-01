@@ -1,5 +1,7 @@
-from pyclbr import Function
-from typing import Any, Dict, Optional
+import time
+from typing import Any, Callable, Dict, Optional
+
+from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.workflow.Errors import StepActionError
@@ -90,17 +92,37 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def monitoring_until_end(self, callback: Optional[Function] = None) -> Optional[bool]:
+    def monitoring_until_end(self, callback: Optional[Callable[[str, str], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
-        La fonction callback indiquée est exécutée en prenant en paramètre la différence de log entre deux vérifications.
+        La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
 
         Args:
-            callback (Optional[Function], optional): fonction de callback à exécuter avec la différence de log entre deux vérifications. Defaults to None.
+            callback (Optional[Callable[[str, str], None]], optional): fonction de callback à exécuter avec log du traitement et status du traitement (callback(logs, status)). Defaults to None.
 
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
         """
-        raise NotImplementedError("ProcessingExecutionAction.monitoring_until_end")
+        # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour facilité les testes
+        i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
+        Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
+        if self.processing_execution is None:
+            raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
+        s_status = self.processing_execution.get_store_properties()["status"]
+        while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+            # appel de la fonction affichant les logs
+            if callback is not None:
+                callback(self.processing_execution.api_logs(), s_status)
+            # On attend le temps demandé
+            time.sleep(i_nb_sec_between_check)
+            # On met à jour __processing_execution
+            self.processing_execution.api_update()
+            s_status = self.processing_execution.get_store_properties()["status"]
+        # Si on est sorti c'est que c'est fini
+        ## dernier affichage
+        if callback is not None:
+            callback(self.processing_execution.api_logs(), s_status)
+        ## on return le status de fin
+        return str(s_status)
 
     @property
     def processing_execution(self) -> Optional[ProcessingExecution]:
