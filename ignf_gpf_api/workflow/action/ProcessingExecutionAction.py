@@ -104,7 +104,6 @@ class ProcessingExecutionAction(ActionAbstract):
         """
         # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour facilité les testes
         i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
-        # s_check_message_pattern = Config().get("processing_execution", "check_message_pattern")
         Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
         if self.processing_execution is None:
             raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
