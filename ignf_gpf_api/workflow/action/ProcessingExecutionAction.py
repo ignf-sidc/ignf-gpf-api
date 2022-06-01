@@ -92,41 +92,38 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def monitoring_until_end(self, callback: Optional[Callable[[str], None]] = None) -> Optional[bool]:
+    def monitoring_until_end(self, callback: Optional[Callable[[str, str], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
-        La fonction callback indiquée est exécutée en prenant en paramètre la différence de log entre deux vérifications.
+        La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
 
         Args:
-            callback (Optional[Callable[[str], None]], optional): fonction de callback à exécuter avec la différence de log entre deux vérifications. Defaults to None.
+            callback (Optional[Callable[[str, str], None]], optional): fonction de callback à exécuter avec log du traitement et status du traitement (callback(logs, status)). Defaults to None.
 
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
         """
+        # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour facilité les testes
         i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
         # s_check_message_pattern = Config().get("processing_execution", "check_message_pattern")
         Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
-        if self.__processing_execution is None:
+        if self.processing_execution is None:
             raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
-        while self.__processing_execution.get_store_properties()["status"] not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
-            # On récupère met à jour __processing_execution
-            self.__processing_execution.api_update()
+        s_status = self.processing_execution.get_store_properties()["status"]
+        while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
             # appel de la fonction affichant les logs
             if callback is not None:
-                callback(self.__processing_execution.api_logs())
-            # affichage message suivi
-            Config().om.info(f"Le traitement {self.__processing_execution} a été interrompu.")
+                callback(self.processing_execution.api_logs(), s_status)
             # On attend le temps demandé
             time.sleep(i_nb_sec_between_check)
+            # On met à jour __processing_execution
+            self.processing_execution.api_update()
+            s_status = self.processing_execution.get_store_properties()["status"]
         # Si on est sorti c'est que c'est fini
-        # répartition des cas :
-        if self.__processing_execution.get_store_properties()["status"] == ProcessingExecution.STATUS_ABORTED:
-            Config().om.info(f"Le traitement {self.__processing_execution} a été interrompu.")
-            return None
-        if self.__processing_execution.get_store_properties()["status"] == ProcessingExecution.STATUS_SUCCESS:
-            Config().om.info(f"Le traitement {self.__processing_execution} s'est bien passé.")
-            return True
-        Config().om.warning(f"Le traitement {self.__processing_execution} s'est terminé en erreur.")
-        return False
+        ## dernier affichage
+        if callback is not None:
+            callback(self.processing_execution.api_logs(), s_status)
+        ## on return le status de fin
+        return str(s_status)
 
     @property
     def processing_execution(self) -> Optional[ProcessingExecution]:
