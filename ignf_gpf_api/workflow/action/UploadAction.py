@@ -1,7 +1,9 @@
-from typing import Any, Dict, List, Optional
+import time
+from typing import Any, Callable, Dict, List, Optional
 
 
 from ignf_gpf_api.Errors import GpfApiError
+from ignf_gpf_api.io.OutputManager import OutputManager
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Dataset import Dataset
 from ignf_gpf_api.io.Config import Config
@@ -138,6 +140,46 @@ class UploadAction:
         # sinon on retourne None
         return None
 
+    def monitor_until_end(self, callback: Optional[Callable[[str], None]] = None) -> Optional[bool]:
+        """Attend que chaque vérification soit terminée (en erreur ou en échec) avant de rendre la main.
+        La fonction callback indiquée est exécutée en prenant en paramètre un message de suivi du nombre de vérifications par statuts.
+
+        Args:
+            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi. Defaults to None.
+
+        Returns:
+            Optional[bool]: True si toutes les vérifications sont ok, sinon False
+        """
+        i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
+        s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
+        b_success: Optional[bool] = None
+        OutputManager().info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
+        if self.__upload is not None:
+            while b_success is None:
+                # On récupère les vérifications
+                d_checks = self.__upload.api_list_checks()
+                # On peut déterminer b_success s'il n'y en a plus en attente et en cours
+                if len(d_checks["asked"]) == len(d_checks["in_progress"]) == 0:
+                    b_success = len(d_checks["failed"]) == 0
+                # On affiche un rapport via la fonction de callback précisée
+                s_message = s_check_message_pattern.format(
+                    nb_asked=len(d_checks["asked"]),
+                    nb_in_progress=len(d_checks["in_progress"]),
+                    nb_passed=len(d_checks["passed"]),
+                    nb_failed=len(d_checks["failed"]),
+                )
+                if callback is not None:
+                    callback(s_message)
+                # On attend le temps demandé
+                time.sleep(i_nb_sec_between_check)
+            # Si on est sorti c'est que c'est tout bon
+            # On log le dernier rapport
+            if b_success:
+                Config().om.info(s_message)
+            else:
+                Config().om.warning(s_message)
+        return b_success
+
     @staticmethod
     def parse_tree(tree: List[Dict[str, Any]], prefix: str = "") -> Dict[str, int]:
         """Parse l'arborescence renvoyée par l'API en un dictionnaire associant le chemin de chaque fichier à sa taille.
@@ -163,9 +205,9 @@ class UploadAction:
                 d_files[s_chemin] = int(d_element["size"])
             elif d_element["type"] == "directory":
                 # Dossier, on itère dessus avec le nom du dossier comme préfixe
-                d_subfiles = UploadAction.parse_tree(d_element["children"], prefix=s_chemin)
+                d_sub_files = UploadAction.parse_tree(d_element["children"], prefix=s_chemin)
                 # On fusionne ces fichiers à notre dict principal
-                d_files = {**d_files, **d_subfiles}
+                d_files = {**d_files, **d_sub_files}
             else:
                 raise GpfApiError(f"Type d'élément rencontré dans l'arborescence '{d_element['type']}' non géré. Contacter le support.")
         return d_files
