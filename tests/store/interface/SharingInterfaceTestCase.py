@@ -50,7 +50,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
         o_api_requester = ApiRequester()
         # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
-            # on appelle la fonction à tester :api_list_comments
+            # on appelle la fonction à tester :api_list_sharings
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
             l_data_recupere = o_sharing_interface.api_list_sharings()
             # on vérifie que route_request est appelé correctement
