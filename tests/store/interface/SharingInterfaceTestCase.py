@@ -21,7 +21,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             # On effectue l ajout d'un commentaire
             # On instancie une entité à qui on va ajouter un commentaire
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
-            # On appelle la fonction api_add_comment
+            # On appelle la fonction api_add_sharings
             o_sharing_interface.api_add_sharings(["_id"])
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with(
