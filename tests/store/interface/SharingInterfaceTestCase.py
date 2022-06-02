@@ -70,7 +70,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             # On effectue la suppression d'un commentaire
             # On instancie une entité dont on va supprimer le partage de livraison
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
-            # On appelle la fonction api_remove_comment
+            # On appelle la fonction api_remove_sharing
             o_sharing_interface.api_remove_sharings(["_id"])
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with(
