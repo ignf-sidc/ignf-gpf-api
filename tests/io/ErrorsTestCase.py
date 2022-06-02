@@ -5,7 +5,7 @@ from ignf_gpf_api.io.Errors import (
     InternalServerError,
     NotAuthorizedError,
     NotFoundError,
-    RequestError,
+    StatusCodeError,
     RouteNotFoundError,
 )
 
@@ -33,18 +33,18 @@ class ErrorsTestCase(unittest.TestCase):
         raise NotAuthorizedError("url", "method", {}, {}, "response")
 
     @staticmethod
-    def raise_RequestError() -> None:
-        raise RequestError("url", "method", {}, {}, 100, "response")
+    def raise_StatusCodeError() -> None:
+        raise StatusCodeError("url", "method", {}, {}, 100, "response")
 
     @staticmethod
     def raise_RouteNotFoundError() -> None:
         raise RouteNotFoundError("route_name")
 
     def test_raise(self) -> None:
-        """On vérifie que les erreures fonctionnent bien."""
+        """On vérifie que les erreurs fonctionnent bien."""
         self.assertRaises(ConfigReaderError, ErrorsTestCase.raise_ConfigReaderError)
         self.assertRaises(InternalServerError, ErrorsTestCase.raise_InternalServerError)
         self.assertRaises(NotFoundError, ErrorsTestCase.raise_NotFoundError)
         self.assertRaises(NotAuthorizedError, ErrorsTestCase.raise_NotAuthorizedError)
-        self.assertRaises(RequestError, ErrorsTestCase.raise_RequestError)
+        self.assertRaises(StatusCodeError, ErrorsTestCase.raise_StatusCodeError)
         self.assertRaises(RouteNotFoundError, ErrorsTestCase.raise_RouteNotFoundError)
