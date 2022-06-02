@@ -2,11 +2,9 @@ import re
 import json
 from pathlib import Path
 
-from ignf_gpf_api.workflow.action.AbstractResolver import AbstractResolver
-from ignf_gpf_api.workflow.action.Errors import ResolveFileError, UnknowFileError, ResolverError
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
-from ignf_gpf_api.workflow.resolver.Errors import ResolverError
+from ignf_gpf_api.workflow.resolver.Errors import ResolveFileError, UnknowFileError, ResolverError
 
 
 class FileResolver(AbstractResolver):

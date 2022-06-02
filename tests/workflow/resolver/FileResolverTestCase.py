@@ -1,16 +1,16 @@
 from pathlib import Path
 import unittest
 
-from ignf_gpf_api.action.FileResolver import FileResolver
+from ignf_gpf_api.workflow.resolver.FileResolver import FileResolver
 
 
 class FileResolverTestCase(unittest.TestCase):
     """Tests FileResolverTestCase class.
 
-    cmd : python3 -m unittest -b tests.action.FileResolverTestCase
+    cmd : python3 -m unittest -b tests.workflow.resolver.FileResolverTestCase
     """
 
-    file_path = str(Path(__file__).parent.parent / "_data/action/FileResolver")
+    file_path = str(Path(__file__).parent.parent.parent / "_data/action/FileResolver")
 
     s_str_value: str = "contenu du fichier de type str"
     s_list_value: str = str('["info_1", "info_2"]')

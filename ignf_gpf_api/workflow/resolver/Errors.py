@@ -52,6 +52,9 @@ class NoEntityFoundError(GpfApiError):
         self.__resolver_name = resolver_name
         self.__to_solve = to_solve
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.__resolver_name}, {self.__to_solve})"
+
 
 class ResolveFileError(GpfApiError):
     """Classe d'erreur pour le résolveur FileResolver quand une erreur de fichier est levée.
