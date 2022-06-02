@@ -48,7 +48,7 @@ class ApiRequesterTestCase(unittest.TestCase):
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
         o_config = Config()
-        o_config.read(ApiRequesterTestCase.config_path / "test_resquester.ini")
+        o_config.read(ApiRequesterTestCase.config_path / "test_requester.ini")
         # On mock la classe d'authentification
         cls.o_mock_authentifier.start()
 
@@ -86,8 +86,8 @@ class ApiRequesterTestCase(unittest.TestCase):
         # Vérifications
         self.assertEqual(o_arc.exception.route_name, "non_existing")
 
-    def test_request_get(self) -> None:
-        """Test de request dans le cadre d'une requête get."""
+    def test_url_request_get(self) -> None:
+        """Test de url_request dans le cadre d'une requête get."""
         # Instanciation du ApiRequester
         o_api_requester = ApiRequester()
         # On mock...
@@ -110,8 +110,8 @@ class ApiRequesterTestCase(unittest.TestCase):
             s_text = json.dumps(self.data)
             self.assertEqual(o_history[0].text, s_text, "check text")
 
-    def test_request_post(self) -> None:
-        """Test de request dans le cadre d'une requête post."""
+    def test_url_request_post(self) -> None:
+        """Test de url_request dans le cadre d'une requête post."""
         # Instanciation du ApiRequester
         o_api_requester = ApiRequester()
         # On mock...
@@ -134,8 +134,8 @@ class ApiRequesterTestCase(unittest.TestCase):
             s_text = json.dumps(self.data)
             self.assertEqual(o_history[0].text, s_text, "check text")
 
-    def test_request_internal_server_error(self) -> None:
-        """Test de request dans le cadre de 3 erreurs internes de suite."""
+    def test_url_request_internal_server_error(self) -> None:
+        """Test de url_request dans le cadre de 3 erreurs internes de suite."""
         # Instanciation du ApiRequester
         o_api_requester = ApiRequester()
         # On mock...
@@ -147,7 +147,6 @@ class ApiRequesterTestCase(unittest.TestCase):
                     {"status_code": HTTPStatus.INTERNAL_SERVER_ERROR},
                     {"status_code": HTTPStatus.INTERNAL_SERVER_ERROR},
                     {"status_code": HTTPStatus.INTERNAL_SERVER_ERROR},
-                    {"status_code": HTTPStatus.INTERNAL_SERVER_ERROR},
                 ],
             )
             # On s'attend à une exception
@@ -156,5 +155,102 @@ class ApiRequesterTestCase(unittest.TestCase):
                 o_api_requester.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
             self.assertEqual(o_arc.exception.message, "L'exécution d'une requête a échoué après 3 tentatives")
-            # On a dû faire 4 requêtes
+            # On a dû faire 3 requêtes
             self.assertEqual(o_mock.call_count, 3, "o_mock.call_count == 3")
+
+    def test_url_request_bad_request(self) -> None:
+        """Test de url_request dans le cadre de 1 erreur bad request."""
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            # Une requête non réussie
+            o_mock.post(self.url, status_code=HTTPStatus.BAD_REQUEST)
+            # On s'attend à une exception
+            with self.assertRaises(GpfApiError) as o_arc:
+                # On effectue une requête
+                o_api_requester.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+            # On doit avoir un message d'erreur
+            self.assertEqual(o_arc.exception.message, "La requête formulée par le programme est incorrecte. Contactez le support.")
+            # On a dû faire 1 seule requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
+    def test_url_request_not_found(self) -> None:
+        """Test de url_request dans le cadre d'une erreur 404 (not found)."""
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            # Une requête non réussie
+            o_mock.post(
+                self.url,
+                [
+                    {"status_code": HTTPStatus.NOT_FOUND},
+                    {"status_code": HTTPStatus.NOT_FOUND},
+                    {"status_code": HTTPStatus.NOT_FOUND},
+                ],
+            )
+            # On s'attend à une exception
+            with self.assertRaises(GpfApiError) as o_arc:
+                # On effectue une requête
+                o_api_requester.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+            # On doit avoir un message d'erreur explicite
+            s_message = f"L'élément demandé n'existe pas. Contactez le support si vous n'êtes pas à l'origine de la demande. URL : {self.url}."
+            self.assertEqual(o_arc.exception.message, s_message)
+            # On a dû faire 1 seule requête (sortie immédiate dans ce cas)
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
+    def test_url_request_not_authorized(self) -> None:
+        """Test de url_request dans le cadre d'une erreur 403 ou 401 (not authorized)."""
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            with patch.object(Authentifier(), "revoke_token", return_value=None) as o_mock_revoke_token:
+                # Une requête avec comme codes retour 104, 403 puis 200
+                o_mock.post(
+                    self.url,
+                    [
+                        {"status_code": HTTPStatus.UNAUTHORIZED},
+                        {"status_code": HTTPStatus.FORBIDDEN},
+                        {"status_code": HTTPStatus.OK},
+                    ],
+                )
+                # Lancement de la requête
+                o_api_requester.url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+                # On a dû faire 3 requêtes
+                self.assertEqual(o_mock.call_count, 3, "o_mock.call_count == 3")
+                # On a dû faire 2 appels à revoke_token
+                self.assertEqual(o_mock_revoke_token.call_count, 2, "o_mock_revoke_token.call_count == 2")
+
+    def test_url_request_http_error(self) -> None:
+        """Test de url_request dans le cadre où on a une HTTPError."""
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            o_mock.get(self.url, exc=requests.HTTPError)
+            # On s'attend à une exception
+            with self.assertRaises(GpfApiError) as o_arc:
+                # Lancement de la requête
+                o_api_requester.url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
+            # On doit avoir un message d'erreur
+            self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
+            # On a dû faire 1 seule requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
+    def test_url_request_url_required(self) -> None:
+        """Test de url_request dans le cadre où on a une URLRequired."""
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            o_mock.get(self.url, exc=requests.URLRequired)
+            # On s'attend à une exception
+            with self.assertRaises(GpfApiError) as o_arc:
+                # Lancement de la requête
+                o_api_requester.url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
+            # On doit avoir un message d'erreur
+            self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
+            # On a dû faire 1 seule requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")

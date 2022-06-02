@@ -130,3 +130,24 @@ class AuthentifierTestCase(unittest.TestCase):
         self.assertTrue(o_mock_method.called)
         # Et ce 3 fois
         self.assertEqual(o_mock_method.call_count, 3)
+
+    def test_revoke_token(self) -> None:
+        """Vérifie le bon fonctionnement de revoke_token."""
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            # Une authentification réussie
+            o_mock.post(AuthentifierTestCase.url, json=AuthentifierTestCase.valid_token)
+            # On tente de récupérer un token...
+            s_token = Authentifier().get_access_token_string()
+            # Il doit être ok
+            self.assertEqual(s_token, "test_token")
+            # On a dû faire une requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+            # On appel la fonction revoke_token à tester
+            Authentifier().revoke_token()
+            # On tente de re-récupérer un token...
+            s_token = Authentifier().get_access_token_string()
+            # Il doit être ok
+            self.assertEqual(s_token, "test_token")
+            # On a dû faire une seconde requête
+            self.assertEqual(o_mock.call_count, 2, "o_mock.call_count == 2")
