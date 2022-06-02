@@ -2,8 +2,7 @@ import re
 import json
 from pathlib import Path
 from ignf_gpf_api.action.AbstractResolver import AbstractResolver
-from ignf_gpf_api.action.Errors import ResolveFileError
-from ignf_gpf_api.action.Errors import UnknowFileError
+from ignf_gpf_api.action.Errors import ResolveFileError, UnknowFileError, ResolverError
 from ignf_gpf_api.io.Config import Config
 
 
@@ -42,6 +41,9 @@ class FileResolver(AbstractResolver):
         p_path_text = Path(s_path)
         if p_path_text.exists():
             s_result = str(p_path_text.read_text(encoding="UTF-8").rstrip("\n"))
+            # si la string est vide
+            if not s_result:
+                raise ResolveFileError("fichier_string", f"le fichier {s_path} est vide")
         else:
             raise ResolveFileError("fichier_string", f"le fichier {p_path_text} n'existe pas")
         return s_result
@@ -55,14 +57,11 @@ class FileResolver(AbstractResolver):
         Returns:
             str: liste contenu dans le fichier
         """
-        p_path_list = Path(s_path)
-        if p_path_list.exists():
-            s_data = str(p_path_list.read_text(encoding="UTF-8").rstrip("\n"))
-            # on vérifie que cela est bien une liste
-            if not isinstance(s_data.strip("][").split(", "), list):
-                print("ce nest pas une liste")
-        else:
-            raise ResolveFileError("fichier_liste", f"le fichier {p_path_list} n'existe pas")
+        s_data = self.__resolve_str(s_path)
+        # on vérifie que cela est bien une liste
+        if not isinstance(json.loads(s_data), list):
+            raise ResolverError("fichier_list", f"le fichier {s_path} ne contient pas une liste")
+
         return s_data
 
     def __resolve_dict(self, s_path: str) -> str:
@@ -75,15 +74,11 @@ class FileResolver(AbstractResolver):
         Returns:
             str: dictionnaire contenu dans le fichier
         """
-        p_path_dict = Path(s_path)
-        if p_path_dict.exists():
-            s_data = str(p_path_dict.read_text(encoding="UTF-8").rstrip("\n"))
-            # on vérifie que cela est bien un dictionnaire
-            if not isinstance(json.loads(s_data), dict):
-                # le programme emet une erreur
-                print("ce nest pas un dictionnaire")
-        else:
-            raise ResolveFileError("fichier_dict", f"le fichier {p_path_dict} n'existe pas")
+        s_data = self.__resolve_str(s_path)
+        # on vérifie que cela est bien un dictionnaire
+        if not isinstance(json.loads(s_data), dict):
+            # le programme emet une erreur
+            raise ResolverError("fichier_dict", f"le fichier {s_path} ne contient pas un dictionnaire")
         return s_data
 
     def resolve(self, s_to_solve: str) -> str:
