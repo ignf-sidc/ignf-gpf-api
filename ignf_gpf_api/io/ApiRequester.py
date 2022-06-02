@@ -3,7 +3,7 @@ from io import BufferedReader
 import time
 import traceback
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List, Union
 import requests
 
 from ignf_gpf_api.Errors import GpfApiError
@@ -35,7 +35,7 @@ class ApiRequester(metaclass=Singleton):
         route_params: Optional[Dict[str, Any]] = None,
         method: str = "GET",
         params: Optional[Dict[str, Any]] = None,
-        data: Optional[Dict[str, Any]] = None,
+        data: Optional[Union[Dict[str, Any], List[Any]]] = None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]] = None,
     ) -> requests.Response:
         """Exécute une requête à l'API à partir du nom d'une route.
@@ -82,7 +82,7 @@ class ApiRequester(metaclass=Singleton):
         url: str,
         method: str = "GET",
         params: Optional[Dict[str, Any]] = None,
-        data: Optional[Dict[str, Any]] = None,
+        data: Optional[Union[Dict[str, Any], List[Any]]] = None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]] = None,
     ) -> requests.Response:
         """Effectue une requête à l'API à partir d'une url. La retente plusieurs fois s'il y a un problème.
@@ -91,15 +91,14 @@ class ApiRequester(metaclass=Singleton):
             url (str): url absolue de la requête
             method (str, optional): méthode de la requête. Defaults to "GET".
             params (Optional[Dict[str, Any]], optional): paramètres. Defaults to None.
-            data (Optional[Dict[str, Any]], optional): données. Defaults to None.
+            data (Optional[Union[Dict[str, Any], List[Any]]], optional): données. Defaults to None.
             files (Optional[Dict[str, Tuple[Any]]], optional): fichiers. Defaults to None.
 
         Returns:
             requests.Response: réponse si succès
         """
         # Définition du header
-        d_headers = Authentifier().get_http_header(json_content_type=True)
-        # Définition des proxies
+        d_headers = Authentifier().get_http_header(json_content_type=files is None)
         d_proxies = {
             "http": None,
             "https": None,

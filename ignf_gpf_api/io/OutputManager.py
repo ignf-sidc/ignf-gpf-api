@@ -1,4 +1,5 @@
 import logging
+from typing import Dict
 
 from ignf_gpf_api.pattern.Singleton import Singleton
 from ignf_gpf_api.io.Color import Color
@@ -9,7 +10,7 @@ class OutputManager(metaclass=Singleton):
 
     def __init__(self) -> None:
         self.__logger = logging.getLogger(__name__)
-        self.__logger.setLevel(logging.INFO)
+        self.__logger.setLevel(logging.DEBUG)
 
     def debug(self, message: str) -> None:
         """Ajout d'un message de type debug
@@ -62,3 +63,19 @@ class OutputManager(metaclass=Singleton):
             self.__logger.critical("ERREUR FATALE - %s", message)
         else:
             self.__logger.critical("%sERREUR FATALE - %s%s", Color.RED, message, Color.END)
+
+    def setLogLevel(self, level: str) -> None:
+        """Défini le niveau de log du logger.
+
+        Args:
+            level (str): niveau de log (DEBUG, INFO, WARNING, ERROR ou CRITICAL)
+        """
+        d_level: Dict[str, int] = {
+            "DEBUG": logging.DEBUG,
+            "INFO": logging.INFO,
+            "WARNING": logging.WARNING,
+            "ERROR": logging.ERROR,
+            "CRITICAL": logging.CRITICAL,
+        }
+        if level in d_level:
+            self.__logger.setLevel(d_level[level])
