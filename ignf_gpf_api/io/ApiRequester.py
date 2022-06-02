@@ -10,7 +10,7 @@ from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.pattern.Singleton import Singleton
 from ignf_gpf_api.io.JsonConverter import JsonConverter
-from ignf_gpf_api.io.Errors import RouteNotFoundError, InternalServerError, NotFoundError, NotAuthorizedError, BadRequestError, RequestError
+from ignf_gpf_api.io.Errors import ApiError, RouteNotFoundError, InternalServerError, NotFoundError, NotAuthorizedError, BadRequestError, StatusCodeError
 from ignf_gpf_api.io.Config import Config
 
 
@@ -54,7 +54,7 @@ class ApiRequester(metaclass=Singleton):
             NotFoundError: levée si l'entité demandée n'est pas trouvée par l'API
             NotAuthorizedError: levée si l'action effectuée demande d'autre autorisations
             BadRequestError: levée si la requête envoyée n'est pas correcte
-            RequestError: levée si une erreur non spécifique a lieu
+            StatusCodeError: levée si un "status code" non prévu est récupéré
 
         Returns:
             requests.Response: réponse vérifiée
@@ -97,8 +97,6 @@ class ApiRequester(metaclass=Singleton):
         Returns:
             requests.Response: réponse si succès
         """
-        # Définition du header
-        d_headers = Authentifier().get_http_header(json_content_type=files is None)
         d_proxies = {
             "http": None,
             "https": None,
@@ -107,6 +105,8 @@ class ApiRequester(metaclass=Singleton):
         while True:
             i_nb_attempts += 1
             try:
+                # Définition du header
+                d_headers = Authentifier().get_http_header(json_content_type=files is None)
                 # Execution de la requête
                 r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=d_proxies, files=files)  # type:ignore
 
@@ -124,14 +124,37 @@ class ApiRequester(metaclass=Singleton):
                 # on peut lever l'exception
                 if r.status_code in (403, 401):
                     # Action non autorisée
+                    Authentifier().revoke_token()  # On révoque le token
                     raise NotAuthorizedError(url, method, params, data, r.text)
                 if r.status_code == 400:
                     # Requête incorrecte
                     raise BadRequestError(url, method, params, data, r.text)
                 # Autre erreur
-                raise RequestError(url, method, params, data, r.status_code, r.text)
-            except Exception as e_error:
-                Config().om.warning(f"L'exécution d'une requête a échoué (tentative {i_nb_attempts}/{self.__nb_attempts})...")
+                raise StatusCodeError(url, method, params, data, r.status_code, r.text)
+
+            except NotFoundError as e_error:
+                # Si l'entité n'est pas trouvée, on ne retente pas, on sort directement en erreur
+                s_message = f"L'élément demandé n'existe pas. Contactez le support si vous n'êtes pas à l'origine de la demande. URL : {e_error.url}."
+                Config().om.error(s_message)
+                raise GpfApiError(s_message) from e_error
+
+            except (requests.HTTPError, requests.URLRequired) as e_error:
+                # S'il y a une erreur d'URL, on ne retente pas, on indique de contacter le support
+                s_message = "L'url indiquée en configuration est invalide ou inexistante. Contactez le support."
+                Config().om.error(s_message)
+                raise GpfApiError(s_message) from e_error
+
+            except BadRequestError as e_error:
+                # S'il y a une erreur de requête incorrecte, on ne retente pas, on indique de contacter le support
+                s_message = "La requête formulée par le programme est incorrecte. Contactez le support."
+                Config().om.error(s_message)
+                raise GpfApiError(s_message) from e_error
+
+            except (ApiError, requests.RequestException) as e_error:
+                # Pour les autres erreurs, on retente selon les paramètres indiqués.
+                # On récupère la classe de l'erreur histoire que ce soit plus parlant...
+                s_title = e_error.__class__.__name__
+                Config().om.warning(f"L'exécution d'une requête a échoué (tentative {i_nb_attempts}/{self.__nb_attempts})... ({s_title})")
                 # Affiche la pile d'exécution
                 Config().om.debug(traceback.format_exc())
                 # Une erreur s'est produite : attend un peu et relance une nouvelle fois la fonction
