@@ -7,7 +7,7 @@ from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
 
 class ProcessingExecutionTestCase(unittest.TestCase):
-    """Tests CommentInterface class.
+    """Tests ProcessingExecution class.
 
     cmd : python3 -m unittest -b tests.store.ProcessingExecutionTestCase
     """
