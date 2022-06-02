@@ -3,6 +3,7 @@
         "EPSG",
         "ignf",
         "mypy",
+        "pathes",
         "pylint",
         "pylintrc",
         "pypi",
@@ -11,6 +12,7 @@
         "setuptools",
         "sharings",
         "testpypi",
+        "UNPUBLISHING",
         "venv",
         "virtualenv"
     ],

@@ -7,6 +7,13 @@ class ProcessingExecution(StoreEntity):
     _entity_name = "processing_execution"
     _entity_title = "exécution d'un traitement"
 
+    STATUS_CREATED = "CREATED"
+    STATUS_WAITING = "WAITING"
+    STATUS_PROGRESS = "PROGRESS"
+    STATUS_SUCCESS = "SUCCESS"
+    STATUS_FAILURE = "FAILURE"
+    STATUS_ABORTED = "ABORTED"
+
     def api_logs(self) -> str:
         """Récupère les logs de cette exécution de traitement sur l'API.
 

@@ -153,9 +153,9 @@ get_access_string(): str</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>664</x>
-      <y>448</y>
+      <y>416</y>
       <w>232</w>
-      <h>112</h>
+      <h>144</h>
     </coordinates>
     <panel_attributes>store:Upload
 --
@@ -163,9 +163,12 @@ api_push_data_file(file_path, api_path)
 api_push_md5_file(file_path)
 api_open()
 api_close()
+api_tree()
 --
-api_add_check()
-api_list_checks()</panel_attributes>
+api_list_checks()
+api_run_checks(check_ids)
+--
+is_open()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -226,14 +229,14 @@ m2=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>72</x>
-      <y>608</y>
+      <x>176</x>
+      <y>648</y>
       <w>176</w>
       <h>80</h>
     </coordinates>
     <panel_attributes>store:ProcessingExecution
 --
-api_get_logs()
+api_logs()
 api_launch()
 api_abort()</panel_attributes>
     <additional_attributes/>
@@ -257,13 +260,11 @@ api_abort()</panel_attributes>
       <x>376</x>
       <y>640</y>
       <w>128</w>
-      <h>72</h>
+      <h>48</h>
     </coordinates>
     <panel_attributes>store:StoredData
 --
-api_list_sharings()
-api_add_sharing()
-api_delete_sharing()</panel_attributes>
+api_edit(data_edit)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -342,13 +343,13 @@ api_edit()</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>152</x>
-      <y>528</y>
-      <w>248</w>
-      <h>96</h>
+      <x>256</x>
+      <y>544</y>
+      <w>160</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>290.0;10.0;10.0;100.0</additional_attributes>
+    <additional_attributes>180.0;10.0;10.0;130.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -388,9 +389,9 @@ m2=0..1</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>384</x>
-      <y>408</y>
+      <y>416</y>
       <w>192</w>
-      <h>144</h>
+      <h>136</h>
     </coordinates>
     <panel_attributes>/store:StoreEntity/
 --
@@ -404,5 +405,29 @@ api_delete()
 to_json(): str
 __str__(): str</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>552</y>
+      <w>176</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>store:ProcessingExecution
+--
+api_logs()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>288</x>
+      <y>536</y>
+      <w>112</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>120.0;10.0;10.0;40.0</additional_attributes>
   </element>
 </diagram>
