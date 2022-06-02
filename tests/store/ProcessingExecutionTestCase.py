@@ -49,6 +49,7 @@ class ProcessingExecutionTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with(
                 "processing_execution_launch",
                 route_params={"processing_execution": "id_entité"},
+                method=ApiRequester.POST,
             )
 
     def test_api_abort(self) -> None:
@@ -65,4 +66,5 @@ class ProcessingExecutionTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with(
                 "processing_execution_abort",
                 route_params={"processing_execution": "id_entité"},
+                method=ApiRequester.POST,
             )
