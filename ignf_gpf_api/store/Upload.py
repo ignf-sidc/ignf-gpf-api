@@ -18,6 +18,15 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
     _entity_name = "upload"
     _entity_title = "livraison"
 
+    STATUS_CREATED = "CREATED"
+    STATUS_OPEN = "OPEN"
+    STATUS_CLOSED = "CLOSED"
+    STATUS_CHECKING = "CHECKING"
+    STATUS_GENERATING = "GENERATING"
+    STATUS_MODIFYING = "MODIFYING"
+    STATUS_UNSTABLE = "UNSTABLE"
+    STATUS_DELETED = "DELETED"
+
     def api_push_data_file(self, file_path: Path, api_path: str) -> None:
         """Envoie un fichier de donnée à la livraison.
 
