@@ -149,8 +149,8 @@ class BadRequestError(_WithResponseError):
     """Mauvaise requête"""
 
 
-class RequestError(_WithResponseError):
-    """Erreur interne à l'API"""
+class StatusCodeError(_WithResponseError):
+    """Erreur avec un "status code" non prévu par une erreur explicite..."""
 
     def __init__(
         self,
