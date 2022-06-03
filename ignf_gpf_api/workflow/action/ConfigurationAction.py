@@ -45,7 +45,7 @@ class ConfigurationAction(ActionAbstract):
         if self.__configuration and self.definition_dict and "comments" in self.definition_dict and self.definition_dict["comments"] != {}:
             for s_comment in self.definition_dict["comments"]:
                 self.__configuration.api_add_comment({"text": s_comment})
-            Config().om.info(f"Configuration {self.__configuration}: les {len(self.definition_dict['comments'])} comments ont été ajoutés avec succès.")
+            Config().om.info(f"Configuration {self.__configuration}: les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
 
     @property
     def configuration(self) -> Optional[Configuration]:
