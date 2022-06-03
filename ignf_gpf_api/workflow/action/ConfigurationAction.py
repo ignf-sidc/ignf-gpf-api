@@ -35,14 +35,14 @@ class ConfigurationAction(ActionAbstract):
     def __add_tags(self) -> None:
         """Ajout des tags sur la Configuration."""
         # on verifie que la configuration et definition_dict ne sont pas null et on verifie qu'il y'a bien une clé tags
-        if self.__configuration is not None and self.definition_dict is not None and self.definition_dict["tags"]:
+        if self.__configuration and self.definition_dict and "tags" in self.definition_dict and self.definition_dict["tags"] != {}:
             self.__configuration.api_add_tags(self.definition_dict["tags"])
             Config().om.info(f"Configuration {self.__configuration}: les {len(self.definition_dict['tags'])} tags ont été ajoutés avec succès.")
 
     def __add_comments(self) -> None:
         """Ajout des commentaires sur la Configuration."""
         # on verifie que la configuration et definition_dict ne sont pas null et on verifie qu'il y'a bien une clé comments
-        if self.__configuration is not None and self.definition_dict is not None and self.definition_dict["comments"]:
+        if self.__configuration and self.definition_dict and "comments" in self.definition_dict and self.definition_dict["comments"] != {}:
             for s_comment in self.definition_dict["comments"]:
                 self.__configuration.api_add_comment({"text": s_comment})
             Config().om.info(f"Configuration {self.__configuration}: les {len(self.definition_dict['comments'])} comments ont été ajoutés avec succès.")
