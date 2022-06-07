@@ -1,5 +1,6 @@
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.workflow.Errors import WorkflowError
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
@@ -32,7 +33,7 @@ class Workflow:
         """
         return self.__raw_definition_dict
 
-    def run_step(self, step_name: str) -> None:
+    def run_step(self, step_name: str, callback: Optional[Callable[[str, str], None]] = None) -> None:
         """Lance une étape du workflow à partir de son nom
         Args:
             step_name (string): nom de l'étape
@@ -52,6 +53,13 @@ class Workflow:
             o_action.resolve()
             # exécution de l'action :
             o_action.run()
+            # on attend la fin de l'exécution si besoin
+            if isinstance(o_action, ProcessingExecutionAction):
+                s_status = o_action.monitoring_until_end(callback=callback)
+                if s_status != ProcessingExecution.STATUS_SUCCESS:
+                    s_error_message = f"Le ProcessingExecution {o_action} ne s'est pas bien passé. Sortie {s_status}"
+                    Config().om.error(s_error_message)
+                    raise WorkflowError(s_error_message)
             # cette action sera la parente de la suivante
             l_parentes = o_action
 
