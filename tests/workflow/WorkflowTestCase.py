@@ -10,6 +10,8 @@ from ignf_gpf_api.workflow.action.ConfigurationAction import ConfigurationAction
 from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
 from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
 
+# pylint:disable=too-many-statements
+
 
 class WorkflowTestCase(unittest.TestCase):
     """Tests UploadAction class.
@@ -65,7 +67,7 @@ class WorkflowTestCase(unittest.TestCase):
         with patch.object(Workflow, "generate", return_value=o_mock_action) as o_mock_action_generate:
             # test pour une action
             o_workflow.run_step("mise-en-base")
-            o_mock_action.run.assert_called_once()
+            o_mock_action.run.assert_called_once_with()
             o_mock_action_generate.assert_called_once_with("mise-en-base/action1", {"type": "action1"}, None)
             o_mock_action.resolve.assert_called_once_with()
             o_mock_action.run.assert_called_once_with()
@@ -81,6 +83,68 @@ class WorkflowTestCase(unittest.TestCase):
             o_mock_action_generate.assert_any_call("mise-en-base2/action2-2", {"type": "action2-2"}, o_mock_action)
             self.assertEqual(o_mock_action.resolve.call_count, 2)
             self.assertEqual(o_mock_action.run.call_count, 2)
+
+        # test pour ProcessingExecutionAction
+
+        # fonction callback
+        def callback(logs: str, status: str) -> None:
+            """fonction bidon pour affichage logs du traitement
+
+            Args:
+                logs (str): logs
+                status (str): status du traitement
+            """
+            print(logs, status)
+
+        # reset / config des mock
+        o_mock_action_generate.reset_mock()
+
+        o_mock_processing_execution_action = MagicMock(spec=ProcessingExecutionAction)
+        o_mock_processing_execution_action.resolve.return_value = None
+        o_mock_processing_execution_action.run.return_value = None
+
+        with patch.object(Workflow, "generate", return_value=o_mock_processing_execution_action) as o_mock_action_generate:
+            # sortie en success
+            o_mock_processing_execution_action.monitoring_until_end.return_value = "SUCCESS"
+            o_workflow.run_step("mise-en-base")
+            o_mock_processing_execution_action.run.assert_called_once_with()
+            o_mock_action_generate.assert_called_once_with("mise-en-base/action1", {"type": "action1"}, None)
+            o_mock_processing_execution_action.resolve.assert_called_once_with()
+            o_mock_processing_execution_action.run.assert_called_once_with()
+            o_mock_processing_execution_action.monitoring_until_end.assert_called_once_with(callback=None)
+
+            # reset des mock
+            o_mock_action_generate.reset_mock()
+            o_mock_processing_execution_action.reset_mock()
+
+            # sortie en success avec callback
+            o_mock_processing_execution_action.monitoring_until_end.return_value = "SUCCESS"
+            o_workflow.run_step("mise-en-base", callback)
+            o_mock_processing_execution_action.run.assert_called_once_with()
+            o_mock_action_generate.assert_called_once_with("mise-en-base/action1", {"type": "action1"}, None)
+            o_mock_processing_execution_action.resolve.assert_called_once_with()
+            o_mock_processing_execution_action.run.assert_called_once_with()
+            o_mock_processing_execution_action.monitoring_until_end.assert_called_once_with(callback=callback)
+
+            # reset des mock
+            o_mock_action_generate.reset_mock()
+            o_mock_processing_execution_action.reset_mock()
+
+            # sortie en FAILURE
+            o_mock_processing_execution_action.monitoring_until_end.return_value = "FAILURE"
+            with self.assertRaises(WorkflowError) as o_arc:
+                o_workflow.run_step("mise-en-base")
+            self.assertEqual(o_arc.exception.message, f"Le ProcessingExecution {o_mock_processing_execution_action} ne c'est pas bien passé. Sortie FAILURE")
+
+            # reset des mock
+            o_mock_action_generate.reset_mock()
+            o_mock_processing_execution_action.reset_mock()
+
+            # sortie en ABORTED
+            o_mock_processing_execution_action.monitoring_until_end.return_value = "ABORTED"
+            with self.assertRaises(WorkflowError) as o_arc:
+                o_workflow.run_step("mise-en-base")
+            self.assertEqual(o_arc.exception.message, f"Le ProcessingExecution {o_mock_processing_execution_action} ne c'est pas bien passé. Sortie ABORTED")
 
     def run_generation(self, expected_type: Type[ActionAbstract], name: str, dico_def: Dict[str, Any], parent: Optional[ActionAbstract] = None) -> None:
         """lancement de la commande de génération
