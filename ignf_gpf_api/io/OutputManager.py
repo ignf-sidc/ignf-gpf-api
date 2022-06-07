@@ -64,7 +64,7 @@ class OutputManager(metaclass=Singleton):
         else:
             self.__logger.critical("%sERREUR FATALE - %s%s", Color.RED, message, Color.END)
 
-    def setLogLevel(self, level: str) -> None:
+    def set_log_level(self, level: str) -> None:
         """Défini le niveau de log du logger.
 
         Args:
