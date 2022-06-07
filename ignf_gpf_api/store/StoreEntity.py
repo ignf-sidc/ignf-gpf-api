@@ -63,11 +63,12 @@ class StoreEntity(ABC):
     ##############################################################
 
     @classmethod
-    def api_create(cls: Type[T], data: Optional[Dict[str, Any]]) -> T:
+    def api_create(cls: Type[T], data: Optional[Dict[str, Any]], route_params: Optional[Dict[str, Any]] = None) -> T:
         """Crée une nouvelle entité dans l'API.
 
         Args:
             data (Optional[Dict[str, Any]]): Données nécessaires pour la création
+            route_params (Optional[Dict[str, Any]]): paramètres de résolution de la route. Defaults to None.
 
         Returns:
             StoreEntity: entité créée
@@ -77,6 +78,7 @@ class StoreEntity(ABC):
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
+            route_params=route_params,
             method=ApiRequester.POST,
             data=data,
         )
