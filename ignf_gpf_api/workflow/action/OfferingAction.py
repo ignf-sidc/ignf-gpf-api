@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
+from ignf_gpf_api.io.Config import Config
 
 
 class OfferingAction(ActionAbstract):
@@ -24,7 +25,8 @@ class OfferingAction(ActionAbstract):
 
     def __create_offering(self) -> None:
         """Création de la Offering sur l'API à partir des paramètres de définition de l'action."""
-        raise NotImplementedError("OfferingAction.__create_offering")
+        Config().om.info("Création d'une offre...")
+        self.__offering = Offering.api_create(self.definition_dict["parameters"])
 
     @property
     def offering(self) -> Optional[Offering]:
