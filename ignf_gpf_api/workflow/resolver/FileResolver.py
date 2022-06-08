@@ -4,7 +4,7 @@ from pathlib import Path
 
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
-from ignf_gpf_api.workflow.resolver.Errors import ResolveFileError, UnknowFileError, ResolverError
+from ignf_gpf_api.workflow.resolver.Errors import UnknownFileError, ResolveFileInvalidError, ResolveFileNotFoundError, ResolverError
 
 
 class FileResolver(AbstractResolver):
@@ -30,10 +30,11 @@ class FileResolver(AbstractResolver):
 
     _file_regex = re.compile(Config().get("workflow_resolution_regex", "file_regex"))
 
-    def __resolve_str(self, s_path: str) -> str:
+    def __resolve_str(self, s_to_solve: str, s_path: str) -> str:
         """fonction privé qui se charge d'extraire une string d'un fichier texte
            on valide que le contenu est bien un texte
         Args:
+            s_to_solve (str): string
             s_path (str): string du path du fichier à ouvrir
 
         Returns:
@@ -42,44 +43,53 @@ class FileResolver(AbstractResolver):
         p_path_text = Path(s_path)
         if p_path_text.exists():
             s_result = str(p_path_text.read_text(encoding="UTF-8").rstrip("\n"))
-            # si la string est vide
-            if not s_result:
-                raise ResolveFileError("fichier_string", f"le fichier {s_path} est vide")
         else:
-            raise ResolveFileError("fichier_string", f"le fichier {p_path_text} n'existe pas")
+            raise ResolveFileNotFoundError(self.name, f"le fichier {s_to_solve} n'existe pas")
         return s_result
 
-    def __resolve_list(self, s_path: str) -> str:
+    def __resolve_list(self, s_to_solve: str, s_path: str) -> str:
         """fonction privé qui se charge d'extraire une string d'un fichier contenant une liste
            on valide que le contenu est bien une liste
 
         Args:
+            s_to_solve (str): string
             s_path (str): string du path du fichier à ouvrir
         Returns:
             str: liste contenu dans le fichier
         """
-        s_data = self.__resolve_str(s_path)
+        s_data = self.__resolve_str(s_to_solve, s_path)
         # on vérifie que cela est bien une liste
-        if not isinstance(json.loads(s_data), list):
-            raise ResolverError("fichier_list", f"le fichier {s_path} ne contient pas une liste")
+        try:
+            l_to_solve = json.loads(s_data)
+        except json.decoder.JSONDecodeError as e_not_list:
+            raise ResolveFileInvalidError(self.name, f"le fichier {s_to_solve} n'est pas valide") from e_not_list
+
+        if not isinstance(l_to_solve, list):
+            raise ResolveFileInvalidError(self.name, f"le fichier {s_to_solve} ne contient pas une liste")
 
         return s_data
 
-    def __resolve_dict(self, s_path: str) -> str:
+    def __resolve_dict(self, s_to_solve: str, s_path: str) -> str:
         """fonction privé qui se charge d'extraire une string d'un fichier contenant un dictionnaire
            on valide que le contenu est bien un dictionnaire
 
         Args:
+            s_to_solve (str): string
             s_path (str): string du path du fichier à ouvrir
 
         Returns:
             str: dictionnaire contenu dans le fichier
         """
-        s_data = self.__resolve_str(s_path)
+        s_data = self.__resolve_str(s_to_solve, s_path)
         # on vérifie que cela est bien un dictionnaire
-        if not isinstance(json.loads(s_data), dict):
+        try:
+            d_to_solve = json.loads(s_data)
+        except json.decoder.JSONDecodeError as e_not_list:
+            raise ResolveFileInvalidError(self.name, f"le fichier {s_to_solve} n'est pas valide") from e_not_list
+
+        if not isinstance(d_to_solve, dict):
             # le programme emet une erreur
-            raise ResolverError("fichier_dict", f"le fichier {s_path} ne contient pas un dictionnaire")
+            raise ResolveFileInvalidError(self.name, f"le fichier {s_to_solve} ne contient pas un dictionnaire")
         return s_data
 
     def resolve(self, s_to_solve: str) -> str:
@@ -100,14 +110,14 @@ class FileResolver(AbstractResolver):
         # On cherche les résolutions à effectuer
         o_result = FileResolver._file_regex.search(s_to_solve)
         if o_result is None:
-            raise ResolveFileError(self.name, s_to_solve)
+            raise ResolverError(self.name, s_to_solve)
         d_groups = o_result.groupdict()
         if d_groups["resolver_type"] == "str":
-            s_result = str(self.__resolve_str(d_groups["resolver_file"]))
+            s_result = str(self.__resolve_str(s_to_solve, d_groups["resolver_file"]))
         elif d_groups["resolver_type"] == "list":
-            s_result = str(self.__resolve_list(d_groups["resolver_file"]))
+            s_result = str(self.__resolve_list(s_to_solve, d_groups["resolver_file"]))
         elif d_groups["resolver_type"] == "dict":
-            s_result = str(self.__resolve_dict(d_groups["resolver_file"]))
+            s_result = str(self.__resolve_dict(s_to_solve, d_groups["resolver_file"]))
         else:
-            raise UnknowFileError(s_to_solve, "type inconnu")
+            raise UnknownFileError(self.name, s_to_solve)
         return s_result
