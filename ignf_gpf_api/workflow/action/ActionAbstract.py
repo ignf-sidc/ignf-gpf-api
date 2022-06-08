@@ -38,7 +38,7 @@ class ActionAbstract(ABC):
         """Résout la définition de l'action"""
         Config().om.info("Résolution de la configuration...")
         # Pour faciliter la résolution, on repasse la définition de l'action en json
-        s_definition = str(json.dumps(self.__definition_dict, indent=4))
+        s_definition = str(json.dumps(self.__definition_dict, indent=4, ensure_ascii=False))
         # lancement des résolveurs
         s_resolved_definition = GlobalResolver().resolve(s_definition)
         # on repasse en json
