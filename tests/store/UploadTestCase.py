@@ -76,8 +76,8 @@ class UploadTestCase(unittest.TestCase):
                 # Vérification sur o_mock_open (lecture binary)
                 o_mock_open.assert_called_once_with("rb")
 
-    def test_api_delete_data_file(self) -> None:
-        "Vérifie le bon fonctionnement de api_delete_data_file."
+    def test_api_delete_data_file_1(self) -> None:
+        "Vérifie le bon fonctionnement de api_delete_data_file si le chemin ne contient pas data/."
         # On instancie une livraison pour laquelle on veut supprimer des fichiers
         # peu importe si la livraison comporte ou pas des fichiers
         o_upload = Upload({"_id": "id_de_test"})
@@ -96,6 +96,28 @@ class UploadTestCase(unittest.TestCase):
                 method=ApiRequester.DELETE,
                 route_params={"upload": "id_de_test"},
                 params={"path": s_api_path},
+            )
+
+    def test_api_delete_data_file_2(self) -> None:
+        "Vérifie le bon fonctionnement de api_delete_data_file si le chemin contient data/."
+        # On instancie une livraison pour laquelle on veut supprimer des fichiers
+        # peu importe si la livraison comporte ou pas des fichiers
+        o_upload = Upload({"_id": "id_de_test"})
+        # on prend un chemin coté api
+        s_api_path = "data/path/cote/api"
+
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        o_api_requester = ApiRequester()
+        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+            # On appelle la fonction que l'on veut tester
+            o_upload.api_delete_data_file(s_api_path)
+
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "upload_delete_data",
+                method=ApiRequester.DELETE,
+                route_params={"upload": "id_de_test"},
+                params={"path": s_api_path[5:]},  # le data/ a dû être retiré
             )
 
     def test_api_delete_md5_file(self) -> None:
