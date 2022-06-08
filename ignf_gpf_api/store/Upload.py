@@ -54,10 +54,15 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
 
     def api_delete_data_file(self, api_path: str) -> None:
         """Supprime un fichier de donnée de la livraison.
+        Retire data/ de devant le chemin si jamais il le contient.
 
         Args:
             api_path (str): chemin distant vers le fichier à supprimer
         """
+        # On retire data/ de devant le chemin si jamais il le contient
+        if api_path.startswith("data/"):
+            api_path = api_path[5:]
+
         # Génération du nom de la route
         s_route = f"{self._entity_name}_delete_data"
 
