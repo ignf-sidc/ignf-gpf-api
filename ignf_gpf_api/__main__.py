@@ -161,7 +161,7 @@ def upload(o_args: argparse.Namespace) -> None:
         for o_dataset in o_dfu.datasets:
             o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
             o_upload = o_ua.run()
-            if o_ua.monitor_until_end(print):
+            if UploadAction.monitor_until_end(o_upload, print):
                 print(f"Livraison {o_upload} créée avec succès.")
             else:
                 print(f"Livraison {o_upload} créée en erreur !")

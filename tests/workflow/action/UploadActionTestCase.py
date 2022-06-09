@@ -276,44 +276,50 @@ class UploadActionTestCase(unittest.TestCase):
     def test_monitor_until_end_ok(self) -> None:
         """Vérifie le bon fonctionnement de monitor_until_end si à la fin c'est ok."""
         # 2 réponses possibles pour api_list_checks : il faut attendre ou c'est tout ok
-        d_list_checks_wait = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
+        d_list_checks_wait_1 = {"asked": [{}, {}],"in_progress": [],"passed": [],"failed": []}
+        d_list_checks_wait_2 = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
         d_list_checks_ok = {"asked": [],"in_progress": [],"passed": [{},{}],"failed": []}
-        # On instancie un faux Dataset et un UploadAction à tester
-        o_mock_dataset = MagicMock()
-        o_ua = UploadAction(o_mock_dataset)
         # On patch la fonction api_list_checks de l'upload
         # elle renvoie une liste avec des traitements en attente 2 fois puis une liste avec que des succès
-        l_returns = [d_list_checks_wait, d_list_checks_wait, d_list_checks_ok]
+        l_returns = [d_list_checks_wait_1, d_list_checks_wait_2, d_list_checks_ok]
         with patch.object(Upload, "api_list_checks", side_effect=l_returns) as o_mock_list_checks:
-            # On instancie un Upload et on le défini comme attribut privée de UploadAction
+            # On instancie un Upload
             o_upload = Upload({"_id": "id_upload_monitor"})
-            o_ua._UploadAction__upload = o_upload  # type: ignore
+            # On instancie un faut callback
+            f_callback = MagicMock()
             # On effectue le monitoring
-            b_result = o_ua.monitor_until_end()
-            # Vérification sur o_mock_list_checks : a dû être appelé 3 fois
+            b_result = UploadAction.monitor_until_end(o_upload, f_callback)
+            # Vérification sur o_mock_list_checks et f_callback: ont dû être appelés 3 fois
             self.assertEqual(o_mock_list_checks.call_count, 3)
+            self.assertEqual(f_callback.call_count, 3)
+            f_callback.assert_any_call("Vérifications : 2 en attente, 0 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 1 en attente, 1 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 0 en attente, 0 en cours, 0 en échec, 2 en succès")
             # Vérifications sur b_result : doit être finalement ok
             self.assertTrue(b_result)
 
     def test_monitor_until_end_ko(self) -> None:
         """Vérifie le bon fonctionnement de monitor_until_end si à la fin c'est ko."""
-        # 2 réponses possibles pour api_list_checks : il faut attendre ou il y a un pb
-        d_list_checks_wait = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
+        # 3 réponses possibles pour api_list_checks : 2 il faut attendre, 1 il y a un pb
+        d_list_checks_wait_1 = {"asked": [{}, {}],"in_progress": [],"passed": [],"failed": []}
+        d_list_checks_wait_2 = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
         d_list_checks_ko = {"asked": [],"in_progress": [],"passed": [{}],"failed": [{}]}
-        # On instancie un faux Dataset et un UploadAction à tester
-        o_mock_dataset = MagicMock()
-        o_ua = UploadAction(o_mock_dataset)
         # On patch la fonction api_list_checks de l'upload
         # elle renvoie une liste avec des traitements en attente 2 fois puis une liste avec des erreurs
-        l_returns = [d_list_checks_wait, d_list_checks_wait, d_list_checks_ko]
+        l_returns = [d_list_checks_wait_1, d_list_checks_wait_2, d_list_checks_ko]
         with patch.object(Upload, "api_list_checks", side_effect=l_returns) as o_mock_list_checks:
-            # On instancie un Upload et on le défini comme attribut privée de UploadAction
+            # On instancie un Upload
             o_upload = Upload({"_id": "id_upload_monitor"})
-            o_ua._UploadAction__upload = o_upload  # type: ignore
+            # On instancie un faut callback
+            f_callback = MagicMock()
             # On effectue le monitoring
-            b_result = o_ua.monitor_until_end()
-            # Vérification sur o_mock_list_checks : a dû être appelé 3 fois
+            b_result = UploadAction.monitor_until_end(o_upload, f_callback)
+            # Vérification sur o_mock_list_checks et f_callback: ont dû être appelés 3 fois
             self.assertEqual(o_mock_list_checks.call_count, 3)
+            self.assertEqual(f_callback.call_count, 3)
+            f_callback.assert_any_call("Vérifications : 2 en attente, 0 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 1 en attente, 1 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 0 en attente, 0 en cours, 1 en échec, 1 en succès")
             # Vérifications sur b_result : doit être finalement ko
             self.assertFalse(b_result)
 
