@@ -139,12 +139,16 @@ class ApiRequester(metaclass=Singleton):
                 raise GpfApiError(s_message) from e_error
 
             except (requests.HTTPError, requests.URLRequired) as e_error:
+                # Affiche la pile d'exécution
+                Config().om.debug(traceback.format_exc())
                 # S'il y a une erreur d'URL, on ne retente pas, on indique de contacter le support
                 s_message = "L'url indiquée en configuration est invalide ou inexistante. Contactez le support."
                 Config().om.error(s_message)
                 raise GpfApiError(s_message) from e_error
 
             except BadRequestError as e_error:
+                # Affiche la pile d'exécution
+                Config().om.debug(traceback.format_exc())
                 # S'il y a une erreur de requête incorrecte, on ne retente pas, on indique de contacter le support
                 s_message = "La requête formulée par le programme est incorrecte. Contactez le support."
                 Config().om.error(s_message)
