@@ -1,0 +1,21 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "test_livraison"
+            ],
+            "upload_infos": {
+                "description": "Jeu test archive",
+                "name": "test_livraison",
+                "srs": "EPSG:4326",
+                "type": "ARCHIVE"
+            },
+            "comments": [
+                "Ceci est un jeu de données pour les archives !"
+            ],
+            "tags": {
+                "test": "ludi"
+            }
+        }
+    ]
+}
