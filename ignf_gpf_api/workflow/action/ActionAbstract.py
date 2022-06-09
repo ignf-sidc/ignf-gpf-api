@@ -45,7 +45,7 @@ class ActionAbstract(ABC):
         try:
             self.__definition_dict = json.loads(s_resolved_definition)
         except json.decoder.JSONDecodeError as e_json:
-            raise StepActionError("Action ({self.workflow_context}) non valide après résolution : {e_json}") from e_json
+            raise StepActionError(f"Action ({self.workflow_context}) non valide après résolution : {e_json}") from e_json
 
     @abstractmethod
     def run(self) -> None:
