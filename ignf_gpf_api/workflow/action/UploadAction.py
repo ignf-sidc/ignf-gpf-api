@@ -67,7 +67,7 @@ class UploadAction:
             if self.__behavior == "DELETE":
                 Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée")
                 o_upload.api_delete()
-                # on en crée un nouveau
+                # on en crée un nouveau (on récupère toutes les champs de "upload_infos" du dataset)
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
             else:
                 # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
