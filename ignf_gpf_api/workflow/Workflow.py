@@ -33,7 +33,7 @@ class Workflow:
         """
         return self.__raw_definition_dict
 
-    def run_step(self, step_name: str, callback: Optional[Callable[[str, str], None]] = None) -> None:
+    def run_step(self, step_name: str, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> None:
         """Lance une étape du workflow à partir de son nom
         Args:
             step_name (string): nom de l'étape
