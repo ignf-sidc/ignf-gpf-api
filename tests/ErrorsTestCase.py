@@ -10,14 +10,14 @@ class ErrorsTestCase(unittest.TestCase):
     """
 
     @staticmethod
-    def raise_GpfApiError() -> None:
+    def raise_gpf_api_error() -> None:
         raise GpfApiError("message")
 
-    def test_GpfApiError(self) -> None:
+    def test_gpf_api_error(self) -> None:
         """Vérifie le bon fonctionnement de GpfApiError."""
         # On lève l'exception
         with self.assertRaises(GpfApiError) as o_arc:
-            ErrorsTestCase.raise_GpfApiError()
+            ErrorsTestCase.raise_gpf_api_error()
         # Vérifications
         # Message renvoi message
         self.assertEqual(o_arc.exception.message, "message")

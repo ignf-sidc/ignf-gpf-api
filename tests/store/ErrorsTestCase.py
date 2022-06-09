@@ -11,14 +11,14 @@ class ErrorsTestCase(unittest.TestCase):
     """
 
     @staticmethod
-    def raise_StoreEntityError() -> None:
+    def raise_store_entity_error() -> None:
         raise StoreEntityError("message")
 
-    def test_StoreEntityError(self) -> None:
+    def test_store_entity_error(self) -> None:
         """Vérifie le bon fonctionnement de StoreEntityError."""
         # On lève l'exception
         with self.assertRaises(StoreEntityError) as o_arc:
-            ErrorsTestCase.raise_StoreEntityError()
+            ErrorsTestCase.raise_store_entity_error()
         # Vérifications
         # Message renvoi message
         self.assertEqual(o_arc.exception.message, "message")

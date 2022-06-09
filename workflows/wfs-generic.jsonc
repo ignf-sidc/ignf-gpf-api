@@ -1,0 +1,116 @@
+{
+    "workflow": {
+        "steps": [
+            // Étape n°1 : intégration des données vecteur livrées en base
+            {
+                "name": "intégration-archive-livrée",
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "parameters": {
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la livraison associée à cette demande
+                                    "{store_entity.upload.infos._id [TAGS(demande={param.demande})]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée "Base intermédiaire" (qui sera également taguée)
+                                    "name": "Base intermédiaire"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            // On récupère le paramètre "demande"
+                            "demande": "{param.demande}"
+                        },
+                        "overloaded_parameters": []
+                    }
+                ]
+            },
+            // Étape n°2 : création de la pyramide vecteur
+            {
+                "name": "création-pyramide",
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "parameters": {
+                            // On récupère l'id du traitement nommé "Création d'une pyramide vecteur"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Création d'une pyramide vecteur)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la stored_data créée à l'étape précédente
+                                    "{store_entity.stored_data.infos._id [INFOS(name=base intermédiaire) TAGS(demande={param.demande})]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée "Pyramide vecteur" (qui sera également taguée)
+                                    "name": "Pyramide vecteur"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            // On récupère le paramètre "demande"
+                            "demande": "{param.demande}"
+                        },
+                        "overloaded_parameters": []
+                    }
+                ]
+            },
+            // Étape n°3 : configuration d'un flux WFS
+            {
+                "name": "configuration-wfs",
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "WFS Générique {param.demande}",
+                            "layer_name": "wfs_{demande.id}",
+                            "type_infos": {
+                                "title": "TITRE",
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    "{store_entity.stored_data.infos._id [INFOS(name=pyramide vecteur), TAGS(demande={param.demande})]}"
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {
+                            "demande": "{param.demande}"
+                        },
+                        "overloaded_parameters": []
+                    }
+                ]
+            },
+            // Étape n°4 : publication du flux WFS millésimé
+            {
+                "name": "publication-wfs",
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters": {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=WFS Générique {param.demande}), TAGS(demande={param.demande})]}"
+                        },
+                        "parameters": {
+                            "visibility": "PRIVATE",
+                            // endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
+                            "endpoint": "6220b50fb579ed7b9ad7f4ae"
+                        },
+                        "overloaded_parameters": []
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import patch, mock_open
 from pathlib import Path
+from typing import Any, Dict, List
 import requests
+
 
 import requests_mock
 from ignf_gpf_api.io.Config import Config
@@ -74,8 +76,8 @@ class UploadTestCase(unittest.TestCase):
                 # Vérification sur o_mock_open (lecture binary)
                 o_mock_open.assert_called_once_with("rb")
 
-    def test_api_delete_data_file(self) -> None:
-        "Vérifie le bon fonctionnement de api_delete_data_file."
+    def test_api_delete_data_file_1(self) -> None:
+        "Vérifie le bon fonctionnement de api_delete_data_file si le chemin ne contient pas data/."
         # On instancie une livraison pour laquelle on veut supprimer des fichiers
         # peu importe si la livraison comporte ou pas des fichiers
         o_upload = Upload({"_id": "id_de_test"})
@@ -94,6 +96,28 @@ class UploadTestCase(unittest.TestCase):
                 method=ApiRequester.DELETE,
                 route_params={"upload": "id_de_test"},
                 params={"path": s_api_path},
+            )
+
+    def test_api_delete_data_file_2(self) -> None:
+        "Vérifie le bon fonctionnement de api_delete_data_file si le chemin contient data/."
+        # On instancie une livraison pour laquelle on veut supprimer des fichiers
+        # peu importe si la livraison comporte ou pas des fichiers
+        o_upload = Upload({"_id": "id_de_test"})
+        # on prend un chemin coté api
+        s_api_path = "data/path/cote/api"
+
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        o_api_requester = ApiRequester()
+        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+            # On appelle la fonction que l'on veut tester
+            o_upload.api_delete_data_file(s_api_path)
+
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "upload_delete_data",
+                method=ApiRequester.DELETE,
+                route_params={"upload": "id_de_test"},
+                params={"path": s_api_path[5:]},  # le data/ a dû être retiré
             )
 
     def test_api_delete_md5_file(self) -> None:
@@ -171,3 +195,34 @@ class UploadTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with("upload_tree", route_params={"upload": "identifiant"})
             # Vérifications sur l_tree
             self.assertEqual(l_tree, l_tree_wanted)
+
+    def test_api_list_checks(self) -> None:
+        "Vérifie le bon fonctionnement de api_list_checks."
+        d_list_checks_wanted: Dict[str, List[Dict[str, Any]]] = {"key_1": [], "key_2": []}
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.get("http://test.com/", json=d_list_checks_wanted)
+            o_response = requests.request("GET", "http://test.com/")
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
+            # On instancie un upload
+            o_upload = Upload({"_id": "identifiant"})
+            # On appelle api_list_checks
+            d_list_checks = o_upload.api_list_checks()
+            # Vérification sur o_mock_request (route api_list_checks avec comme params de route l'id)
+            o_mock_request.assert_called_once_with("upload_list_checks", route_params={"upload": "identifiant"})
+            # Vérifications sur list_checks
+            self.assertEqual(d_list_checks, d_list_checks_wanted)
+
+    def test_api_run_checks(self) -> None:
+        "Vérifie le bon fonctionnement de api_run_checks."
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
+            # On instancie une livraison
+            o_upload_run_checks = Upload({"_id": "id"})
+            # liste des ids à verifier
+            l_list_checks_ids: List[Any] = ["id1", "id2"]
+            # On appelle la fonction api_run_checks
+            o_upload_run_checks.api_run_checks(l_list_checks_ids)
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with("upload_run_checks", method=ApiRequester.POST, route_params={"upload": "id"}, data=["id1", "id2"])
