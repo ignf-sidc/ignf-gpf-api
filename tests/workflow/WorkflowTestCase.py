@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional, Type
 import unittest
 from unittest.mock import patch, MagicMock
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
 from ignf_gpf_api.workflow.Errors import WorkflowError
 from ignf_gpf_api.workflow.Workflow import Workflow
@@ -87,14 +88,13 @@ class WorkflowTestCase(unittest.TestCase):
         # test pour ProcessingExecutionAction
 
         # fonction callback
-        def callback(logs: str, status: str) -> None:
-            """fonction bidon pour affichage logs du traitement
+        def callback(o_pe: ProcessingExecution) -> None:
+            """fonction bidon pour affichage le traitement
 
             Args:
-                logs (str): logs
-                status (str): status du traitement
+                o_pe (ProcessingExecution): traitement dont on suit le traitement
             """
-            print(logs, status)
+            print(o_pe)
 
         # reset / config des mock
         o_mock_action_generate.reset_mock()
