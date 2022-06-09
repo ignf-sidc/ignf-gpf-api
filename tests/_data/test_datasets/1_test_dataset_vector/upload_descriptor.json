@@ -7,7 +7,7 @@
             "upload_infos": {
                 "description": "Jeu test vecteur",
                 "name": "TEST_DATASET_CANTON",
-                "srs": "EPSG:4326",
+                "srs": "EPSG:2154",
                 "type": "VECTOR"
             },
             "comments": [
