@@ -1,0 +1,23 @@
+{
+    "$id": "/schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "Schéma d'un JSON avec un nom et un titre",
+    "type": "object",
+    "properties": {
+        // On définit la propriété "name"
+        "name": {
+            "type": "string",
+            "title": "Nom"
+        },
+        // On définit la propriété "title"
+        "title": {
+            "type": "string",
+            "title": "titre"
+        }
+    },
+    "required": [
+        "name",
+        "title"
+    ],
+    "additionalProperties": false
+}

@@ -1,0 +1,20 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "not/existing1",
+                "not/existing2",
+                "not/existing3"
+
+            ],
+            "upload_infos": {
+                "description": "Jeu test avec données non existantes",
+                "name": "UN NOM",
+                "srs": "EPSG:2154",
+                "type": "VECTOR"
+            },
+            "comments": [],
+            "tags": {}
+        }
+    ]
+}
