@@ -147,7 +147,6 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
         # mock de o_mock_processing_execution
         o_mock_processing_execution = MagicMock(name="test")
         o_mock_processing_execution.get_store_properties.side_effect = [{"status": el} for el in l_status] + [{"status": s_status_end}]*3
-        o_mock_processing_execution.api_logs.return_value = "mes logs"
         o_mock_processing_execution.api_update.return_value = None
 
         with patch.object(ProcessingExecutionAction, "processing_execution", new_callable=PropertyMock) as o_mock_pe, \
@@ -166,11 +165,8 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
             self.assertEqual(o_mock_processing_execution.api_update.call_count, len(l_status))
             ##log + callback
             if f_callback is not None:
-                self.assertEqual(o_mock_processing_execution.api_logs.call_count, len(l_status)+1)
                 self.assertEqual(f_callback.call_count, len(l_status)+1)
-                self.assertEqual(f_callback.mock_calls, [call("mes logs", el) for el in l_status+[s_status_end]])
-            else:
-                o_mock_processing_execution.api_logs.assert_not_called()
+                self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)+1))
 
     def test_monitoring_until_end(self)-> None:
         """test de test_monitoring_until_end"""

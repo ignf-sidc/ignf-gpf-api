@@ -92,7 +92,7 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def monitoring_until_end(self, callback: Optional[Callable[[str, str], None]] = None) -> str:
+    def monitoring_until_end(self, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
         La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
 
@@ -111,7 +111,7 @@ class ProcessingExecutionAction(ActionAbstract):
         while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
             # appel de la fonction affichant les logs
             if callback is not None:
-                callback(self.processing_execution.api_logs(), s_status)
+                callback(self.processing_execution)
             # On attend le temps demandé
             time.sleep(i_nb_sec_between_check)
             # On met à jour __processing_execution
@@ -120,7 +120,7 @@ class ProcessingExecutionAction(ActionAbstract):
         # Si on est sorti c'est que c'est fini
         ## dernier affichage
         if callback is not None:
-            callback(self.processing_execution.api_logs(), s_status)
+            callback(self.processing_execution)
         ## on return le status de fin
         return str(s_status)
 
