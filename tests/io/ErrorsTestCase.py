@@ -5,7 +5,7 @@ from ignf_gpf_api.io.Errors import (
     InternalServerError,
     NotAuthorizedError,
     NotFoundError,
-    RequestError,
+    StatusCodeError,
     RouteNotFoundError,
 )
 
@@ -17,34 +17,34 @@ class ErrorsTestCase(unittest.TestCase):
     """
 
     @staticmethod
-    def raise_ConfigReaderError() -> None:
+    def raise_config_reader_error() -> None:
         raise ConfigReaderError("message")
 
     @staticmethod
-    def raise_InternalServerError() -> None:
+    def raise_internal_server_error() -> None:
         raise InternalServerError("url", "method", {}, {})
 
     @staticmethod
-    def raise_NotFoundError() -> None:
+    def raise_not_found_error() -> None:
         raise NotFoundError("url", "method", {}, {})
 
     @staticmethod
-    def raise_NotAuthorizedError() -> None:
+    def raise_not_authorized_error() -> None:
         raise NotAuthorizedError("url", "method", {}, {}, "response")
 
     @staticmethod
-    def raise_RequestError() -> None:
-        raise RequestError("url", "method", {}, {}, 100, "response")
+    def raise_status_code_error() -> None:
+        raise StatusCodeError("url", "method", {}, {}, 100, "response")
 
     @staticmethod
-    def raise_RouteNotFoundError() -> None:
+    def raise_route_not_found_error() -> None:
         raise RouteNotFoundError("route_name")
 
     def test_raise(self) -> None:
-        """On vérifie que les erreures fonctionnent bien."""
-        self.assertRaises(ConfigReaderError, ErrorsTestCase.raise_ConfigReaderError)
-        self.assertRaises(InternalServerError, ErrorsTestCase.raise_InternalServerError)
-        self.assertRaises(NotFoundError, ErrorsTestCase.raise_NotFoundError)
-        self.assertRaises(NotAuthorizedError, ErrorsTestCase.raise_NotAuthorizedError)
-        self.assertRaises(RequestError, ErrorsTestCase.raise_RequestError)
-        self.assertRaises(RouteNotFoundError, ErrorsTestCase.raise_RouteNotFoundError)
+        """On vérifie que les erreurs fonctionnent bien."""
+        self.assertRaises(ConfigReaderError, ErrorsTestCase.raise_config_reader_error)
+        self.assertRaises(InternalServerError, ErrorsTestCase.raise_internal_server_error)
+        self.assertRaises(NotFoundError, ErrorsTestCase.raise_not_found_error)
+        self.assertRaises(NotAuthorizedError, ErrorsTestCase.raise_not_authorized_error)
+        self.assertRaises(StatusCodeError, ErrorsTestCase.raise_status_code_error)
+        self.assertRaises(RouteNotFoundError, ErrorsTestCase.raise_route_not_found_error)

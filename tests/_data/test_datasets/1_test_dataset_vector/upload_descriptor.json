@@ -1,0 +1,21 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "CANTON"
+            ],
+            "upload_infos": {
+                "description": "Jeu test vecteur",
+                "name": "TEST_DATASET_CANTON",
+                "srs": "EPSG:2154",
+                "type": "VECTOR"
+            },
+            "comments": [
+                "Ceci est un jeu test vecteur"
+            ],
+            "tags": {
+                "reference": "2100-01-00001"
+            }
+        }
+    ]
+}

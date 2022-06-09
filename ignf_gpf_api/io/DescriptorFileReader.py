@@ -8,7 +8,7 @@ from ignf_gpf_api.Errors import GpfApiError
 
 
 class DescriptorFileReader:
-    """Lit et valide le fichier descriptif d'une livraison.
+    """Lit et valide le fichier descriptif d'un ensemble de datasets.
 
     Attributes :
         __descriptor_dict (Optional[Dict[Any, Any]]) : contenu du fichier descriptif
@@ -38,7 +38,7 @@ class DescriptorFileReader:
             self.__descriptor_dict,
             d_schema,
             "Fichier descriptif de livraison {json_path} non valide.",
-            "Schéma du fichier descriptif de livrasion non valide. Contactez le support.",
+            "Schéma du fichier descriptif de livraison non valide. Contactez le support.",
         )
 
         # Vérification de l'existence des répertoires décrits dans le fichier
@@ -48,8 +48,9 @@ class DescriptorFileReader:
 
     def __validate_pathes(self) -> None:
         """Vérifie si les répertoires existent (s'interrompt si l'un d'entre eux n'existe pas).
+
         Raises:
-            FileNotFoundError : si un répertoire décrit dans le fichier descripteur n'existe pas
+            GpfApiError : si un répertoire décrit dans le fichier descripteur n'existe pas
         """
         # liste qui va servir à lister les dossiers en erreurs
         l_liste_folder_non_valide: List[str] = []
@@ -61,11 +62,11 @@ class DescriptorFileReader:
                     p_folder_path = self.__parent_folder / s_data_dir
                     if not p_folder_path.exists():
                         l_liste_folder_non_valide.append(str(p_folder_path))
-            # si à la fin du parcours des dossiers la liste n'est pas vide, on leve une erreur:
+            # si à la fin du parcours des dossiers la liste n'est pas vide, on lève une erreur:
             if l_liste_folder_non_valide:
                 # affiche la liste des dossiers non valides
-                Config().om.error("Liste des dossiers en erreur : \n  * {}".format("\n  * ".join(l_liste_folder_non_valide)))
-                raise GpfApiError("la commande de vérification des répertoires a trouvée des erreurs.")
+                Config().om.error("Liste des dossiers à téléverser non existants :\n  * {}".format("\n  * ".join(l_liste_folder_non_valide)))
+                raise GpfApiError("Au moins un des répertoires listés dans le fichier descripteur de livraison n'existe pas.")
 
     def __instantiate_datasets(self) -> None:
         """Instancie les datasets."""

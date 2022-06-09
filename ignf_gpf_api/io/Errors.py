@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List, Union
 from ignf_gpf_api.Errors import GpfApiError
 
 
@@ -50,14 +50,14 @@ class RouteNotFoundError(ApiError):
 class AbstractRequestError(ApiError):
     """Erreur générique de requête à l'API"""
 
-    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Dict[str, Any]]) -> None:
+    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]]) -> None:
         """Constructeur.
 
         Args:
             url (str): url de la requête
             method (str): méthode de la requête
             params (Optional[Dict[str, Any]]): paramètres de la requête
-            data (Optional[Dict[str, Any]]): données envoyées
+            data (Optional[Union[Dict[str, Any], List[Any]]]): données envoyées
         """
         super().__init__()
         self.url = url
@@ -91,14 +91,14 @@ class NotFoundError(AbstractRequestError):
 class NotAuthorizedError(AbstractRequestError):
     """Action non autorisée"""
 
-    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Dict[str, Any]], response: str):
+    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]], response: str):
         """Constructeur.
 
         Args:
             url (str): url de la requête
             method (str): méthode de la requête
             params (Optional[Dict[str, Any]]): paramètres de la requête
-            data (Optional[Dict[str, Any]]): données envoyées
+            data (Optional[Union[Dict[str, Any], List[Any]]]): données envoyées
             response (str): données reçues
         """
         super().__init__(url, method, params, data)
@@ -119,14 +119,14 @@ class NotAuthorizedError(AbstractRequestError):
 class _WithResponseError(AbstractRequestError):
     """Erreur avec réponse."""
 
-    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Dict[str, Any]], response: str):
+    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]], response: str):
         """Constructeur.
 
         Args:
             url (str): url de la requête
             method (str): méthode de la requête
             params (Optional[Dict[str, Any]]): paramètres de la requête
-            data (Optional[Dict[str, Any]]): données envoyées
+            data (Optional[Union[Dict[str, Any], List[Any]]]): données envoyées
             response (str): données reçues
         """
         super().__init__(url, method, params, data)
@@ -149,15 +149,15 @@ class BadRequestError(_WithResponseError):
     """Mauvaise requête"""
 
 
-class RequestError(_WithResponseError):
-    """Erreur interne à l'API"""
+class StatusCodeError(_WithResponseError):
+    """Erreur avec un "status code" non prévu par une erreur explicite..."""
 
     def __init__(
         self,
         url: str,
         method: str,
         params: Optional[Dict[str, Any]],
-        data: Optional[Dict[str, Any]],
+        data: Optional[Union[Dict[str, Any], List[Any]]],
         status_code: int,
         response: str,
     ):
@@ -167,7 +167,7 @@ class RequestError(_WithResponseError):
             url (str): url de la requête
             method (str): méthode de la requête
             params (Optional[Dict[str, Any]]): paramètres de la requête
-            data (Optional[Dict[str, Any]]): données envoyées
+            data (Optional[Union[Dict[str, Any], List[Any]]]): données envoyées
             status_code (int): code de retour
             response (str): données reçues
         """
