@@ -97,7 +97,7 @@ class ProcessingExecutionAction(ActionAbstract):
         La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
 
         Args:
-            callback (Optional[Callable[[str, str], None]], optional): fonction de callback à exécuter avec log du traitement et status du traitement (callback(logs, status)). Defaults to None.
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): fonction de callback à exécuter prend en argument le traitement (callback(processing-execution)). Defaults to None.
 
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
