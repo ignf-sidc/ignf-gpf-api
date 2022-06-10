@@ -85,11 +85,11 @@ class FileResolver(AbstractResolver):
         try:
             d_to_solve = json.loads(s_data)
         except json.decoder.JSONDecodeError as e_not_list:
-            raise ResolveFileInvalidError(self.name, f"le fichier {s_to_solve} n'est pas valide") from e_not_list
+            raise ResolveFileInvalidError(self.name, s_to_solve) from e_not_list
 
         if not isinstance(d_to_solve, dict):
             # le programme emet une erreur
-            raise ResolveFileInvalidError(self.name, f"le fichier {s_to_solve} ne contient pas un dictionnaire")
+            raise ResolveFileInvalidError(self.name, s_to_solve)
         return s_data
 
     def resolve(self, s_to_solve: str) -> str:
