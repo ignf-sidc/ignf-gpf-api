@@ -44,7 +44,7 @@ class FileResolver(AbstractResolver):
         if p_path_text.exists():
             s_result = str(p_path_text.read_text(encoding="UTF-8").rstrip("\n"))
         else:
-            raise ResolveFileNotFoundError(self.name, f"le fichier {s_to_solve} n'existe pas")
+            raise ResolveFileNotFoundError(self.name, s_to_solve)
         return s_result
 
     def __resolve_list(self, s_to_solve: str, s_path: str) -> str:
