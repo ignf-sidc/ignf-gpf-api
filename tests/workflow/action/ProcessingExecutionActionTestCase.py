@@ -169,7 +169,7 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
                 self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)+1))
 
 
-    def interrupt_monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool) -> None:
+    def interrupt_monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool, b_upload: bool, b_stored_data: bool) -> None:
         # cas interruption par l'utilisateur.
         """lancement + test de ProcessingExecutionAction.monitoring_until_end() + simulation ctrl+C pendant monitoring_until_end
 
@@ -177,6 +177,8 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
             s_status_end (str): status de fin
             b_waits (bool): si on a des status intermédiaire
             b_callback (bool): si on a une fonction callback
+            b_upload (bool): si sortie du traitement en upload
+            b_stored_data (bool): si sortie du traitement en stored-data
         """
 
         if b_waits:
@@ -188,6 +190,16 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
             f_callback = MagicMock()
         else:
             f_callback = None
+        if b_upload :
+            o_mock_upload = MagicMock()
+            o_mock_upload.api_delete.return_value = None
+        else:
+            o_mock_upload = None
+        if b_stored_data:
+            o_mock_stored_data = MagicMock()
+            o_mock_stored_data.api_delete.return_value = None
+        else:
+            o_mock_stored_data = None
 
         i_iter = 0
         def status() -> Dict[str, Any]:
@@ -212,9 +224,15 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
         o_mock_processing_execution.api_update.return_value = None
         o_mock_processing_execution.api_abort.return_value = None
 
+
         with patch.object(ProcessingExecutionAction, "processing_execution", new_callable=PropertyMock) as o_mock_pe, \
+            patch.object(ProcessingExecutionAction, "upload", new_callable=PropertyMock) as o_mock_u, \
+            patch.object(ProcessingExecutionAction, "stored_data", new_callable=PropertyMock) as o_mock_sd, \
             patch.object(Config, "get_int", return_value=0) :
+
             o_mock_pe.return_value = o_mock_processing_execution
+            o_mock_u.return_value = o_mock_upload
+            o_mock_sd.return_value = o_mock_stored_data
 
             # initialisation de ProcessingExecutionAction
             o_pea = ProcessingExecutionAction("contexte", {})
@@ -237,10 +255,21 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
                 self.assertEqual(f_callback.call_count, len(l_status)-2)
                 self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)-2))
 
+            # vérification suppression el de sortie
+            if b_waits and s_status_end == ProcessingExecution.STATUS_ABORTED:
+                if b_upload and o_mock_upload:
+                    o_mock_upload.api_delete.assert_called_once_with()
+                elif b_stored_data and o_mock_stored_data:
+                    o_mock_stored_data.api_delete.assert_called_once_with()
+
+
+
     def test_monitoring_until_end(self)-> None:
         """test de test_monitoring_until_end"""
         for s_status_end in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
             for b_waits in [False, True]:
                 for b_callback in [False, True]:
                     self.monitoring_until_end_args(s_status_end, b_waits, b_callback)
-                    self.interrupt_monitoring_until_end_args(s_status_end, b_waits, b_callback)
+                    self.interrupt_monitoring_until_end_args(s_status_end, b_waits, b_callback, True, False)
+                    self.interrupt_monitoring_until_end_args(s_status_end, b_waits, b_callback, False, True)
+                    self.interrupt_monitoring_until_end_args(s_status_end, b_waits, b_callback, False, False)

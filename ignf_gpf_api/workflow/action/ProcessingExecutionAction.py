@@ -61,10 +61,10 @@ class ProcessingExecutionAction(ActionAbstract):
             # cas on a pas de tag ou vide: on ne fait rien
             return
         # on ajoute le tag
-        if self.__upload is not None:
-            self.__upload.api_add_tags(self.definition_dict["tags"])
-        elif self.__stored_data is not None:
-            self.__stored_data.api_add_tags(self.definition_dict["tags"])
+        if self.upload is not None:
+            self.upload.api_add_tags(self.definition_dict["tags"])
+        elif self.stored_data is not None:
+            self.stored_data.api_add_tags(self.definition_dict["tags"])
         else:
             # on a pas de stored_data ni de upload
             raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les tags")
@@ -75,12 +75,12 @@ class ProcessingExecutionAction(ActionAbstract):
             # cas on a pas de commentaires : on ne fait rien
             return
         # on ajoute le commentaires
-        if self.__upload is not None:
+        if self.upload is not None:
             for s_comment in self.definition_dict["comments"]:
-                self.__upload.api_add_comment({"text": s_comment})
-        elif self.__stored_data is not None:
+                self.upload.api_add_comment({"text": s_comment})
+        elif self.stored_data is not None:
             for s_comment in self.definition_dict["comments"]:
-                self.__stored_data.api_add_comment({"text": s_comment})
+                self.stored_data.api_add_comment({"text": s_comment})
         else:
             # on a pas de stored_data ni de upload
             raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les commentaires")
@@ -149,12 +149,12 @@ class ProcessingExecutionAction(ActionAbstract):
                 callback(self.processing_execution)
             if s_status == ProcessingExecution.STATUS_ABORTED:
                 # suppression de l'upload ou la stored data en sortie
-                if self.__upload is not None:
+                if self.upload is not None:
                     Config().om.warning("Suppression de l'upload en cour de remplissage suite à l’interruption du programme")
-                    self.__upload.api_delete()
-                elif self.__stored_data is not None:
+                    self.upload.api_delete()
+                elif self.stored_data is not None:
                     Config().om.warning("Suppression de la stored-data en cour de remplissage suite à l'interruption du programme")
-                    self.__stored_data.api_delete()
+                    self.stored_data.api_delete()
                 # transmission de l'interruption
             raise KeyboardInterrupt() from e
 
