@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Optional
 
 import unittest
 from unittest.mock import PropertyMock, call, patch, MagicMock
-from ignf_gpf_api.io.Config import Config
 
+from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.Upload import Upload
@@ -168,11 +168,79 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
                 self.assertEqual(f_callback.call_count, len(l_status)+1)
                 self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)+1))
 
+
+    def interrupt_monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool) -> None:
+        # cas interruption par l'utilisateur.
+        """lancement + test de ProcessingExecutionAction.monitoring_until_end() + simulation ctrl+C pendant monitoring_until_end
+
+        Args:
+            s_status_end (str): status de fin
+            b_waits (bool): si on a des status intermédiaire
+            b_callback (bool): si on a une fonction callback
+        """
+
+        if b_waits:
+            l_status = [{"status": ProcessingExecution.STATUS_CREATED}, {"status": ProcessingExecution.STATUS_WAITING}, {"status": ProcessingExecution.STATUS_PROGRESS}, \
+                {"raise": "KeyboardInterrupt"}, {"status": ProcessingExecution.STATUS_PROGRESS}] + [{"status": s_status_end}] *3
+        else:
+            l_status = [{"raise": "KeyboardInterrupt"}] + [{"status": s_status_end}] *3
+        if b_callback:
+            f_callback = MagicMock()
+        else:
+            f_callback = None
+
+        i_iter = 0
+        def status() -> Dict[str, Any]:
+            """fonction pour mock de get_store_properties (=> status)
+
+            Raises:
+                KeyboardInterrupt: simulation du Ctrl+C
+
+            Returns:
+                Dict[str, Any]: dict contenant le status
+            """
+            nonlocal i_iter
+            s_el = l_status[i_iter]
+            i_iter+=1
+            if "raise" in s_el:
+                raise KeyboardInterrupt()
+            return s_el
+
+        # mock de o_mock_processing_execution
+        o_mock_processing_execution = MagicMock(name="test")
+        o_mock_processing_execution.get_store_properties.side_effect = status
+        o_mock_processing_execution.api_update.return_value = None
+        o_mock_processing_execution.api_abort.return_value = None
+
+        with patch.object(ProcessingExecutionAction, "processing_execution", new_callable=PropertyMock) as o_mock_pe, \
+            patch.object(Config, "get_int", return_value=0) :
+            o_mock_pe.return_value = o_mock_processing_execution
+
+            # initialisation de ProcessingExecutionAction
+            o_pea = ProcessingExecutionAction("contexte", {})
+
+            # vérification sortie en erreur de monitoring_until_end
+            with self.assertRaises(KeyboardInterrupt):
+                o_pea.monitoring_until_end(f_callback)
+
+            # exécution de abort
+            if not b_waits:
+                o_mock_processing_execution.api_abort.assert_not_called()
+            else:
+                o_mock_processing_execution.api_abort.assert_called_once_with()
+
+            # vérification de l'attente
+            ## update
+            self.assertEqual(o_mock_processing_execution.api_update.call_count, len(l_status)-3)
+            ##log + callback
+            if f_callback is not None:
+                self.assertEqual(f_callback.call_count, len(l_status)-4)
+                self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)-4))
+
     def test_monitoring_until_end(self)-> None:
         """test de test_monitoring_until_end"""
-        s_status_end =  ProcessingExecution.STATUS_SUCCESS
         for s_status_end in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
-            self.monitoring_until_end_args(s_status_end, False, False)
-            self.monitoring_until_end_args(s_status_end, True, False)
-            self.monitoring_until_end_args(s_status_end, True, True)
-            self.monitoring_until_end_args(s_status_end, False, True)
+            for b_waits in [False, True]:
+                for b_callback in [False, True]:
+                    self.monitoring_until_end_args(s_status_end, b_waits, b_callback)
+                    self.interrupt_monitoring_until_end_args(s_status_end, b_waits, b_callback)

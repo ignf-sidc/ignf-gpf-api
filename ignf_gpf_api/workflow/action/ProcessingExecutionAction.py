@@ -107,22 +107,56 @@ class ProcessingExecutionAction(ActionAbstract):
         Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
         if self.processing_execution is None:
             raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
-        s_status = self.processing_execution.get_store_properties()["status"]
-        while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
-            # appel de la fonction affichant les logs
+        try:
+            s_status = self.processing_execution.get_store_properties()["status"]
+            while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+                # appel de la fonction affichant les logs
+                if callback is not None:
+                    callback(self.processing_execution)
+                # On attend le temps demandé
+                time.sleep(i_nb_sec_between_check)
+                # On met à jour __processing_execution + valeur status
+                self.processing_execution.api_update()
+                s_status = self.processing_execution.get_store_properties()["status"]
+            # Si on est sorti c'est que c'est fini
+            ## dernier affichage
             if callback is not None:
                 callback(self.processing_execution)
-            # On attend le temps demandé
-            time.sleep(i_nb_sec_between_check)
-            # On met à jour __processing_execution
+            ## on return le status de fin
+            return str(s_status)
+        except KeyboardInterrupt as e:
+            # si le traitement est déjà dans un statu fini on ne fait rien => transmission de l'interruption
             self.processing_execution.api_update()
             s_status = self.processing_execution.get_store_properties()["status"]
-        # Si on est sorti c'est que c'est fini
-        ## dernier affichage
-        if callback is not None:
-            callback(self.processing_execution)
-        ## on return le status de fin
-        return str(s_status)
+            if s_status in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+
+                Config().om.warning("traitement déjà fini")
+                raise
+            # arrêt du traitement
+            Config().om.warning("Ctrl+C : traitement en cour d’interruption, veuillez attendre ...")
+            self.processing_execution.api_abort()
+            # attente que le traitement passe dans un statu fini
+            self.processing_execution.api_update()
+            s_status = self.processing_execution.get_store_properties()["status"]
+            while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+                # On attend 2s
+                time.sleep(2)
+                # On met à jour __processing_execution + valeur status
+                self.processing_execution.api_update()
+                s_status = self.processing_execution.get_store_properties()["status"]
+            ## dernier affichage
+            if callback is not None:
+                callback(self.processing_execution)
+            if s_status == ProcessingExecution.STATUS_ABORTED:
+                # suppression de l'upload ou la stored data en sortie
+                if self.__upload is not None:
+                    Config().om.warning("Suppression de l'upload en cour de remplissage suite à l’interruption du programme")
+                    self.__upload.api_delete()
+                elif self.__stored_data is not None:
+                    Config().om.warning("Suppression de la stored-data en cour de remplissage suite à l'interruption du programme")
+                    self.__stored_data.api_delete()
+                # transmission de l'interruption
+            raise KeyboardInterrupt() from e
 
     @property
     def processing_execution(self) -> Optional[ProcessingExecution]:
