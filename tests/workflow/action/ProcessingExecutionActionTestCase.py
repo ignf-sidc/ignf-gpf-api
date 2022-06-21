@@ -181,9 +181,9 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
 
         if b_waits:
             l_status = [{"status": ProcessingExecution.STATUS_CREATED}, {"status": ProcessingExecution.STATUS_WAITING}, {"status": ProcessingExecution.STATUS_PROGRESS}, \
-                {"raise": "KeyboardInterrupt"}, {"status": ProcessingExecution.STATUS_PROGRESS}] + [{"status": s_status_end}] *3
+                {"raise": "KeyboardInterrupt"}, {"status": ProcessingExecution.STATUS_PROGRESS}, {"status": s_status_end}]
         else:
-            l_status = [{"raise": "KeyboardInterrupt"}] + [{"status": s_status_end}] *3
+            l_status = [{"raise": "KeyboardInterrupt"}, {"status": s_status_end}]
         if b_callback:
             f_callback = MagicMock()
         else:
@@ -231,11 +231,11 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
 
             # vérification de l'attente
             ## update
-            self.assertEqual(o_mock_processing_execution.api_update.call_count, len(l_status)-3)
+            self.assertEqual(o_mock_processing_execution.api_update.call_count, len(l_status)-1)
             ##log + callback
             if f_callback is not None:
-                self.assertEqual(f_callback.call_count, len(l_status)-4)
-                self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)-4))
+                self.assertEqual(f_callback.call_count, len(l_status)-2)
+                self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)-2))
 
     def test_monitoring_until_end(self)-> None:
         """test de test_monitoring_until_end"""
