@@ -289,10 +289,10 @@ class ProcessingExecutionActionTestCase(unittest.TestCase):
 
     def test_output_new_entity(self)-> None:
         """test de output_new_entity"""
-        for output in ["upload", "stored_data"]:
+        for s_output in ["upload", "stored_data"]:
             for b_new in [True, False]:
                 d_output = {"name": "new"} if b_new else {"_id": "ancien"}
-                d_definition_dict: Dict[str, Any] = {"body_parameters":{"output":{output:d_output}}}
+                d_definition_dict: Dict[str, Any] = {"body_parameters":{"output":{s_output:d_output}}}
                 # initialisation de ProcessingExecutionAction
                 o_pea = ProcessingExecutionAction("contexte", d_definition_dict)
                 self.assertEqual(o_pea.output_new_entity, b_new)
