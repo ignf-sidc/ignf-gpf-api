@@ -1,6 +1,8 @@
+from pathlib import Path
 from typing import Any, Dict, Optional, Type
 import unittest
 from unittest.mock import patch, MagicMock
+from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
 from ignf_gpf_api.workflow.Errors import WorkflowError
@@ -192,3 +194,19 @@ class WorkflowTestCase(unittest.TestCase):
         # test type offering
         self.run_generation(OfferingAction, "name", {"type": "offering"}, None)
         self.run_generation(OfferingAction, "name", {"type": "offering"}, o_mock_parent)
+
+    def test_open_workflow(self) -> None:
+        """Test de la fonction open_workflow."""
+        p_workflows = Path(__name__).parent.parent.parent / "workflows"
+        # On teste le workflow archive-generic.jsonc
+        o_workflow_1 = Workflow.open_workflow(p_workflows / "archive-generic.jsonc")
+        self.assertEqual(o_workflow_1.name, "archive-generic.jsonc")
+        self.assertEqual(len(o_workflow_1.steps), 3)
+        # On teste le workflow wfs-generic.jsonc
+        o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc", "wfs generic")
+        self.assertEqual(o_workflow_2.name, "wfs generic")
+        self.assertEqual(len(o_workflow_2.steps), 4)
+        # On teste un fichier inexistant
+        with self.assertRaises(GpfApiError) as o_arc:
+            Workflow.open_workflow(Path("pas_là.json"))
+        self.assertEqual(o_arc.exception.message, "Le fichier de workflow pas_là.json est introuvable. Contactez le support.")
