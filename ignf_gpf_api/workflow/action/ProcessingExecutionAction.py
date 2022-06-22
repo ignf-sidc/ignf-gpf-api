@@ -133,7 +133,7 @@ class ProcessingExecutionAction(ActionAbstract):
                 Config().om.warning("traitement déjà fini")
                 raise
             # arrêt du traitement
-            Config().om.warning("Ctrl+C : traitement en cour d’interruption, veuillez attendre ...")
+            Config().om.warning("Ctrl+C : traitement en cours d’interruption, veuillez attendre...")
             self.processing_execution.api_abort()
             # attente que le traitement passe dans un statu fini
             self.processing_execution.api_update()
@@ -150,10 +150,10 @@ class ProcessingExecutionAction(ActionAbstract):
             if s_status == ProcessingExecution.STATUS_ABORTED:
                 # suppression de l'upload ou la stored data en sortie
                 if self.upload is not None:
-                    Config().om.warning("Suppression de l'upload en cour de remplissage suite à l’interruption du programme")
+                    Config().om.warning("Suppression de l'upload en cours de remplissage suite à l’interruption du programme")
                     self.upload.api_delete()
                 elif self.stored_data is not None:
-                    Config().om.warning("Suppression de la stored-data en cour de remplissage suite à l'interruption du programme")
+                    Config().om.warning("Suppression de la stored-data en cours de remplissage suite à l'interruption du programme")
                     self.stored_data.api_delete()
                 # transmission de l'interruption
             raise KeyboardInterrupt() from e
