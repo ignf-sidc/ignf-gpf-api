@@ -147,7 +147,7 @@ class ProcessingExecutionAction(ActionAbstract):
             ## dernier affichage
             if callback is not None:
                 callback(self.processing_execution)
-            if s_status == ProcessingExecution.STATUS_ABORTED:
+            if s_status == ProcessingExecution.STATUS_ABORTED and self.output_new_entity:
                 # suppression de l'upload ou la stored data en sortie
                 if self.upload is not None:
                     Config().om.warning("Suppression de l'upload en cours de remplissage suite à l’interruption du programme")
@@ -169,3 +169,16 @@ class ProcessingExecutionAction(ActionAbstract):
     @property
     def stored_data(self) -> Optional[StoredData]:
         return self.__stored_data
+
+    @property
+    def output_new_entity(self) -> bool:
+        """si c'est une nouvelle entité name"""
+        print(self.definition_dict)
+        d_output = self.definition_dict["body_parameters"]["output"]
+        if "upload" in d_output:
+            d_el = self.definition_dict["body_parameters"]["output"]["upload"]
+        elif "stored_data" in d_output:
+            d_el = self.definition_dict["body_parameters"]["output"]["stored_data"]
+        else:
+            return False
+        return "name" in d_el
