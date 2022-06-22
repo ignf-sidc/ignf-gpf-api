@@ -13,6 +13,7 @@ from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExe
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
 # pylint:disable=too-many-branches
+# pylint:disable=too-many-statements
 # fmt: off
 class ProcessingExecutionActionTestCase(unittest.TestCase):
     """Tests UploadAction class.
