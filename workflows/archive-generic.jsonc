@@ -1,0 +1,96 @@
+{
+    "workflow": {
+        "steps": {
+            // Étape n°1 : intégration de l'archive livrée
+            "intégration-archive-livrée": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Intégration d'archives livrées"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration d'archives livrées)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la Livraison associée grâce à son nom
+                                    "{store_entity.upload.infos._id [INFOS(name=TEST_DATASET_VECTOR)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle Donnée Stockée nommée "Archive"
+                                    "name": "Archive"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "comments": [
+                            "Tutoriel de mise à disposition d'archive : intégration de l'archive"
+                        ],
+                        // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            "tuto": "oui",
+                            "temp": "non"
+                        }
+                    }
+                ],
+                "parents": []
+            },
+            // Étape n°2 : configuration pour la génération de l'archive
+            "configuration-archive-livrée": {
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "DOWNLOAD",
+                            "name": "Configuration Archive",
+                            "layer_name": "archive",
+                            "type_infos": {
+                                "title": "Couche Canton du tutoriel",
+                                "abstract": "Exemple d'archive à télécharger",
+                                "used_data": [
+                                    {
+                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom et l'un de ses tags
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=Archive), TAGS(tuto=oui)]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des commentaires ajoutés à la Configuration
+                        "comments": [
+                            "Tutoriel de mise à disposition d'archive"
+                        ],
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {
+                            "tuto": "oui"
+                        }
+                    }
+                ],
+                "parents": [
+                    "intégration-archive-livrée"
+                ]
+            },
+            // Etape n°3 : publication de l'archive
+            "publication-archive-livrée": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters": {
+                            // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=Configuration Archive), TAGS(tuto=oui)]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            // Endpoint de type DOWNLOAD (id trouvé en récupérant les informations de l'entrepôt)
+                            "endpoint": "6260169ff464edc13092bc3a"
+                        }
+                    }
+                ],
+                "parents": [
+                    "configuration-archive-livrée"
+                ]
+            }
+        }
+    }
+}
