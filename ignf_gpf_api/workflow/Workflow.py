@@ -1,4 +1,6 @@
-from typing import Any, Callable, Dict, Optional
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+from ignf_gpf_api.helper.JsonHelper import JsonHelper
 
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.workflow.Errors import WorkflowError
@@ -80,6 +82,14 @@ class Workflow:
         Config().om.error(s_error_message)
         raise WorkflowError(s_error_message)
 
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def steps(self) -> List[str]:
+        return list(self.__raw_definition_dict["workflow"]["steps"].keys())
+
     @staticmethod
     def generate(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None) -> ActionAbstract:
         """génération de la bonne action selon le type
@@ -99,3 +109,35 @@ class Workflow:
         if definition_dict["type"] == "offering":
             return OfferingAction(workflow_context, definition_dict, parent_action)
         raise WorkflowError(f"Aucune correspondance pour ce type d'action : {definition_dict['type']}")
+
+    @staticmethod
+    def open_workflow(workflow_path: Path, workflow_name: Optional[str] = None) -> "Workflow":
+        """Instancie un Workflow en vérifiant le schéma fourni.
+
+        Args:
+            workflow_path (Path): chemin vers le fichier de workflow.
+            workflow_name (Optional[str], optional): nom du workflow, si None, le nom du fichier est utilisé. Defaults to None.
+
+        Returns:
+            Workflow: workflow instancié
+        """
+        # Chemin vers le schéma des workflows
+        p_schema = Path(__file__).parent.parent / "conf" / "json_schemas" / "workflow.json"
+        # Vérification du schéma
+        JsonHelper.validate_json(
+            workflow_path,
+            p_schema,
+            schema_not_found_pattern="Le schéma décrivant la structure d'un workflow {schema_path} est introuvable. Contactez le support.",
+            schema_not_parsable_pattern="Le schéma décrivant la structure d'un workflow {schema_path} est non parsable. Contactez le support.",
+            schema_not_valid_pattern="Le schéma décrivant la structure d'un workflow {schema_path} est invalide. Contactez le support.",
+            json_not_found_pattern="Le fichier de workflow {json_path} est introuvable. Contactez le support.",
+            json_not_parsable_pattern="Le fichier de workflow {json_path} est non parsable. Contactez le support.",
+            json_not_valid_pattern="Le fichier de workflow {json_path} est invalide. Contactez le support.",
+        )
+        # Ouverture du json
+        d_workflow = JsonHelper.load(workflow_path)
+        # Si le nom n'est pas défini, on prend celui du fichier
+        if workflow_name is None:
+            workflow_name = workflow_path.name
+        # Instanciation et retour
+        return Workflow(workflow_name, d_workflow)
