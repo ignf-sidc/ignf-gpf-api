@@ -15,7 +15,7 @@ from tests.GpfTestCase import GpfTestCase
 # pylint:disable=too-many-branches
 # fmt: off
 class ProcessingExecutionActionTestCase(GpfTestCase):
-    """Tests UploadAction class.
+    """Tests ProcessingExecutionAction class.
 
     cmd : python3 -m unittest -b tests.workflow.action.ProcessingExecutionActionTestCase
     """

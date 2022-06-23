@@ -13,7 +13,7 @@ class ConcreteAction(ActionAbstract):
 
 
 class ActionAbstractTestCase(GpfTestCase):
-    """Tests UploadAction class.
+    """Tests ActionAbstract class.
 
     cmd : python3 -m unittest -b tests.workflow.action.ActionAbstractTestCase
     """

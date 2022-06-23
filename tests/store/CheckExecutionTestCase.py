@@ -8,7 +8,7 @@ from tests.GpfTestCase import GpfTestCase
 
 
 class CheckExecutionTestCase(GpfTestCase):
-    """Tests CommentInterface class.
+    """Tests CheckExecution class.
 
     cmd : python3 -m unittest -b tests.store.CheckExecutionTestCase
     """

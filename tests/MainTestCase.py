@@ -3,7 +3,7 @@ from tests.GpfTestCase import GpfTestCase
 
 
 class MainTestCase(GpfTestCase):
-    """Tests ConfigTestCase class.
+    """Tests Main class.
 
     cmd : python3 -m unittest -b tests.MainTestCase
     """
