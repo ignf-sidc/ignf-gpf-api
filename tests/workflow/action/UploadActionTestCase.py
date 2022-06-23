@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional
-import unittest
+
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
@@ -7,6 +7,7 @@ from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.Errors import GpfApiError
+from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
@@ -16,7 +17,7 @@ from ignf_gpf_api.Errors import GpfApiError
 # (on désactive le formatage en attendant Python 3.10 et la possibilité de mettre des parenthèses pour gérer le multi with proprement)
 
 
-class UploadActionTestCase(unittest.TestCase):
+class UploadActionTestCase(GpfTestCase):
     """Tests UploadAction class.
 
     cmd : python3 -m unittest -b tests.workflow.action.UploadActionTestCase
@@ -31,6 +32,7 @@ class UploadActionTestCase(unittest.TestCase):
         # On charge une config spéciale pour les tests d'upload
         o_config = Config()
         o_config.read(UploadActionTestCase.config_path / "test_upload.ini")
+        o_config.set_output_manager(MagicMock())
 
     @classmethod
     def tearDownClass(cls) -> None:

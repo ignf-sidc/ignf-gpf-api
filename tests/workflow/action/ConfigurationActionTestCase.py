@@ -1,17 +1,17 @@
 from typing import Any, Dict, List, Optional
 
-import unittest
 from unittest.mock import patch, MagicMock
 
 from ignf_gpf_api.store.Configuration import Configuration
 from ignf_gpf_api.workflow.action.ConfigurationAction import ConfigurationAction
+from tests.GpfTestCase import GpfTestCase
 
 
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
 # pylint:disable=too-many-branches
 # fmt: off
-class ConfigurationActionTestCase(unittest.TestCase):
+class ConfigurationActionTestCase(GpfTestCase):
     """Tests ConfigurationAction class.
     cmd : python3 -m unittest -b tests.workflow.action.ConfigurationActionTestCase
     """

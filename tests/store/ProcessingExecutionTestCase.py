@@ -1,12 +1,13 @@
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
+from tests.GpfTestCase import GpfTestCase
 
 
-class ProcessingExecutionTestCase(unittest.TestCase):
+class ProcessingExecutionTestCase(GpfTestCase):
     """Tests ProcessingExecution class.
 
     cmd : python3 -m unittest -b tests.store.ProcessingExecutionTestCase

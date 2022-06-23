@@ -1,5 +1,4 @@
 from typing import Any, Dict, Optional, Type
-import unittest
 from unittest.mock import patch, MagicMock
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
@@ -11,10 +10,12 @@ from ignf_gpf_api.workflow.action.ConfigurationAction import ConfigurationAction
 from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
 from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
 
+from tests.GpfTestCase import GpfTestCase
+
 # pylint:disable=too-many-statements
 
 
-class WorkflowTestCase(unittest.TestCase):
+class WorkflowTestCase(GpfTestCase):
     """Tests UploadAction class.
 
     cmd : python3 -m unittest -b tests.workflow.WorkflowTestCase
