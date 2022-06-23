@@ -27,6 +27,8 @@ class UploadActionTestCase(GpfTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """fonction lancée une fois avant tous les tests de la classe"""
+        super().setUpClass()
         # On détruit le Singleton Config
         Config._instance = None
         # On charge une config spéciale pour les tests d'upload
@@ -36,6 +38,8 @@ class UploadActionTestCase(GpfTestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """fonction lancée une fois après tous les tests de la classe"""
+        super().tearDownClass()
         # On détruit le Singleton Config
         Config._instance = None
 
