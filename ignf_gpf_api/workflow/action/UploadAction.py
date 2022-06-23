@@ -25,7 +25,7 @@ class UploadAction:
     def __init__(self, dataset: Dataset, behavior: Optional[str] = None) -> None:
         self.__dataset: Dataset = dataset
         self.__upload: Optional[Upload] = None
-        # On suit le comporte donnée en paramètre ou à défaut celui de la config
+        # On suit le comportement donnée en paramètre ou à défaut celui de la config
         self.__behavior: str = behavior if behavior is not None else Config().get("upload_creation", "behavior_if_exists")
 
     def run(self) -> Upload:
