@@ -4,7 +4,6 @@ from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
 from ignf_gpf_api.workflow.Errors import WorkflowError
 from ignf_gpf_api.workflow.Workflow import Workflow
-
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.workflow.action.ConfigurationAction import ConfigurationAction
 from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
@@ -16,7 +15,7 @@ from tests.GpfTestCase import GpfTestCase
 
 
 class WorkflowTestCase(GpfTestCase):
-    """Tests UploadAction class.
+    """Tests Workflow class.
 
     cmd : python3 -m unittest -b tests.workflow.WorkflowTestCase
     """

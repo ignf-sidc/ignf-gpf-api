@@ -13,6 +13,7 @@ from tests.GpfTestCase import GpfTestCase
 # fmt: off
 class ConfigurationActionTestCase(GpfTestCase):
     """Tests ConfigurationAction class.
+
     cmd : python3 -m unittest -b tests.workflow.action.ConfigurationActionTestCase
     """
 

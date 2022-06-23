@@ -11,7 +11,7 @@ from tests.GpfTestCase import GpfTestCase
 
 
 class UploadTestCase(GpfTestCase):
-    """Tests UploadTestCase class.
+    """Tests Upload class.
 
     cmd : python3 -m unittest -b tests.store.UploadTestCase
     """

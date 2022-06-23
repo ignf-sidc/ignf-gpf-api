@@ -11,6 +11,7 @@ from tests.GpfTestCase import GpfTestCase
 # fmt: off
 class OfferingActionTestCase(GpfTestCase):
     """Tests OfferingAction class.
+
     cmd : python3 -m unittest -b tests.workflow.action.OfferingActionTestCase
     """
 
