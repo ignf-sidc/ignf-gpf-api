@@ -1,5 +1,4 @@
 from pathlib import Path
-import unittest
 from unittest.mock import patch
 from http import HTTPStatus
 import requests_mock
@@ -7,11 +6,12 @@ import requests_mock
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.auth.Errors import AuthentificationError
+from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=protected-access
 
 
-class AuthentifierTestCase(unittest.TestCase):
+class AuthentifierTestCase(GpfTestCase):
     """Tests Authentifier class.
 
     cmd : python3 -m unittest -b tests.auth.AuthentifierTestCase

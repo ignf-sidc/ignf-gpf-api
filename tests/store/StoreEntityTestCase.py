@@ -1,14 +1,14 @@
 import json
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.io.ApiRequester import ApiRequester
+from tests.GpfTestCase import GpfTestCase
 
 
-class StoreEntityTestCase(unittest.TestCase):
+class StoreEntityTestCase(GpfTestCase):
     """Tests StoreEntity class.
 
     cmd : python3 -m unittest -b tests.store.StoreEntityTestCase

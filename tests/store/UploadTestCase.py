@@ -1,18 +1,16 @@
-import unittest
 from unittest.mock import patch, mock_open
 from pathlib import Path
 from typing import Any, Dict, List
 import requests
-
-
 import requests_mock
-from ignf_gpf_api.io.Config import Config
 
+from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.ApiRequester import ApiRequester
+from tests.GpfTestCase import GpfTestCase
 
 
-class UploadTestCase(unittest.TestCase):
+class UploadTestCase(GpfTestCase):
     """Tests UploadTestCase class.
 
     cmd : python3 -m unittest -b tests.store.UploadTestCase

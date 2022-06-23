@@ -3,7 +3,6 @@ from io import BufferedReader
 import json
 from pathlib import Path
 from typing import Dict, Tuple
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
@@ -13,11 +12,12 @@ from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Errors import RouteNotFoundError
+from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=protected-access
 
 
-class ApiRequesterTestCase(unittest.TestCase):
+class ApiRequesterTestCase(GpfTestCase):
     """Tests ApiRequester class.
 
     cmd : python3 -m unittest -b tests.io.ApiRequesterTestCase
