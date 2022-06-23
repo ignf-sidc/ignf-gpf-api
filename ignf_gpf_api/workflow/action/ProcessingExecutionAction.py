@@ -172,8 +172,7 @@ class ProcessingExecutionAction(ActionAbstract):
 
     @property
     def output_new_entity(self) -> bool:
-        """si c'est une nouvelle entité name"""
-        print(self.definition_dict)
+        """Indique s'il y a création d'une nouvelle entité (clé "name" et non "_id" présente dans le paramètre "output" du corps de requête)."""
         d_output = self.definition_dict["body_parameters"]["output"]
         if "upload" in d_output:
             d_el = self.definition_dict["body_parameters"]["output"]["upload"]
