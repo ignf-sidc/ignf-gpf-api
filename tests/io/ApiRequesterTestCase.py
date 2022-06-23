@@ -44,6 +44,8 @@ class ApiRequesterTestCase(GpfTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """fonction lancée une fois avant tous les tests de la classe"""
+        super().setUpClass()
         # On détruit le Singleton Config
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
@@ -54,6 +56,8 @@ class ApiRequesterTestCase(GpfTestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """fonction lancée une fois après tous les tests de la classe"""
+        super().tearDownClass()
         # On ne mock plus la classe d'authentification
         cls.o_mock_authentifier.stop()
 

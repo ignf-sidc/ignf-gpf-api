@@ -26,6 +26,8 @@ class AuthentifierTestCase(GpfTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """fonction lancée une fois avant tous les tests de la classe"""
+        super().setUpClass()
         # On détruit le Singleton Config
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
@@ -33,11 +35,14 @@ class AuthentifierTestCase(GpfTestCase):
         o_config.read(AuthentifierTestCase.config_path / "test_authentifier.ini")
 
     def setUp(self) -> None:
+        """fonction lancée avant chaque test de la classe"""
         # On détruit le singleton Authentifier
         Authentifier._instance = None
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """fonction lancée une fois après tous les tests de la classe"""
+        super().tearDownClass()
         # On détruit le Singleton Config
         Config._instance = None
 
