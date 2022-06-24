@@ -1,11 +1,11 @@
-import unittest
 from pathlib import Path
 
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
 from ignf_gpf_api.Errors import GpfApiError
+from tests.GpfTestCase import GpfTestCase
 
 
-class JsonHelperTestCase(unittest.TestCase):
+class JsonHelperTestCase(GpfTestCase):
     """Test de la classe JsonHelper : on doit pouvoir ouvrir des JSON avec des commentaires !
     Et on doit pouvoir valider des schéma JSON avec des messages précis selon l'erreur.
 

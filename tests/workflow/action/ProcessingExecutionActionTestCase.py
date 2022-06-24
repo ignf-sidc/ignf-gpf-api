@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Optional
 
-import unittest
 from unittest.mock import PropertyMock, call, patch, MagicMock
 
 from ignf_gpf_api.io.Config import Config
@@ -8,6 +7,7 @@ from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
+from tests.GpfTestCase import GpfTestCase
 
 
 # pylint:disable=too-many-arguments
@@ -15,8 +15,8 @@ from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExe
 # pylint:disable=too-many-branches
 # pylint:disable=too-many-statements
 # fmt: off
-class ProcessingExecutionActionTestCase(unittest.TestCase):
-    """Tests UploadAction class.
+class ProcessingExecutionActionTestCase(GpfTestCase):
+    """Tests ProcessingExecutionAction class.
 
     cmd : python3 -m unittest -b tests.workflow.action.ProcessingExecutionActionTestCase
     """
