@@ -1,12 +1,13 @@
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.EventInterface import EventInterface
+from tests.GpfTestCase import GpfTestCase
 
 
-class EventInterfaceTestCase(unittest.TestCase):
+class EventInterfaceTestCase(GpfTestCase):
     """Tests EventInterface class.
 
     cmd : python3 -m unittest -b tests.store.EventInterfaceTestCase

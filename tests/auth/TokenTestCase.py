@@ -1,9 +1,8 @@
-import unittest
-
 from ignf_gpf_api.auth.Token import Token
+from tests.GpfTestCase import GpfTestCase
 
 
-class TokenTestCase(unittest.TestCase):
+class TokenTestCase(GpfTestCase):
     """Tests Token class.
 
     cmd : python3 -m unittest -b tests.auth.TokenTestCase

@@ -3,7 +3,6 @@ from typing import Any, Callable, Dict, List, Optional
 
 
 from ignf_gpf_api.Errors import GpfApiError
-from ignf_gpf_api.io.OutputManager import OutputManager
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Dataset import Dataset
 from ignf_gpf_api.io.Config import Config
@@ -159,7 +158,7 @@ class UploadAction:
         i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
         s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
         b_success: Optional[bool] = None
-        OutputManager().info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
+        Config().om.info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
         while b_success is None:
             # On récupère les vérifications
             d_checks = upload.api_list_checks()

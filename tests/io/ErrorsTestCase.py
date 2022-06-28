@@ -1,5 +1,3 @@
-import unittest
-
 from ignf_gpf_api.io.Errors import (
     ConfigReaderError,
     InternalServerError,
@@ -8,9 +6,10 @@ from ignf_gpf_api.io.Errors import (
     StatusCodeError,
     RouteNotFoundError,
 )
+from tests.GpfTestCase import GpfTestCase
 
 
-class ErrorsTestCase(unittest.TestCase):
+class ErrorsTestCase(GpfTestCase):
     """Tests Errors class : permet de vérifier que les erreurs peuvent bien s'instancier.
 
     cmd : python3 -m unittest -b tests.io.ErrorsTestCase

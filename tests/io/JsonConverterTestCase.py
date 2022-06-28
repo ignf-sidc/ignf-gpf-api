@@ -1,11 +1,11 @@
 import datetime
 import json
-import unittest
 
 from ignf_gpf_api.io.JsonConverter import JsonConverter
+from tests.GpfTestCase import GpfTestCase
 
 
-class JsonConverterTestCase(unittest.TestCase):
+class JsonConverterTestCase(GpfTestCase):
     """Tests JsonConverterTestCase class.
 
     cmd : python3 -m unittest -b tests.io.JsonConverterTestCase

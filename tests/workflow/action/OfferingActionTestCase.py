@@ -1,16 +1,17 @@
-import unittest
 from unittest.mock import patch, MagicMock
 
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
+from tests.GpfTestCase import GpfTestCase
 
 
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
 # pylint:disable=too-many-branches
 # fmt: off
-class OfferingActionTestCase(unittest.TestCase):
+class OfferingActionTestCase(GpfTestCase):
     """Tests OfferingAction class.
+
     cmd : python3 -m unittest -b tests.workflow.action.OfferingActionTestCase
     """
 
