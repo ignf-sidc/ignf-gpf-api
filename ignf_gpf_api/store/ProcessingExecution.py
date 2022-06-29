@@ -1,4 +1,5 @@
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
 class ProcessingExecution(StoreEntity):
@@ -20,12 +21,37 @@ class ProcessingExecution(StoreEntity):
         Returns:
             str: les logs récupérés
         """
-        raise NotImplementedError("ProcessingExecution.api_logs")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_logs"
+        # Requête "get"
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+        )
+        s_log = o_response.text
+        # on renvoie les logs
+        return s_log
 
     def api_launch(self) -> None:
         """Lance l'exécution du traitement sur l'API."""
-        raise NotImplementedError("ProcessingExecution.api_launch")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_launch"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+        )
 
     def api_abort(self) -> None:
         """Annule l'exécution du traitement sur l'API."""
-        raise NotImplementedError("ProcessingExecution.api_abort")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_abort"
+
+        # Requête
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+        )

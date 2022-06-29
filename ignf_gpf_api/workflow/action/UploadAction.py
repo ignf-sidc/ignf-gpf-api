@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Optional
+import time
+from typing import Any, Callable, Dict, List, Optional
 
 
 from ignf_gpf_api.Errors import GpfApiError
@@ -65,7 +66,7 @@ class UploadAction:
             if self.__behavior == "DELETE":
                 Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée")
                 o_upload.api_delete()
-                # on en crée un nouveau
+                # on en crée un nouveau (on récupère toutes les champs de "upload_infos" du dataset)
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
             else:
                 # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
@@ -138,6 +139,52 @@ class UploadAction:
         # sinon on retourne None
         return None
 
+    @property
+    def upload(self) -> Optional[Upload]:
+        return self.__upload
+
+    @staticmethod
+    def monitor_until_end(upload: Upload, callback: Optional[Callable[[str], None]] = None) -> bool:
+        """Attend que toute les vérifications liées à la Livraison indiquée soient terminées (en erreur ou en succès) avant de rendre la main.
+        La fonction callback indiquée est exécutée en prenant en paramètre un message de suivi du nombre de vérifications par statut.
+
+        Args:
+            upload (Upload): Livraison à monitorer
+            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi. Defaults to None.
+
+        Returns:
+            bool: True si toutes les vérifications sont ok, sinon False
+        """
+        i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
+        s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
+        b_success: Optional[bool] = None
+        Config().om.info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
+        while b_success is None:
+            # On récupère les vérifications
+            d_checks = upload.api_list_checks()
+            # On peut déterminer b_success s'il n'y en a plus en attente et en cours
+            if len(d_checks["asked"]) == len(d_checks["in_progress"]) == 0:
+                b_success = len(d_checks["failed"]) == 0
+            # On affiche un rapport via la fonction de callback précisée
+            s_message = s_check_message_pattern.format(
+                nb_asked=len(d_checks["asked"]),
+                nb_in_progress=len(d_checks["in_progress"]),
+                nb_passed=len(d_checks["passed"]),
+                nb_failed=len(d_checks["failed"]),
+            )
+            if callback is not None:
+                callback(s_message)
+            # Si l'état est toujours indéterminé
+            if b_success is None:
+                # On attend le temps demandé
+                time.sleep(i_nb_sec_between_check)
+        # On log le dernier rapport selon l'état et on sort
+        if b_success:
+            Config().om.info(s_message)
+            return True
+        Config().om.warning(s_message)
+        return False
+
     @staticmethod
     def parse_tree(tree: List[Dict[str, Any]], prefix: str = "") -> Dict[str, int]:
         """Parse l'arborescence renvoyée par l'API en un dictionnaire associant le chemin de chaque fichier à sa taille.
@@ -163,9 +210,9 @@ class UploadAction:
                 d_files[s_chemin] = int(d_element["size"])
             elif d_element["type"] == "directory":
                 # Dossier, on itère dessus avec le nom du dossier comme préfixe
-                d_subfiles = UploadAction.parse_tree(d_element["children"], prefix=s_chemin)
+                d_sub_files = UploadAction.parse_tree(d_element["children"], prefix=s_chemin)
                 # On fusionne ces fichiers à notre dict principal
-                d_files = {**d_files, **d_subfiles}
+                d_files = {**d_files, **d_sub_files}
             else:
                 raise GpfApiError(f"Type d'élément rencontré dans l'arborescence '{d_element['type']}' non géré. Contacter le support.")
         return d_files

@@ -1,12 +1,13 @@
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
+from tests.GpfTestCase import GpfTestCase
 
 
-class SharingInterfaceTestCase(unittest.TestCase):
+class SharingInterfaceTestCase(GpfTestCase):
     """Tests SharingInterface class.
 
     cmd : python3 -m unittest -b tests.store.interface.SharingInterfaceTestCase
@@ -21,7 +22,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             # On effectue l ajout d'un commentaire
             # On instancie une entité à qui on va ajouter un commentaire
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
-            # On appelle la fonction api_add_comment
+            # On appelle la fonction api_add_sharings
             o_sharing_interface.api_add_sharings(["_id"])
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with(
@@ -50,7 +51,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
         o_api_requester = ApiRequester()
         # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
-            # on appelle la fonction à tester :api_list_comments
+            # on appelle la fonction à tester :api_list_sharings
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
             l_data_recupere = o_sharing_interface.api_list_sharings()
             # on vérifie que route_request est appelé correctement
@@ -70,7 +71,7 @@ class SharingInterfaceTestCase(unittest.TestCase):
             # On effectue la suppression d'un commentaire
             # On instancie une entité dont on va supprimer le partage de livraison
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
-            # On appelle la fonction api_remove_comment
+            # On appelle la fonction api_remove_sharing
             o_sharing_interface.api_remove_sharings(["_id"])
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with(

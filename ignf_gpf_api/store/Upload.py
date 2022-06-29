@@ -18,6 +18,15 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
     _entity_name = "upload"
     _entity_title = "livraison"
 
+    STATUS_CREATED = "CREATED"
+    STATUS_OPEN = "OPEN"
+    STATUS_CLOSED = "CLOSED"
+    STATUS_CHECKING = "CHECKING"
+    STATUS_GENERATING = "GENERATING"
+    STATUS_MODIFYING = "MODIFYING"
+    STATUS_UNSTABLE = "UNSTABLE"
+    STATUS_DELETED = "DELETED"
+
     def api_push_data_file(self, file_path: Path, api_path: str) -> None:
         """Envoie un fichier de donnée à la livraison.
 
@@ -45,10 +54,15 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
 
     def api_delete_data_file(self, api_path: str) -> None:
         """Supprime un fichier de donnée de la livraison.
+        Retire data/ de devant le chemin si jamais il le contient.
 
         Args:
             api_path (str): chemin distant vers le fichier à supprimer
         """
+        # On retire data/ de devant le chemin si jamais il le contient
+        if api_path.startswith("data/"):
+            api_path = api_path[5:]
+
         # Génération du nom de la route
         s_route = f"{self._entity_name}_delete_data"
 

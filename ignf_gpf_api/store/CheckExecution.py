@@ -8,6 +8,11 @@ class CheckExecution(StoreEntity):
     _entity_name = "check_execution"
     _entity_title = "exécution d'une vérification"
 
+    STATUS_WAITING = "WAITING"
+    STATUS_PROGRESS = "PROGRESS"
+    STATUS_SUCCESS = "SUCCESS"
+    STATUS_FAILURE = "FAILURE"
+
     def api_logs(self) -> str:
         """Récupère les logs de cette exécution de vérification sur l'API.
 

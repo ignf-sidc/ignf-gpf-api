@@ -1,4 +1,4 @@
-"""API Python pour simplifier l'utilisation de l'API Entrepôt Géoplateforme."""
+"""API Python pour simplifier l'utilisation de l'API Entrepôt Géo-plateforme."""
 
 import configparser
 import io
@@ -17,13 +17,10 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.io.OutputManager import OutputManager
 
 
 def main() -> None:
     """Fonction d'entrée."""
-    # Instanciation du logger
-    Config().set_output_manager(OutputManager())
     # Résolution des paramètres utilisateurs
     o_args = parse_args()
 
@@ -150,8 +147,10 @@ def config(o_args: argparse.Namespace) -> None:
 
 
 def upload(o_args: argparse.Namespace) -> None:
-    """Authentifie l'utilisateur et retourne les informations de connexion demandées.
-    Si aucune information est demandée, confirme juste la bonne authentification.
+    """Création/Gestion des Livraison (Upload).
+    Si un fichier descriptor est précisé, on effectue la livraison.
+    Si un id est précisé, on affiche la livraison.
+    Sinon on liste les Livraisons avec éventuellement des filtres.
 
     Args:
         o_args (argparse.Namespace): paramètres utilisateurs
@@ -162,7 +161,10 @@ def upload(o_args: argparse.Namespace) -> None:
         for o_dataset in o_dfu.datasets:
             o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
             o_upload = o_ua.run()
-            print(f"Livraison {o_upload} créée avec succès.")
+            if UploadAction.monitor_until_end(o_upload, print):
+                print(f"Livraison {o_upload} créée avec succès.")
+            else:
+                print(f"Livraison {o_upload} créée en erreur !")
     elif o_args.id is not None:
         o_upload = Upload.api_get(o_args.id)
         print(o_upload)
