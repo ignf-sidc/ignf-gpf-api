@@ -37,7 +37,7 @@ class FullEditInterfaceTestCase(unittest.TestCase):
         # Instanciation d'une fausse réponse HTTP
         with requests_mock.Mocker() as o_mock:
             o_mock.post("http://test.com/", json=d_old_api_data)
-            o_response = requests.register_uri("PUT", "http://test.com/", text="resp")
+            o_response = requests.get("http://test.com/").text
 
         # Instanciation du ApiRequester
         o_api_requester = ApiRequester()
