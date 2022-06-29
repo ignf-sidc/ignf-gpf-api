@@ -5,7 +5,11 @@ from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
 from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverError
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.store.Processing import Processing
+from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.Configuration import Configuration
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
+from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Config import Config
@@ -22,6 +26,10 @@ class StoreEntityResolver(AbstractResolver):
     __key_to_cls: Dict[str, Type[StoreEntity]] = {
         Upload.entity_name(): Upload,
         Processing.entity_name(): Processing,
+        StoredData.entity_name(): StoredData,
+        Configuration.entity_name(): Configuration,
+        Offering.entity_name(): Offering,
+        ProcessingExecution.entity_name(): ProcessingExecution,
     }
 
     def __init__(self, name: str) -> None:

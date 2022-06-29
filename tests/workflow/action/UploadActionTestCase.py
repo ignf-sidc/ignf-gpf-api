@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional
-import unittest
+
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
@@ -7,19 +7,41 @@ from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.Errors import GpfApiError
+from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=too-many-arguments
 # pylint:disable=too-many-locals
 # pylint:disable=too-many-branches
+# pylint:disable=protected-access
 # fmt: off
 # (on désactive le formatage en attendant Python 3.10 et la possibilité de mettre des parenthèses pour gérer le multi with proprement)
 
 
-class UploadActionTestCase(unittest.TestCase):
+class UploadActionTestCase(GpfTestCase):
     """Tests UploadAction class.
 
-    cmd : python3 -m unittest -b tests.action.UploadActionTestCase
+    cmd : python3 -m unittest -b tests.workflow.action.UploadActionTestCase
     """
+
+    config_path = Path(__file__).parent.parent.parent / "_config"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """fonction lancée une fois avant tous les tests de la classe"""
+        super().setUpClass()
+        # On détruit le Singleton Config
+        Config._instance = None
+        # On charge une config spéciale pour les tests d'upload
+        o_config = Config()
+        o_config.read(UploadActionTestCase.config_path / "test_upload.ini")
+        o_config.set_output_manager(MagicMock())
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """fonction lancée une fois après tous les tests de la classe"""
+        super().tearDownClass()
+        # On détruit le Singleton Config
+        Config._instance = None
 
     def run_args(
         self,
@@ -256,6 +278,56 @@ class UploadActionTestCase(unittest.TestCase):
             run_fail=True,
             message_exception=f"Impossible de continué, la livraison {l_return_value_api_list[0]} est fermée.",
         )
+
+    def test_monitor_until_end_ok(self) -> None:
+        """Vérifie le bon fonctionnement de monitor_until_end si à la fin c'est ok."""
+        # 2 réponses possibles pour api_list_checks : il faut attendre ou c'est tout ok
+        d_list_checks_wait_1 = {"asked": [{}, {}],"in_progress": [],"passed": [],"failed": []}
+        d_list_checks_wait_2 = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
+        d_list_checks_ok = {"asked": [],"in_progress": [],"passed": [{},{}],"failed": []}
+        # On patch la fonction api_list_checks de l'upload
+        # elle renvoie une liste avec des traitements en attente 2 fois puis une liste avec que des succès
+        l_returns = [d_list_checks_wait_1, d_list_checks_wait_2, d_list_checks_ok]
+        with patch.object(Upload, "api_list_checks", side_effect=l_returns) as o_mock_list_checks:
+            # On instancie un Upload
+            o_upload = Upload({"_id": "id_upload_monitor"})
+            # On instancie un faut callback
+            f_callback = MagicMock()
+            # On effectue le monitoring
+            b_result = UploadAction.monitor_until_end(o_upload, f_callback)
+            # Vérification sur o_mock_list_checks et f_callback: ont dû être appelés 3 fois
+            self.assertEqual(o_mock_list_checks.call_count, 3)
+            self.assertEqual(f_callback.call_count, 3)
+            f_callback.assert_any_call("Vérifications : 2 en attente, 0 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 1 en attente, 1 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 0 en attente, 0 en cours, 0 en échec, 2 en succès")
+            # Vérifications sur b_result : doit être finalement ok
+            self.assertTrue(b_result)
+
+    def test_monitor_until_end_ko(self) -> None:
+        """Vérifie le bon fonctionnement de monitor_until_end si à la fin c'est ko."""
+        # 3 réponses possibles pour api_list_checks : 2 il faut attendre, 1 il y a un pb
+        d_list_checks_wait_1 = {"asked": [{}, {}],"in_progress": [],"passed": [],"failed": []}
+        d_list_checks_wait_2 = {"asked": [{}],"in_progress": [{}],"passed": [],"failed": []}
+        d_list_checks_ko = {"asked": [],"in_progress": [],"passed": [{}],"failed": [{}]}
+        # On patch la fonction api_list_checks de l'upload
+        # elle renvoie une liste avec des traitements en attente 2 fois puis une liste avec des erreurs
+        l_returns = [d_list_checks_wait_1, d_list_checks_wait_2, d_list_checks_ko]
+        with patch.object(Upload, "api_list_checks", side_effect=l_returns) as o_mock_list_checks:
+            # On instancie un Upload
+            o_upload = Upload({"_id": "id_upload_monitor"})
+            # On instancie un faut callback
+            f_callback = MagicMock()
+            # On effectue le monitoring
+            b_result = UploadAction.monitor_until_end(o_upload, f_callback)
+            # Vérification sur o_mock_list_checks et f_callback: ont dû être appelés 3 fois
+            self.assertEqual(o_mock_list_checks.call_count, 3)
+            self.assertEqual(f_callback.call_count, 3)
+            f_callback.assert_any_call("Vérifications : 2 en attente, 0 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 1 en attente, 1 en cours, 0 en échec, 0 en succès")
+            f_callback.assert_any_call("Vérifications : 0 en attente, 0 en cours, 1 en échec, 1 en succès")
+            # Vérifications sur b_result : doit être finalement ko
+            self.assertFalse(b_result)
 
     def test_api_tree_not_empty(self) -> None:
         """Vérifie le bon fonctionnement de api_tree si ce n'est pas vide."""

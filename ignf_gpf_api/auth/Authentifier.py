@@ -45,7 +45,7 @@ class Authentifier(metaclass=Singleton):
         """
         o_response = None
         try:
-            # Requête Keycloak de récupération du jeton
+            # Requête KeyCloak de récupération du jeton
             o_response = requests.post(
                 self.__token_url,
                 data={
@@ -105,3 +105,7 @@ class Authentifier(metaclass=Singleton):
         if json_content_type:
             d_http_header["content-type"] = "application/json"
         return d_http_header
+
+    def revoke_token(self) -> None:
+        """Révoque le token actuellement utilisé pour forcer la récupération d'un nouveau token."""
+        self.__last_token = None

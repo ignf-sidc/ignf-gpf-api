@@ -1,9 +1,9 @@
 import json
-import unittest
 from unittest.mock import patch, MagicMock
 
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
+from tests.GpfTestCase import GpfTestCase
 
 
 # classe temporaire pour les test : ActionAbstract est abstraite
@@ -12,10 +12,10 @@ class ConcreteAction(ActionAbstract):
         pass
 
 
-class ActionAbstractTestCase(unittest.TestCase):
-    """Tests UploadAction class.
+class ActionAbstractTestCase(GpfTestCase):
+    """Tests ActionAbstract class.
 
-    cmd : python3 -m unittest -b tests.action.ActionAbstractTestCase
+    cmd : python3 -m unittest -b tests.workflow.action.ActionAbstractTestCase
     """
 
     def test_workflow_context(self) -> None:
@@ -48,4 +48,4 @@ class ActionAbstractTestCase(unittest.TestCase):
             o_action = ConcreteAction("nom", d_definition, None)
             o_action.resolve()
             assert o_action.definition_dict == d_resolved_dico
-            o_mock_resolve.assert_called_once_with(str(json.dumps(d_definition)))
+            o_mock_resolve.assert_called_once_with(str(json.dumps(d_definition, indent=4)))

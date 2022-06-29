@@ -1,7 +1,10 @@
-from pyclbr import Function
-from typing import Any, Dict, Optional
+import time
+from typing import Any, Callable, Dict, Optional
+
+from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
+from ignf_gpf_api.workflow.Errors import StepActionError
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.store.Upload import Upload
 
@@ -39,31 +42,121 @@ class ProcessingExecutionAction(ActionAbstract):
         """Création du ProcessingExecution sur l'API à partir des paramètres de définition de l'action.
         Récupération des attributs processing_execution et Upload/StoredData.
         """
-        raise NotImplementedError("ProcessingExecutionAction.__create_processing_execution")
+        # création de la ProcessingExecution
+        self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["parameters"])
+
+        d_info = self.__processing_execution.get_store_properties()["output"]
+        if "upload" in d_info:
+            # récupération de l'upload
+            self.__upload = Upload.api_get(d_info["upload"]["_id"])
+        elif "stored_data" in d_info:
+            # récupération de la stored_data
+            self.__stored_data = StoredData.api_get(d_info["stored_data"]["_id"])
+        else:
+            raise StepActionError(f"Aucune correspondance pour {d_info.keys()}")
 
     def __add_tags(self) -> None:
         """Ajout des tags sur l'Upload ou la StoredData en sortie du ProcessingExecution."""
-        raise NotImplementedError("ProcessingExecutionAction.__add_tags")
+        if "tags" not in self.definition_dict or self.definition_dict["tags"] == {}:
+            # cas on a pas de tag ou vide: on ne fait rien
+            return
+        # on ajoute le tag
+        if self.upload is not None:
+            self.upload.api_add_tags(self.definition_dict["tags"])
+        elif self.stored_data is not None:
+            self.stored_data.api_add_tags(self.definition_dict["tags"])
+        else:
+            # on a pas de stored_data ni de upload
+            raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les tags")
 
     def __add_comments(self) -> None:
         """Ajout des commentaires sur l'Upload ou la StoredData en sortie du ProcessingExecution."""
-        raise NotImplementedError("ProcessingExecutionAction.__add_comments")
+        if "comments" not in self.definition_dict:
+            # cas on a pas de commentaires : on ne fait rien
+            return
+        # on ajoute le commentaires
+        if self.upload is not None:
+            for s_comment in self.definition_dict["comments"]:
+                self.upload.api_add_comment({"text": s_comment})
+        elif self.stored_data is not None:
+            for s_comment in self.definition_dict["comments"]:
+                self.stored_data.api_add_comment({"text": s_comment})
+        else:
+            # on a pas de stored_data ni de upload
+            raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les commentaires")
 
     def __launch(self) -> None:
         """Lancement de la ProcessingExecution."""
-        raise NotImplementedError("ProcessingExecutionAction.__launch")
+        if self.__processing_execution is not None:
+            self.__processing_execution.api_launch()
+        else:
+            raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def monitoring_until_end(self, callback: Optional[Function] = None) -> Optional[bool]:
+    def monitoring_until_end(self, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
-        La fonction callback indiquée est exécutée en prenant en paramètre la différence de log entre deux vérifications.
+        La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
 
         Args:
-            callback (Optional[Function], optional): fonction de callback à exécuter avec la différence de log entre deux vérifications. Defaults to None.
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): fonction de callback à exécuter prend en argument le traitement (callback(processing-execution)). Defaults to None.
 
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
         """
-        raise NotImplementedError("ProcessingExecutionAction.monitoring_until_end")
+        # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour facilité les testes
+        i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
+        Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
+        if self.processing_execution is None:
+            raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
+        try:
+            s_status = self.processing_execution.get_store_properties()["status"]
+            while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+                # appel de la fonction affichant les logs
+                if callback is not None:
+                    callback(self.processing_execution)
+                # On attend le temps demandé
+                time.sleep(i_nb_sec_between_check)
+                # On met à jour __processing_execution + valeur status
+                self.processing_execution.api_update()
+                s_status = self.processing_execution.get_store_properties()["status"]
+            # Si on est sorti c'est que c'est fini
+            ## dernier affichage
+            if callback is not None:
+                callback(self.processing_execution)
+            ## on return le status de fin
+            return str(s_status)
+        except KeyboardInterrupt as e:
+            # si le traitement est déjà dans un statu fini on ne fait rien => transmission de l'interruption
+            self.processing_execution.api_update()
+            s_status = self.processing_execution.get_store_properties()["status"]
+            if s_status in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+
+                Config().om.warning("traitement déjà fini")
+                raise
+            # arrêt du traitement
+            Config().om.warning("Ctrl+C : traitement en cours d’interruption, veuillez attendre...")
+            self.processing_execution.api_abort()
+            # attente que le traitement passe dans un statu fini
+            self.processing_execution.api_update()
+            s_status = self.processing_execution.get_store_properties()["status"]
+            while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+                # On attend 2s
+                time.sleep(2)
+                # On met à jour __processing_execution + valeur status
+                self.processing_execution.api_update()
+                s_status = self.processing_execution.get_store_properties()["status"]
+            ## dernier affichage
+            if callback is not None:
+                callback(self.processing_execution)
+            if s_status == ProcessingExecution.STATUS_ABORTED and self.output_new_entity:
+                # suppression de l'upload ou la stored data en sortie
+                if self.upload is not None:
+                    Config().om.warning("Suppression de l'upload en cours de remplissage suite à l’interruption du programme")
+                    self.upload.api_delete()
+                elif self.stored_data is not None:
+                    Config().om.warning("Suppression de la stored-data en cours de remplissage suite à l'interruption du programme")
+                    self.stored_data.api_delete()
+                # transmission de l'interruption
+            raise KeyboardInterrupt() from e
 
     @property
     def processing_execution(self) -> Optional[ProcessingExecution]:
@@ -76,3 +169,15 @@ class ProcessingExecutionAction(ActionAbstract):
     @property
     def stored_data(self) -> Optional[StoredData]:
         return self.__stored_data
+
+    @property
+    def output_new_entity(self) -> bool:
+        """Indique s'il y a création d'une nouvelle entité (clé "name" et non "_id" présente dans le paramètre "output" du corps de requête)."""
+        d_output = self.definition_dict["body_parameters"]["output"]
+        if "upload" in d_output:
+            d_el = self.definition_dict["body_parameters"]["output"]["upload"]
+        elif "stored_data" in d_output:
+            d_el = self.definition_dict["body_parameters"]["output"]["stored_data"]
+        else:
+            return False
+        return "name" in d_el

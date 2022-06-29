@@ -1,12 +1,13 @@
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
+from tests.GpfTestCase import GpfTestCase
 
 
-class CommentInterfaceTestCase(unittest.TestCase):
+class CommentInterfaceTestCase(GpfTestCase):
     """Tests CommentInterface class.
 
     cmd : python3 -m unittest -b tests.store.interface.CommentInterfaceTestCase

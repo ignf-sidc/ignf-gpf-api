@@ -1,5 +1,4 @@
 from pathlib import Path
-import unittest
 from unittest.mock import patch
 from http import HTTPStatus
 import requests_mock
@@ -7,11 +6,12 @@ import requests_mock
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.auth.Errors import AuthentificationError
+from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=protected-access
 
 
-class AuthentifierTestCase(unittest.TestCase):
+class AuthentifierTestCase(GpfTestCase):
     """Tests Authentifier class.
 
     cmd : python3 -m unittest -b tests.auth.AuthentifierTestCase
@@ -26,6 +26,8 @@ class AuthentifierTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """fonction lancée une fois avant tous les tests de la classe"""
+        super().setUpClass()
         # On détruit le Singleton Config
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
@@ -33,11 +35,14 @@ class AuthentifierTestCase(unittest.TestCase):
         o_config.read(AuthentifierTestCase.config_path / "test_authentifier.ini")
 
     def setUp(self) -> None:
+        """fonction lancée avant chaque test de la classe"""
         # On détruit le singleton Authentifier
         Authentifier._instance = None
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """fonction lancée une fois après tous les tests de la classe"""
+        super().tearDownClass()
         # On détruit le Singleton Config
         Config._instance = None
 
@@ -130,3 +135,24 @@ class AuthentifierTestCase(unittest.TestCase):
         self.assertTrue(o_mock_method.called)
         # Et ce 3 fois
         self.assertEqual(o_mock_method.call_count, 3)
+
+    def test_revoke_token(self) -> None:
+        """Vérifie le bon fonctionnement de revoke_token."""
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            # Une authentification réussie
+            o_mock.post(AuthentifierTestCase.url, json=AuthentifierTestCase.valid_token)
+            # On tente de récupérer un token...
+            s_token = Authentifier().get_access_token_string()
+            # Il doit être ok
+            self.assertEqual(s_token, "test_token")
+            # On a dû faire une requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+            # On appel la fonction revoke_token à tester
+            Authentifier().revoke_token()
+            # On tente de re-récupérer un token...
+            s_token = Authentifier().get_access_token_string()
+            # Il doit être ok
+            self.assertEqual(s_token, "test_token")
+            # On a dû faire une seconde requête
+            self.assertEqual(o_mock.call_count, 2, "o_mock.call_count == 2")

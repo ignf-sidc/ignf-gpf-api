@@ -1,4 +1,5 @@
 import logging
+from typing import Dict, Optional
 
 from ignf_gpf_api.pattern.Singleton import Singleton
 from ignf_gpf_api.io.Color import Color
@@ -7,9 +8,32 @@ from ignf_gpf_api.io.Color import Color
 class OutputManager(metaclass=Singleton):
     """Gestionnaire de sortie."""
 
-    def __init__(self) -> None:
+    def __init__(self, file_logger: Optional[str] = None, formater: Optional[str] = None) -> None:
+        """initialisation de OutputManager
+
+        Args:
+            file_logger (Optional[str], optional): nom du fichier de log ou None si on ne vaux pas de log fichier. Defaults to None.
+            formater (Optional[str], optional): format du log (cf doc `logging`). Defaults to None.
+        """
+        # initialisation du loger
         self.__logger = logging.getLogger(__name__)
         self.__logger.setLevel(logging.INFO)
+
+        # création formateur
+        o_formatter = logging.Formatter(formater)
+
+        # ajout handler console : affichage des logs dans la console
+        o_ch = logging.StreamHandler()
+        o_ch.setLevel(level=logging.DEBUG)
+        o_ch.setFormatter(o_formatter)
+        self.__logger.addHandler(o_ch)
+
+        # ajout handler ficher : écriture des logs dans un ficher
+        if file_logger:
+            o_fh = logging.FileHandler(file_logger)
+            o_fh.setLevel(level=logging.DEBUG)
+            o_fh.setFormatter(o_formatter)
+            self.__logger.addHandler(o_fh)
 
     def debug(self, message: str) -> None:
         """Ajout d'un message de type debug
@@ -62,3 +86,19 @@ class OutputManager(metaclass=Singleton):
             self.__logger.critical("ERREUR FATALE - %s", message)
         else:
             self.__logger.critical("%sERREUR FATALE - %s%s", Color.RED, message, Color.END)
+
+    def set_log_level(self, level: str) -> None:
+        """Défini le niveau de log du logger.
+
+        Args:
+            level (str): niveau de log (DEBUG, INFO, WARNING, ERROR ou CRITICAL)
+        """
+        d_level: Dict[str, int] = {
+            "DEBUG": logging.DEBUG,
+            "INFO": logging.INFO,
+            "WARNING": logging.WARNING,
+            "ERROR": logging.ERROR,
+            "CRITICAL": logging.CRITICAL,
+        }
+        if level in d_level:
+            self.__logger.setLevel(d_level[level])

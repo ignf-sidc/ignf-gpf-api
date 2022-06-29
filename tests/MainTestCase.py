@@ -1,10 +1,9 @@
-import unittest
-
 from ignf_gpf_api.__main__ import parse_args
+from tests.GpfTestCase import GpfTestCase
 
 
-class MainTestCase(unittest.TestCase):
-    """Tests ConfigTestCase class.
+class MainTestCase(GpfTestCase):
+    """Tests Main class.
 
     cmd : python3 -m unittest -b tests.MainTestCase
     """
