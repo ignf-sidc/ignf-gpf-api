@@ -34,7 +34,7 @@ class FullEditInterfaceTestCase(unittest.TestCase):
         }
 
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
+        with requests_mock.Mocker(real_http=True) as o_mock:
             o_mock.post("http://test.com/", json={"_id": "123456789"})
             o_response = requests.request("POST", "http://test.com/")
 
