@@ -1,12 +1,12 @@
-from unittest.mock import patch
 import unittest
+from unittest.mock import patch
 import requests
+
 import requests_mock
 
-# from tests.GpfTestCase import GpfTestCase
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.PartialEditInterface import PartialEditInterface
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
 class PartialEditInterfaceTestCase(unittest.TestCase):
@@ -35,22 +35,21 @@ class PartialEditInterfaceTestCase(unittest.TestCase):
         }
 
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json=d_old_api_data)
-            o_response = requests.request("PATCH", "http://test.com/")
+        with requests_mock.Mocker(real_http=True) as o_mock:
+            o_mock.post("http://test.com/", json={"_id": "123456789"})
+            o_response = requests.request("POST", "http://test.com/")
 
         # Instanciation du ApiRequester
         o_api_requester = ApiRequester()
 
         # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+        with patch.object(o_api_requester, "route_request", return_value=o_response):
             o_partial_edit_interface = PartialEditInterface(d_old_api_data)
-            # on fait appel à api_partial_edit(d_old_api_data)
-            o_partial_edit_interface.api_partial_edit(d_old_api_data)
-            # On appelle la fonction api_update
             o_partial_edit_interface.api_update()
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_get", route_params={"store_entity": "id_à_maj"})
-            # Vérification que les infos de l'entité sont modifiées partiellement
-            o_store_entity = StoreEntity(d_old_api_data)
+            # o_mock_request.assert_called_once_with("store_entity_partial_edit", data=d_partly_modified_api_data, method=ApiRequester.PATCH, route_params={"store_entity": "123456789"})
+            o_partial_edit_interface.api_partial_edit(d_partly_modified_api_data)
+            o_partial_edit_interface.api_update()
+            # Vérification que les infos de l'entité sont maj
+            o_store_entity = StoreEntity(d_partly_modified_api_data)
             self.assertDictEqual(o_store_entity.get_store_properties(), d_partly_modified_api_data)
