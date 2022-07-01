@@ -39,7 +39,7 @@ class PartialEditInterfaceTestCase(unittest.TestCase):
             o_mock_request.assert_called_once_with(
                 "store_entity_partial_edit",
                 route_params={"store_entity": "123456789"},
-                method=ApiRequester.PUT,
+                method=ApiRequester.PATCH,
                 data=d_partly_modified_api_data,
             )
             o_mock_update.assert_called_once_with()
