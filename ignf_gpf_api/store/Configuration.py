@@ -1,5 +1,4 @@
-# from typing import Any, Dict, List
-from typing import List
+from typing import Any, Dict, List
 
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.store.StoreEntity import StoreEntity
@@ -21,7 +20,7 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
     STATUS_SYNCHRONIZING = "SYNCHRONIZING"
 
     def api_list_offerings(self) -> List[Offering]:
-        """Liste les Offering liées à cette Configuration.
+       """Liste les Offering liées à cette Configuration.
         Returns:
             List[Offering]: liste des Offering trouvées
         """
@@ -31,20 +30,30 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
         # Requête "get"
         o_response = ApiRequester().route_request(
             s_route,
-            # route_params={self._entity_name: self.id},
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
         )
         l_offerings: List[Offering] = o_response.json()
 
         return l_offerings
 
-        # raise NotImplementedError("Configuration.api_list_offerings")
+    def api_add_offering(self, data_offering: Dict[str, Any]) -> Offering:
+        """Ajoute une Offering à cette Configuration.
+        Args:
+            data_offering (Dict[str, Any]): données pour la création de l'Offering
+        Returns:
+            Offering: représentation Python de l'Offering créée
+        """
 
-    # def api_add_offering(self, data_offering: Dict[str, Any]) -> Offering:
-    #     """Ajoute une Offering à cette Configuration.
-    #     Args:
-    #         data_offering (Dict[str, Any]): données pour la création de l'Offering
-    #     Returns:
-    #         Offering: représentation Python de l'Offering créée
-    #     """
-    #     return Offering.api_create(data_offering, route_params={self._entity_name: self.id})
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_add_offering"
+        # Requête "get"
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.POST,
+            route_params={self._entity_name: self.id},
+            data=data_offering,
+        )
+
+        return Offering.api_create(data_offering)
 
