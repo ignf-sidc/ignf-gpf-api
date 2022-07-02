@@ -6,7 +6,7 @@ from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
 from ignf_gpf_api.store.interface.EventInterface import EventInterface
 from ignf_gpf_api.store.interface.FullEditInterface import FullEditInterface
-
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInterface, StoreEntity):
     """Classe Python représentant l'entité Configuration (configuration)."""
@@ -24,7 +24,18 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
         Returns:
             List[Offering]: liste des Offering trouvées
         """
-        raise NotImplementedError("Configuration.api_list_offerings")
+        # Génération du nom de la route
+        s_route = f"{self._entity_name}_list_offerings"
+        # Requête "get"
+        o_response = ApiRequester().route_request(
+            s_route,
+            route_params={self._entity_name: self.id},
+        )
+        l_offerings: List[Dict[str, str]] = o_response.json()
+
+        return l_offerings
+
+        #raise NotImplementedError("Configuration.api_list_offerings")
 
     def api_add_offering(self, data_offering: Dict[str, Any]) -> Offering:
         """Ajoute une Offering à cette Configuration.
