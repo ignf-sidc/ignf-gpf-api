@@ -5,6 +5,7 @@ import requests_mock
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.Configuration import Configuration
+from ignf_gpf_api.store.Offering import Offering
 
 
 class ListOfferingTestCase(unittest.TestCase):
@@ -17,10 +18,8 @@ class ListOfferingTestCase(unittest.TestCase):
         """Vérifie le bon fonctionnement de api_list_offerings."""
 
         l_offerings = {
-            "_id": "123456789",
-            "name": "nom",
-            "key": "value",
-            "tags": "tag_value",
+            "_id": "offering",
+            "_entity_title": "offre",
         }
 
         # Instanciation d'une fausse réponse HTTP
@@ -38,6 +37,6 @@ class ListOfferingTestCase(unittest.TestCase):
             # on vérifie que route_request est appelé correctement
             o_mock_request.assert_called_once_with(
                 "configuration_list_sharings",
-                route_params={"configuration": "123456789"},
+                route_params={"configuration": "offering"},
                 method=ApiRequester.POST,
             )
