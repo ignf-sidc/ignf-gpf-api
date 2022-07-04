@@ -1,10 +1,14 @@
 {
     "cSpell.words": [
         "bbox",
+        "beartype",
         "EPSG",
+        "Géoplateforme",
         "ignf",
         "insee",
+        "jsonschema",
         "mypy",
+        "parsables",
         "pathes",
         "pylint",
         "pylintrc",
