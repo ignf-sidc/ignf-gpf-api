@@ -9,7 +9,7 @@ from ignf_gpf_api.store.Configuration import Configuration
 
 
 class ConfigurationTestCase(unittest.TestCase):
-    """Tests ListOfferingTestCase class.
+    """Tests ConfigurationTestCase class.
 
     cmd : python3 -m unittest -b tests.store.ConfigurationTestCase
     """
