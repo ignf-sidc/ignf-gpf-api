@@ -32,19 +32,17 @@ class WorkflowTestCase(GpfTestCase):
         """test de run_step"""
         d_workflow = {
             "workflow": {
-                "steps": [
-                    {"name": "1er etape"},
-                    {"name": "autre"},
-                    {
-                        "name": "mise-en-base",
+                "steps": {
+                    "1er etape": {},
+                    "autre": {},
+                    "mise-en-base": {
                         "actions": [
                             {
                                 "type": "action1",
                             }
                         ],
                     },
-                    {
-                        "name": "mise-en-base2",
+                    "mise-en-base2": {
                         "actions": [
                             {
                                 "type": "action2-1",
@@ -54,7 +52,7 @@ class WorkflowTestCase(GpfTestCase):
                             },
                         ],
                     },
-                ]
+                }
             }
         }
         o_workflow = Workflow("nom", d_workflow)
