@@ -66,18 +66,18 @@ class Workflow:
             l_parentes = o_action
 
     def __get_step_definition(self, step_name: str) -> Dict[str, Any]:
-        """Renvoie le dictionnaire correspondant à une étape du workflow à partir de son nom
+        """Renvoie le dictionnaire correspondant à une étape du workflow à partir de son nom.
+        Lève une WorkflowError avec un message clair si l'étape n'est pas trouvée.
         Args:
             step_name (string): nom de l'étape
         Raises:
             WorkflowExecutionError: est levée si l'étape n'existe pas dans le workflow
         """
         # Recherche de l'étape correspondante
-        for o_step in self.__raw_definition_dict["workflow"]["steps"]:
-            if o_step["name"] == step_name:
-                return dict(o_step)
+        if step_name in self.__raw_definition_dict["workflow"]["steps"]:
+            return dict(self.__raw_definition_dict["workflow"]["steps"][step_name])
 
-        # Si on passe la boucle, c'est que l'étape n'existe pas dans la définition du workflow
+        # Si on passe le if, c'est que l'étape n'existe pas dans la définition du workflow
         s_error_message = f"L'étape {step_name} n'est pas définie dans le workflow {self.__name}"
         Config().om.error(s_error_message)
         raise WorkflowError(s_error_message)
