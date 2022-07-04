@@ -1,9 +1,9 @@
 import json
-import unittest
 from unittest.mock import patch, MagicMock
 
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
+from tests.GpfTestCase import GpfTestCase
 
 
 # classe temporaire pour les test : ActionAbstract est abstraite
@@ -12,8 +12,8 @@ class ConcreteAction(ActionAbstract):
         pass
 
 
-class ActionAbstractTestCase(unittest.TestCase):
-    """Tests UploadAction class.
+class ActionAbstractTestCase(GpfTestCase):
+    """Tests ActionAbstract class.
 
     cmd : python3 -m unittest -b tests.workflow.action.ActionAbstractTestCase
     """
