@@ -45,15 +45,4 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
         Returns:
             Offering: représentation Python de l'Offering créée
         """
-
-        # Génération du nom de la route
-        s_route = f"{self._entity_name}_add_offering"
-        # Requête "get"
-        ApiRequester().route_request(
-            s_route,
-            method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
-            data=data_offering,
-        )
-
-        return Offering.api_create(data_offering)
+        return Offering.api_create(data_offering, route_params={self._entity_name: self.id})
