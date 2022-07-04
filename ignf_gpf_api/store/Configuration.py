@@ -20,20 +20,21 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
     STATUS_SYNCHRONIZING = "SYNCHRONIZING"
 
     def api_list_offerings(self) -> List[Offering]:
-       """Liste les Offering liées à cette Configuration.
+        """Liste les Offering liées à cette Configuration.
         Returns:
             List[Offering]: liste des Offering trouvées
         """
 
         # Génération du nom de la route
-        s_route = f"{self._entity_name}_list_sharings"
+        s_route = f"{self._entity_name}_list_offerings"
         # Requête "get"
         o_response = ApiRequester().route_request(
             s_route,
-            method=ApiRequester.POST,
+            method=ApiRequester.GET,
             route_params={self._entity_name: self.id},
         )
-        l_offerings: List[Offering] = o_response.json()
+        # Instanciation de chaque élément renvoyé dans la liste
+        l_offerings: List[Offering] = [Offering(i) for i in o_response.json()]
 
         return l_offerings
 
@@ -56,4 +57,3 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
         )
 
         return Offering.api_create(data_offering)
-
