@@ -6,6 +6,7 @@ import requests_mock
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.Configuration import Configuration
+from ignf_gpf_api.store.StoreEntity import StoreEntity
 
 
 class ConfigurationTestCase(unittest.TestCase):
@@ -41,3 +42,25 @@ class ConfigurationTestCase(unittest.TestCase):
             self.assertIsInstance(l_offerings[1], Offering)
             self.assertEqual(l_offerings[0].id, "offering_1")
             self.assertEqual(l_offerings[1].id, "offering_2")
+
+    def test_add_offering(self) -> None:
+        """Vérifie le bon fonctionnement de api_add_offering."""
+
+        d_data_offering = {"_id": "11111111"}
+
+        # Instanciation de Configuration
+        o_configuration = Configuration({"_id": "2222222"})
+
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(StoreEntity, "api_create", return_value=Offering(d_data_offering)) as o_mock_create:
+            o_offering = o_configuration.api_add_offering(d_data_offering)
+            # on vérifie que api_create est appelé correctement
+            o_mock_create.assert_called_once_with(
+                d_data_offering,
+                route_params={"configuration": "2222222"},
+            )
+
+            # on vérifie qu'on a bien ajouté l'Offering à la configuration
+            self.assertIsInstance(o_offering, Offering)
+            self.assertEqual(o_offering.id, "11111111")
+            self.assertDictEqual(o_offering.get_store_properties(), d_data_offering)
