@@ -16,8 +16,8 @@ class OfferingActionTestCase(unittest.TestCase):
 
     def test_run(self) -> None:
         """test de run"""
-        # creation du dictionnaire qui reprend les paramétres du workflow pour creer une offre
-        d_action = {"type": "offering", "parameters": {"param": "valeur"}, "url_parameters": {"id_configuration"}}
+        # creation du dictionnaire qui reprend les paramètres du workflow pour créer une offre
+        d_action = {"type": "offering", "body_parameters": {"param": "valeur"}, "url_parameters": {"id_configuration"}}
 
         # initialisation de Offering
         o_offering = OfferingAction("contexte", d_action)
@@ -33,4 +33,4 @@ class OfferingActionTestCase(unittest.TestCase):
             o_offering.run()
 
             # test de l'appel à Offering.api_create
-            o_mock_offering_api_create.assert_called_once_with(d_action['parameters'], route_params=d_action['url_parameters'])
+            o_mock_offering_api_create.assert_called_once_with(d_action['body_parameters'], route_params=d_action['url_parameters'])
