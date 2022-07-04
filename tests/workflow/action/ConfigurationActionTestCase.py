@@ -22,8 +22,8 @@ class ConfigurationActionTestCase(unittest.TestCase):
             tags (Optional[Dict[str, Any]]): dict des tags ou None
             comments (Optional[List]): list des comments ou None
         """
-        # creation du dictionnaire qui reprend les paramétres du workflow pour creer une configuration
-        d_action = {"type": "configuration", "parameters": {"param": "valeur"}}
+        # creation du dictionnaire qui reprend les paramètres du workflow pour créer une configuration
+        d_action = {"type": "configuration", "body_parameters": {"param": "valeur"}}
         if tags is not None:
             d_action["tags"] = tags
         if comments is not None:
@@ -43,7 +43,7 @@ class ConfigurationActionTestCase(unittest.TestCase):
             o_conf.run()
 
             # test de l'appel à Configuration.api_create
-            o_mock_configuration_api_create.assert_called_once_with(d_action['parameters'])
+            o_mock_configuration_api_create.assert_called_once_with(d_action['body_parameters'])
 
             # test api_add_tags
             if "tags" in d_action and d_action["tags"]:
