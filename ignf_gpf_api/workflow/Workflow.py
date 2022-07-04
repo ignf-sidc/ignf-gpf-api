@@ -1,5 +1,8 @@
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
+
+import jsonschema  # type: ignore
+from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
 
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
@@ -141,3 +144,65 @@ class Workflow:
             workflow_name = workflow_path.name
         # Instanciation et retour
         return Workflow(workflow_name, d_workflow)
+
+    def validate(self) -> List[str]:
+        """Valide le workflow en s'assurant qu'il est cohérent. Retourne la liste des erreurs trouvées.
+
+        Returns:
+            List[str]: liste des erreurs trouvées
+        """
+        l_errors: List[str] = []
+
+        # Chemin vers le schéma des workflows
+        p_schema = Path(__file__).parent.parent / "conf" / "json_schemas" / "workflow.json"
+        # Ouverture du schéma
+        d_schema = JsonHelper.load(
+            p_schema,
+            file_not_found_pattern="Le schéma décrivant la structure d'un workflow {schema_path} est introuvable. Contactez le support.",
+            file_not_parsable_pattern="Le schéma décrivant la structure d'un workflow {schema_path} est non parsable. Contactez le support.",
+        )
+        # Vérification du schéma
+        try:
+            jsonschema.validate(instance=self.__raw_definition_dict, schema=d_schema)
+        # Récupération de l'erreur levée si le schéma est invalide
+        except jsonschema.exceptions.SchemaError as e:
+            raise GpfApiError(f"Le schéma décrivant la structure d'un workflow {p_schema} est invalide. Contactez le support.") from e
+        # Récupération de l'erreur levée si le json est invalide
+        except jsonschema.exceptions.ValidationError as e:
+            l_errors.append(f"Le workflow ne respecte pas le schéma demandé. Erreur de schéma :\n--- début ---\n{e}\n--- fin ---")
+
+        # Maintenant que l'on a fait ça, on peut faire des vérifications pratiques
+
+        # 1. Est-ce que les parents de chaque étape existent ?
+        # Pour chaque étape
+        for s_step_name in self.steps:
+            # Pour chaque parent de l'étape
+            for s_parent_name in self.__get_step_definition(s_step_name)["parents"]:
+                # S'il n'est pas dans la liste
+                if not s_parent_name in self.steps:
+                    l_errors.append(f"Le parent « {s_parent_name} » de l'étape « {s_step_name} » n'est pas défini dans le workflow.")
+
+        # 2. Est-ce que chaque action a une étape ?
+        # Pour chaque étape
+        for s_step_name in self.steps:
+            # est-ce qu'il y a au moins une action ?
+            if not self.__get_step_definition(s_step_name)["actions"]:
+                l_errors.append(f"L'étape « {s_step_name} » n'a aucune action de défini.")
+
+        # 3. Est-ce que chaque action de chaque étape est instantiable ?
+        # Pour chaque étape
+        for s_step_name in self.steps:
+            # Pour chaque action de l'étape
+            for i, d_action in enumerate(self.__get_step_definition(s_step_name)["actions"], 1):
+                # On tente de l'instancier
+                try:
+                    Workflow.generate(self.name, d_action)
+                except WorkflowError as e_workflow_error:
+                    l_errors.append(f"L'action n°{i} de l'étape « {s_step_name} » n'est pas instantiable ({e_workflow_error}).")
+                except KeyError as e_key_error:
+                    l_errors.append(f"L'action n°{i} de l'étape « {s_step_name} » n'a pas la clef obligatoire ({e_key_error}).")
+                except Exception as e:
+                    l_errors.append(f"L'action n°{i} de l'étape « {s_step_name} » lève une erreur inattendue ({e}).")
+
+        # On renvoie la liste
+        return l_errors
