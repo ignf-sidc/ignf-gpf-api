@@ -1,12 +1,13 @@
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
+from tests.GpfTestCase import GpfTestCase
 
 
-class SharingInterfaceTestCase(unittest.TestCase):
+class SharingInterfaceTestCase(GpfTestCase):
     """Tests SharingInterface class.
 
     cmd : python3 -m unittest -b tests.store.interface.SharingInterfaceTestCase
