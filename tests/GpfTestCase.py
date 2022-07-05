@@ -1,5 +1,9 @@
+from typing import Any
 import unittest
 from unittest.mock import PropertyMock, patch, MagicMock
+import requests
+
+import requests_mock
 
 from ignf_gpf_api.io.Config import Config
 
@@ -27,3 +31,17 @@ class GpfTestCase(unittest.TestCase):
         # On ne mock plus la classe d'authentification
         if cls._o_patch_om:
             cls._o_patch_om.stop()
+
+    @staticmethod
+    def get_response(**kwargs: Any) -> requests.Response:
+        """Génère une réponse selon les arguments passés en paramètres.
+        Args:
+            **kwargs (Any): _description_
+        Returns:
+            requests.Response: _description_
+        """
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.get("http://test.com/", **kwargs)
+            o_response = requests.request("GET", "http://test.com/")
+            return o_response

@@ -106,12 +106,13 @@ class StoreEntity(ABC):
         return cls(o_response.json())
 
     @classmethod
-    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None) -> List[T]:
+    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, all_pages: bool = True) -> List[T]:
         """Liste les entités de l'API respectant les paramètres donnés.
 
         Args:
             infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
             tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
+            all_pages (bool): booléen indiquant s'il faut itérer et récupérer toutes les pages
 
         Returns:
             List[StoreEntity]: liste des entités retournées
@@ -127,14 +128,31 @@ class StoreEntity(ABC):
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_list"
 
-        # Requête
-        o_response = ApiRequester().route_request(
-            s_route,
-            params=d_params,
-        )
+        # Liste pour stocker les entités
+        l_entities: List[T] = []
 
-        # Instanciation
-        return [cls(x) for x in o_response.json()]
+        # Numéro de la page demandée
+        i_page = 1
+
+        # Flag indiquant si la dernière page était vide
+        b_last_page_empty = False
+
+        # On requête tant qu'on est à la première page ou qu'on veut toutes les pages et que la dernière n'était pas vide
+        while i_page == 1 or (all_pages and b_last_page_empty is True):
+            # On liste les entités à la bonne page
+            o_response = ApiRequester().route_request(
+                s_route,
+                params={**d_params, **{"page": i_page}},
+            )
+            # On les ajoute à la liste
+            l_entities += [cls(i) for i in o_response.json()]
+            # On met à jour le flag
+            b_last_page_empty = bool(o_response.json())
+            # On passe à la page suivante
+            i_page += 1
+
+        # On renvoie la liste des entités récupérées
+        return l_entities
 
     def api_delete(self) -> None:
         """Supprime l'entité de l'API."""
