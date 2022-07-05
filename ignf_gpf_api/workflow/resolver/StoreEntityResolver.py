@@ -4,14 +4,15 @@ from typing import Dict, Optional, Pattern, Type
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
 from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverError
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
+from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Processing import Processing
 from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.Configuration import Configuration
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.Offering import Offering
-from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Upload import Upload
+from ignf_gpf_api.store.Endpoint import Endpoint
 from ignf_gpf_api.io.Config import Config
 
 
@@ -30,6 +31,7 @@ class StoreEntityResolver(AbstractResolver):
         Configuration.entity_name(): Configuration,
         Offering.entity_name(): Offering,
         ProcessingExecution.entity_name(): ProcessingExecution,
+        Endpoint.entity_name(): Endpoint,
     }
 
     def __init__(self, name: str) -> None:
