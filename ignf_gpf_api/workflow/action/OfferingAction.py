@@ -26,7 +26,7 @@ class OfferingAction(ActionAbstract):
     def __create_offering(self) -> None:
         """Création de la Offering sur l'API à partir des paramètres de définition de l'action."""
         Config().om.info("Création d'une offre...")
-        self.__offering = Offering.api_create(self.definition_dict["parameters"], route_params=self.definition_dict["url_parameters"])
+        self.__offering = Offering.api_create(self.definition_dict["body_parameters"], route_params=self.definition_dict["url_parameters"])
 
     @property
     def offering(self) -> Optional[Offering]:

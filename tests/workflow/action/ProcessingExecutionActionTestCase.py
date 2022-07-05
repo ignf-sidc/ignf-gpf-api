@@ -29,7 +29,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
             comments (Optional[List]): list des comments ou None
             s_type_output (str): type de l'output (stored_data ou upload)
         """
-        d_action = {"type": "processing-execution", "parameters": {"param": "valeur"}}
+        d_action = {"type": "processing-execution", "body_parameters": {"param": "valeur"}}
         if tags is not None:
             d_action["tags"] = tags
         if comments is not None:
@@ -63,7 +63,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
             o_pea.run()
 
             # test de l'appel à ProcessingExecution.api_create
-            o_mock_processing_execution_api_create.assert_called_once_with(d_action['parameters'])
+            o_mock_processing_execution_api_create.assert_called_once_with(d_action['body_parameters'])
             # un appel à ProcessingExecution().get_store_properties
             o_mock_precession.get_store_properties.assert_called_once_with()
 

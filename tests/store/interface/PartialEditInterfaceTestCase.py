@@ -1,11 +1,12 @@
-import unittest
 from unittest.mock import patch
 
 from ignf_gpf_api.store.interface.PartialEditInterface import PartialEditInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 
+from tests.GpfTestCase import GpfTestCase
 
-class PartialEditInterfaceTestCase(unittest.TestCase):
+
+class PartialEditInterfaceTestCase(GpfTestCase):
     """Tests PartialEditInterface class.
     cmd : python3 -m unittest -b tests.store.interface.PartialEditInterfaceTestCase
     """

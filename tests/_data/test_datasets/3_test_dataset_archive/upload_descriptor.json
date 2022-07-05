@@ -6,7 +6,7 @@
             ],
             "upload_infos": {
                 "description": "Jeu test archive",
-                "name": "test_livraison",
+                "name": "TEST_DATASET_ARCHIVE",
                 "srs": "EPSG:4326",
                 "type": "ARCHIVE"
             },
@@ -14,7 +14,7 @@
                 "Ceci est un jeu de données pour les archives !"
             ],
             "tags": {
-                "test": "ludi"
+                "tuto": "oui"
             }
         }
     ]
