@@ -1,13 +1,13 @@
 import configparser
 from pathlib import Path
-import unittest
 
 from ignf_gpf_api.io.Config import Config
+from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=protected-access
 
 
-class ConfigTestCase(unittest.TestCase):
+class ConfigTestCase(GpfTestCase):
     """Tests ConfigTestCase class.
 
     cmd : python3 -m unittest -b tests.io.ConfigTestCase
