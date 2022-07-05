@@ -32,9 +32,8 @@ class FullEditInterfaceTestCase(GpfTestCase):
         }
 
         o_full_edit_interface = FullEditInterface(d_old_api_data)
-        o_api_requester = ApiRequester()
 
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request, patch.object(o_full_edit_interface, "api_update", return_value=None) as o_mock_update:
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request, patch.object(o_full_edit_interface, "api_update", return_value=None) as o_mock_update:
             # On appelle la fonction api_full_edit
             o_full_edit_interface.api_full_edit(d_full_modified_api_data)
             # Vérification sur o_mock_request

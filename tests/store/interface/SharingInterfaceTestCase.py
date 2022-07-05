@@ -1,6 +1,4 @@
 from unittest.mock import patch
-import requests
-import requests_mock
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.SharingInterface import SharingInterface
@@ -15,10 +13,8 @@ class SharingInterfaceTestCase(GpfTestCase):
 
     def test_api_add_sharings(self) -> None:
         "Vérifie le bon fonctionnement de api_add_sharings."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue l ajout d'un commentaire
             # On instancie une entité à qui on va ajouter un commentaire
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
@@ -44,13 +40,9 @@ class SharingInterfaceTestCase(GpfTestCase):
             }
         ]
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json=l_data)
-            o_response = requests.request("POST", "http://test.com/")
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+        o_response = GpfTestCase.get_response(json=l_data)
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # on appelle la fonction à tester :api_list_sharings
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
             l_data_recupere = o_sharing_interface.api_list_sharings()
@@ -64,10 +56,8 @@ class SharingInterfaceTestCase(GpfTestCase):
 
     def test_api_remove_sharings(self) -> None:
         "Vérifie le bon fonctionnement de api_remove_sharings."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue la suppression d'un commentaire
             # On instancie une entité dont on va supprimer le partage de livraison
             o_sharing_interface = SharingInterface({"_id": "id_entité"})
