@@ -132,3 +132,4 @@ dmypy.json
 config.ini
 test.ini
 test.py
+test_*.py
