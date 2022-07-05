@@ -1,5 +1,6 @@
 from typing import Dict
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
 class FullEditInterface(StoreEntity):
@@ -11,4 +12,13 @@ class FullEditInterface(StoreEntity):
         Args:
             d_data_edit (Dict[str, str]): nouvelles valeurs de propriétés
         """
-        raise NotImplementedError(f"FullEditInterface.api_full_edit({d_data_edit})")
+        # Requête
+        ApiRequester().route_request(
+            f"{self._entity_name}_full_edit",
+            data=d_data_edit,
+            method=ApiRequester.PUT,
+            route_params={self._entity_name: self.id},
+        )
+
+        # Mise à jour du stockage local (_store_api_dict)
+        self.api_update()

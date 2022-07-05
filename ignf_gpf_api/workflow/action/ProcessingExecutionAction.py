@@ -61,10 +61,10 @@ class ProcessingExecutionAction(ActionAbstract):
             # cas on a pas de tag ou vide: on ne fait rien
             return
         # on ajoute le tag
-        if self.__upload is not None:
-            self.__upload.api_add_tags(self.definition_dict["tags"])
-        elif self.__stored_data is not None:
-            self.__stored_data.api_add_tags(self.definition_dict["tags"])
+        if self.upload is not None:
+            self.upload.api_add_tags(self.definition_dict["tags"])
+        elif self.stored_data is not None:
+            self.stored_data.api_add_tags(self.definition_dict["tags"])
         else:
             # on a pas de stored_data ni de upload
             raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les tags")
@@ -75,12 +75,12 @@ class ProcessingExecutionAction(ActionAbstract):
             # cas on a pas de commentaires : on ne fait rien
             return
         # on ajoute le commentaires
-        if self.__upload is not None:
+        if self.upload is not None:
             for s_comment in self.definition_dict["comments"]:
-                self.__upload.api_add_comment({"text": s_comment})
-        elif self.__stored_data is not None:
+                self.upload.api_add_comment({"text": s_comment})
+        elif self.stored_data is not None:
             for s_comment in self.definition_dict["comments"]:
-                self.__stored_data.api_add_comment({"text": s_comment})
+                self.stored_data.api_add_comment({"text": s_comment})
         else:
             # on a pas de stored_data ni de upload
             raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les commentaires")
@@ -92,12 +92,12 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def monitoring_until_end(self, callback: Optional[Callable[[str, str], None]] = None) -> str:
+    def monitoring_until_end(self, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
         La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
 
         Args:
-            callback (Optional[Callable[[str, str], None]], optional): fonction de callback à exécuter avec log du traitement et status du traitement (callback(logs, status)). Defaults to None.
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): fonction de callback à exécuter prend en argument le traitement (callback(processing-execution)). Defaults to None.
 
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
@@ -107,22 +107,56 @@ class ProcessingExecutionAction(ActionAbstract):
         Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
         if self.processing_execution is None:
             raise StepActionError("Aucune procession-execution de trouvé. Impossible de suivre le déroulement du traitement")
-        s_status = self.processing_execution.get_store_properties()["status"]
-        while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
-            # appel de la fonction affichant les logs
+        try:
+            s_status = self.processing_execution.get_store_properties()["status"]
+            while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+                # appel de la fonction affichant les logs
+                if callback is not None:
+                    callback(self.processing_execution)
+                # On attend le temps demandé
+                time.sleep(i_nb_sec_between_check)
+                # On met à jour __processing_execution + valeur status
+                self.processing_execution.api_update()
+                s_status = self.processing_execution.get_store_properties()["status"]
+            # Si on est sorti c'est que c'est fini
+            ## dernier affichage
             if callback is not None:
-                callback(self.processing_execution.api_logs(), s_status)
-            # On attend le temps demandé
-            time.sleep(i_nb_sec_between_check)
-            # On met à jour __processing_execution
+                callback(self.processing_execution)
+            ## on return le status de fin
+            return str(s_status)
+        except KeyboardInterrupt as e:
+            # si le traitement est déjà dans un statu fini on ne fait rien => transmission de l'interruption
             self.processing_execution.api_update()
             s_status = self.processing_execution.get_store_properties()["status"]
-        # Si on est sorti c'est que c'est fini
-        ## dernier affichage
-        if callback is not None:
-            callback(self.processing_execution.api_logs(), s_status)
-        ## on return le status de fin
-        return str(s_status)
+            if s_status in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+
+                Config().om.warning("traitement déjà fini")
+                raise
+            # arrêt du traitement
+            Config().om.warning("Ctrl+C : traitement en cours d’interruption, veuillez attendre...")
+            self.processing_execution.api_abort()
+            # attente que le traitement passe dans un statu fini
+            self.processing_execution.api_update()
+            s_status = self.processing_execution.get_store_properties()["status"]
+            while s_status not in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
+                # On attend 2s
+                time.sleep(2)
+                # On met à jour __processing_execution + valeur status
+                self.processing_execution.api_update()
+                s_status = self.processing_execution.get_store_properties()["status"]
+            ## dernier affichage
+            if callback is not None:
+                callback(self.processing_execution)
+            if s_status == ProcessingExecution.STATUS_ABORTED and self.output_new_entity:
+                # suppression de l'upload ou la stored data en sortie
+                if self.upload is not None:
+                    Config().om.warning("Suppression de l'upload en cours de remplissage suite à l’interruption du programme")
+                    self.upload.api_delete()
+                elif self.stored_data is not None:
+                    Config().om.warning("Suppression de la stored-data en cours de remplissage suite à l'interruption du programme")
+                    self.stored_data.api_delete()
+                # transmission de l'interruption
+            raise KeyboardInterrupt() from e
 
     @property
     def processing_execution(self) -> Optional[ProcessingExecution]:
@@ -135,3 +169,15 @@ class ProcessingExecutionAction(ActionAbstract):
     @property
     def stored_data(self) -> Optional[StoredData]:
         return self.__stored_data
+
+    @property
+    def output_new_entity(self) -> bool:
+        """Indique s'il y a création d'une nouvelle entité (clé "name" et non "_id" présente dans le paramètre "output" du corps de requête)."""
+        d_output = self.definition_dict["body_parameters"]["output"]
+        if "upload" in d_output:
+            d_el = self.definition_dict["body_parameters"]["output"]["upload"]
+        elif "stored_data" in d_output:
+            d_el = self.definition_dict["body_parameters"]["output"]["stored_data"]
+        else:
+            return False
+        return "name" in d_el

@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>296</x>
-      <y>520</y>
+      <x>304</x>
+      <y>448</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
@@ -16,8 +16,8 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>352</x>
-      <y>216</y>
+      <x>360</x>
+      <y>144</y>
       <w>248</w>
       <h>320</h>
     </coordinates>
@@ -27,8 +27,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>520</x>
-      <y>520</y>
+      <x>528</x>
+      <y>448</y>
       <w>128</w>
       <h>40</h>
     </coordinates>
@@ -39,8 +39,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>712</x>
-      <y>520</y>
+      <x>720</x>
+      <y>448</y>
       <w>128</w>
       <h>40</h>
     </coordinates>
@@ -51,8 +51,8 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>576</x>
-      <y>216</y>
+      <x>584</x>
+      <y>144</y>
       <w>24</w>
       <h>320</h>
     </coordinates>
@@ -62,8 +62,8 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>576</x>
-      <y>216</y>
+      <x>584</x>
+      <y>144</y>
       <w>216</w>
       <h>320</h>
     </coordinates>
@@ -73,8 +73,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>920</x>
-      <y>240</y>
+      <x>928</x>
+      <y>168</y>
       <w>192</w>
       <h>72</h>
     </coordinates>
@@ -90,8 +90,8 @@ get_tag(key)
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>648</x>
-      <y>240</y>
+      <x>656</x>
+      <y>168</y>
       <w>240</w>
       <h>88</h>
     </coordinates>
@@ -107,8 +107,8 @@ api_remove_comment(id)
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>280</x>
-      <y>240</y>
+      <x>288</x>
+      <y>168</y>
       <w>240</w>
       <h>72</h>
     </coordinates>
@@ -123,8 +123,8 @@ api_remove_sharings(datastore_ids)
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>480</x>
-      <y>184</y>
+      <x>488</x>
+      <y>112</y>
       <w>192</w>
       <h>40</h>
     </coordinates>
@@ -135,8 +135,8 @@ api_remove_sharings(datastore_ids)
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>304</x>
-      <y>304</y>
+      <x>312</x>
+      <y>232</y>
       <w>24</w>
       <h>232</h>
     </coordinates>
@@ -147,8 +147,8 @@ fg=red</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>304</x>
-      <y>304</y>
+      <x>312</x>
+      <y>232</y>
       <w>248</w>
       <h>232</h>
     </coordinates>
@@ -159,8 +159,8 @@ fg=red</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>816</x>
-      <y>320</y>
+      <x>824</x>
+      <y>248</y>
       <w>24</w>
       <h>216</h>
     </coordinates>
@@ -171,8 +171,8 @@ fg=orange</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>616</x>
-      <y>304</y>
+      <x>624</x>
+      <y>232</y>
       <w>376</w>
       <h>232</h>
     </coordinates>
@@ -183,8 +183,8 @@ fg=orange</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>392</x>
-      <y>320</y>
+      <x>400</x>
+      <y>248</y>
       <w>448</w>
       <h>216</h>
     </coordinates>
@@ -195,8 +195,8 @@ fg=orange</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1144</x>
-      <y>240</y>
+      <x>888</x>
+      <y>632</y>
       <w>128</w>
       <h>48</h>
     </coordinates>
@@ -209,13 +209,99 @@ api_events()
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>816</x>
-      <y>280</y>
-      <w>376</w>
-      <h>256</h>
+      <x>824</x>
+      <y>416</y>
+      <w>144</w>
+      <h>232</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 fg=orange</panel_attributes>
-    <additional_attributes>450.0;10.0;450.0;270.0;10.0;270.0;10.0;300.0</additional_attributes>
+    <additional_attributes>160.0;270.0;160.0;10.0;10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>304</x>
+      <y>632</y>
+      <w>160</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>/store:PartialEditInterface/
+--
+api_partial_edit(data_edit)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>704</x>
+      <y>632</y>
+      <w>160</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>/store:FullEditInterface/
+--
+api_full_edit(data_edit)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>128</x>
+      <y>448</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>store:Offering
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>168</x>
+      <y>480</y>
+      <w>224</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+fg=#008540</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0;260.0;70.0;260.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>368</x>
+      <y>480</y>
+      <w>240</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+fg=#008540</panel_attributes>
+    <additional_attributes>280.0;10.0;280.0;70.0;10.0;70.0;10.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>368</x>
+      <y>480</y>
+      <w>24</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+fg=#008540</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>776</x>
+      <y>480</y>
+      <w>24</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;
+fg=#008540</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;190.0</additional_attributes>
   </element>
 </diagram>

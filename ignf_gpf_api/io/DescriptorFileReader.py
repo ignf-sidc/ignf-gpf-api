@@ -8,7 +8,7 @@ from ignf_gpf_api.Errors import GpfApiError
 
 
 class DescriptorFileReader:
-    """Lit et valide le fichier descriptif d'une livraison.
+    """Lit et valide le fichier descriptif d'un ensemble de datasets.
 
     Attributes :
         __descriptor_dict (Optional[Dict[Any, Any]]) : contenu du fichier descriptif

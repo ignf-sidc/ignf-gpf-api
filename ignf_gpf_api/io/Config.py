@@ -33,7 +33,7 @@ class Config(metaclass=Singleton):
             self.__config_parser.read_file(f_ini)
 
         # Définition du niveau de log pour l'OutputManager par défaut
-        self.__output_manager.setLogLevel(self.get("logging", "log_level"))
+        self.__output_manager.set_log_level(self.get("logging", "log_level"))
 
     def set_output_manager(self, output_manager: Any) -> None:
         self.__output_manager = output_manager

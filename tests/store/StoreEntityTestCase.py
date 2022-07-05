@@ -1,14 +1,14 @@
 import json
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.io.ApiRequester import ApiRequester
+from tests.GpfTestCase import GpfTestCase
 
 
-class StoreEntityTestCase(unittest.TestCase):
+class StoreEntityTestCase(GpfTestCase):
     """Tests StoreEntity class.
 
     cmd : python3 -m unittest -b tests.store.StoreEntityTestCase
@@ -64,8 +64,8 @@ class StoreEntityTestCase(unittest.TestCase):
     def test_api_get_not_found(self) -> None:
         "Vérifie le bon fonctionnement de api_get si entité non trouvé."
 
-    def test_api_create(self) -> None:
-        "Vérifie le bon fonctionnement de api_create."
+    def test_api_create_1(self) -> None:
+        "Vérifie le bon fonctionnement de api_create sans route_params."
         # on créé un store entity dans l'api (avec un dictionnaire)
         # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
         # 1/ on vérifie l'appel ApiRequester.route_request
@@ -82,7 +82,40 @@ class StoreEntityTestCase(unittest.TestCase):
             # On effectue la création d'un objet
             o_store_entity = StoreEntity.api_create({"key_1": "value_1"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_create", method=ApiRequester.POST, data={"key_1": "value_1"})
+            o_mock_request.assert_called_once_with(
+                "store_entity_create",
+                route_params=None,
+                method=ApiRequester.POST,
+                data={"key_1": "value_1"},
+            )
+            # Vérifications sur o_store_entity
+            self.assertIsInstance(o_store_entity, StoreEntity)
+            self.assertEqual(o_store_entity.id, "123456789")
+
+    def test_api_create_2(self) -> None:
+        "Vérifie le bon fonctionnement de api_create avec route_params."
+        # on créé un store entity dans l'api (avec un dictionnaire)
+        # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
+        # 1/ on vérifie l'appel ApiRequester.route_request
+        # 2/ on vérifie l'objet instancié
+
+        # Instanciation d'une fausse réponse HTTP
+        with requests_mock.Mocker() as o_mock:
+            o_mock.post("http://test.com/", json={"_id": "123456789"})
+            o_response = requests.request("POST", "http://test.com/")
+        # Instanciation du ApiRequester
+        o_api_requester = ApiRequester()
+        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+            # On effectue la création d'un objet
+            o_store_entity = StoreEntity.api_create({"key_1": "value_1"}, route_params={"toto": "titi"})
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "store_entity_create",
+                route_params={"toto": "titi"},
+                method=ApiRequester.POST,
+                data={"key_1": "value_1"},
+            )
             # Vérifications sur o_store_entity
             self.assertIsInstance(o_store_entity, StoreEntity)
             self.assertEqual(o_store_entity.id, "123456789")

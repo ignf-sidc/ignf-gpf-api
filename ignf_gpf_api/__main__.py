@@ -147,8 +147,10 @@ def config(o_args: argparse.Namespace) -> None:
 
 
 def upload(o_args: argparse.Namespace) -> None:
-    """Authentifie l'utilisateur et retourne les informations de connexion demandées.
-    Si aucune information est demandée, confirme juste la bonne authentification.
+    """Création/Gestion des Livraison (Upload).
+    Si un fichier descriptor est précisé, on effectue la livraison.
+    Si un id est précisé, on affiche la livraison.
+    Sinon on liste les Livraisons avec éventuellement des filtres.
 
     Args:
         o_args (argparse.Namespace): paramètres utilisateurs
@@ -159,7 +161,7 @@ def upload(o_args: argparse.Namespace) -> None:
         for o_dataset in o_dfu.datasets:
             o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
             o_upload = o_ua.run()
-            if o_ua.monitor_until_end():
+            if UploadAction.monitor_until_end(o_upload, print):
                 print(f"Livraison {o_upload} créée avec succès.")
             else:
                 print(f"Livraison {o_upload} créée en erreur !")
