@@ -1,3 +1,4 @@
+from pathlib import Path
 import unittest
 from unittest.mock import PropertyMock, patch, MagicMock
 
@@ -9,6 +10,8 @@ class GpfTestCase(unittest.TestCase):
 
     _o_patch_om = None
     _o_mock_om = None
+
+    p_data_test = Path(__file__).parent / "_data"
 
     @classmethod
     def setUpClass(cls) -> None:
