@@ -1,7 +1,5 @@
 import json
 from unittest.mock import call, patch
-import requests
-import requests_mock
 from ignf_gpf_api.store.Errors import StoreEntityError
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
@@ -93,13 +91,9 @@ class StoreEntityTestCase(GpfTestCase):
         # 2/ on vérifie l'objet instancié
 
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json={"_id": "123456789"})
-            o_response = requests.request("POST", "http://test.com/")
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+        o_response = GpfTestCase.get_response(json={"_id": "123456789"})
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # On effectue la création d'un objet
             o_store_entity = StoreEntity.api_create({"key_1": "value_1"})
             # Vérification sur o_mock_request
@@ -121,13 +115,9 @@ class StoreEntityTestCase(GpfTestCase):
         # 2/ on vérifie l'objet instancié
 
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json={"_id": "123456789"})
-            o_response = requests.request("POST", "http://test.com/")
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+        o_response = GpfTestCase.get_response(json={"_id": "123456789"})
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # On effectue la création d'un objet
             o_store_entity = StoreEntity.api_create({"key_1": "value_1"}, route_params={"toto": "titi"})
             # Vérification sur o_mock_request
@@ -247,10 +237,8 @@ class StoreEntityTestCase(GpfTestCase):
         # 1/ on vérifie l'appel ApiRequester.route_request
         # 2/ avec le mock, pas besoin de vérifier que l'instance (SUR l'api) n'existe plus
 
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue la suppression d'une entité
             # On instancie une entité à supprimer
             o_store_entity = StoreEntity({"_id": "id_à_supprimer"})
@@ -265,13 +253,9 @@ class StoreEntityTestCase(GpfTestCase):
         d_old_data = {"_id": "id_à_maj", "name": "ancien nom"}
         d_new_data = {"_id": "id_à_maj", "name": "nouveau nom"}
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json=d_new_data)
-            o_response = requests.request("POST", "http://test.com/")
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+        o_response = GpfTestCase.get_response(json=d_new_data)
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # On effectue la suppression d'une entité
             # On instancie une entité à mettre à jour
             o_store_entity = StoreEntity(d_old_data)

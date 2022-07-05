@@ -31,9 +31,8 @@ class PartialEditInterfaceTestCase(GpfTestCase):
         }
 
         o_partial_edit_interface = PartialEditInterface(d_old_api_data)
-        o_api_requester = ApiRequester()
 
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request, patch.object(o_partial_edit_interface, "api_update", return_value=None) as o_mock_update:
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request, patch.object(o_partial_edit_interface, "api_update", return_value=None) as o_mock_update:
             # On appelle la fonction api_partial_edit
             o_partial_edit_interface.api_partial_edit(d_partly_modified_api_data)
             # Vérification sur o_mock_request

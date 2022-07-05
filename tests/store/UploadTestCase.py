@@ -1,8 +1,6 @@
 from unittest.mock import patch, mock_open
 from pathlib import Path
 from typing import Any, Dict, List
-import requests
-import requests_mock
 
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Upload import Upload
@@ -18,14 +16,12 @@ class UploadTestCase(GpfTestCase):
 
     def test_api_push_data_file(self) -> None:
         "Vérifie le bon fonctionnement de api_push_data_file."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
         # On instancie une livraison pour laquelle on veut pousser des fichiers
         o_upload = Upload({"_id": "id_de_test"})
         # On récupère le nom de la clé associée au fichier
         s_key_file = Config().get("upload_creation", "push_data_file_key")
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             o_opener = mock_open()
             # on va mocker le { file_path.open("rb") } présent dans la fct api_push_data_file :
             with patch.object(Path, "open", return_value=o_opener.return_value) as o_mock_open:
@@ -49,14 +45,12 @@ class UploadTestCase(GpfTestCase):
 
     def test_api_push_md5_file(self) -> None:
         "Vérifie le bon fonctionnement de api_push_md5_file."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
         # On instancie une livraison pour laquelle on veut pousser des fichiers
         o_upload = Upload({"_id": "id_de_test"})
         # On récupère le nom de la clé associée au fichier
         s_key_file = Config().get("upload_creation", "push_md5_file_key")
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             o_opener = mock_open()
             with patch.object(Path, "open", return_value=o_opener.return_value) as o_mock_open:
                 # Initialisation des paramètres utilisés par la fonction à tester
@@ -82,9 +76,8 @@ class UploadTestCase(GpfTestCase):
         # on prend un chemin coté api
         s_api_path = "path/cote/api"
 
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        o_api_requester = ApiRequester()
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On appelle la fonction que l'on veut tester
             o_upload.api_delete_data_file(s_api_path)
 
@@ -104,9 +97,8 @@ class UploadTestCase(GpfTestCase):
         # on prend un chemin coté api
         s_api_path = "data/path/cote/api"
 
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        o_api_requester = ApiRequester()
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On appelle la fonction que l'on veut tester
             o_upload.api_delete_data_file(s_api_path)
 
@@ -126,9 +118,8 @@ class UploadTestCase(GpfTestCase):
         # on prend un chemin coté api
         s_api_path = "path/cote/api"
 
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        o_api_requester = ApiRequester()
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On appelle la fonction que l'on veut tester
             o_upload.api_delete_md5_file(s_api_path)
 
@@ -142,10 +133,8 @@ class UploadTestCase(GpfTestCase):
 
     def test_api_open(self) -> None:
         "Vérifie le bon fonctionnement de api_open."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue l'ouverture d'une livraison
             # On instancie une livraison à ouvrir
             o_upload_2_open = Upload({"_id": "id_à_ouvrir"})
@@ -160,10 +149,8 @@ class UploadTestCase(GpfTestCase):
 
     def test_api_close(self) -> None:
         "Vérifie le bon fonctionnement de api_close."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue la fermeture d'une livraison
             # On instancie une livraison à fermer
             o_upload_2_close = Upload({"_id": "id_à_fermer"})
@@ -180,10 +167,8 @@ class UploadTestCase(GpfTestCase):
         "Vérifie le bon fonctionnement de api_tree."
         l_tree_wanted = [{"key_1": "value_1", "key_2": "value_2"}]
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json=l_tree_wanted)
-            o_response = requests.request("POST", "http://test.com/")
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        o_response = GpfTestCase.get_response(json=l_tree_wanted)
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # On instancie un upload
             o_upload = Upload({"_id": "identifiant"})
@@ -198,10 +183,8 @@ class UploadTestCase(GpfTestCase):
         "Vérifie le bon fonctionnement de api_list_checks."
         d_list_checks_wanted: Dict[str, List[Dict[str, Any]]] = {"key_1": [], "key_2": []}
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.get("http://test.com/", json=d_list_checks_wanted)
-            o_response = requests.request("GET", "http://test.com/")
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        o_response = GpfTestCase.get_response(json=d_list_checks_wanted)
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # On instancie un upload
             o_upload = Upload({"_id": "identifiant"})
@@ -214,7 +197,7 @@ class UploadTestCase(GpfTestCase):
 
     def test_api_run_checks(self) -> None:
         "Vérifie le bon fonctionnement de api_run_checks."
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons params
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On instancie une livraison
             o_upload_run_checks = Upload({"_id": "id"})
