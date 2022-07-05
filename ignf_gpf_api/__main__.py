@@ -12,6 +12,8 @@ import shutil
 import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
+from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.workflow.Workflow import Workflow
 from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
@@ -38,6 +40,8 @@ def main() -> None:
         upload(o_args)
     elif o_args.task == "dataset":
         dataset(o_args)
+    elif o_args.task == "workflow":
+        workflow(o_args)
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -73,6 +77,9 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
     o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à enregistrer")
     o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier descriptor à créer")
+    # Parser pour workflow
+    o_parser_auth = o_sub_parsers.add_parser("workflow", help="Workflow")
+    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser")
     return o_parser.parse_args(args)
 
 
@@ -199,6 +206,22 @@ def dataset(o_args: argparse.Namespace) -> None:
             if p_child.is_dir():
                 l_children.append(p_child.name)
         print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
+
+
+def workflow(o_args: argparse.Namespace) -> None:
+    """Vérifie ou exécute un workflow.
+
+    Args:
+        o_args (argparse.Namespace): paramètres utilisateurs
+    """
+    p_workflow = Path(o_args.file)
+    o_workflow = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
+    l_errors = o_workflow.validate()
+    if l_errors:
+        s_errors = "\n   * ".join(l_errors)
+        print(f"{len(l_errors)} trouvées dans le workflow :\n   * {s_errors}")
+        raise GpfApiError("Workflow invalide.")
+    print("Le workflow est valide.")
 
 
 if __name__ == "__main__":

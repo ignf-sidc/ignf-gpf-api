@@ -43,7 +43,7 @@ class ProcessingExecutionAction(ActionAbstract):
         Récupération des attributs processing_execution et Upload/StoredData.
         """
         # création de la ProcessingExecution
-        self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["parameters"])
+        self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
 
         d_info = self.__processing_execution.get_store_properties()["output"]
         if "upload" in d_info:

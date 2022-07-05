@@ -1,16 +1,17 @@
-import unittest
 from unittest.mock import patch
 import requests
 import requests_mock
 
-from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.io.ApiRequester import ApiRequester
+from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.store.Configuration import Configuration
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 
+from tests.GpfTestCase import GpfTestCase
 
-class ConfigurationTestCase(unittest.TestCase):
-    """Tests ConfigurationTestCase class.
+
+class ConfigurationTestCase(GpfTestCase):
+    """Tests Configuration class.
 
     cmd : python3 -m unittest -b tests.store.ConfigurationTestCase
     """
