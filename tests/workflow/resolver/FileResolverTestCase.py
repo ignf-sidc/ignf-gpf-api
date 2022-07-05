@@ -10,7 +10,7 @@ class FileResolverTestCase(unittest.TestCase):
     cmd : python3 -m unittest -b tests.workflow.resolver.FileResolverTestCase
     """
 
-    file_path = str(Path(__file__).parent.parent.parent / "_data/action/FileResolver")
+    file_path = str(Path(__file__).parent.parent.parent / "_data" / "workflow" / "resolver" / "FileResolver")
 
     s_str_value: str = "contenu du fichier de type str"
     s_list_value: str = str('["info_1", "info_2"]')
