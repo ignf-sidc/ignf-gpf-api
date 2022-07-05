@@ -1,11 +1,12 @@
-import unittest
 from unittest.mock import patch
 
 from ignf_gpf_api.store.interface.FullEditInterface import FullEditInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 
+from tests.GpfTestCase import GpfTestCase
 
-class FullEditInterfaceTestCase(unittest.TestCase):
+
+class FullEditInterfaceTestCase(GpfTestCase):
     """Tests FullEditInterface class.
 
     cmd : python3 -m unittest -b tests.store.interface.FullEditInterfaceTestCase
