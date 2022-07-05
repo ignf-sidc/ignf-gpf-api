@@ -1,7 +1,7 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Type
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 
-from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.StoreEntity import StoreEntity, T
 
 
 class Endpoint(StoreEntity):
@@ -10,16 +10,17 @@ class Endpoint(StoreEntity):
     _entity_name = "endpoint"
     _entity_title = "point de montage"
 
-    @staticmethod
-    def api_list(infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None) -> List["Endpoint"]:
+    @classmethod
+    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
         """Liste les points de montage de l'API respectant les paramètres donnés.
 
         Args:
             infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
             tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
+            page (Optional[int]): page à récupérer, toutes si None. Default to None.
 
         Returns:
-            List[Endpoint]: liste des entités retournées
+            List[T]: liste des entités retournées
         """
         # Gestion des paramètres nuls
         infos_filter = infos_filter if infos_filter is not None else {}
@@ -29,7 +30,7 @@ class Endpoint(StoreEntity):
         o_response = ApiRequester().route_request("datastore_get")
 
         # Liste pour stocker les endpoints correspondants
-        l_endpoints: List[Endpoint] = []
+        l_endpoints: List[T] = []
 
         # Pour chaque endpoints en dictionnaire
         for d_endpoint in o_response.json()["endpoints"]:
@@ -42,6 +43,6 @@ class Endpoint(StoreEntity):
                     break
             # S'il est ok au final, on l'ajoute
             if b_ok:
-                l_endpoints.append(Endpoint(d_endpoint))
+                l_endpoints.append(cls(d_endpoint))
         # A la fin, on renvoie la liste
         return l_endpoints
