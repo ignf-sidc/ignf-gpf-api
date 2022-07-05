@@ -57,7 +57,7 @@ class NoEntityFoundError(GpfApiError):
 
 
 class ResolveFileNotFoundError(GpfApiError):
-    """Classe d'erreur pour le résolveur FileResolver quand une erreur de fichier est levée.
+    """Classe d'erreur pour le résolveur FileResolver quand le fichier indiqué est introuvable.
 
     Attributes:
         __message (str): message décrivant le problème
@@ -76,7 +76,7 @@ class ResolveFileNotFoundError(GpfApiError):
 
 
 class ResolveFileInvalidError(GpfApiError):
-    """Classe d'erreur pour le résolveur FileResolver quand une erreur de fichier est levée.
+    """Classe d'erreur pour le résolveur FileResolver quand le fichier indiqué est invalide.
 
     Attributes:
         __message (str): message décrivant le problème
@@ -86,25 +86,6 @@ class ResolveFileInvalidError(GpfApiError):
 
     def __init__(self, resolver_name: str, to_solve: str) -> None:
         s_message = f"Erreur de traitement d'un fichier (résolveur '{resolver_name}') avec la chaîne '{to_solve}'."
-        super().__init__(s_message)
-        self.__resolver_name = resolver_name
-        self.__to_solve = to_solve
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.__resolver_name}, {self.__to_solve})"
-
-
-class UnknownFileError(GpfApiError):
-    """Classe d'erreur pour le résolveur FileResolver quand une erreur de type fichier est levée.
-
-    Attributes:
-        __message (str): message décrivant le problème
-        __resolver_name (str): nom du résolveur
-        __to_solve (str): chaîne à résoudre
-    """
-
-    def __init__(self, resolver_name: str, to_solve: str) -> None:
-        s_message = f"Erreur de traitement d'un fichier (résolveur '{resolver_name}') type de fichier non connu: '{to_solve} '."
         super().__init__(s_message)
         self.__resolver_name = resolver_name
         self.__to_solve = to_solve

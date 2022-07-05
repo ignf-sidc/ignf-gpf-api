@@ -4,7 +4,7 @@ from pathlib import Path
 
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
-from ignf_gpf_api.workflow.resolver.Errors import UnknownFileError, ResolveFileInvalidError, ResolveFileNotFoundError, ResolverError
+from ignf_gpf_api.workflow.resolver.Errors import ResolveFileInvalidError, ResolveFileNotFoundError, ResolverError
 
 
 class FileResolver(AbstractResolver):
@@ -88,7 +88,7 @@ class FileResolver(AbstractResolver):
             raise ResolveFileInvalidError(self.name, s_to_solve) from e_not_list
 
         if not isinstance(d_to_solve, dict):
-            # le programme emet une erreur
+            # le programme émet une erreur
             raise ResolveFileInvalidError(self.name, s_to_solve)
         return s_data
 
@@ -119,5 +119,5 @@ class FileResolver(AbstractResolver):
         elif d_groups["resolver_type"] == "dict":
             s_result = str(self.__resolve_dict(s_to_solve, d_groups["resolver_file"]))
         else:
-            raise UnknownFileError(self.name, s_to_solve)
+            raise ResolverError(self.name, s_to_solve)
         return s_result
