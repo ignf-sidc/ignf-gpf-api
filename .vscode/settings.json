@@ -1,9 +1,11 @@
 {
     "cSpell.words": [
         "EPSG",
+        "Géoplateforme",
         "ignf",
         "mypy",
         "pathes",
+        "pathlib",
         "pylint",
         "pylintrc",
         "pypi",
