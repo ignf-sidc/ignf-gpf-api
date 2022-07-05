@@ -1,5 +1,6 @@
 import time
 from typing import Any, Callable, Dict, Optional
+from ignf_gpf_api.Errors import GpfApiError
 
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
@@ -21,12 +22,17 @@ class ProcessingExecutionAction(ActionAbstract):
         __StoredData (Optional[StoredData]) : représentation Python de la données stockée en sortie (null si livraison en sortie)
     """
 
-    def __init__(self, workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> None:
+    BEHAVIOR_STOP = "STOP"
+    BEHAVIOR_DELETE = "DELETE"
+    BEHAVIOR_CONTINUE = "CONTINUE"
+
+    def __init__(self, workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None, behavior: Optional[str] = None) -> None:
         super().__init__(workflow_context, definition_dict, parent_action)
         # Autres attributs
         self.__processing_execution: Optional[ProcessingExecution] = None
         self.__upload: Optional[Upload] = None
         self.__stored_data: Optional[StoredData] = None
+        self.__behavior: str = behavior if behavior is not None else Config().get("processing_execution", "behavior_if_exists")
 
     def run(self) -> None:
         # Création de l'exécution du traitement (attributs processing_execution et Upload/StoredData défini)
@@ -42,10 +48,38 @@ class ProcessingExecutionAction(ActionAbstract):
         """Création du ProcessingExecution sur l'API à partir des paramètres de définition de l'action.
         Récupération des attributs processing_execution et Upload/StoredData.
         """
-        # création de la ProcessingExecution
-        self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["parameters"])
+        # On vérifie si on doit créer de nouvelles entités
+        if self.output_new_entity:
+            # On vérifie si une stored_data équivalente à celle du dictionnaire de définition existe déjà
+            o_stored_data = self.__find_stored_data()
+            if o_stored_data is not None:
 
-        d_info = self.__processing_execution.get_store_properties()["output"]
+                # Comportement d'arrêt du programme
+                if self.__behavior == self.BEHAVIOR_STOP:
+                    raise GpfApiError(f"Impossible de créer l'éxecution de traitement, une donnée stockée équivalente {o_stored_data} existe déjà.")
+                # Comportement de suppression des entités détectées
+                elif self.__behavior == self.BEHAVIOR_DELETE:
+                    Config().om.warning(f"Une donnée stockée équivalente à {o_stored_data} va être supprimée puis recréée")
+                    Config().om.warning("Si une éxécution de traitement liée à la donnée équivalente existe, il sera supprimé.")
+                    # Récupération des traitements qui ont créé la donnnée stockée équivalente
+                    l_process = ProcessingExecution.api_list(infos_filter={"output_stored_data": o_stored_data.id})
+                    for o_process in l_process:
+                        # Suppression du traitement
+                        o_process.api_delete()
+                    # Suppression de la donnée stockée
+                    o_stored_data.api_delete()
+                    # création de la ProcessingExecution
+                    self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
+                    d_info = self.__processing_execution.get_store_properties()["output"]
+                # Comportements non supportés
+                else:
+                    raise GpfApiError(f"Le comportement {self.__behavior} n'est pas reconnu, l'éxécution de traitement est annulée.")
+        else:
+            # création de la ProcessingExecution
+            self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
+            d_info = self.__processing_execution.get_store_properties()["output"]
+
+        # Récupération des entités de l'exécution de traitement
         if "upload" in d_info:
             # récupération de l'upload
             self.__upload = Upload.api_get(d_info["upload"]["_id"])
@@ -92,6 +126,35 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
+    def __find_stored_data(self) -> Optional[StoredData]:
+        """
+        Fonction permettant de récupérer une stored Data en fonction des filtres définis dans default.ini
+
+        Returns:
+            Optional[StoredData]: données stockées retrouvée
+        """
+        # On tente de récupérer la stored_data selon les critères d'informations (nom...)
+        l_attributes = Config().get("processing_execution", "uniqueness_constraint_infos").split(";")
+        d_infos = {}
+        d_dico = self.definition_dict["body_parameters"]["output"]
+        for s_infos in l_attributes:
+            if s_infos != "":
+                if "stored_data" in d_dico:
+                    d_infos[s_infos] = d_dico["stored_data"][s_infos]
+        # On tente de récupérer la stored_data selon les critères de tags donnés en conf (uniqueness_constraint_tags)
+        l_tags = Config().get("processing_execution", "uniqueness_constraint_tags").split(";")
+        d_tags = {}
+        for s_tag in l_tags:
+            if s_tag != "":
+                d_tags[s_tag] = self.definition_dict["tags"][s_tag]
+        # On peut maintenant filtrer les stored data selon ces critères
+        l_storeddata = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags)
+        # S'il y a un ou plusieurs stored data, on retourne le 1er :
+        if l_storeddata:
+            return l_storeddata[0]
+        # sinon on retourne None
+        return None
+
     def monitoring_until_end(self, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
         La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
@@ -102,7 +165,7 @@ class ProcessingExecutionAction(ActionAbstract):
         Returns:
             Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
         """
-        # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour facilité les testes
+        # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour faciliter les tests
         i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
         Config().om.info(f"Monitoring du traitement toutes les {i_nb_sec_between_check} secondes...")
         if self.processing_execution is None:
