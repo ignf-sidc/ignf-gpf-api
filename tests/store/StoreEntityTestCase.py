@@ -143,7 +143,7 @@ class StoreEntityTestCase(GpfTestCase):
 
     def test_api_list(self) -> None:
         "Vérifie le bon fonctionnement de api_list."
-        # 1 : vérif fonctionnement ok si plusieurs pages dispos et toutes les pages demandées
+        # 1 : vérif fonctionnement ok si plusieurs pages dispos et toutes les pages demandées (par défaut)
         # On a deux réponses avec une liste d'entités puis une vide
         l_responses_1 = [
             GpfTestCase.get_response(json=[{"_id": "1"}, {"_id": "2"}, {"_id": "3"}]),
@@ -172,7 +172,7 @@ class StoreEntityTestCase(GpfTestCase):
                 self.assertIsInstance(o_entity, StoreEntity)
                 self.assertEqual(o_entity.id, str(i))
 
-        # 2 : vérif fonctionnement ok si seulement une page dispos et toutes les pages demandées
+        # 2 : vérif fonctionnement ok si seulement une page dispos et toutes les pages demandées (par défaut)
         # On a une réponse avec un liste d'entités puis une vide
         l_responses_2 = [
             GpfTestCase.get_response(json=[{"_id": "1"}, {"_id": "2"}]),
@@ -199,11 +199,11 @@ class StoreEntityTestCase(GpfTestCase):
                 self.assertIsInstance(o_entity, StoreEntity)
                 self.assertEqual(o_entity.id, str(i))
 
-        # 3 : vérif fonctionnement ok si plusieurs pages dispos et une page demandée
+        # 3 : vérif fonctionnement ok si plusieurs pages dispos et une page demandée (la 1)
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", side_effect=l_responses_1) as o_mock_request:
             # On effectue le listing d'une entité
-            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"}, all_pages=False)
+            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"}, page=1)
             # Vérification sur o_mock_request
             # Fonction appelée 1 fois
             self.assertEqual(o_mock_request.call_count, 1)
@@ -224,7 +224,7 @@ class StoreEntityTestCase(GpfTestCase):
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", side_effect=l_responses_2) as o_mock_request:
             # On effectue le listing d'une entité
-            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"}, all_pages=False)
+            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"}, page=3)
             # Vérification sur o_mock_request
             # Fonction appelée 1 fois
             self.assertEqual(o_mock_request.call_count, 1)
@@ -232,7 +232,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 3}),
                 ],
             )
             # Vérifications sur l_entities
