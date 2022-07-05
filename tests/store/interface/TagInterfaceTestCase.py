@@ -43,10 +43,8 @@ class TagInterfaceTestCase(GpfTestCase):
         # dictionnaire de tag à ajouter
         d_more_tag_data = {"tag_key2": "tag_value2"}
 
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On instancie un TagInterface
             o_tag_interface = TagInterface(d_api_data)
             # On appelle la fonction api_add_tags
@@ -73,10 +71,8 @@ class TagInterfaceTestCase(GpfTestCase):
         # dictionnaire de tag à supprimer
         l_less_tag_data = ["tag_key2"]
 
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On instancie un TagInterface
             o_tag_interface = TagInterface(d_api_data)
             # On appelle la fonction api_remove_tags
