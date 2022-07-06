@@ -24,7 +24,12 @@ class OfferingAction(ActionAbstract):
         # Ajout de l'Offering
         self.__create_offering()
         # Affichage
-        Config().om.info(f"Offre créée : {self.__offering}")
+        o_offering = self.offering
+        if o_offering is not None:
+            # Récupération des liens
+            o_offering.api_update()
+            s_urls = "\n   - ".join(o_offering["urls"])
+            Config().om.info(f"Offre créée : {self.__offering}\n   - {s_urls}")
         Config().om.info("Création d'une offre : terminé")
 
     def __create_offering(self) -> None:
