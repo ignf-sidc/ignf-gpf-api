@@ -117,6 +117,9 @@ class StoreEntity(ABC):
         Returns:
             List[StoreEntity]: liste des entités retournées
         """
+        # Nombre d'éléments max à lister par requête
+        i_limit = Config().get_int("store_api", "nb_limit")
+
         # Gestion des paramètres nuls
         infos_filter = infos_filter if infos_filter is not None else {}
         tags_filter = tags_filter if tags_filter is not None else {}
@@ -134,20 +137,20 @@ class StoreEntity(ABC):
         # Numéro de la page demandée
         i_page = 1 if page is None else page
 
-        # Flag indiquant si la dernière page était vide
-        b_last_page_empty = False
+        # Flag indiquant s'il faut requêter la prochaine page
+        b_next_page = True
 
         # On requête tant qu'on est à la page spécifiquement demandée ou qu'on veut toutes les pages et que la dernière n'était pas vide
-        while i_page == page or (page is None and b_last_page_empty is False):
+        while i_page == page or (page is None and b_next_page is True):
             # On liste les entités à la bonne page
             o_response = ApiRequester().route_request(
                 s_route,
-                params={**d_params, **{"page": i_page}},
+                params={**d_params, **{"page": i_page, "limit": i_limit}},
             )
             # On les ajoute à la liste
             l_entities += [cls(i) for i in o_response.json()]
-            # On met à jour le flag
-            b_last_page_empty = len(o_response.json()) == 0
+            # On doit requêter la page suivante si on a eu autant d'élément que demandé au max, sinon c'est que c'est bon
+            b_next_page = len(o_response.json()) == i_limit
             # On passe à la page suivante
             i_page += 1
 
