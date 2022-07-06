@@ -38,14 +38,18 @@ class Workflow:
         """
         return self.__raw_definition_dict
 
-    def run_step(self, step_name: str, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> None:
+    def run_step(self, step_name: str, callback: Optional[Callable[[ProcessingExecution], None]] = None, behavior: Optional[str] = None) -> None:
         """Lance une étape du workflow à partir de son nom
+
         Args:
-            step_name (string): nom de l'étape
+            step_name (str): nom de l'étape
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): callback de suivi. Defaults to None.
+            behavior (Optional[str]): comportement à adopter si une entité existe déjà sur l'entrepôt. Defaults to None.
+
         Raises:
-            WorkflowExecutionError: est levée si un problème apparaît pendant l'exécution du workflow
+            WorkflowError: levée si un problème apparaît pendant l'exécution du workflow
         """
-        Config().om.info(f"Lancement de l'étape {step_name}")
+        Config().om.info(f"Lancement de l'étape {step_name}...")
         # Récupération de l'étape dans la définition de workflow
         d_step_definition = self.__get_step_definition(step_name)
         # initialisation des actions parentes
@@ -53,7 +57,7 @@ class Workflow:
         # Pour chaque action définie dans le workflow, instanciation de l'objet Action puis création sur l'entrepôt
         for d_action_raw in d_step_definition["actions"]:
             # création de l'action
-            o_action = Workflow.generate(f"{step_name}/{d_action_raw['type']}", d_action_raw, o_parent_action)
+            o_action = Workflow.generate(f"{step_name}", d_action_raw, o_parent_action, behavior)
             # résolution
             o_action.resolve()
             # exécution de l'action
@@ -96,19 +100,20 @@ class Workflow:
         return list(self.__raw_definition_dict["workflow"]["steps"].keys())
 
     @staticmethod
-    def generate(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None) -> ActionAbstract:
+    def generate(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> ActionAbstract:
         """génération de la bonne action selon le type
 
         Args:
             workflow_context (str): nom du context du workflow
             definition_dict (Dict[str, Any]): dictionnaire définissant l'action
             parent_action (Optional[&quot;ActionAbstract&quot;], optional): action précédente (si étape à plusieurs action). Defaults to None.
+            behavior (Optional[str]): comportement à adopter si l'entité créée par l'action existe déjà sur l'entrepôt
 
         Returns:
             ActionAbstract: instance permettant de lancer l'action
         """
         if definition_dict["type"] == "processing-execution":
-            return ProcessingExecutionAction(workflow_context, definition_dict, parent_action)
+            return ProcessingExecutionAction(workflow_context, definition_dict, parent_action, behavior=behavior)
         if definition_dict["type"] == "configuration":
             return ConfigurationAction(workflow_context, definition_dict, parent_action)
         if definition_dict["type"] == "offering":

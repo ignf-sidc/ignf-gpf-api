@@ -71,7 +71,7 @@ class WorkflowTestCase(GpfTestCase):
             # test pour une action
             o_workflow.run_step("mise-en-base")
             o_mock_action.run.assert_called_once_with()
-            o_mock_action_generate.assert_called_once_with("mise-en-base/action1", {"type": "action1"}, None)
+            o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
             o_mock_action.resolve.assert_called_once_with()
             o_mock_action.run.assert_called_once_with()
 
@@ -82,8 +82,8 @@ class WorkflowTestCase(GpfTestCase):
             # test pour 2 actions
             o_workflow.run_step("mise-en-base2")
             self.assertEqual(o_mock_action_generate.call_count, 2)
-            o_mock_action_generate.assert_any_call("mise-en-base2/action2-1", {"type": "action2-1"}, None)
-            o_mock_action_generate.assert_any_call("mise-en-base2/action2-2", {"type": "action2-2"}, o_mock_action)
+            o_mock_action_generate.assert_any_call("mise-en-base2", {"type": "action2-1"}, None, None)
+            o_mock_action_generate.assert_any_call("mise-en-base2", {"type": "action2-2"}, o_mock_action, None)
             self.assertEqual(o_mock_action.resolve.call_count, 2)
             self.assertEqual(o_mock_action.run.call_count, 2)
 
@@ -110,7 +110,7 @@ class WorkflowTestCase(GpfTestCase):
             o_mock_processing_execution_action.monitoring_until_end.return_value = "SUCCESS"
             o_workflow.run_step("mise-en-base")
             o_mock_processing_execution_action.run.assert_called_once_with()
-            o_mock_action_generate.assert_called_once_with("mise-en-base/action1", {"type": "action1"}, None)
+            o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
             o_mock_processing_execution_action.resolve.assert_called_once_with()
             o_mock_processing_execution_action.run.assert_called_once_with()
             o_mock_processing_execution_action.monitoring_until_end.assert_called_once_with(callback=None)
@@ -123,7 +123,7 @@ class WorkflowTestCase(GpfTestCase):
             o_mock_processing_execution_action.monitoring_until_end.return_value = "SUCCESS"
             o_workflow.run_step("mise-en-base", callback)
             o_mock_processing_execution_action.run.assert_called_once_with()
-            o_mock_action_generate.assert_called_once_with("mise-en-base/action1", {"type": "action1"}, None)
+            o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
             o_mock_processing_execution_action.resolve.assert_called_once_with()
             o_mock_processing_execution_action.run.assert_called_once_with()
             o_mock_processing_execution_action.monitoring_until_end.assert_called_once_with(callback=callback)
@@ -148,35 +148,38 @@ class WorkflowTestCase(GpfTestCase):
                 o_workflow.run_step("mise-en-base")
             self.assertEqual(o_arc.exception.message, f"Le ProcessingExecution {o_mock_processing_execution_action} ne s'est pas bien passé. Sortie ABORTED")
 
-    def run_generation(self, expected_type: Type[ActionAbstract], name: str, dico_def: Dict[str, Any], parent: Optional[ActionAbstract] = None) -> None:
+    def run_generation(self, expected_type: Type[ActionAbstract], name: str, dico_def: Dict[str, Any], parent: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> None:
         """lancement de la commande de génération
 
         Args:
-            expected_type (Type[&quot;ActionAbstract&quot;]): type de la classe attendu en sortie de la fonction
+            expected_type (Type[ActionAbstract]): type de la classe attendu en sortie de la fonction
             name (str): nom du contexte du workflow
             dico_def (Dict[str, Any]): dictionnaire de l'action
-            parent (Optional[&quot;ActionAbstract&quot;], optional): parent de l'action. Defaults to None.
+            parent (Optional[ActionAbstract], optional): parent de l'action. Defaults to None.
+            behavior (Optional[str], optional): comportement à adopter. Defaults to None.
         """
         # mock des fonction __init__ des classes action généré
-        def new_init(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None) -> None:
-            print("new - ", workflow_context, definition_dict, parent_action)
+        def new_init(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> None:
+            print("new - ", workflow_context, definition_dict, parent_action, behavior)
 
         d_mock = {}
 
-        with patch.object(ProcessingExecutionAction, "__init__", wraps=new_init) as d_mock["ProcessingExecutionAction"], patch.object(ConfigurationAction, "__init__", wraps=new_init) as d_mock[
-            "ConfigurationAction"
-        ], patch.object(OfferingAction, "__init__", wraps=new_init) as d_mock["OfferingAction"]:
-
-            # exécution
-            o_action_generated = Workflow.generate(name, dico_def, parent)
-            # testes
-            assert type(o_action_generated) == expected_type
-
-            for s_class_name, o_mock in d_mock.items():
-                if expected_type.__name__ == s_class_name:
-                    o_mock.assert_called_once_with(name, dico_def, parent)
-                else:
-                    o_mock.assert_not_called()
+        with patch.object(ProcessingExecutionAction, "__init__", wraps=new_init) as d_mock["ProcessingExecutionAction"]:
+            with patch.object(ConfigurationAction, "__init__", wraps=new_init) as d_mock["ConfigurationAction"]:
+                with patch.object(OfferingAction, "__init__", wraps=new_init) as d_mock["OfferingAction"]:
+                    # exécution
+                    o_action_generated = Workflow.generate(name, dico_def, parent, behavior=behavior)
+                    # tests
+                    self.assertIsInstance(o_action_generated, expected_type)
+                    for s_class_name, o_mock in d_mock.items():
+                        if expected_type.__name__ == s_class_name:
+                            # Le comportement n'est transmis que pour les ProcessingExecutionAction (pour le moment)
+                            if isinstance(o_action_generated, ProcessingExecutionAction):
+                                o_mock.assert_called_once_with(name, dico_def, parent, behavior=behavior)
+                            else:
+                                o_mock.assert_called_once_with(name, dico_def, parent)
+                        else:
+                            o_mock.assert_not_called()
 
     def test_generate(self) -> None:
         """test de generate"""
@@ -184,15 +187,15 @@ class WorkflowTestCase(GpfTestCase):
         o_mock_parent = MagicMock()
 
         # test type processing-execution
-        self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, None)
+        self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, None, behavior="DELETE")
         self.run_generation(ProcessingExecutionAction, "name", {"type": "processing-execution"}, o_mock_parent)
 
         # test type configuration
-        self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, None)
+        self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, None, behavior="DELETE")
         self.run_generation(ConfigurationAction, "name", {"type": "configuration"}, o_mock_parent)
 
         # test type offering
-        self.run_generation(OfferingAction, "name", {"type": "offering"}, None)
+        self.run_generation(OfferingAction, "name", {"type": "offering"}, None, behavior="DELETE")
         self.run_generation(OfferingAction, "name", {"type": "offering"}, o_mock_parent)
 
     def test_open_workflow(self) -> None:
