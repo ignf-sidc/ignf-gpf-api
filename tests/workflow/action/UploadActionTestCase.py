@@ -276,7 +276,7 @@ class UploadActionTestCase(GpfTestCase):
             api_create=False,
             api_delete=False,
             run_fail=True,
-            message_exception=f"Impossible de continué, la livraison {l_return_value_api_list[0]} est fermée.",
+            message_exception=f"Impossible de continuer, la livraison {l_return_value_api_list[0]} est fermée.",
         )
 
     def test_monitor_until_end_ok(self) -> None:
