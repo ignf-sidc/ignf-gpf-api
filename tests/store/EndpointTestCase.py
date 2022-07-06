@@ -1,6 +1,4 @@
 from unittest.mock import patch
-import requests
-import requests_mock
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.Endpoint import Endpoint
@@ -18,28 +16,25 @@ class EndpointTestCase(GpfTestCase):
         """Vérifie le bon fonctionnement de api_list."""
 
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker(real_http=True) as o_mock:
-            o_mock.post(
-                "http://test.com/",
-                json={
-                    "endpoints": [
-                        {
-                            "_id": "endpoint_1",
-                            "name": "Service WMTS",
-                            "type": "WMTS-TMS",
-                        },
-                        {
-                            "_id": "endpoint_2",
-                            "name": "Service de téléchargement",
-                            "type": "DOWNLOAD",
-                        },
-                    ]
-                },
-            )
-            o_response = requests.request("POST", "http://test.com/")
+        o_response = GpfTestCase.get_response(
+            json={
+                "endpoints": [
+                    {
+                        "_id": "endpoint_1",
+                        "name": "Service WMTS",
+                        "type": "WMTS-TMS",
+                    },
+                    {
+                        "_id": "endpoint_2",
+                        "name": "Service de téléchargement",
+                        "type": "DOWNLOAD",
+                    },
+                ]
+            }
+        )
 
         # 1 : pas de filtres
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             l_endpoints = Endpoint.api_list()
             # on vérifie que route_request est appelée correctement
@@ -53,7 +48,7 @@ class EndpointTestCase(GpfTestCase):
             self.assertEqual(l_endpoints[1].id, "endpoint_2")
 
         # 2 : filtre sur le nom
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             l_endpoints = Endpoint.api_list(infos_filter={"name": "Service WMTS"})
             # on vérifie que route_request est appelée correctement
@@ -65,7 +60,7 @@ class EndpointTestCase(GpfTestCase):
             self.assertEqual(l_endpoints[0].id, "endpoint_1")
 
         # 2 : filtre sur le type
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             l_endpoints = Endpoint.api_list(infos_filter={"type": "DOWNLOAD"})
             # on vérifie que route_request est appelée correctement

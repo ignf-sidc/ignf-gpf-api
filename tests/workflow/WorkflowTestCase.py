@@ -1,5 +1,9 @@
+from pathlib import Path
 from typing import Any, Dict, Optional, Type
 from unittest.mock import patch, MagicMock
+
+from ignf_gpf_api.Errors import GpfApiError
+from ignf_gpf_api.helper.JsonHelper import JsonHelper
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
 from ignf_gpf_api.workflow.Errors import WorkflowError
@@ -30,19 +34,17 @@ class WorkflowTestCase(GpfTestCase):
         """test de run_step"""
         d_workflow = {
             "workflow": {
-                "steps": [
-                    {"name": "1er etape"},
-                    {"name": "autre"},
-                    {
-                        "name": "mise-en-base",
+                "steps": {
+                    "1er etape": {},
+                    "autre": {},
+                    "mise-en-base": {
                         "actions": [
                             {
                                 "type": "action1",
                             }
                         ],
                     },
-                    {
-                        "name": "mise-en-base2",
+                    "mise-en-base2": {
                         "actions": [
                             {
                                 "type": "action2-1",
@@ -52,7 +54,7 @@ class WorkflowTestCase(GpfTestCase):
                             },
                         ],
                     },
-                ]
+                }
             }
         }
         o_workflow = Workflow("nom", d_workflow)
@@ -192,3 +194,39 @@ class WorkflowTestCase(GpfTestCase):
         # test type offering
         self.run_generation(OfferingAction, "name", {"type": "offering"}, None)
         self.run_generation(OfferingAction, "name", {"type": "offering"}, o_mock_parent)
+
+    def test_open_workflow(self) -> None:
+        """Test de la fonction open_workflow."""
+        p_workflows = Path(__name__).parent.parent.parent / "workflows"
+        # On teste le workflow archive-generic.jsonc
+        o_workflow_1 = Workflow.open_workflow(p_workflows / "archive-generic.jsonc")
+        self.assertEqual(o_workflow_1.name, "archive-generic.jsonc")
+        self.assertEqual(len(o_workflow_1.steps), 3)
+        # On teste le workflow wfs-generic.jsonc
+        o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc", "wfs generic")
+        self.assertEqual(o_workflow_2.name, "wfs generic")
+        self.assertEqual(len(o_workflow_2.steps), 4)
+        # On teste un fichier inexistant
+        with self.assertRaises(GpfApiError) as o_arc:
+            Workflow.open_workflow(Path("pas_là.json"))
+        self.assertEqual(o_arc.exception.message, "Le fichier de workflow pas_là.json est introuvable. Contactez le support.")
+
+    def test_validate(self) -> None:
+        """Test de la fonction validate."""
+        p_workflows = Path(__name__).parent.parent.parent / "workflows"
+        # On valide le workflow archive-generic.jsonc
+        o_workflow_1 = Workflow.open_workflow(p_workflows / "archive-generic.jsonc")
+        self.assertFalse(o_workflow_1.validate())
+        # On valide le workflow wfs-generic.jsonc
+        o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc")
+        self.assertFalse(o_workflow_2.validate())
+        # On valide le workflow bad-workflow.jsonc
+        p_workflow = GpfTestCase.p_data_test / "workflow" / "bad-workflow.jsonc"
+        o_workflow_2 = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
+        l_errors = o_workflow_2.validate()
+        self.assertTrue(l_errors)
+        self.assertIn("Le workflow ne respecte pas le schéma demandé. Erreur de schéma :", l_errors[0])
+        self.assertEqual(l_errors[1], "Le parent « parent-not-found » de l'étape « no-parent-no-action » n'est pas défini dans le workflow.")
+        self.assertEqual(l_errors[2], "L'étape « no-parent-no-action » n'a aucune action de défini.")
+        self.assertEqual(l_errors[3], "L'action n°1 de l'étape « configuration-wfs » n'est pas instantiable (Aucune correspondance pour ce type d'action : type-not-found).")
+        self.assertEqual(l_errors[4], "L'action n°2 de l'étape « configuration-wfs » n'a pas la clef obligatoire ('type').")

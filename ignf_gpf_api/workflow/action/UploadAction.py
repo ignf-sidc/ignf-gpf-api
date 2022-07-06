@@ -34,6 +34,7 @@ class UploadAction:
         Returns:
             Upload: livraison créée
         """
+        Config().om.info("Création et complétion d'une livraison...")
         # Création de la livraison
         self.__create_upload()
         # Ajout des tags
@@ -46,9 +47,13 @@ class UploadAction:
         self.__push_md5_files()
         # Fermeture de la livraison
         self.__close()
-        # Retourne la liste de livraisons
-        if self.__upload is not None:
-            return self.__upload
+        # Affiche et retourne la livraison
+        if self.upload is not None:
+            # Affichage
+            Config().om.info(f"Livraison créée et complétée : {self.__upload}")
+            Config().om.info("Création et complétion d'une livraison : terminé")
+            # Retour
+            return self.upload
         # On ne devrait pas arriver ici...
         raise GpfApiError("Erreur à la création de la livraison.")
 
@@ -62,56 +67,62 @@ class UploadAction:
             # On sort en erreur si demandé
             if self.__behavior == "STOP":
                 raise GpfApiError(f"Impossible de créer la livraison, une livraison identique {o_upload} existe déjà.")
-            # On recrée la livraison si demandé
+            # On supprime/recrée la livraison si demandé
             if self.__behavior == "DELETE":
-                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée")
+                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée...")
                 o_upload.api_delete()
-                # on en crée un nouveau (on récupère toutes les champs de "upload_infos" du dataset)
+                # on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
+                Config().om.warning(f"Livraison {self.__upload} recréée avec succès.")
             else:
                 # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
                 # cas livraison fermé : on plante
                 if not o_upload.is_open():
                     raise GpfApiError(f"Impossible de continuer, la livraison {o_upload} est fermée.")
-                Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va reprendre et la compléter.")
+                Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va la reprendre et la compléter.")
                 self.__upload = o_upload
         else:
-            # Si l'upload est nul, on en crée un nouveau
+            # Si le livraison est nulle, on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
             self.__upload = Upload.api_create(self.__dataset.upload_infos)
-            Config().om.info(f"Livraison {self.__upload} créée avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} créée avec succès.")
 
     def __add_tags(self) -> None:
-        """Ajout les tags."""
+        """Ajoute les tags."""
         if self.__upload is not None and self.__dataset.tags is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : ajout des {len(self.__dataset.tags)} tags...")
             self.__upload.api_add_tags(self.__dataset.tags)
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.tags)} tags ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.tags)} tags ont été ajoutés avec succès.")
 
     def __add_comments(self) -> None:
-        """Ajout les commentaires."""
+        """Ajoute les commentaires."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : ajout des {len(self.__dataset.comments)} commentaires...")
             for s_comment in self.__dataset.comments:
                 self.__upload.api_add_comment({"text": s_comment})
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:
-        """Envoie les fichiers de données."""
+        """Téléverse les fichiers de données."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : téléversement des {len(self.__dataset.data_files)} fichiers de données...")
             for p_file_path, s_api_path in self.__dataset.data_files.items():
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.data_files)} fichiers de données ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.data_files)} fichiers de données ont été téléversés avec succès.")
 
     def __push_md5_files(self) -> None:
-        """Envoie les fichiers md5."""
+        """Téléverse les fichiers de clefs."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : téléversement des {len(self.__dataset.md5_files)} fichiers de clefs...")
             for p_file_path in self.__dataset.md5_files:
                 self.__upload.api_push_md5_file(p_file_path)
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.md5_files)} fichiers md5 ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.md5_files)} fichiers de clefs ont été téléversés avec succès.")
 
     def __close(self) -> None:
         """Ferme la livraison."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : fermeture de la livraison...")
             self.__upload.api_close()
-            Config().om.info(f"Livraison {self.__upload} créée avec succès")
+            Config().om.info(f"Livraison {self.__upload['name']} : livraison fermée avec succès. La livraison va maintenant être vérifiée par la Géoplateforme.")
 
     def __find(self) -> Optional[Upload]:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
