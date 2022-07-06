@@ -130,8 +130,8 @@ class UploadAction:
         Returns:
             Optional[Upload]: None si rien trouvé, sinon l'Upload trouvé
         """
-        # On tente de récupérer l'upload selon les critères d'attributs donnés en conf (uniqueness_constraint_upload_infos)
-        l_attributes = Config().get("upload_creation", "uniqueness_constraint_upload_infos").split(";")
+        # On tente de récupérer l'upload selon les critères d'attributs donnés en conf (uniqueness_constraint_infos)
+        l_attributes = Config().get("upload_creation", "uniqueness_constraint_infos").split(";")
         d_attributs = {}
         for s_attribut in l_attributes:
             if s_attribut != "":
