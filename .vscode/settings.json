@@ -4,6 +4,7 @@
         "beartype",
         "EPSG",
         "Géoplateforme",
+        "geotuileur",
         "ignf",
         "insee",
         "jsonschema",

@@ -59,6 +59,7 @@ class ApiRequester(metaclass=Singleton):
         Returns:
             requests.Response: réponse vérifiée
         """
+        Config().om.debug(f"route_request({route_name}, {method}, {route_params}, {params})")
 
         # La valeur par défaut est transformée en un dict valide
         if route_params is None:
