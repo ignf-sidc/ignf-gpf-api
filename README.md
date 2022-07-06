@@ -14,6 +14,8 @@ token_url=https://qlf-iam-gpf.ign.fr/auth/realms/master/protocol/openid-connect/
 login=LOGIN
 # Votre mot de passe
 password=PASSWORD
+# Votre id client
+client_id=geotuileur
 
 [store_api]
 # L'url d'entrée de l'API (cf. doc)
