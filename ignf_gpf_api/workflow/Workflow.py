@@ -49,14 +49,15 @@ class Workflow:
         # Récupération de l'étape dans la définition de workflow
         d_step_definition = self.__get_step_definition(step_name)
         # initialisation des actions parentes
-        l_parentes = None
+        o_parent_action: Optional[ActionAbstract] = None
         # Pour chaque action définie dans le workflow, instanciation de l'objet Action puis création sur l'entrepôt
         for d_action_raw in d_step_definition["actions"]:
             # création de l'action
-            o_action = Workflow.generate(f"{step_name}/{d_action_raw['type']}", d_action_raw, l_parentes)
+            o_action = Workflow.generate(f"{step_name}/{d_action_raw['type']}", d_action_raw, o_parent_action)
             # résolution
             o_action.resolve()
-            # exécution de l'action :
+            # exécution de l'action
+            Config().om.info(f"Exécution de l'action '{o_action.workflow_context}-{o_action.index}'...")
             o_action.run()
             # on attend la fin de l'exécution si besoin
             if isinstance(o_action, ProcessingExecutionAction):
@@ -65,8 +66,9 @@ class Workflow:
                     s_error_message = f"Le ProcessingExecution {o_action} ne s'est pas bien passé. Sortie {s_status}"
                     Config().om.error(s_error_message)
                     raise WorkflowError(s_error_message)
+            Config().om.info(f"Exécution de l'action '{o_action.workflow_context}-{o_action.index}' : terminée")
             # cette action sera la parente de la suivante
-            l_parentes = o_action
+            o_parent_action = o_action
 
     def __get_step_definition(self, step_name: str) -> Dict[str, Any]:
         """Renvoie le dictionnaire correspondant à une étape du workflow à partir de son nom.
@@ -182,7 +184,7 @@ class Workflow:
                 if not s_parent_name in self.steps:
                     l_errors.append(f"Le parent « {s_parent_name} » de l'étape « {s_step_name} » n'est pas défini dans le workflow.")
 
-        # 2. Est-ce que chaque action a une étape ?
+        # 2. Est-ce que chaque action a au moins une étape ?
         # Pour chaque étape
         for s_step_name in self.steps:
             # est-ce qu'il y a au moins une action ?
