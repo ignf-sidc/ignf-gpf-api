@@ -35,6 +35,7 @@ class ProcessingExecutionAction(ActionAbstract):
         self.__behavior: str = behavior if behavior is not None else Config().get("processing_execution", "behavior_if_exists")
 
     def run(self) -> None:
+        Config().om.info("Création d'une exécution de traitement et complétion de l'entité en sortie...")
         # Création de l'exécution du traitement (attributs processing_execution et Upload/StoredData défini)
         self.__create_processing_execution()
         # Ajout des tags sur l'Upload ou la StoredData
@@ -43,6 +44,10 @@ class ProcessingExecutionAction(ActionAbstract):
         self.__add_comments()
         # Lancement du traitement
         self.__launch()
+        # Affichage
+        o_output_entity = self.__stored_data if self.__stored_data is not None else self.__upload
+        Config().om.info(f"Exécution de traitement créée et lancée ({self.processing_execution}) et entité en sortie complétée ({o_output_entity}).")
+        Config().om.info("Création d'une exécution de traitement et complétion de l'entité en sortie : terminé")
 
     def __create_processing_execution(self) -> None:
         """Création du ProcessingExecution sur l'API à partir des paramètres de définition de l'action.
@@ -53,15 +58,14 @@ class ProcessingExecutionAction(ActionAbstract):
             # On vérifie si une stored_data équivalente à celle du dictionnaire de définition existe déjà
             o_stored_data = self.__find_stored_data()
             if o_stored_data is not None:
-
                 # Comportement d'arrêt du programme
                 if self.__behavior == self.BEHAVIOR_STOP:
-                    raise GpfApiError(f"Impossible de créer l'éxecution de traitement, une donnée stockée équivalente {o_stored_data} existe déjà.")
+                    raise GpfApiError(f"Impossible de créer l’exécution de traitement, une donnée stockée en sortie équivalente {o_stored_data} existe déjà.")
                 # Comportement de suppression des entités détectées
-                elif self.__behavior == self.BEHAVIOR_DELETE:
+                if self.__behavior == self.BEHAVIOR_DELETE:
                     Config().om.warning(f"Une donnée stockée équivalente à {o_stored_data} va être supprimée puis recréée")
-                    Config().om.warning("Si une éxécution de traitement liée à la donnée équivalente existe, il sera supprimé.")
-                    # Récupération des traitements qui ont créé la donnnée stockée équivalente
+                    Config().om.warning("Si une exécution de traitement liée à la donnée équivalente existe, elle sera supprimée.")
+                    # Récupération des traitements qui ont créé la donnée stockée équivalente
                     l_process = ProcessingExecution.api_list(infos_filter={"output_stored_data": o_stored_data.id})
                     for o_process in l_process:
                         # Suppression du traitement
@@ -73,7 +77,7 @@ class ProcessingExecutionAction(ActionAbstract):
                     d_info = self.__processing_execution.get_store_properties()["output"]
                 # Comportements non supportés
                 else:
-                    raise GpfApiError(f"Le comportement {self.__behavior} n'est pas reconnu, l'éxécution de traitement est annulée.")
+                    raise GpfApiError(f"Le comportement {self.__behavior} n'est pas reconnu, l'exécution de traitement est annulée.")
         else:
             # création de la ProcessingExecution
             self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
@@ -94,11 +98,15 @@ class ProcessingExecutionAction(ActionAbstract):
         if "tags" not in self.definition_dict or self.definition_dict["tags"] == {}:
             # cas on a pas de tag ou vide: on ne fait rien
             return
-        # on ajoute le tag
+        # on ajoute les tags
         if self.upload is not None:
+            Config().om.info(f"Livraison {self.upload['name']} : ajout des {len(self.definition_dict['tags'])} tags...")
             self.upload.api_add_tags(self.definition_dict["tags"])
+            Config().om.info(f"Livraison {self.upload['name']} : les {len(self.definition_dict['tags'])} tags ont été ajoutés avec succès.")
         elif self.stored_data is not None:
+            Config().om.info(f"Donnée stockée {self.stored_data['name']} : ajout des {len(self.definition_dict['tags'])} tags...")
             self.stored_data.api_add_tags(self.definition_dict["tags"])
+            Config().om.info(f"Donnée stockée {self.stored_data['name']} : les {len(self.definition_dict['tags'])} tags ont été ajoutés avec succès.")
         else:
             # on a pas de stored_data ni de upload
             raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les tags")
@@ -108,21 +116,28 @@ class ProcessingExecutionAction(ActionAbstract):
         if "comments" not in self.definition_dict:
             # cas on a pas de commentaires : on ne fait rien
             return
-        # on ajoute le commentaires
+        # on ajoute les commentaires
         if self.upload is not None:
+            Config().om.info(f"Livraison {self.upload['name']} : ajout des {len(self.definition_dict['comments'])} commentaires...")
             for s_comment in self.definition_dict["comments"]:
                 self.upload.api_add_comment({"text": s_comment})
+            Config().om.info(f"Livraison {self.upload['name']} : les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
         elif self.stored_data is not None:
+            Config().om.info(f"Donnée stockée {self.stored_data['name']} : ajout des {len(self.definition_dict['comments'])} commentaires...")
             for s_comment in self.definition_dict["comments"]:
                 self.stored_data.api_add_comment({"text": s_comment})
+            Config().om.info(f"Donnée stockée {self.stored_data['name']} : les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
         else:
             # on a pas de stored_data ni de upload
             raise StepActionError("aucune upload ou stored-data trouvé. Impossible d'ajouter les commentaires")
 
     def __launch(self) -> None:
         """Lancement de la ProcessingExecution."""
-        if self.__processing_execution is not None:
-            self.__processing_execution.api_launch()
+        if self.processing_execution is not None:
+            Config().om.info(f"Exécution de traitement {self.processing_execution['name']} : lancement...")
+            self.processing_execution.api_launch()
+            Config().om.info(f"Exécution de traitement {self.processing_execution['name']} : lancée avec succès.")
+
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
@@ -148,16 +163,17 @@ class ProcessingExecutionAction(ActionAbstract):
             if s_tag != "":
                 d_tags[s_tag] = self.definition_dict["tags"][s_tag]
         # On peut maintenant filtrer les stored data selon ces critères
-        l_storeddata = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags)
+        l_stored_data = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags)
         # S'il y a un ou plusieurs stored data, on retourne le 1er :
-        if l_storeddata:
-            return l_storeddata[0]
+        if l_stored_data:
+            return l_stored_data[0]
         # sinon on retourne None
         return None
 
     def monitoring_until_end(self, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> str:
         """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
         La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
+        Si l'utilisateur stoppe le programme, la ProcessingExecution est arrêtée avant de quitter.
 
         Args:
             callback (Optional[Callable[[ProcessingExecution], None]], optional): fonction de callback à exécuter prend en argument le traitement (callback(processing-execution)). Defaults to None.
