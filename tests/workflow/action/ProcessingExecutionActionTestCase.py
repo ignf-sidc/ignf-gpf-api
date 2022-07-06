@@ -21,7 +21,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.action.ProcessingExecutionActionTestCase
     """
 
-    def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]],  s_type_output: str) -> None:
+    def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]], s_key: str, s_type_output: str) -> None:
         """lancement +test de ProcessingExecutionAction.run selon param
 
         Args:
@@ -29,7 +29,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
             comments (Optional[List]): list des comments ou None
             s_type_output (str): type de l'output (stored_data ou upload)
         """
-        d_action = {"type": "processing-execution", "body_parameters": {"param": "valeur"}}
+        d_action = {"type": "processing-execution", "body_parameters":{"output":{s_key:"test"}}}
         if tags is not None:
             d_action["tags"] = tags
         if comments is not None:
@@ -54,7 +54,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
         o_mock_stored_data.api_add_tags.return_value = None
         o_mock_stored_data.api_add_comment.return_value = None
 
-        # suppression de la mise en page forcé pour le with
+        # suppression de la mise en page forcée pour le with
         with patch.object(Upload, "api_get", return_value=o_mock_upload) as o_mock_processing_upload_api_get, \
             patch.object(StoredData, "api_get", return_value=o_mock_stored_data) as o_mock_processing_store_data_api_get, \
             patch.object(ProcessingExecution, "api_create", return_value=o_mock_precession) as o_mock_processing_execution_api_create \
@@ -118,14 +118,15 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
         """test de run"""
         # test upload
         for s_type_output in [ "upload", "stored_data"]:
+            s_key = "name"
             ## sans tag + sans commentaire
-            self.run_args(None, None, s_type_output)
+            self.run_args(None, None, s_key, s_type_output)
             ## tag vide + commentaire vide
-            self.run_args({}, [], s_type_output)
+            self.run_args({}, [], s_key, s_type_output)
             ## 1 tag + 1 commentaire
-            self.run_args({"tag1": "val1"}, ["comm1"], s_type_output)
+            self.run_args({"tag1": "val1"}, ["comm1"], s_key, s_type_output)
             ## 2 tag + 4 commentaire
-            self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_type_output)
+            self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output)
 
     def monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool) -> None:
         """lancement + test de ProcessingExecutionAction.monitoring_until_end() selon param

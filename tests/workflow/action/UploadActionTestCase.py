@@ -81,7 +81,7 @@ class UploadActionTestCase(GpfTestCase):
             return Upload(d_dict)
 
         def config_get(a: str, b: str) -> Optional[str]:  # pylint:disable=invalid-name,unused-argument
-            if b == "uniqueness_constraint_upload_infos":
+            if b == "uniqueness_constraint_infos":
                 return "name"
             if b == "uniqueness_constraint_tags":
                 return ""
