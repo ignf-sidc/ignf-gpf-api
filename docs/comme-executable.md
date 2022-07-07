@@ -37,6 +37,25 @@ python -m ignf_gpf_api config -s store_authentification
 python -m ignf_gpf_api config -s store_authentification -o password
 ```
 
+## Récupérer des jeux de données d'exemple
+
+Il est possible de récupérer des jeux de données d'exemple via l'exécutable.
+
+Lancez la commande suivante pour liste les jeux disponibles :
+
+```sh
+python -m ignf_gpf_api dataset
+```
+
+Lancez la commande suivante pour extraire un jeu de donnée :
+
+```sh
+python -m ignf_gpf_api dataset -n 1_dataset_vector
+```
+
+Les données seront extraites dans le dossier courent, vous pouvez préciser la destination avec le paramètre `--folder` (ou `-f`).
+
+
 ## Envoyer des données
 
 Pour envoyer des données, vous devez générer un [fichier descripteur de livraison](upload_descriptor.md).
@@ -49,6 +68,8 @@ Ensuite, vous pouvez simplement livrer des données :
 python -m ignf_gpf_api upload -f mon_fichier_descripteur.json
 ```
 
+Les jeux de données d'exemple sont fournis avec le fichier descripteur (voir [Récupérer des jeux de données d'exemple](#recuperer-des-jeux-de-donnees-dexemple)).
+
 
 ## Réaliser des traitements et publier mes données
 
@@ -56,7 +77,13 @@ Pour réaliser des traitements et publier des données géographiques, vous deve
 
 C'est un fichier au format JSON permettant de décrire en une suite d'étape les traitements et les publications à effectuer.
 
-Ensuite, vous pouvez simplement lancer une étape:
+Vous pouvez valider votre workflow :
+
+```sh
+python -m ignf_gpf_api workflow -f mon_workflow.json
+```
+
+Ensuite, vous pouvez simplement lancer une étape :
 
 ```sh
 python -m ignf_gpf_api workflow -f mon_workflow.json -s mon_étape

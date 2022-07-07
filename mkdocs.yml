@@ -12,3 +12,11 @@ nav:
   - upload_descriptor.md
   - workflow.md
   - development.md
+
+markdown_extensions:
+  - toc:
+      permalink: "#"
+
+plugins:
+  - search:
+      lang: fr
