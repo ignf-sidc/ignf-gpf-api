@@ -23,8 +23,6 @@ class UploadActionTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.action.UploadActionTestCase
     """
 
-    config_path = Path(__file__).parent.parent.parent / "_config"
-
     @classmethod
     def setUpClass(cls) -> None:
         """fonction lancée une fois avant tous les tests de la classe"""
@@ -33,7 +31,7 @@ class UploadActionTestCase(GpfTestCase):
         Config._instance = None
         # On charge une config spéciale pour les tests d'upload
         o_config = Config()
-        o_config.read(UploadActionTestCase.config_path / "test_upload.ini")
+        o_config.read(GpfTestCase.conf_dir_path / "test_upload.ini")
         o_config.set_output_manager(MagicMock())
 
     @classmethod

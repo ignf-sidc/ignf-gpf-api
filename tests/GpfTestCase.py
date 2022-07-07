@@ -15,7 +15,9 @@ class GpfTestCase(unittest.TestCase):
     _o_patch_om = None
     _o_mock_om = None
 
-    p_data_test = Path(__file__).parent / "_data"
+    conf_dir_path = Path(__file__).parent.absolute() / "_conf"
+    data_dir_path = Path(__file__).parent.absolute() / "_data"
+    test_dir_path = Path(__file__).parent.absolute() / "_test"
 
     @classmethod
     def setUpClass(cls) -> None:

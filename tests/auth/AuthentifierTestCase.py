@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import patch
 from http import HTTPStatus
 import requests_mock
@@ -17,7 +16,6 @@ class AuthentifierTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.auth.AuthentifierTestCase
     """
 
-    config_path = Path(__file__).parent.parent / "_config"
     url = "https://store_authentification.test.io/auth/realms/master/protocol/openid-connect/token"
     valid_token = {
         "access_token": "test_token",
@@ -32,7 +30,7 @@ class AuthentifierTestCase(GpfTestCase):
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
         o_config = Config()
-        o_config.read(AuthentifierTestCase.config_path / "test_authentifier.ini")
+        o_config.read(GpfTestCase.conf_dir_path / "test_authentifier.ini")
 
     def setUp(self) -> None:
         """fonction lancée avant chaque test de la classe"""
