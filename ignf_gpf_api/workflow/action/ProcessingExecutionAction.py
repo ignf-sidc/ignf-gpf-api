@@ -144,9 +144,9 @@ class ProcessingExecutionAction(ActionAbstract):
     def __launch(self) -> None:
         """Lancement de la ProcessingExecution."""
         if self.processing_execution is not None:
-            Config().om.info(f"Exécution de traitement {self.processing_execution['name']} : lancement...")
+            Config().om.info(f"Exécution de traitement {self.processing_execution['processing']['name']} : lancement...")
             self.processing_execution.api_launch()
-            Config().om.info(f"Exécution de traitement {self.processing_execution['name']} : lancée avec succès.")
+            Config().om.info(f"Exécution de traitement {self.processing_execution['processing']['name']} : lancée avec succès.")
 
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
