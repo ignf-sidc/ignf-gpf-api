@@ -53,17 +53,21 @@ class ProcessingExecutionAction(ActionAbstract):
         """Création du ProcessingExecution sur l'API à partir des paramètres de définition de l'action.
         Récupération des attributs processing_execution et Upload/StoredData.
         """
-        # On vérifie si on doit créer de nouvelles entités
+        d_info: Optional[Dict[str, Any]] = None
+
+        # On regarde si cette Exécution de Traitement implique la création d'une nouvelle entité (Livraison / Donnée Stockée)
         if self.output_new_entity:
-            # On vérifie si une stored_data équivalente à celle du dictionnaire de définition existe déjà
+            # TODO : gérer également les Livraison
+            # On vérifie si une  Donnée Stockée équivalente à celle du dictionnaire de définition existe déjà
             o_stored_data = self.__find_stored_data()
+            # Si on en a trouvée
             if o_stored_data is not None:
                 # Comportement d'arrêt du programme
                 if self.__behavior == self.BEHAVIOR_STOP:
                     raise GpfApiError(f"Impossible de créer l’exécution de traitement, une donnée stockée en sortie équivalente {o_stored_data} existe déjà.")
                 # Comportement de suppression des entités détectées
                 if self.__behavior == self.BEHAVIOR_DELETE:
-                    Config().om.warning(f"Une donnée stockée équivalente à {o_stored_data} va être supprimée puis recréée")
+                    Config().om.warning(f"Une donnée stockée équivalente à {o_stored_data} va être supprimée puis recréée.")
                     Config().om.warning("Si une exécution de traitement liée à la donnée équivalente existe, elle sera supprimée.")
                     # Récupération des traitements qui ont créé la donnée stockée équivalente
                     l_process = ProcessingExecution.api_list(infos_filter={"output_stored_data": o_stored_data.id})
@@ -78,10 +82,16 @@ class ProcessingExecutionAction(ActionAbstract):
                 # Comportements non supportés
                 else:
                     raise GpfApiError(f"Le comportement {self.__behavior} n'est pas reconnu, l'exécution de traitement est annulée.")
-        else:
+
+        # A ce niveau là, si on a encore self.__processing_execution qui est None, c'est qu'on peut créer l'Exécution de Traitement sans problème
+        if self.__processing_execution is None:
             # création de la ProcessingExecution
             self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
             d_info = self.__processing_execution.get_store_properties()["output"]
+
+        if d_info is None:
+            Config().om.debug(self.__processing_execution.to_json(indent=4))
+            raise GpfApiError("Erreur à la création de l'exécution de traitement : impossible de récupérer l'entité en sortie.")
 
         # Récupération des entités de l'exécution de traitement
         if "upload" in d_info:
