@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Schéma JSON pour un fichier workflow",
+    "description": "",
+    "type": "object",
+    "workflow": [
+        "workflow"
+    ],
+    "properties": {
+        "workflow": {
+            "type": "object",
+            "required": [
+                "steps"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "steps": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                            "actions",
+                            "parents"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "actions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "body_parameters"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "processing-execution",
+                                                "configuration",
+                                                "offering"
+                                            ]
+                                        },
+                                        "url_parameters": {
+                                            "type": "object"
+                                        },
+                                        "body_parameters": {
+                                            "type": "object"
+                                        },
+                                        "comments": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "tags": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            },
+                            "parents": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

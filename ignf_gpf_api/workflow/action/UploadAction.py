@@ -3,7 +3,6 @@ from typing import Any, Callable, Dict, List, Optional
 
 
 from ignf_gpf_api.Errors import GpfApiError
-from ignf_gpf_api.io.OutputManager import OutputManager
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Dataset import Dataset
 from ignf_gpf_api.io.Config import Config
@@ -25,7 +24,7 @@ class UploadAction:
     def __init__(self, dataset: Dataset, behavior: Optional[str] = None) -> None:
         self.__dataset: Dataset = dataset
         self.__upload: Optional[Upload] = None
-        # On suit le comporte donnée en paramètre ou à défaut celui de la config
+        # On suit le comportement donnée en paramètre ou à défaut celui de la config
         self.__behavior: str = behavior if behavior is not None else Config().get("upload_creation", "behavior_if_exists")
 
     def run(self) -> Upload:
@@ -35,6 +34,7 @@ class UploadAction:
         Returns:
             Upload: livraison créée
         """
+        Config().om.info("Création et complétion d'une livraison...")
         # Création de la livraison
         self.__create_upload()
         # Ajout des tags
@@ -47,9 +47,13 @@ class UploadAction:
         self.__push_md5_files()
         # Fermeture de la livraison
         self.__close()
-        # Retourne la liste de livraisons
-        if self.__upload is not None:
-            return self.__upload
+        # Affiche et retourne la livraison
+        if self.upload is not None:
+            # Affichage
+            Config().om.info(f"Livraison créée et complétée : {self.__upload}")
+            Config().om.info("Création et complétion d'une livraison : terminé")
+            # Retour
+            return self.upload
         # On ne devrait pas arriver ici...
         raise GpfApiError("Erreur à la création de la livraison.")
 
@@ -63,56 +67,62 @@ class UploadAction:
             # On sort en erreur si demandé
             if self.__behavior == "STOP":
                 raise GpfApiError(f"Impossible de créer la livraison, une livraison identique {o_upload} existe déjà.")
-            # On recrée la livraison si demandé
+            # On supprime/recrée la livraison si demandé
             if self.__behavior == "DELETE":
-                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée")
+                Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée...")
                 o_upload.api_delete()
-                # on en crée un nouveau (on récupère toutes les champs de "upload_infos" du dataset)
+                # on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
                 self.__upload = Upload.api_create(self.__dataset.upload_infos)
+                Config().om.warning(f"Livraison {self.__upload} recréée avec succès.")
             else:
                 # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
                 # cas livraison fermé : on plante
                 if not o_upload.is_open():
-                    raise GpfApiError(f"Impossible de continué, la livraison {o_upload} est fermée.")
-                Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va reprendre et la compléter.")
+                    raise GpfApiError(f"Impossible de continuer, la livraison {o_upload} est fermée.")
+                Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va la reprendre et la compléter.")
                 self.__upload = o_upload
         else:
-            # Si l'upload est nul, on en crée un nouveau
+            # Si le livraison est nulle, on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
             self.__upload = Upload.api_create(self.__dataset.upload_infos)
-            Config().om.info(f"Livraison {self.__upload} créée avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} créée avec succès.")
 
     def __add_tags(self) -> None:
-        """Ajout les tags."""
+        """Ajoute les tags."""
         if self.__upload is not None and self.__dataset.tags is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : ajout des {len(self.__dataset.tags)} tags...")
             self.__upload.api_add_tags(self.__dataset.tags)
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.tags)} tags ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.tags)} tags ont été ajoutés avec succès.")
 
     def __add_comments(self) -> None:
-        """Ajout les commentaires."""
+        """Ajoute les commentaires."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : ajout des {len(self.__dataset.comments)} commentaires...")
             for s_comment in self.__dataset.comments:
                 self.__upload.api_add_comment({"text": s_comment})
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:
-        """Envoie les fichiers de données."""
+        """Téléverse les fichiers de données."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : téléversement des {len(self.__dataset.data_files)} fichiers de données...")
             for p_file_path, s_api_path in self.__dataset.data_files.items():
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.data_files)} fichiers de données ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.data_files)} fichiers de données ont été téléversés avec succès.")
 
     def __push_md5_files(self) -> None:
-        """Envoie les fichiers md5."""
+        """Téléverse les fichiers de clefs."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : téléversement des {len(self.__dataset.md5_files)} fichiers de clefs...")
             for p_file_path in self.__dataset.md5_files:
                 self.__upload.api_push_md5_file(p_file_path)
-            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.md5_files)} fichiers md5 ont été ajoutés avec succès.")
+            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.md5_files)} fichiers de clefs ont été téléversés avec succès.")
 
     def __close(self) -> None:
         """Ferme la livraison."""
         if self.__upload is not None:
+            Config().om.info(f"Livraison {self.__upload['name']} : fermeture de la livraison...")
             self.__upload.api_close()
-            Config().om.info(f"Livraison {self.__upload} créée avec succès")
+            Config().om.info(f"Livraison {self.__upload['name']} : livraison fermée avec succès. La livraison va maintenant être vérifiée par la Géoplateforme.")
 
     def __find(self) -> Optional[Upload]:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
@@ -120,8 +130,8 @@ class UploadAction:
         Returns:
             Optional[Upload]: None si rien trouvé, sinon l'Upload trouvé
         """
-        # On tente de récupérer l'upload selon les critères d'attributs donnés en conf (uniqueness_constraint_upload_infos)
-        l_attributes = Config().get("upload_creation", "uniqueness_constraint_upload_infos").split(";")
+        # On tente de récupérer l'upload selon les critères d'attributs donnés en conf (uniqueness_constraint_infos)
+        l_attributes = Config().get("upload_creation", "uniqueness_constraint_infos").split(";")
         d_attributs = {}
         for s_attribut in l_attributes:
             if s_attribut != "":
@@ -131,7 +141,7 @@ class UploadAction:
         d_tags = {}
         for s_tag in l_tags:
             if s_tag != "":
-                d_tags[s_tag] = self.__dataset.upload_infos[s_tag]
+                d_tags[s_tag] = self.__dataset.tags[s_tag]
         # On peut maintenant filter les upload selon ces critères
         l_uploads = Upload.api_list(infos_filter=d_attributs, tags_filter=d_tags)
         # S'il y a un ou plusieurs upload, on retourne le 1er :
@@ -159,7 +169,7 @@ class UploadAction:
         i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
         s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
         b_success: Optional[bool] = None
-        OutputManager().info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
+        Config().om.info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
         while b_success is None:
             # On récupère les vérifications
             d_checks = upload.api_list_checks()

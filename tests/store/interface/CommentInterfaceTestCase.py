@@ -1,12 +1,11 @@
-import unittest
 from unittest.mock import patch
-import requests
-import requests_mock
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.CommentInterface import CommentInterface
+from tests.GpfTestCase import GpfTestCase
 
 
-class CommentInterfaceTestCase(unittest.TestCase):
+class CommentInterfaceTestCase(GpfTestCase):
     """Tests CommentInterface class.
 
     cmd : python3 -m unittest -b tests.store.interface.CommentInterfaceTestCase
@@ -14,10 +13,8 @@ class CommentInterfaceTestCase(unittest.TestCase):
 
     def test_api_add_comment(self) -> None:
         "Vérifie le bon fonctionnement de api_add_comment."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue l ajout d'un commentaire
             # On instancie une entité à qui on va ajouter un commentaire
             o_comment_interface = CommentInterface({"_id": "id_entité"})
@@ -43,13 +40,9 @@ class CommentInterfaceTestCase(unittest.TestCase):
             }
         ]
         # Instanciation d'une fausse réponse HTTP
-        with requests_mock.Mocker() as o_mock:
-            o_mock.post("http://test.com/", json=l_data)
-            o_response = requests.request("POST", "http://test.com/")
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=o_response) as o_mock_request:
+        o_response = GpfTestCase.get_response(json=l_data)
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # on appelle la fonction à tester :api_list_comments
             o_comment_interface = CommentInterface({"_id": "id_entité"})
             l_data_recupere = o_comment_interface.api_list_comments()
@@ -63,10 +56,8 @@ class CommentInterfaceTestCase(unittest.TestCase):
 
     def test_api_edit_comment(self) -> None:
         "Vérifie le bon fonctionnement de api_edit_comment."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue l ajout d'un commentaire
             # On instancie une entité à qui on va ajouter un commentaire
             o_comment_interface = CommentInterface({"_id": "id_entité"})
@@ -82,10 +73,8 @@ class CommentInterfaceTestCase(unittest.TestCase):
 
     def test_api_remove_comment(self) -> None:
         "Vérifie le bon fonctionnement de api_remove_comment."
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue la suppression d'un commentaire
             # On instancie une entité dont on va supprimer le commentaire
             o_comment_interface = CommentInterface({"_id": "id_entité"})

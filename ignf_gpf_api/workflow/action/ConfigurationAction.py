@@ -20,32 +20,39 @@ class ConfigurationAction(ActionAbstract):
         self.__configuration: Optional[Configuration] = None
 
     def run(self) -> None:
+        Config().om.info("Création et complétion d'une configuration...")
         # Création de la Configuration
         self.__create_configuration()
-        # Ajout des tags sur l'Upload ou la StoredData
+        # Ajout des tags sur la Configuration
         self.__add_tags()
-        # Ajout des commentaires sur l'Upload ou la StoredData
+        # Ajout des commentaires sur la Configuration
         self.__add_comments()
+        # Affichage
+        Config().om.info(f"Configuration créée et complétée : {self.__configuration}")
+        Config().om.info("Création et complétion d'une configuration : terminé")
 
     def __create_configuration(self) -> None:
         """Création de la Configuration sur l'API à partir des paramètres de définition de l'action."""
-        Config().om.info("Création d'une configuration...")
-        self.__configuration = Configuration.api_create(self.definition_dict["parameters"])
+        Config().om.info("Création de la configuration...")
+        self.__configuration = Configuration.api_create(self.definition_dict["body_parameters"])
+        Config().om.info(f"Configuration {self.__configuration['name']} créée avec succès.")
 
     def __add_tags(self) -> None:
         """Ajout des tags sur la Configuration."""
-        # on verifie que la configuration et definition_dict ne sont pas null et on verifie qu'il y'a bien une clé tags
-        if self.__configuration and self.definition_dict and "tags" in self.definition_dict and self.definition_dict["tags"] != {}:
-            self.__configuration.api_add_tags(self.definition_dict["tags"])
-            Config().om.info(f"Configuration {self.__configuration}: les {len(self.definition_dict['tags'])} tags ont été ajoutés avec succès.")
+        # on vérifie que la configuration et definition_dict ne sont pas null et on vérifie qu'il y'a bien une clé tags
+        if self.configuration and self.definition_dict and "tags" in self.definition_dict and self.definition_dict["tags"] != {}:
+            Config().om.info(f"Configuration {self.configuration['name']} : ajout des {len(self.definition_dict['tags'])} tags...")
+            self.configuration.api_add_tags(self.definition_dict["tags"])
+            Config().om.info(f"Configuration {self.configuration['name']} : les {len(self.definition_dict['tags'])} tags ont été ajoutés avec succès.")
 
     def __add_comments(self) -> None:
         """Ajout des commentaires sur la Configuration."""
-        # on verifie que la configuration et definition_dict ne sont pas null et on verifie qu'il y'a bien une clé comments
-        if self.__configuration and self.definition_dict and "comments" in self.definition_dict and self.definition_dict["comments"] != {}:
+        # on vérifie que la configuration et definition_dict ne sont pas null et on vérifie qu'il y'a bien une clé comments
+        if self.configuration and self.definition_dict and "comments" in self.definition_dict and self.definition_dict["comments"] != {}:
+            Config().om.info(f"Configuration {self.configuration['name']} : ajout des {len(self.definition_dict['comments'])} commentaires...")
             for s_comment in self.definition_dict["comments"]:
-                self.__configuration.api_add_comment({"text": s_comment})
-            Config().om.info(f"Configuration {self.__configuration}: les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
+                self.configuration.api_add_comment({"text": s_comment})
+            Config().om.info(f"Configuration {self.configuration['name']} : les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
 
     @property
     def configuration(self) -> Optional[Configuration]:
