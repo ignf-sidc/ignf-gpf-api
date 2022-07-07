@@ -1,4 +1,6 @@
 from pathlib import Path
+import hashlib
+
 from ignf_gpf_api.Errors import GpfApiError
 
 
@@ -53,3 +55,20 @@ class FileHelper:
         if f_size_gb <= f_size_in_bytes < f_size_tb:
             return f"{f_size_in_bytes / f_size_gb:.2f} GO"
         return f"{f_size_in_bytes / f_size_tb:.2f} TO"
+
+    @staticmethod
+    def md5_hash(file_path: Path) -> str:
+        """
+        Méthode permettant de calculer la clef md5 d'un fichier
+
+        Args:
+            file_path (Path): chemin d'un fichier
+
+        Returns:
+            str: clef md5 du fichier
+        """
+        s_file_hash = hashlib.md5()
+        with file_path.open("rb") as o_file:
+            for o_chunk in iter(lambda: o_file.read(4096), b""):
+                s_file_hash.update(o_chunk)
+        return s_file_hash.hexdigest()
