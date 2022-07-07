@@ -234,3 +234,14 @@ class ApiRequesterTestCase(GpfTestCase):
             self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
+    def test_range_next_page(self) -> None:
+        """Test de range_next_page."""
+        # On a 10 entités à récupérer et on en a récupéré 10 : on ne doit pas continuer
+        self.assertFalse(ApiRequester.range_next_page("1-10/10", 10))
+        # On a 10 entités à récupérer et on en a récupéré 5 : on doit continuer
+        self.assertTrue(ApiRequester.range_next_page("1-5/10", 5))
+        # Content-Range nul : on doit s'arrêter
+        self.assertFalse(ApiRequester.range_next_page(None, 5))
+        # Content-Range non parsable : on doit s'arrêter
+        self.assertFalse(ApiRequester.range_next_page("non_parsable", 0))

@@ -149,8 +149,8 @@ class StoreEntity(ABC):
             )
             # On les ajoute à la liste
             l_entities += [cls(i) for i in o_response.json()]
-            # On doit requêter la page suivante si on a eu autant d'élément que demandé au max, sinon c'est que c'est bon
-            b_next_page = len(o_response.json()) == i_limit
+            # On regarde le Content-Range de la réponse pour savoir si on doit refaire une requête pour récupérer la fin
+            b_next_page = ApiRequester.range_next_page(o_response.headers.get("Content-Range"), len(l_entities))
             # On passe à la page suivante
             i_page += 1
 
