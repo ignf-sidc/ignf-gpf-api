@@ -13,8 +13,6 @@ class ConfigTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.io.ConfigTestCase
     """
 
-    config_path = Path(__file__).parent.parent / "_config"
-
     def setUp(self) -> None:
         # On détruit le singleton Config
         Config._instance = None
@@ -32,7 +30,7 @@ class ConfigTestCase(GpfTestCase):
         self.assertEqual(o_parser.get("store_authentification", "password"), "PASSWORD_TO_MODIFY")
         self.assertEqual(o_parser.get("store_api", "datastore"), "DATASTORE_ID_TO_MODIFY")
         # On ouvre le nouveau fichier
-        Config().read(ConfigTestCase.config_path / "test_overload.ini")
+        Config().read(GpfTestCase.conf_dir_path / "test_overload.ini")
         # On vérifie que l'on a les nouvelles valeurs
         self.assertEqual(o_parser.get("store_authentification", "login"), "TEST_LOGIN")
         self.assertEqual(o_parser.get("store_authentification", "password"), "TEST_PASSWORD")
@@ -40,7 +38,7 @@ class ConfigTestCase(GpfTestCase):
 
     def test_get(self) -> None:
         """Vérifie le bon fonctionnement de get, get_int, get_float et get_bool."""
-        Config().read(ConfigTestCase.config_path / "test_value_type.ini")
+        Config().read(GpfTestCase.conf_dir_path / "test_value_type.ini")
         # On peut récupérer des strings
         self.assertEqual(Config().get("test_value_type", "my_string"), "titi")
         self.assertEqual(Config().get("test_value_type", "my_int"), "42")

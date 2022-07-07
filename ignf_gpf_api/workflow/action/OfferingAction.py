@@ -8,7 +8,7 @@ class OfferingAction(ActionAbstract):
     """Classe dédiée à la création des Offering.
 
     Attributes :
-        __workflow_context (str) : nom du context du workflow
+        __workflow_context (str) : nom du contexte du workflow
         __definition_dict (Dict[str, Any]) : définition de l'action
         __parent_action (Optional["Action"]) : action parente
         __offering (Optional[Offering]) : représentation Python de la Offering créée
@@ -20,13 +20,21 @@ class OfferingAction(ActionAbstract):
         self.__offering: Optional[Offering] = None
 
     def run(self) -> None:
-        # Création de la Offering
+        Config().om.info("Création d'une offre...")
+        # Ajout de l'Offering
         self.__create_offering()
+        # Affichage
+        o_offering = self.offering
+        if o_offering is not None:
+            # Récupération des liens
+            o_offering.api_update()
+            s_urls = "\n   - ".join(o_offering["urls"])
+            Config().om.info(f"Offre créée : {self.__offering}\n   - {s_urls}")
+        Config().om.info("Création d'une offre : terminé")
 
     def __create_offering(self) -> None:
-        """Création de la Offering sur l'API à partir des paramètres de définition de l'action."""
-        Config().om.info("Création d'une offre...")
-        self.__offering = Offering.api_create(self.definition_dict["parameters"], route_params=self.definition_dict["url_parameters"])
+        """Création de l'Offering sur l'API à partir des paramètres de définition de l'action."""
+        self.__offering = Offering.api_create(self.definition_dict["body_parameters"], route_params=self.definition_dict["url_parameters"])
 
     @property
     def offering(self) -> Optional[Offering]:

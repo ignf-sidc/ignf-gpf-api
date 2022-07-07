@@ -1,9 +1,15 @@
 {
     "cSpell.words": [
+        "bbox",
+        "beartype",
         "EPSG",
         "Géoplateforme",
+        "geotuileur",
         "ignf",
+        "insee",
+        "jsonschema",
         "mypy",
+        "parsables",
         "pathes",
         "pathlib",
         "pylint",
@@ -11,12 +17,15 @@
         "pypi",
         "pypirc",
         "rcfile",
+        "recupere",
         "setuptools",
         "sharings",
         "testpypi",
+        "tippecanoe",
         "UNPUBLISHING",
         "venv",
-        "virtualenv"
+        "virtualenv",
+        "WMTS"
     ],
     // On définit la docstring de base comme étant celle de google
     "autoDocstring.docstringFormat": "google",

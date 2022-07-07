@@ -17,9 +17,9 @@ jobs:
     - name: "Analyse code with black"
       run: black --diff --check ignf_gpf_api tests
     - name: "Analyse code with pylint"
-      run: pylint --rcfile=.pylintrc ignf_gpf_api --recursive=y
+      run: pylint --rcfile=.pylintrc --disable=fixme ignf_gpf_api --recursive=y
     - name: "Analyse tests with pylint"
-      run: pylint --rcfile=.pylintrc tests --recursive=y
+      run: pylint --rcfile=.pylintrc --disable=fixme tests --recursive=y
     - name: "Analyse code with mypy"
       run: mypy --strict ignf_gpf_api tests
     - name: "Run unit tests"

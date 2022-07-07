@@ -23,8 +23,6 @@ class UploadActionTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.action.UploadActionTestCase
     """
 
-    config_path = Path(__file__).parent.parent.parent / "_config"
-
     @classmethod
     def setUpClass(cls) -> None:
         """fonction lancée une fois avant tous les tests de la classe"""
@@ -33,7 +31,7 @@ class UploadActionTestCase(GpfTestCase):
         Config._instance = None
         # On charge une config spéciale pour les tests d'upload
         o_config = Config()
-        o_config.read(UploadActionTestCase.config_path / "test_upload.ini")
+        o_config.read(GpfTestCase.conf_dir_path / "test_upload.ini")
         o_config.set_output_manager(MagicMock())
 
     @classmethod
@@ -81,7 +79,7 @@ class UploadActionTestCase(GpfTestCase):
             return Upload(d_dict)
 
         def config_get(a: str, b: str) -> Optional[str]:  # pylint:disable=invalid-name,unused-argument
-            if b == "uniqueness_constraint_upload_infos":
+            if b == "uniqueness_constraint_infos":
                 return "name"
             if b == "uniqueness_constraint_tags":
                 return ""
@@ -276,7 +274,7 @@ class UploadActionTestCase(GpfTestCase):
             api_create=False,
             api_delete=False,
             run_fail=True,
-            message_exception=f"Impossible de continué, la livraison {l_return_value_api_list[0]} est fermée.",
+            message_exception=f"Impossible de continuer, la livraison {l_return_value_api_list[0]} est fermée.",
         )
 
     def test_monitor_until_end_ok(self) -> None:
