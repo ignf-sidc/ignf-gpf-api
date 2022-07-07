@@ -1,12 +1,12 @@
-import unittest
 from unittest.mock import patch
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Errors import StoreEntityError
+from tests.GpfTestCase import GpfTestCase
 
 
-class TagInterfaceTestCase(unittest.TestCase):
+class TagInterfaceTestCase(GpfTestCase):
     """Tests TagInterface class.
 
     cmd : python3 -m unittest -b tests.store.interface.TagInterfaceTestCase
@@ -43,10 +43,8 @@ class TagInterfaceTestCase(unittest.TestCase):
         # dictionnaire de tag à ajouter
         d_more_tag_data = {"tag_key2": "tag_value2"}
 
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On instancie un TagInterface
             o_tag_interface = TagInterface(d_api_data)
             # On appelle la fonction api_add_tags
@@ -73,10 +71,8 @@ class TagInterfaceTestCase(unittest.TestCase):
         # dictionnaire de tag à supprimer
         l_less_tag_data = ["tag_key2"]
 
-        # Instanciation du ApiRequester
-        o_api_requester = ApiRequester()
-        # On mock la fonction request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(o_api_requester, "route_request", return_value=None) as o_mock_request:
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On instancie un TagInterface
             o_tag_interface = TagInterface(d_api_data)
             # On appelle la fonction api_remove_tags

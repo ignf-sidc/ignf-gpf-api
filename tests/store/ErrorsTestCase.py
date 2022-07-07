@@ -1,10 +1,9 @@
-import unittest
-
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.store.Errors import StoreEntityError
+from tests.GpfTestCase import GpfTestCase
 
 
-class ErrorsTestCase(unittest.TestCase):
+class ErrorsTestCase(GpfTestCase):
     """Tests Errors classes.
 
     cmd : python3 -m unittest -b tests.store.ErrorsTestCase
