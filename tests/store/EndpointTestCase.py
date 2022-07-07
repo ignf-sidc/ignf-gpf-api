@@ -14,24 +14,28 @@ class EndpointTestCase(GpfTestCase):
 
     def test_api_list(self) -> None:
         """Vérifie le bon fonctionnement de api_list."""
-
-        # Instanciation d'une fausse réponse HTTP
-        o_response = GpfTestCase.get_response(
-            json={
-                "endpoints": [
-                    {
+        # Extrait de la requête "datastore" de l'API
+        d_data = {
+            "endpoints": [
+                {
+                    "endpoint": {
                         "_id": "endpoint_1",
                         "name": "Service WMTS",
                         "type": "WMTS-TMS",
-                    },
-                    {
+                    }
+                },
+                {
+                    "endpoint": {
                         "_id": "endpoint_2",
                         "name": "Service de téléchargement",
                         "type": "DOWNLOAD",
-                    },
-                ]
-            }
-        )
+                    }
+                },
+            ]
+        }
+
+        # Instanciation d'une fausse réponse HTTP
+        o_response = GpfTestCase.get_response(json=d_data)
 
         # 1 : pas de filtres
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param

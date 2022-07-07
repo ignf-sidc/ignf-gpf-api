@@ -11,6 +11,7 @@
         "mypy",
         "parsables",
         "pathes",
+        "pathlib",
         "pylint",
         "pylintrc",
         "pypi",
@@ -24,7 +25,8 @@
         "UNPUBLISHING",
         "venv",
         "virtualenv",
-        "WMTS"
+        "WMTS",
+        "workdir"
     ],
     // On définit la docstring de base comme étant celle de google
     "autoDocstring.docstringFormat": "google",

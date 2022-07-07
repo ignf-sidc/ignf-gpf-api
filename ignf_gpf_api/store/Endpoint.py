@@ -38,11 +38,11 @@ class Endpoint(StoreEntity):
             b_ok = True
             # On vérifie s'il respecte les critère d'attributs
             for k, v in infos_filter.items():
-                if d_endpoint.get(k) != v:
+                if d_endpoint["endpoint"].get(k) != v:
                     b_ok = False
                     break
             # S'il est ok au final, on l'ajoute
             if b_ok:
-                l_endpoints.append(cls(d_endpoint))
+                l_endpoints.append(cls(d_endpoint["endpoint"]))
         # A la fin, on renvoie la liste
         return l_endpoints
