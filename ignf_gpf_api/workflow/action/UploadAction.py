@@ -141,7 +141,7 @@ class UploadAction:
         d_tags = {}
         for s_tag in l_tags:
             if s_tag != "":
-                d_tags[s_tag] = self.__dataset.upload_infos[s_tag]
+                d_tags[s_tag] = self.__dataset.tags[s_tag]
         # On peut maintenant filter les upload selon ces critères
         l_uploads = Upload.api_list(infos_filter=d_attributs, tags_filter=d_tags)
         # S'il y a un ou plusieurs upload, on retourne le 1er :
