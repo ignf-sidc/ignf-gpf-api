@@ -16,3 +16,7 @@ class FileHelperTestCase(GpfTestCase):
         self.assertEqual("476.84 MO", FileHelper.format_size(500000000))
         self.assertEqual("465.66 GO", FileHelper.format_size(500000000000))
         self.assertEqual("454.75 TO", FileHelper.format_size(500000000000000))
+
+    def test_md5_hash(self) -> None:
+        """Vérification du bon fonctionnement de la fonction md5_hash."""
+        self.assertEqual("54b63bf2c922188c1f19abe97e865005", FileHelper.md5_hash(GpfTestCase.test_dir_path / "helper" / "FileHelper" / "md5.txt"))

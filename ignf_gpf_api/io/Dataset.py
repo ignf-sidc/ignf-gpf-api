@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict, List
-import hashlib
+from ignf_gpf_api.helper.FileHelper import FileHelper
+
 from ignf_gpf_api.io.Config import Config
 
 
@@ -70,7 +71,7 @@ class Dataset:
                 for p_file in self.__data_files:
                     if p_md5_dir in p_file.parents:
                         p_file_trunc = p_file.relative_to(self.__root_dir)
-                        d_md5[p_file_trunc] = self.__file_md5_hash(p_file)
+                        d_md5[p_file_trunc] = FileHelper.md5_hash(p_file)
 
                 # A la fin on rempli le fichier .md5
                 with open(p_md5_dir_suf, "w", encoding="utf-8") as o_md5_file:
@@ -127,19 +128,3 @@ class Dataset:
                 p_api = p_rep_elt.relative_to(self.__root_dir)
                 # Remplissage du dictionnaire __data_files
                 self.__data_files[p_rep_elt] = str(p_api.parent)
-
-    def __file_md5_hash(self, file_path: Path) -> str:
-        """
-        Méthode permettant de calculer la clef md5 d'un fichier
-
-        Args:
-            file_path (Path): chemin d'un fichier
-
-        Returns:
-            str: clef md5 du fichier
-        """
-        s_file_hash = hashlib.md5()
-        with file_path.open("rb") as o_file:
-            for o_chunk in iter(lambda: o_file.read(4096), b""):
-                s_file_hash.update(o_chunk)
-        return s_file_hash.hexdigest()

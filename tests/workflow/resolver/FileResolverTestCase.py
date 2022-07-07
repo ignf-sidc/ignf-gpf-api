@@ -1,17 +1,16 @@
-from pathlib import Path
-import unittest
 from ignf_gpf_api.workflow.resolver.Errors import ResolveFileInvalidError, ResolveFileNotFoundError, ResolverError
-
 from ignf_gpf_api.workflow.resolver.FileResolver import FileResolver
 
+from tests.GpfTestCase import GpfTestCase
 
-class FileResolverTestCase(unittest.TestCase):
-    """Tests FileResolverTestCase class.
+
+class FileResolverTestCase(GpfTestCase):
+    """Tests FileResolver class.
 
     cmd : python3 -m unittest -b tests.workflow.resolver.FileResolverTestCase
     """
 
-    file_path = Path(__file__).parent.parent.parent / "_data" / "workflow" / "resolver" / "FileResolver"
+    file_path = GpfTestCase.test_dir_path / "workflow" / "resolver" / "FileResolver"
 
     s_str_value: str = "contenu du fichier de type str"
     s_list_value: str = str('["info_1", "info_2"]')
@@ -21,7 +20,6 @@ class FileResolverTestCase(unittest.TestCase):
         """Vérifie le bon fonctionnement de la fonction resolve pour un str."""
         o_file_resolver = FileResolver("file")
         # Si mot clé incorrect erreur levée
-        self.maxDiff = None
         with self.assertRaises(ResolverError) as o_arc_1:
             o_file_resolver.resolve("other(text.txt)")
         self.assertEqual(o_arc_1.exception.message, "Erreur du résolveur 'file' avec la chaîne 'other(text.txt)'.")

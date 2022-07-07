@@ -12,6 +12,8 @@ import shutil
 import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
+from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.workflow.Workflow import Workflow
 from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
@@ -38,6 +40,8 @@ def main() -> None:
         upload(o_args)
     elif o_args.task == "dataset":
         dataset(o_args)
+    elif o_args.task == "workflow":
+        workflow(o_args)
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -72,7 +76,10 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     # Parser pour dataset
     o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
     o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à enregistrer")
-    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier descriptor à créer")
+    o_parser_auth.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
+    # Parser pour workflow
+    o_parser_auth = o_sub_parsers.add_parser("workflow", help="Workflow")
+    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser")
     return o_parser.parse_args(args)
 
 
@@ -177,22 +184,26 @@ def upload(o_args: argparse.Namespace) -> None:
 
 
 def dataset(o_args: argparse.Namespace) -> None:
-    """List les jeux de données test proposés et si demandé en export un.
+    """Liste les jeux de données d'exemple proposés et, si demandé par l'utilisateur, en export un.
 
     Args:
         o_args (argparse.Namespace): paramètres utilisateurs
     """
-    p_root = Path(__file__).parent.parent / "tests" / "_data" / "test_datasets"
+    p_root = Config.data_dir_path / "datasets"
     if o_args.name is not None:
-        print(f"Exportation du jeux de donnée '{o_args.name}'...")
-        p_output = Path(o_args.file) if o_args.file is not None else Path(f"{o_args.name}.json")
-        print(f"Chemin de sortie : {p_output}")
-        # Copie du fichier JSON
-        p_from = p_root / f"{o_args.name}.json"
-        shutil.copy(p_from, p_output)
-        # Copie du répertoire
-        shutil.copytree(p_from.with_suffix(""), p_output.with_suffix(""))
-        print("Exportation terminée.")
+        s_dataset = str(o_args.name)
+        print(f"Exportation du jeu de donnée '{s_dataset}'...")
+        p_from = p_root / s_dataset
+        if p_from.exists():
+            p_output = Path(o_args.folder) if o_args.folder is not None else Path(s_dataset)
+            if p_output.exists():
+                p_output = p_output / "s_dataset"
+            print(f"Chemin de sortie : {p_output}")
+            # Copie du répertoire
+            shutil.copytree(p_from, p_output)
+            print("Exportation terminée.")
+        else:
+            raise GpfApiError(f"Jeu de données '{s_dataset}' introuvable.")
     else:
         l_children: List[str] = []
         for p_child in p_root.iterdir():
@@ -201,13 +212,33 @@ def dataset(o_args: argparse.Namespace) -> None:
         print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
 
 
+def workflow(o_args: argparse.Namespace) -> None:
+    """Vérifie ou exécute un workflow.
+
+    Args:
+        o_args (argparse.Namespace): paramètres utilisateurs
+    """
+    p_workflow = Path(o_args.file).absolute()
+    Config().om.info(f"Ouverture du workflow {p_workflow}...")
+    o_workflow = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
+    Config().om.info("Validation du workflow...")
+    l_errors = o_workflow.validate()
+    if l_errors:
+        s_errors = "\n   * ".join(l_errors)
+        Config().om.error(f"{len(l_errors)} erreurs ont été trouvées dans le workflow.")
+        Config().om.info(f"Liste des erreurs :\n   * {s_errors}")
+        raise GpfApiError("Workflow invalide.")
+    Config().om.info("Le workflow est valide.", green_colored=True)
+
+
 if __name__ == "__main__":
     try:
         main()
+        sys.exit(0)
     except GpfApiError as e_gpf_api_error:
-        print(e_gpf_api_error.message)
-        sys.exit(1)
+        Config().om.critical(e_gpf_api_error.message)
     except Exception as e_exception:
-        print("Erreur non spécifiée :")
-        print(traceback.format_exc())
-        sys.exit(1)
+        Config().om.critical("Erreur non spécifiée :")
+        Config().om.error(traceback.format_exc())
+        Config().om.critical("Erreur non spécifiée.")
+    sys.exit(1)

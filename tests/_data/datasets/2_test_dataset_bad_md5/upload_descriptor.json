@@ -5,7 +5,7 @@
                 "CANTON"
             ],
             "upload_infos": {
-                "description": "Jeu test vecteur avec dse clefs md5 toutes pourries.",
+                "description": "Jeu test vecteur avec des clefs md5 toutes pourries.",
                 "name": "TEST MD5 POURRIES",
                 "srs": "EPSG:4326",
                 "type": "VECTOR"

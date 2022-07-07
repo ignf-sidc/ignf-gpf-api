@@ -1,0 +1,66 @@
+{
+    "workflow": {
+        "steps": {
+            // Étape n°1 : une étape ok
+            "intégration-archive-livrée": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la Livraison associée grâce à son nom
+                                    "{store_entity.upload.infos._id [INFOS(name=NOM_LIVRAISON)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle Donnée Stockée nommée "Base intermédiaire"
+                                    "name": "Base intermédiaire"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "comments": [
+                            "Commentaire"
+                        ],
+                        // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            "tuto": "non",
+                            "temp": "oui"
+                        }
+                    }
+                ],
+                "parents": []
+            },
+            // Étape n°2 : parent non existant, pas d'action
+            "no-parent-no-action": {
+                "actions": [],
+                "parents": [
+                    "parent-not-found"
+                ]
+            },
+
+            // Étape n°3 : actions non valide
+            "configuration-wfs": {
+                "actions": [
+                    {
+                        "type": "type-not-found"
+                    },
+                    {
+                    },
+                    {
+                        "type": "processing-execution"
+                    }
+                ],
+                "parents": [
+                    "no-parent-no-action"
+                ]
+            }
+        }
+    }
+}

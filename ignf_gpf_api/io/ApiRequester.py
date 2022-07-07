@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from io import BufferedReader
+import re
 import time
 import traceback
 
@@ -22,6 +23,8 @@ class ApiRequester(metaclass=Singleton):
     PUT = "PUT"
     PATCH = "PATCH"
     DELETE = "DELETE"
+
+    regex_content_range = re.compile(Config().get("store_api", "regex_content_range"))
 
     def __init__(self) -> None:
         # Récupération du convertisseur Json
@@ -59,6 +62,7 @@ class ApiRequester(metaclass=Singleton):
         Returns:
             requests.Response: réponse vérifiée
         """
+        Config().om.debug(f"route_request({route_name}, {method}, {route_params}, {params})")
 
         # La valeur par défaut est transformée en un dict valide
         if route_params is None:
@@ -169,3 +173,28 @@ class ApiRequester(metaclass=Singleton):
                     s_message = f"L'exécution d'une requête a échoué après {i_nb_attempts} tentatives"
                     Config().om.error(s_message)
                     raise GpfApiError(s_message) from e_error
+
+    @staticmethod
+    def range_next_page(content_range: Optional[str], length: int) -> bool:
+        """Fonction analysant le Content-Range d'une réponse pour indiquer s'il
+        faut faire d'autres requêtes ou si tout est déjà récupéré.
+
+        Args:
+            content_range (Optional[str]): Content-Range renvoyé par l'API
+            length (int): nombre d'élément déjà récupéré
+
+        Returns:
+            bool: True s'il faut continuer, False sinon
+        """
+        # On regarde le Content-Range de la réponse pour savoir si on doit refaire une requête pour récupérer la fin
+        if content_range is None:
+            # S'il n'est pas renseigné, on arrête là
+            return False
+        # Sinon on tente de le parser
+        o_result = ApiRequester.regex_content_range.search(content_range)
+        if o_result is None:
+            # Si le parsing a raté, on met un warning en on s'arrête là niveau requête
+            Config().om.warning(f"Impossible d'analyser le nombre d'éléments à requêter. Contactez le support. (Content-Range : {content_range})")
+            return False
+        # Sinon, on compare la len indiquée par le serveur à celle de notre liste, si c'est égal ou supérieur on arrête
+        return not length >= int(o_result.group("len"))
