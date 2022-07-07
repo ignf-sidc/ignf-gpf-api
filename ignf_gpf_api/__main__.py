@@ -14,6 +14,8 @@ from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
 from ignf_gpf_api.workflow.Workflow import Workflow
+from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
+from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolver
 from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
@@ -28,8 +30,12 @@ def main() -> None:
 
     # Résolution de la config
     if not Path(o_args.config).exists():
-        raise GpfApiError(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
+        Config().om.warning(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
     Config().read(o_args.config)
+
+    # Si debug on monte la config
+    if o_args.debug:
+        Config().om.set_log_level("DEBUG")
 
     # Exécution de l'action demandée
     if o_args.task == "auth":
@@ -57,6 +63,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser = argparse.ArgumentParser(prog="ignf_gpf_api", description="Exécutable pour interagir avec l'API Entrepôt de la Géoplateforme.")
     o_parser.add_argument("--ini", dest="config", default="config.ini", help="Chemin vers le fichier de config à utiliser (config.ini par défaut)")
     o_parser.add_argument("--version", action="version", version=f"%(prog)s v{ignf_gpf_api.__version__}")
+    o_parser.add_argument("--debug", dest="debug", required=False, default=False, action="store_true", help="Passe l'appli en mode debug (plus de messages affichés)")
     o_sub_parsers = o_parser.add_subparsers(dest="task", metavar="TASK", required=True, help="Tâche à effectuer")
     # Parser pour auth
     o_parser_auth = o_sub_parsers.add_parser("auth", help="Authentification")
@@ -75,11 +82,14 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser_auth.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
     # Parser pour dataset
     o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
-    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à enregistrer")
+    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à extraire")
     o_parser_auth.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
     # Parser pour workflow
     o_parser_auth = o_sub_parsers.add_parser("workflow", help="Workflow")
-    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser")
+    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser OU chemin où extraire le dataset")
+    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
+    o_parser_auth.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
+    o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
     return o_parser.parse_args(args)
 
 
@@ -166,7 +176,8 @@ def upload(o_args: argparse.Namespace) -> None:
         p_file = Path(o_args.file)
         o_dfu = DescriptorFileReader(p_file)
         for o_dataset in o_dfu.datasets:
-            o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
+            s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
+            o_ua = UploadAction(o_dataset, behavior=s_behavior)
             o_upload = o_ua.run()
             if UploadAction.monitor_until_end(o_upload, print):
                 print(f"Livraison {o_upload} créée avec succès.")
@@ -197,7 +208,7 @@ def dataset(o_args: argparse.Namespace) -> None:
         if p_from.exists():
             p_output = Path(o_args.folder) if o_args.folder is not None else Path(s_dataset)
             if p_output.exists():
-                p_output = p_output / "s_dataset"
+                p_output = p_output / s_dataset
             print(f"Chemin de sortie : {p_output}")
             # Copie du répertoire
             shutil.copytree(p_from, p_output)
@@ -218,17 +229,49 @@ def workflow(o_args: argparse.Namespace) -> None:
     Args:
         o_args (argparse.Namespace): paramètres utilisateurs
     """
-    p_workflow = Path(o_args.file).absolute()
-    Config().om.info(f"Ouverture du workflow {p_workflow}...")
-    o_workflow = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
-    Config().om.info("Validation du workflow...")
-    l_errors = o_workflow.validate()
-    if l_errors:
-        s_errors = "\n   * ".join(l_errors)
-        Config().om.error(f"{len(l_errors)} erreurs ont été trouvées dans le workflow.")
-        Config().om.info(f"Liste des erreurs :\n   * {s_errors}")
-        raise GpfApiError("Workflow invalide.")
-    Config().om.info("Le workflow est valide.", green_colored=True)
+    p_root = Config.data_dir_path / "workflows"
+    if o_args.name is not None:
+        s_workflow = str(o_args.name)
+        print(f"Exportation du workflow '{s_workflow}'...")
+        p_from = p_root / s_workflow
+        if p_from.exists():
+            p_output = Path(o_args.file) if o_args.file is not None else Path(s_workflow)
+            if p_output.exists() and p_output.is_dir():
+                p_output = p_output / s_workflow
+            print(f"Chemin de sortie : {p_output}")
+            # Copie du répertoire
+            shutil.copyfile(p_from, p_output)
+            print("Exportation terminée.")
+        else:
+            raise GpfApiError(f"Workflow '{s_workflow}' introuvable.")
+    elif o_args.file is not None:
+        # Ouverture du fichier
+        p_workflow = Path(o_args.file).absolute()
+        Config().om.info(f"Ouverture du workflow {p_workflow}...")
+        o_workflow = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
+        # Y'a-t-il une étape d'indiquée
+        if o_args.step is None:
+            # Si pas d'étape indiquée, on valide le workflow
+            Config().om.info("Validation du workflow...")
+            l_errors = o_workflow.validate()
+            if l_errors:
+                s_errors = "\n   * ".join(l_errors)
+                Config().om.error(f"{len(l_errors)} erreurs ont été trouvées dans le workflow.")
+                Config().om.info(f"Liste des erreurs :\n   * {s_errors}")
+                raise GpfApiError("Workflow invalide.")
+            Config().om.info("Le workflow est valide.", green_colored=True)
+        else:
+            # Sinon, on définit des résolveurs
+            GlobalResolver().add_resolver(StoreEntityResolver("store_entity"))
+            # et on lance l'étape
+            s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
+            o_workflow.run_step(o_args.step, print, behavior=s_behavior)
+    else:
+        l_children: List[str] = []
+        for p_child in p_root.iterdir():
+            if p_child.is_file():
+                l_children.append(p_child.name)
+        print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
 
 
 if __name__ == "__main__":
