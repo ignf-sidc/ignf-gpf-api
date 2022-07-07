@@ -67,7 +67,7 @@ class StoreEntityTestCase(GpfTestCase):
         self.assertEqual(o_arc.exception.message, "filter_tags_dict_from_str : le filtre 'pas de signe égal' ne contient pas le caractère '='")
 
     def test_api_get(self) -> None:
-        "Vérifie le bon fonctionnement de api_get si tout va bien."
+        """Vérifie le bon fonctionnement de api_get si tout va bien."""
         # Instanciation d'une fausse réponse HTTP
         o_response = GpfTestCase.get_response(json={"_id": "123456789"})
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
@@ -84,7 +84,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertEqual(o_store_entity.id, "123456789")
 
     def test_api_create_1(self) -> None:
-        "Vérifie le bon fonctionnement de api_create sans route_params."
+        """Vérifie le bon fonctionnement de api_create sans route_params."""
         # on créé un store entity dans l'api (avec un dictionnaire)
         # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
         # 1/ on vérifie l'appel ApiRequester.route_request
@@ -108,7 +108,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertEqual(o_store_entity.id, "123456789")
 
     def test_api_create_2(self) -> None:
-        "Vérifie le bon fonctionnement de api_create avec route_params."
+        """Vérifie le bon fonctionnement de api_create avec route_params."""
         # on créé un store entity dans l'api (avec un dictionnaire)
         # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
         # 1/ on vérifie l'appel ApiRequester.route_request
@@ -131,16 +131,16 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertIsInstance(o_store_entity, StoreEntity)
             self.assertEqual(o_store_entity.id, "123456789")
 
-    def test_api_list(self) -> None:
-        "Vérifie le bon fonctionnement de api_list."
-        # 1 : vérif fonctionnement ok si plusieurs pages dispos et toutes les pages demandées (par défaut)
-        # On a deux réponses : une avec 10 entités et une avec 3 entités (on demande 10 entités max)
-        l_responses_1 = [
-            GpfTestCase.get_response(json=[{"_id": str(i)} for i in range(1, 11)]),
-            GpfTestCase.get_response(json=[{"_id": str(i)} for i in range(11, 13)]),
+    def test_api_list_multi_pages(self) -> None:
+        """Vérifie le bon fonctionnement de api_list si plusieurs pages."""
+        # On a deux réponses : indiquant qu'il y a 12 entités au total
+        l_responses = [
+            GpfTestCase.get_response(json=[{"_id": str(i)} for i in range(1, 11)], headers={"Content-Range": "1-10/12"}),
+            GpfTestCase.get_response(json=[{"_id": str(i)} for i in range(11, 13)], headers={"Content-Range": "11-12/12"}),
         ]
+        # 1 : par défaut on va faire une seconde requête pour tout récupérer
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(ApiRequester(), "route_request", side_effect=l_responses_1) as o_mock_request:
+        with patch.object(ApiRequester(), "route_request", side_effect=l_responses) as o_mock_request:
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
@@ -156,38 +156,14 @@ class StoreEntityTestCase(GpfTestCase):
             )
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
+            self.assertEqual(len(l_entities), 12)
             for i, o_entity in enumerate(l_entities, start=1):
                 self.assertIsInstance(o_entity, StoreEntity)
                 self.assertEqual(o_entity.id, str(i))
 
-        # 2 : vérif fonctionnement ok si seulement une page dispos et toutes les pages demandées (par défaut)
-        # On a une réponse avec une liste de 2 entités (soit moins que les 10 demandées)
-        l_responses_2 = [
-            GpfTestCase.get_response(json=[{"_id": "1"}, {"_id": "2"}]),
-        ]
+        # 2 : si on demande une page précisé (la 1) on ne fait pas d'autre requête
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(ApiRequester(), "route_request", side_effect=l_responses_2) as o_mock_request:
-            # On effectue le listing d'une entité
-            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
-            # Vérification sur o_mock_request
-            # Fonction appelée 2 fois
-            self.assertEqual(o_mock_request.call_count, 1)
-            # Paramètres ok, avec seulement la page 1
-            self.assertListEqual(
-                o_mock_request.call_args_list,
-                [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10}),
-                ],
-            )
-            # Vérifications sur l_entities
-            self.assertIsInstance(l_entities, list)
-            for i, o_entity in enumerate(l_entities, start=1):
-                self.assertIsInstance(o_entity, StoreEntity)
-                self.assertEqual(o_entity.id, str(i))
-
-        # 3 : vérif fonctionnement ok si plusieurs pages dispos et une page demandée (la 1)
-        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(ApiRequester(), "route_request", side_effect=l_responses_1) as o_mock_request:
+        with patch.object(ApiRequester(), "route_request", side_effect=l_responses) as o_mock_request:
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"}, page=1)
             # Vérification sur o_mock_request
@@ -202,33 +178,62 @@ class StoreEntityTestCase(GpfTestCase):
             )
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
+            self.assertEqual(len(l_entities), 10)
             for i, o_entity in enumerate(l_entities, start=1):
                 self.assertIsInstance(o_entity, StoreEntity)
                 self.assertEqual(o_entity.id, str(i))
 
-        # 4 : vérif fonctionnement ok si seulement une page dispos et une page demandée
+    def test_api_list_no_loop(self) -> None:
+        """Vérifie le bon fonctionnement de api_list si on demande tout mais qu'on ne doit pas boucler.
+        On ne doit pas boucler si Content-Range indique qu'on a tout récupéré, ou qu'il n'est pas défini ou qu'il est non parsable.
+        """
+        # On a une réponse renvoyant 2 entités et indiquant qu'il y a 2 entités au total
+        o_response = GpfTestCase.get_response(json=[{"_id": "1"}, {"_id": "2"}], headers={"Content-Range": "1-2/2"})
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
-        with patch.object(ApiRequester(), "route_request", side_effect=l_responses_2) as o_mock_request:
+        with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             # On effectue le listing d'une entité
-            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"}, page=3)
+            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            # Fonction appelée 1 fois
-            self.assertEqual(o_mock_request.call_count, 1)
-            # Paramètres ok, avec page 1 uniquement
-            self.assertListEqual(
-                o_mock_request.call_args_list,
-                [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 3, "limit": 10}),
-                ],
-            )
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
+            self.assertEqual(len(l_entities), 2)
+            for i, o_entity in enumerate(l_entities, start=1):
+                self.assertIsInstance(o_entity, StoreEntity)
+                self.assertEqual(o_entity.id, str(i))
+
+        # On a une réponse renvoyant 2 entités et sans Content-Range
+        o_response = GpfTestCase.get_response(json=[{"_id": "1"}, {"_id": "2"}])
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
+            # On effectue le listing d'une entité
+            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            # Vérifications sur l_entities
+            self.assertIsInstance(l_entities, list)
+            self.assertEqual(len(l_entities), 2)
+            for i, o_entity in enumerate(l_entities, start=1):
+                self.assertIsInstance(o_entity, StoreEntity)
+                self.assertEqual(o_entity.id, str(i))
+
+        # On a une réponse renvoyant 2 entités et avec un content-range non parsable
+        o_response = GpfTestCase.get_response(json=[{"_id": "1"}, {"_id": "2"}], headers={"Content-Range": "non_parsable"})
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
+            # On effectue le listing d'une entité
+            l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            # Vérifications sur l_entities
+            self.assertIsInstance(l_entities, list)
+            self.assertEqual(len(l_entities), 2)
             for i, o_entity in enumerate(l_entities, start=1):
                 self.assertIsInstance(o_entity, StoreEntity)
                 self.assertEqual(o_entity.id, str(i))
 
     def test_api_delete(self) -> None:
-        "Vérifie le bon fonctionnement de api_delete."
+        """Vérifie le bon fonctionnement de api_delete."""
         # on créé une instance puis on la supprime
         # 1/ on vérifie l'appel ApiRequester.route_request
         # 2/ avec le mock, pas besoin de vérifier que l'instance (SUR l'api) n'existe plus
@@ -244,7 +249,7 @@ class StoreEntityTestCase(GpfTestCase):
             o_mock_request.assert_called_once_with("store_entity_delete", route_params={"store_entity": "id_à_supprimer"}, method=ApiRequester.DELETE)
 
     def test_api_update(self) -> None:
-        "Vérifie le bon fonctionnement de api_update."
+        """Vérifie le bon fonctionnement de api_update."""
         # Infos de l'entité avant la maj et après
         d_old_data = {"_id": "id_à_maj", "name": "ancien nom"}
         d_new_data = {"_id": "id_à_maj", "name": "nouveau nom"}

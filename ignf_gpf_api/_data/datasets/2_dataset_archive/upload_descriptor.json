@@ -2,16 +2,16 @@
     "datasets": [
         {
             "data_dirs": [
-                "test_livraison"
+                "CANTON"
             ],
             "upload_infos": {
-                "description": "Jeu test archive",
-                "name": "TEST_DATASET_ARCHIVE",
+                "description": "Jeu d'exemple archive",
+                "name": "EXAMPLE_DATASET_ARCHIVE",
                 "srs": "EPSG:4326",
                 "type": "ARCHIVE"
             },
             "comments": [
-                "Ceci est un jeu de données pour les archives !"
+                "Ceci est un jeu de données d'exemple contenant des archives !"
             ],
             "tags": {
                 "tuto": "oui"
