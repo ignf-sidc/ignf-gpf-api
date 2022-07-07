@@ -1,9 +1,9 @@
 declare -i code=0
 
 # Lancement de pylint
-pylint --rcfile=.pylintrc ignf_gpf_api --recursive=y
+pylint --rcfile=.pylintrc --disable=fixme ignf_gpf_api --recursive=y
 code+=$?
-pylint --rcfile=.pylintrc tests --recursive=y
+pylint --rcfile=.pylintrc --disable=fixme tests --recursive=y
 code+=$?
 echo
 
