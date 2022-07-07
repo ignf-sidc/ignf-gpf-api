@@ -1,7 +1,6 @@
 from http import HTTPStatus
 from io import BufferedReader
 import json
-from pathlib import Path
 from typing import Dict, Tuple
 from unittest.mock import patch
 import requests
@@ -25,7 +24,6 @@ class ApiRequesterTestCase(GpfTestCase):
 
     # On va mocker la classe d'authentification globalement
     o_mock_authentifier = patch.object(Authentifier, "get_access_token_string", return_value="test_token")
-    config_path = Path(__file__).parent.parent / "_config"
 
     # Paramètres de requêtes
     url = "https://api.test.io/"
@@ -50,7 +48,7 @@ class ApiRequesterTestCase(GpfTestCase):
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
         o_config = Config()
-        o_config.read(ApiRequesterTestCase.config_path / "test_requester.ini")
+        o_config.read(GpfTestCase.conf_dir_path / "test_requester.ini")
         # On mock la classe d'authentification
         cls.o_mock_authentifier.start()
 
