@@ -13,7 +13,7 @@
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
-                                    "{store_entity.upload.infos._id [INFOS(name=TEST_DATASET_ARCHIVE)]}"
+                                    "{store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_ARCHIVE)]}"
                                 ]
                             },
                             "output": {

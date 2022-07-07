@@ -5,13 +5,13 @@
                 "CANTON"
             ],
             "upload_infos": {
-                "description": "Jeu test vecteur",
-                "name": "TEST_DATASET_VECTOR",
+                "description": "Jeu d'exemple vecteur",
+                "name": "EXAMPLE_DATASET_VECTOR",
                 "srs": "EPSG:2154",
                 "type": "VECTOR"
             },
             "comments": [
-                "Ceci est un jeu test vecteur"
+                "Ceci est un jeu de données d'exemple contenant des données vecteur"
             ],
             "tags": {
                 "tuto": "oui"

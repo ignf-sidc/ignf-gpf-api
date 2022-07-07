@@ -13,7 +13,7 @@
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
-                                    "{store_entity.upload.infos._id [INFOS(name=TEST_DATASET_ARCHIVE)]}"
+                                    "{store_entity.upload.infos._id [INFOS(name=NOM_LIVRAISON)]}"
                                 ]
                             },
                             "output": {
@@ -26,11 +26,11 @@
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide vecteur : création base intermédiaire"
+                            "Commentaire"
                         ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
-                            "tuto": "oui",
+                            "tuto": "non",
                             "temp": "oui"
                         }
                     }
