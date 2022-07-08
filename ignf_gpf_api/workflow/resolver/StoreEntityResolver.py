@@ -43,13 +43,13 @@ class StoreEntityResolver(AbstractResolver):
         super().__init__(name)
         self.__regex: Pattern[str] = re.compile(Config().get("workflow_resolution_regex", "store_entity_regex"))
 
-    def resolve(self, s_to_solve: str) -> str:
+    def resolve(self, string_to_solve: str) -> str:
         # On résout la chaîne à résoudre si jamais on a des paramètres dans des paramètres...
-        s_to_solve = GlobalResolver().resolve(s_to_solve)
+        string_to_solve = GlobalResolver().resolve(string_to_solve)
         # On parse la chaîne à résoudre
-        o_result = self.regex.search(s_to_solve)
+        o_result = self.regex.search(string_to_solve)
         if o_result is None:
-            raise ResolverError(self.name, s_to_solve)
+            raise ResolverError(self.name, string_to_solve)
         d_groups = o_result.groupdict()
         # On récupère les filtres à utiliser
         # Sur les infos
@@ -64,7 +64,7 @@ class StoreEntityResolver(AbstractResolver):
         l_entities = self.__key_to_cls[s_entity_type].api_list(infos_filter=d_filter_infos, tags_filter=d_filter_tags, page=1)
         # Si on a aucune entité trouvée
         if len(l_entities) == 0:
-            raise NoEntityFoundError(self.name, s_to_solve)
+            raise NoEntityFoundError(self.name, string_to_solve)
         # Sinon on regarde ce qu'on doit envoyer
         o_entity = l_entities[0]
         s_selected_field = d_groups["selected_field"]
@@ -75,7 +75,7 @@ class StoreEntityResolver(AbstractResolver):
         # On doit renvoyer un tag, possible que si ça implémente TagInterface
         if isinstance(o_entity, TagInterface):
             return o_entity.get_tag(s_selected_field)
-        raise ResolverError(self.name, s_to_solve)
+        raise ResolverError(self.name, string_to_solve)
 
     @property
     def regex(self) -> Pattern[str]:

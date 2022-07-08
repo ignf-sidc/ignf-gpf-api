@@ -24,17 +24,23 @@ class GlobalResolver(metaclass=Singleton):
         """Ajout un résolveur à la liste."""
         self.__resolvers[resolver.name] = resolver
 
-    def resolve(self, s_to_solve_global: str) -> str:
+    def resolve(self, string_to_solve_global: str) -> str:
         """Résout la chaîne à traiter et retourne la chaîne obtenue.
         Résout TOUT le paramétrage trouvé.
 
+        Args:
+            string_to_solve_global (str): chaîne globale à résoudre
+
+        Raises:
+            ResolverNotFoundError: levée si un résolveur demandé n'est pas trouvé
+
         Returns:
-            str: chaîne obtenue
+            str: chaîne résolue
         """
         # Pour stocker les remplacements à effectuer
         d_old_new: Dict[str, str] = {}
         # On cherche les résolutions à effectuer
-        l_resolutions = [result.groupdict() for result in GlobalResolver._regex.finditer(s_to_solve_global)]
+        l_resolutions = [result.groupdict() for result in GlobalResolver._regex.finditer(string_to_solve_global)]
 
         # On va résoudre les résolutions
         for d_resolution in l_resolutions:
@@ -56,7 +62,7 @@ class GlobalResolver(metaclass=Singleton):
                 d_old_new[s_old] = s_new
 
         # On a tout résolu, maintenant il faut remplacer
-        s_solved = s_to_solve_global
+        s_solved = string_to_solve_global
         for s_old, s_new in d_old_new.items():
             s_solved = s_solved.replace(s_old, s_new)
         # Retour
