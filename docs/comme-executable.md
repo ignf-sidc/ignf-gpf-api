@@ -53,7 +53,7 @@ Lancez la commande suivante pour extraire un jeu de donnée :
 python -m ignf_gpf_api dataset -n 1_dataset_vector
 ```
 
-Les données seront extraites dans le dossier courent, vous pouvez préciser la destination avec le paramètre `--folder` (ou `-f`).
+Les données seront extraites dans le dossier courant, vous pouvez préciser la destination avec le paramètre `--folder` (ou `-f`).
 
 
 ## Envoyer des données

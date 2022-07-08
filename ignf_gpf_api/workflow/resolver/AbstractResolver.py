@@ -13,11 +13,14 @@ class AbstractResolver(ABC):
         self.__name: str = name
 
     @abstractmethod
-    def resolve(self, s_to_solve: str) -> str:
+    def resolve(self, string_to_solve: str) -> str:
         """Résout la chaîne à traiter et retourne la chaîne obtenue.
 
+        Args:
+            string_to_solve (str): chaîne à résoudre
+
         Returns:
-            str: chaîne obtenue
+            str: chaîne résolue
         """
 
     @property
