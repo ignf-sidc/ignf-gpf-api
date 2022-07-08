@@ -1,8 +1,27 @@
 site_name: ignf_gpf_api
 
+repo_url: https://github.com/ignf_sidc/ignf_gpf_api/
+
 theme:
-  name: "readthedocs"
+  name: ivory
+  highlightjs: true
+  hljs_languages:
+    - yaml
   locale: fr
+
+extra_css:
+  - custom.css
+
+markdown_extensions:
+  - toc:
+      permalink: "#"
+
+plugins:
+  - search:
+      lang: fr
+#  - pheasant:
+#      version: ignf_gpf_api
+  - mkapi
 
 nav:
   - index.md
@@ -12,11 +31,4 @@ nav:
   - upload_descriptor.md
   - workflow.md
   - development.md
-
-markdown_extensions:
-  - toc:
-      permalink: "#"
-
-plugins:
-  - search:
-      lang: fr
+  - API: mkapi/api/ignf_gpf_api|strict

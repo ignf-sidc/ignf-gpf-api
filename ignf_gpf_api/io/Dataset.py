@@ -18,18 +18,18 @@ class Dataset:
         __root_dir (Path): Chemin racine du dataset (absolu ou relatif ?)
     """
 
-    def __init__(self, d_dataset: Dict[Any, Any], p_root_dir: Path) -> None:
+    def __init__(self, dataset: Dict[Any, Any], p_root_dir: Path) -> None:
         """Constructeur
 
         Args:
-            d_dataset (Dict[Any, Any]): dataset tel que dans le fichier descriptif de livraison
+            dataset (Dict[Any, Any]): dataset tel que dans le fichier descriptif de livraison
             p_root_dir (Path): Chemin racine à partir duquel sont défini les data_dirs
         """
         # Définition des attributs
-        self.__data_dirs: List[Path] = [Path(i) for i in d_dataset["data_dirs"]]  # Chemins relatifs
-        self.__upload_infos: Dict[str, str] = d_dataset["upload_infos"]
-        self.__comments: List[str] = d_dataset["comments"]
-        self.__tags: Dict[str, str] = d_dataset["tags"]
+        self.__data_dirs: List[Path] = [Path(i) for i in dataset["data_dirs"]]  # Chemins relatifs
+        self.__upload_infos: Dict[str, str] = dataset["upload_infos"]
+        self.__comments: List[str] = dataset["comments"]
+        self.__tags: Dict[str, str] = dataset["tags"]
         self.__data_files: Dict[Path, str] = {}
         self.__md5_files: List[Path] = []
         self.__root_dir: Path = p_root_dir
