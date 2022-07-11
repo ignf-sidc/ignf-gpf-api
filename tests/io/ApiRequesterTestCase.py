@@ -163,6 +163,21 @@ class ApiRequesterTestCase(GpfTestCase):
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
+    def test_url_request_conflict(self) -> None:
+        """Test de url_request dans le cadre de 1 erreur conflict."""
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            # Une requête non réussie
+            o_mock.post(self.url, status_code=HTTPStatus.CONFLICT)
+            # On s'attend à une exception
+            with self.assertRaises(GpfApiError) as o_arc:
+                # On effectue une requête
+                ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+            # On doit avoir un message d'erreur
+            self.assertEqual(o_arc.exception.message, "La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
+            # On a dû faire 1 seule requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
     def test_url_request_not_found(self) -> None:
         """Test de url_request dans le cadre d'une erreur 404 (not found)."""
         # On mock...
