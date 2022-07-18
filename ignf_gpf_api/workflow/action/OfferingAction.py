@@ -7,11 +7,11 @@ from ignf_gpf_api.io.Config import Config
 class OfferingAction(ActionAbstract):
     """Classe dédiée à la création des Offering.
 
-    Attributes :
-        __workflow_context (str) : nom du contexte du workflow
-        __definition_dict (Dict[str, Any]) : définition de l'action
-        __parent_action (Optional["Action"]) : action parente
-        __offering (Optional[Offering]) : représentation Python de la Offering créée
+    Attributes:
+        __workflow_context (str): nom du contexte du workflow
+        __definition_dict (Dict[str, Any]): définition de l'action
+        __parent_action (Optional["Action"]): action parente
+        __offering (Optional[Offering]): représentation Python de la Offering créée
     """
 
     def __init__(self, workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> None:

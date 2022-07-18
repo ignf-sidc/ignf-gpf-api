@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class AbstractResolver(ABC):
     """Classe abstraite permettant de résoudre le paramétrage des fichiers d'action.
 
-    Attributes :
+    Attributes:
         __name (str): nom de code du resolver
     """
 

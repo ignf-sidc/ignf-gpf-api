@@ -11,7 +11,7 @@ from ignf_gpf_api.io.Config import Config
 class UploadAction:
     """Classe permettant d'accompagner la création d'une livraison.
 
-    Attributes :
+    Attributes:
         __dataset (Dataset): dataset contenant les info de la livraison à créer
         __upload (Optional[Upload]): livraison représentant l'entité créée sur l'entrepôt
         __behavior (str): comportement à adopter si la livraison existe déjà sur l'entrepôt

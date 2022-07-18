@@ -13,13 +13,13 @@ from ignf_gpf_api.store.Upload import Upload
 class ProcessingExecutionAction(ActionAbstract):
     """classe dédiée à la création des ProcessingExecution.
 
-    Attributes :
-        __workflow_context (str) : nom du context du workflow
-        __definition_dict (Dict[str, Any]) : définition de l'action
-        __parent_action (Optional["Action"]) : action parente
-        __processing_execution (Optional[ProcessingExecution]) : représentation Python de l'exécution de traitement créée
-        __Upload (Optional[Upload]) : représentation Python de la livraison en sortie (null si données stockée en sortie)
-        __StoredData (Optional[StoredData]) : représentation Python de la données stockée en sortie (null si livraison en sortie)
+    Attributes:
+        __workflow_context (str): nom du context du workflow
+        __definition_dict (Dict[str, Any]): définition de l'action
+        __parent_action (Optional["Action"]): action parente
+        __processing_execution (Optional[ProcessingExecution]): représentation Python de l'exécution de traitement créée
+        __Upload (Optional[Upload]): représentation Python de la livraison en sortie (null si données stockée en sortie)
+        __StoredData (Optional[StoredData]): représentation Python de la données stockée en sortie (null si livraison en sortie)
     """
 
     BEHAVIOR_STOP = "STOP"

@@ -15,18 +15,18 @@ from ignf_gpf_api.workflow.action.OfferingAction import OfferingAction
 
 
 class Workflow:
-    """Description et lancement d'un workflow
-    Attributes :
-        __name (string) : nom du workflow
-        __raw_definition_dict (dict) : définition du workflow
+    """Description et lancement d'un workflow.
+    Attributes:
+        __name (str): Nom du workflow
+        __raw_definition_dict (dict): Définition du workflow
     """
 
     def __init__(self, name: str, raw_dict: Dict[str, Any]) -> None:
         """Constructeur
 
         Args:
-            name (string) : nom du workflow
-            raw_dict (dict): workflow non résolu
+            name (str) : Nom du workflow
+            raw_dict (dict): Workflow non résolu
         """
         self.__name = name
         self.__raw_definition_dict = raw_dict
