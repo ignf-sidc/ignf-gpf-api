@@ -10,7 +10,7 @@ from ignf_gpf_api.io.Config import Config
 class GlobalResolver(metaclass=Singleton):
     """Classe permettant de résoudre une action en appelant les bons résolveurs.
 
-    Attributes :
+    Attributes:
         __resolvers (Dict[str, AbstractResolver]): association nom du résolveur / résolveur.
     """
 

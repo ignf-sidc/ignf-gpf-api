@@ -10,10 +10,10 @@ from ignf_gpf_api.Errors import GpfApiError
 class DescriptorFileReader:
     """Lit et valide le fichier descriptif d'un ensemble de datasets.
 
-    Attributes :
-        __descriptor_dict (Optional[Dict[Any, Any]]) : contenu du fichier descriptif
-        __datasets (List[Dataset]): liste des datasets contenus dans le fichier descripteur de livraison
-        __parent_folder(path): path du dossier parent des données
+    Attributes:
+        __descriptor_dict (Optional[Dict[Any, Any]]): Contenu du fichier descriptif
+        __datasets (List[Dataset]): Liste des datasets contenus dans le fichier descripteur de livraison
+        __parent_folder(path): Chemin du dossier parent des données
     """
 
     def __init__(self, descriptor_file_path: Path) -> None:
