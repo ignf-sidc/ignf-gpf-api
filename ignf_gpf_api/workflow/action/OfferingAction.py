@@ -34,6 +34,8 @@ class OfferingAction(ActionAbstract):
 
     def __create_offering(self) -> None:
         """Création de l'Offering sur l'API à partir des paramètres de définition de l'action."""
+        # OU gérer une erreur ConflictError
+        # OU tenter de liste les Offering déjà existantes pour voir si une correspond à celle qu'on veut créer
         self.__offering = Offering.api_create(self.definition_dict["body_parameters"], route_params=self.definition_dict["url_parameters"])
 
     @property

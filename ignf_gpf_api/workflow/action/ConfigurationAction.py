@@ -33,6 +33,8 @@ class ConfigurationAction(ActionAbstract):
 
     def __create_configuration(self) -> None:
         """Création de la Configuration sur l'API à partir des paramètres de définition de l'action."""
+        # OU gérer une erreur ConflictError
+        # OU tenter de liste les Configuration déjà existantes pour voir si une correspond à celle qu'on veut créer
         Config().om.info("Création de la configuration...")
         self.__configuration = Configuration.api_create(self.definition_dict["body_parameters"])
         Config().om.info(f"Configuration {self.__configuration['name']} créée avec succès.")
