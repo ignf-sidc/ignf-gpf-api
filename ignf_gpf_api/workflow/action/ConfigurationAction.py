@@ -2,6 +2,7 @@ from typing import Any, Dict, Optional
 from ignf_gpf_api.store.Configuration import Configuration
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.io.Config import Config
+from ignf_gpf_api.io.Errors import ConflictError
 
 
 class ConfigurationAction(ActionAbstract):
@@ -33,11 +34,13 @@ class ConfigurationAction(ActionAbstract):
 
     def __create_configuration(self) -> None:
         """Création de la Configuration sur l'API à partir des paramètres de définition de l'action."""
-        # OU gérer une erreur ConflictError
-        # OU tenter de liste les Configuration déjà existantes pour voir si une correspond à celle qu'on veut créer
-        Config().om.info("Création de la configuration...")
-        self.__configuration = Configuration.api_create(self.definition_dict["body_parameters"])
-        Config().om.info(f"Configuration {self.__configuration['name']} créée avec succès.")
+        # on gère une erreur de type ConflictError
+        try:
+            Config().om.info("Création de la configuration...")
+            self.__configuration = Configuration.api_create(self.definition_dict["body_parameters"])
+            Config().om.info(f"Configuration {self.__configuration['name']} créée avec succès.")
+        except ConflictError:
+            Config().om.warning("La configuration que vous tentez de créer existe déjà !")
 
     def __add_tags(self) -> None:
         """Ajout des tags sur la Configuration."""
