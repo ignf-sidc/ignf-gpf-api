@@ -15,7 +15,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
 ]
-dynamic = ["version", "description"]
+dynamic = ["version"]
+description = "Python API to simplify the use of the GPF HTTPS API."
 
 dependencies = [
     "requests>=2.6",
