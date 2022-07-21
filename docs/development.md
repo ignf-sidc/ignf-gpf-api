@@ -10,7 +10,7 @@ git clone git@github.com:ignf-sidc/ignf-gpf-api.git
 
 Ouvrez le dossier nouvellement crée avec votre éditeur favoris (ici [Visual Studio Code](https://code.visualstudio.com/)) :
 
-```
+```sh
 code ignf-gpf-api
 ```
 
@@ -26,7 +26,7 @@ Puis mettez à jour `pip` et `virtualenv` :
 python3 -m pip install --user --upgrade pip virtualenv setuptools
 ```
 
-Créez un environnement isolé :
+Créez un environnement isolé : (sera créer dans le dossier où la commande est lancé donc il est préférable de se placer dans le dossier ignf-gpf-api)
 
 ```sh
 python3 -m venv env
@@ -51,11 +51,45 @@ Lancez les tests pour vérifier que tout fonctionne correctement :
 ./check.sh
 ```
 
-## Développement
+## Développement et testes
 
 Pour tester le programme, vous aurez besoin de créer un fichier `config.ini`, cf. [configuration](configuration.md).
 
+Les classes python sont couvertes avec un maximum de testes unitaires donc avec le développement/modification d'une classe/fonction il faut développer/modifier les testes unitaire de l'élément.
+
+Penser à activer l'environnement avant de lancer les testes :
+
+```sh
+source env/bin/activate
+```
+
+Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/python/environments#_work-with-python-interpreters)
+
 À la fin de votre développement, lancez `check.sh` pour vérifier que votre code respecte les critères de qualité du code.
+
+### Consigne développement
+
+- Nomenclature Python (classes en PascalCase, constantes en UPPER_CASE, le reste en snake_case)​
+- Variables suffixées par leur type (cf. "variable-rgx" du .pylintrc)​
+  - `s_` : string​
+  - `i_` : integer​
+  - `f_` : float​
+  - `l_` : list (et autres enumerable)​
+  - `d_` : dict​
+  - `b_` : bool​
+  - `e_` : error​
+  - `p_` : Path​
+  - `o_` : object​
+- Programmation typée (vérifiée avec mypy; [memo type](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html))
+- Toutes les classes et fonctions doivent être documentés.
+- Utilisation de pathlib.Path et non de os.path​
+- Gérer l'affichage des messages avec `Config().om​`, ne pas utiliser de `print()` ou autre logger.
+  - Config().om.debug("message")
+  - Config().om.info("message")
+  - Config().om.warning("message")
+  - Config().om.error("message")
+  - Config().om.critical("message")
+- Configuration centralisée via la classe Config()​ (cf [comm-module](comme-module.md))
 
 ## Documentation
 
@@ -77,12 +111,12 @@ export FLIT_PASSWORD=<token>
 
 Publication sur TestPyPI :
 
-```
+```sh
 flit publish --pypirc .pypirc --repository testpypi
 ```
 
 Publication sur PyPI :
 
-```
+```sh
 flit publish --pypirc .pypirc --repository pypi
 ```
