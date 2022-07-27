@@ -95,14 +95,16 @@ class ResolveFileInvalidError(GpfApiError):
 
 
 class ResolveDataUsernameNotFound(GpfApiError):
-    """_summary_
+    """Classe d'erreur quand les informations de l'utilisateur ne sont pas récupérées
 
-    Args:
-        GpfApiError (_type_): _description_
+    Attributes:
+        __message (str): message décrivant le problème
+        __resolver_name (str): nom du résolveur
+        __to_solve (str): chaîne à résoudre
     """
 
     def __init__(self, resolver_name: str, to_solve: str) -> None:
-        s_message = f"Erreur sur les informations de l'utilisateur authentifié avec la chaîne utilisée '{to_solve}' lors de l'authentification."
+        s_message = f"Erreur de récupération des données de l'utilisateur (résolveur '{resolver_name}')  avec la chaîne utilisée '{to_solve}'."
         super().__init__(s_message)
         self.__to_solve = to_solve
         self.__resolver_name = resolver_name
