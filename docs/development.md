@@ -26,7 +26,7 @@ Puis mettez à jour `pip` et `virtualenv` :
 python3 -m pip install --user --upgrade pip virtualenv setuptools
 ```
 
-Créez un environnement isolé : (sera créer dans le dossier où la commande est lancé donc il est préférable de se placer dans le dossier ignf-gpf-api)
+Créez un environnement isolé : (il sera créé dans le dossier où la commande est lancée donc il est préférable de se placer dans le dossier `ignf-gpf-api`)
 
 ```sh
 python3 -m venv env
@@ -51,13 +51,13 @@ Lancez les tests pour vérifier que tout fonctionne correctement :
 ./check.sh
 ```
 
-## Développement et testes
+## Développement et tests
 
 Pour tester le programme, vous aurez besoin de créer un fichier `config.ini`, cf. [configuration](configuration.md).
 
-Les classes python sont couvertes avec un maximum de testes unitaires donc avec le développement/modification d'une classe/fonction il faut développer/modifier les testes unitaire de l'élément.
+Les classes python sont couvertes avec un maximum de tests unitaires donc avec le développement/modification d'une classe/fonction il faut développer/modifier les tests unitaires de l'élément.
 
-Penser à activer l'environnement avant de lancer les testes :
+Pensez à activer l'environnement avant de lancer les tests :
 
 ```sh
 source env/bin/activate
@@ -81,7 +81,7 @@ Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/pyth
   - `p_` : Path​
   - `o_` : object​
 - Programmation typée (vérifiée avec mypy; [memo type](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html))
-- Toutes les classes et fonctions doivent être documentés.
+- Toutes les classes et fonctions doivent être documentées.
 - Utilisation de pathlib.Path et non de os.path​
 - Gérer l'affichage des messages avec `Config().om​`, ne pas utiliser de `print()` ou autre logger.
   - Config().om.debug("message")
@@ -89,7 +89,7 @@ Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/pyth
   - Config().om.warning("message")
   - Config().om.error("message")
   - Config().om.critical("message")
-- Configuration centralisée via la classe Config()​ (cf [comm-module](comme-module.md))
+- Configuration centralisée via la classe Config()​ (cf. [Utilisation comme module Python](comme-module.md))
 
 ## Documentation
 
