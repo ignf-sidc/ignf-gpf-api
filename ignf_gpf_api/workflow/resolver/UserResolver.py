@@ -23,16 +23,16 @@ class UserResolver(AbstractResolver):
         self.__username_data: Dict[str, Any] = username_data
 
     def resolve(self, string_to_solve: str) -> Any:
-        """_summary_
+        """résoudre la chaîne de caractères pour récupérer les infos de l'utilisateur
 
         Args:
-            string_to_solve (str): _description_
+            string_to_solve (str): chaîne de caractères à résoudre
 
         Raises:
-            ResolverError: _description_
+            ResolveDataUsernameNotFound: gérer l'erreur quand l'info de l'utilisateur n'est pas récupérée
 
         Returns:
-            str: _description_
+            str: chaîne de caractères résolue
         """
         # La chaîne à résoudre est en fait la clé, donc il suffit de renvoyer la valeur associée
         if string_to_solve in self.__username_data:

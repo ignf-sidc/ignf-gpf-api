@@ -11,43 +11,27 @@ class UserResolverTestCase(GpfTestCase):
     """
 
     def test_can_solve_user(self) -> None:
-        """test unitaire pour vérifier s'il réussit à récupérer les données de l'utilisateur authentifié"""
+        """test unitaire pour vérifier s'il réussit à récupérer les données de l'utilisateur"""
 
         s_name_resolver = "dpsg_resolver"
-        s_to_solve_2 = "Phoebe"
+        s_to_solve_1 = "first_name"
+        s_to_solve_2 = "nom_existant"
         d_username_data = {
             "creation": "2022-05-08T15:02:10.095Z",
             "_id": "628b8b88001dae60e9fc2745",
-            "communities_member": [
-                {
-                    "rights": {
-                        "community_rights": "true",
-                        "uploads_rights": "true",
-                        "processings_rights": "true",
-                        "datastore_rights": "true",
-                        "stored_data_rights": "true",
-                        "broadcast_rights": "true",
-                    },
-                    "community": {
-                        "public": "false",
-                        "_id": "6260157bf464ed789892bc04",
-                        "name": "BAck office Géoplateforme",
-                        "technical_name": "bag",
-                        "supervisor": "6220b1ccd70753cdbe20351e",
-                        "datastore": "626016c7f464ed698292bc42",
-                    },
-                }
-            ],
-            "email": "francois.bacquelot@ign.fr",
-            "first_name": "François",
+            "email": "prenom.nom@ign.fr",
+            "first_name": "first_name",
             "last_call": "2022-05-23T13:27:47.324Z",
-            "last_name": "BACQUELOT",
+            "last_name": "family_name",
         }
 
         # instanciation de l'objet lié à la classe UserResolver()
         o_resolver = UserResolver(s_name_resolver, d_username_data)
 
+        # test en mode réussite
+        self.assertEqual(o_resolver.resolve(s_to_solve_1), "first_name")
+
         # test en mode erreur
         with self.assertRaises(ResolveDataUsernameNotFound) as e_exception:
             o_resolver.resolve(s_to_solve_2)
-        self.assertNotEqual(e_exception.exception.message, f"Le nom du username '{s_to_solve_2}' n'a pas pu récupéré les informations d'utilisateur lors de l'authentification.")
+        self.assertNotEqual(e_exception.exception.message, f"Le nom du username '{s_to_solve_2}' n'a pas pu récupérer les informations d'utilisateur lors de l'authentification.")
