@@ -10,7 +10,7 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.io.ApiRequester import ApiRequester
-from ignf_gpf_api.io.Errors import RouteNotFoundError
+from ignf_gpf_api.io.Errors import RouteNotFoundError, ConflictError
 from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=protected-access
@@ -170,11 +170,12 @@ class ApiRequesterTestCase(GpfTestCase):
             # Une requête non réussie
             o_mock.post(self.url, status_code=HTTPStatus.CONFLICT)
             # On s'attend à une exception
-            with self.assertRaises(GpfApiError) as o_arc:
+            with self.assertRaises(ConflictError):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
+            # self.assertEqual(o_arc.exception.message, "La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
+            # Au contraire de GpfApiError, ConflictError ne comporte pas de membre message...
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 

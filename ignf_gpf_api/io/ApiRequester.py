@@ -132,10 +132,8 @@ class ApiRequester(metaclass=Singleton):
             except ConflictError as e_error:
                 # Affiche la pile d'exécution
                 Config().om.debug(traceback.format_exc())
-                # S'il y a un conflit, on ne retente pas, on affiche une explication
-                s_message = "La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?"
-                Config().om.error(s_message)
-                raise GpfApiError(s_message) from e_error
+                # S'il y a un conflit, on ne retente pas, on ne fait rien. On propage l'erreur.
+                raise e_error
 
             except (ApiError, requests.RequestException) as e_error:
                 # Pour les autres erreurs, on retente selon les paramètres indiqués.
