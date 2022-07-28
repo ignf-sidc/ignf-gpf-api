@@ -95,7 +95,7 @@ INFO - Offre créée : Offering(id=62c708e72246434ac40ee3ad)
    - download|https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive
 ```
 
-Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez téléchargés.
+Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez téléversées et qui sont maintenant disponibles en téléchargement.
 
 Vous pouvez alors télécharger le fichier de votre choix en ajoutant son nom à la suite du lien. Dans notre cas, ça serait :
 
