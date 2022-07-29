@@ -20,7 +20,7 @@ Récupérez les données en lançant la commande :
 python -m ignf_gpf_api dataset -n 2_dataset_archive
 ```
 
-Observez la structure du fichier :
+Observez la structure du jeu de données :
 
 ```
 2_dataset_archive/
@@ -86,7 +86,7 @@ python -m ignf_gpf_api workflow -f archive-generic.jsonc -s publication-archive-
 
 La première commande ne doit pas être instantanée : un traitement est effectué et les logs doivent vous être remontés.
 
-Les deux traitements suivants sont instantanés. A la fin, vous devez voir s'afficher un lien.
+Les deux étapes suivantes sont instantanées. A la fin, vous devez voir s'afficher un lien.
 
 Exemple :
 
