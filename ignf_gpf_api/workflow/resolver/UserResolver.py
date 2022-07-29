@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
-from ignf_gpf_api.workflow.resolver.Errors import ResolveDataUsernameNotFound
+from ignf_gpf_api.workflow.resolver.Errors import ResolveUserError
 
 
 class UserResolver(AbstractResolver):
@@ -31,4 +31,4 @@ class UserResolver(AbstractResolver):
         if string_to_solve in self.__user_data:
             return str(self.__user_data[string_to_solve])
         # Sinon on lève une exception
-        raise ResolveDataUsernameNotFound(self.name, string_to_solve)
+        raise ResolveUserError(self.name, string_to_solve)

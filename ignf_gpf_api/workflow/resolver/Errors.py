@@ -98,7 +98,7 @@ class ResolveFileInvalidError(GpfApiError):
         return f"{self.__class__.__name__}({self.__resolver_name}, {self.__to_solve})"
 
 
-class ResolveDataUsernameNotFound(GpfApiError):
+class ResolveUserError(GpfApiError):
     """Classe d'erreur quand les informations de l'utilisateur ne sont pas récupérées
 
     Attributes:
