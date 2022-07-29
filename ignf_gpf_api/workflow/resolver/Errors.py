@@ -36,6 +36,10 @@ class ResolverNotFoundError(GpfApiError):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__resolver_name})"
 
+    @property
+    def resolver_name(self) -> str:
+        return self.__resolver_name
+
 
 class NoEntityFoundError(GpfApiError):
     """Classe d'erreur pour le résolveur StoreEntityResolver quand aucune entité n'est trouvée.
