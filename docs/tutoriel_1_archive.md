@@ -22,7 +22,7 @@ python -m ignf_gpf_api dataset -n 2_dataset_archive
 
 Observez la structure du fichier :
 
-```
+```txt
 2_dataset_archive/
 ├── CANTON
 │   └── CANTON.zip
@@ -41,9 +41,12 @@ Ouvrez le fichier pour avoir plus de détails.
 Il est composé d'une liste de `datasets` représentant chacun une livraison distincte.
 
 Chaque dataset contient :
+
 * la liste des dossiers à téléverser ;
 * les informations de la livraison à créer (nom, description, srs et type) ;
 * les commentaires et les tags à ajouter à la livraison.
+
+La documentation du ficher descripteur est disponible [ici](upload_descriptor.md).
 
 ## Livraison des données
 
@@ -69,9 +72,18 @@ python -m ignf_gpf_api workflow -n archive-generic.jsonc
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 3 étapes. Il faudra lancer une commande pour chacune d'elles.
 
+```mermaid
+%% doc mermaid ici https://mermaid-js.github.io/mermaid/#/flowchart?id=flowcharts-basic-syntax
+flowchart TD
+    A("upload") -->|intégration-archive-livrée| B("dataset")
+    B -->|configuration-archive-livrée| C(configuration)
+    C -->|publication-archive-livrée| D(publication)
+```
+
 ## Traitement et publication
 
-Le workflow « archive-generic » permet de passer de la livraison à un lien permettant de télécharger la donnée. Il comporte 3 étapes :
+Le workflow « archive-generic » permet de passer de la livraison à une lien permettant de télécharger la donnée. Il comporte 3 étapes :
+
 * `intégration-archive-livrée` : transformation des données livrées temporaires en une Donnée Stockée pérenne ;
 * `configuration-archive-livrée` : configuration d'un service de téléchargement permettant de télécharger les données ;
 * `publication-archive-livrée` : publication du service de téléchargement.
@@ -90,7 +102,7 @@ Les deux traitements suivants sont instantanés. A la fin, vous devez voir s'aff
 
 Exemple :
 
-```
+```txt
 INFO - Offre créée : Offering(id=62c708e72246434ac40ee3ad)
    - download|https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive
 ```
@@ -99,6 +111,21 @@ Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez tél�
 
 Vous pouvez alors télécharger le fichier de votre choix en ajoutant son nom à la suite du lien. Dans notre cas, ça serait :
 
-```
+```txt
 https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive/CANTON.zip
+```
+
+## Résumer des commandes
+
+```sh
+# récupération des données test
+python -m ignf_gpf_api dataset -n 2_dataset_archive
+# livraison des données sur la geoplatforme
+python -m ignf_gpf_api upload -f 2_dataset_archive/upload_descriptor.json
+# récupération du workflow d'archive
+python -m ignf_gpf_api workflow -n archive-generic.jsonc
+# exécution des 3 étapes pour la publication de l'archive
+python -m ignf_gpf_api workflow -f archive-generic.jsonc -s intégration-archive-livrée
+python -m ignf_gpf_api workflow -f archive-generic.jsonc -s configuration-archive-livrée
+python -m ignf_gpf_api workflow -f archive-generic.jsonc -s publication-archive-livrée
 ```
