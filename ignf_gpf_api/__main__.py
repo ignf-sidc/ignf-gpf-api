@@ -13,6 +13,7 @@ import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.io.Errors import ConflictError
 from ignf_gpf_api.workflow.Workflow import Workflow
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolver
@@ -280,6 +281,10 @@ if __name__ == "__main__":
         sys.exit(0)
     except GpfApiError as e_gpf_api_error:
         Config().om.critical(e_gpf_api_error.message)
+    except ConflictError:
+        # gestion "globale" des ConflictError (ConfigurationAction et OfferingAction
+        # possèdent chacune leur propre gestion)
+        Config().om.critical("La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
     except Exception as e_exception:
         Config().om.critical("Erreur non spécifiée :")
         Config().om.error(traceback.format_exc())
