@@ -2,7 +2,7 @@
 
 La Géoplateforme permet d'héberger vos fichiers pour permettre à vos utilisateur de les télécharger simplement.
 
-Pour cela, vous devez téléverser des données « archive » c'est à dire qui ne seront pas retouchées par la Géoplateforme.
+Pour cela, vous devez téléverser des données « archive » (c'est à dire qu'elles ne seront pas retouchées par la Géoplateforme).
 
 Pour commencer, nous vous conseillons de suivre ce tutoriel qui vous permet de manipuler des données déjà existantes. Vous pouvez ensuite adapter chaque étape pour livrer vos données.
 
@@ -30,7 +30,7 @@ Observez la structure du fichier :
 └── upload_descriptor.json
 ```
 
-La donnée que l'on souhaite héberger est le fichier `CANTON.zip`. Le fichier `CANTON.md5` permettra de valider les données téléversés côté Géoplateforme.
+La donnée que l'on souhaite héberger est le fichier `CANTON.zip`. Le fichier `CANTON.md5` permettra de valider les données téléversées côté Géoplateforme.
 
 Enfin, le fichier `upload_descriptor.json` permet de décrire la livraison à effectuer.
 
@@ -56,7 +56,7 @@ Livrer les données en indiquant le chemin du fichier descripteur au programme :
 python -m ignf_gpf_api upload -f 2_dataset_archive/upload_descriptor.json
 ```
 
-Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérification côté API avant de conclure que tout est bon.
+Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérifications côté API avant de conclure que tout est bon.
 
 ## Workflow
 
@@ -84,7 +84,7 @@ flowchart TD
 
 Le workflow « archive-generic » permet de passer de la livraison à une lien permettant de télécharger la donnée. Il comporte 3 étapes :
 
-* `intégration-archive-livrée` : transformation des données livrées temporaire en une Donnée Stockée pérenne ;
+* `intégration-archive-livrée` : transformation des données livrées temporaires en une Donnée Stockée pérenne ;
 * `configuration-archive-livrée` : configuration d'un service de téléchargement permettant de télécharger les données ;
 * `publication-archive-livrée` : publication du service de téléchargement.
 
@@ -98,7 +98,7 @@ python -m ignf_gpf_api workflow -f archive-generic.jsonc -s publication-archive-
 
 La première commande ne doit pas être instantanée : un traitement est effectué et les logs doivent vous être remontés.
 
-Le deux traitements suivants sont instantanés. A la fin, vous devez voir s'afficher un lien.
+Les deux traitements suivants sont instantanés. A la fin, vous devez voir s'afficher un lien.
 
 Exemple :
 
@@ -107,9 +107,9 @@ INFO - Offre créée : Offering(id=62c708e72246434ac40ee3ad)
    - download|https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive
 ```
 
-Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez télécharger.
+Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez téléversées et qui sont maintenant disponibles en téléchargement.
 
-Vous pouvez alors télécharge le fichier de votre choix en ajoutant son nom à la suite du lien. Dans notre cas, ça serait :
+Vous pouvez alors télécharger le fichier de votre choix en ajoutant son nom à la suite du lien. Dans notre cas, ça serait :
 
 ```txt
 https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive/CANTON.zip
