@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
-from ignf_gpf_api.workflow.resolver.Errors import ResolveDataUsernameNotFound
+from ignf_gpf_api.workflow.resolver.Errors import ResolveUserError
 
 from tests.GpfTestCase import GpfTestCase
 
@@ -40,7 +40,7 @@ class UserResolverTestCase(GpfTestCase):
 
         # test en mode erreur (exception levée + message ok)
         s_to_solve = "non_existant"
-        with self.assertRaises(ResolveDataUsernameNotFound) as e_exception:
+        with self.assertRaises(ResolveUserError) as e_exception:
             o_resolver.resolve(s_to_solve)
         self.assertEqual(e_exception.exception.message, f"Erreur de récupération des données de l'utilisateur (résolveur 'user') avec la chaîne '{s_to_solve}'.")
 

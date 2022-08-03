@@ -3,7 +3,6 @@ from typing import Dict, Optional, Pattern, Type
 
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
 from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverError
-from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Processing import Processing
 from ignf_gpf_api.store.StoredData import StoredData
@@ -44,8 +43,6 @@ class StoreEntityResolver(AbstractResolver):
         self.__regex: Pattern[str] = re.compile(Config().get("workflow_resolution_regex", "store_entity_regex"))
 
     def resolve(self, string_to_solve: str) -> str:
-        # On résout la chaîne à résoudre si jamais on a des paramètres dans des paramètres...
-        string_to_solve = GlobalResolver().resolve(string_to_solve)
         # On parse la chaîne à résoudre
         o_result = self.regex.search(string_to_solve)
         if o_result is None:
