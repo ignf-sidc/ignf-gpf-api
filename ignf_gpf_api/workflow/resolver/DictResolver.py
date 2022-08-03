@@ -22,9 +22,9 @@ class DictResolver(AbstractResolver):
         super().__init__(name)
         self.__key_value: Dict[str, Any] = key_value
 
-    def resolve(self, s_to_solve: str) -> str:
+    def resolve(self, string_to_solve: str) -> str:
         # La chaîne à résoudre est en fait la clé, donc il suffit de renvoyer la valeur associée
-        if s_to_solve in self.__key_value:
-            return str(self.__key_value[s_to_solve])
+        if string_to_solve in self.__key_value:
+            return str(self.__key_value[string_to_solve])
         # Sinon on lève une exception
-        raise ResolverError(self.name, s_to_solve)
+        raise ResolverError(self.name, string_to_solve)

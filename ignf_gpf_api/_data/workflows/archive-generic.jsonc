@@ -13,13 +13,13 @@
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
-                                    "{store_entity.upload.infos._id [INFOS(name=TEST_DATASET_VECTOR)]}"
+                                    "{store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_ARCHIVE)]}"
                                 ]
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "Archive"
-                                    "name": "Archive"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__Archive"
+                                    "name": "{user.last_name}__Archive"
                                 }
                             },
                             "parameters": {}
@@ -44,15 +44,15 @@
                         "type": "configuration",
                         "body_parameters": {
                             "type": "DOWNLOAD",
-                            "name": "Configuration Archive",
-                            "layer_name": "archive",
+                            "name": "{user.last_name}__Configuration_Archive",
+                            "layer_name": "{user.last_name}__archive",
                             "type_infos": {
                                 "title": "Couche Canton du tutoriel",
                                 "abstract": "Exemple d'archive à télécharger",
                                 "used_data": [
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom et l'un de ses tags
-                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=Archive), TAGS(tuto=oui)]}"
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Archive), TAGS(tuto=oui)]}"
                                     }
                                 ]
                             }
@@ -78,12 +78,12 @@
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=Configuration Archive), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Configuration_Archive), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",
                             // Endpoint de type DOWNLOAD (id trouvé en récupérant les informations de l'entrepôt)
-                            "endpoint": "6260169ff464edc13092bc3a"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=DOWNLOAD)]}"
                         }
                     }
                 ],

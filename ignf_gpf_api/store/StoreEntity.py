@@ -12,7 +12,10 @@ T = TypeVar("T", bound="StoreEntity")
 class StoreEntity(ABC):
     """StoreEntity : représentation Python d'une entité de l'entrepôt.
 
-    Attributes :
+    Args:
+        store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
+
+    Attributes:
         _store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
     """
 
@@ -23,12 +26,6 @@ class StoreEntity(ABC):
     _entity_title: str = "Entité Abstraite"
 
     def __init__(self, store_api_dict: Dict[str, Any]) -> None:
-        """Constructeur. On récupère l'id et le reste des données.
-        On lance la fonction de vérification.
-
-        Args:
-            store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
-        """
         self._store_api_dict: Dict[str, Any] = store_api_dict
 
     ##############################################################
@@ -149,8 +146,8 @@ class StoreEntity(ABC):
             )
             # On les ajoute à la liste
             l_entities += [cls(i) for i in o_response.json()]
-            # On doit requêter la page suivante si on a eu autant d'élément que demandé au max, sinon c'est que c'est bon
-            b_next_page = len(o_response.json()) == i_limit
+            # On regarde le Content-Range de la réponse pour savoir si on doit refaire une requête pour récupérer la fin
+            b_next_page = ApiRequester.range_next_page(o_response.headers.get("Content-Range"), len(l_entities))
             # On passe à la page suivante
             i_page += 1
 
@@ -176,22 +173,37 @@ class StoreEntity(ABC):
         self._store_api_dict = o_response.json()
 
     @staticmethod
-    def filter_dict_from_str(s_filters: Optional[str]) -> Dict[str, str]:
-        """Les filtres de store_entities basés sur les tags ou les propriétés sont écrits sous la forme name=value,name=value
-        Cette fonction transforme une liste de tags sous cette forme en dictionnaire de la forme {"name":"value","name":"value"}
+    def filter_dict_from_str(filters: Optional[str]) -> Dict[str, str]:
+        """Les filtres de store_entities basés sur les tags ou les propriétés sont écrits sous la forme `name=value,name=value`.
+        Cette fonction transforme une liste de tags sous cette forme en dictionnaire de la forme `{"name":"value","name":"value"}`.
 
         Args:
-            s_filters (Optional[str]): liste de filtres ayant la forme : name=value,name=value
+            filters (Optional[str]): Liste de filtres ayant la forme `name=value,name=value`
+
         Returns:
-            Dict[str, str]: dictionnaire ayant la forme {"name":"value","name":"value"}
+            Dict[str, str]: Dictionnaire ayant la forme `{"name": "value", "name": "value"}`
+
+        Examples:
+            Conversion classique :
+            >>> filter_dict_from_str("name=value,name=value")
+            {'name':'value','name':'value'}
+
+            Les espaces ne changent rien :
+            >>> filter_dict_from_str("name = value , name= value")
+            {'name':'value','name':'value'}
+
+            La valeur None renvoie un dictionnaire vide
+            >>> filter_dict_from_str(None)
+            {}
+
         Raises:
             StoreEntityError : si un filtre ne contient pas le caractère '='
         """
         # Dictionnaire résultat
         d_filter: Dict[str, str] = {}
-        if s_filters is not None:
+        if filters is not None:
             # On extrait les filtres séparés par une virgule
-            l_filter = s_filters.split(",")
+            l_filter = filters.split(",")
 
             # Pour chaque filtre
             for s_filter in l_filter:
@@ -213,7 +225,7 @@ class StoreEntity(ABC):
         """Renvoie les données JSON de l'entité éventuellement formatées.
 
         Args:
-            indent (Optional[int], optional): Nombre d'espace pour chaque indentation. Defaults to None.
+            indent (Optional[int], optional): Nombre d'espaces pour chaque indentation. Defaults to None.
 
         Returns:
             str: Donnée JSON
@@ -225,26 +237,29 @@ class StoreEntity(ABC):
     ##############################################################
 
     def __getitem__(self, key: str) -> Any:
-        """Les entités se comportent comme des dictionnaires pour l'accès aux attributs
-
-        Args:
-            key (str): attribut à récupérer
-
-        Returns:
-            Any: Valeur associée à l'attribut
-        """
+        # La classe se comporte comme un dictionnaire
+        # et permet de récupérer les info de _store_api_dict
         return self._store_api_dict[key]
+
+    ##############################################################
+    # Fonction test d'égalité
+    ##############################################################
+
+    def __eq__(self, obj: object) -> bool:
+        if isinstance(obj, StoreEntity):
+            return self.id == obj.id
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     ##############################################################
     # Fonctions de représentation
     ##############################################################
     def __str__(self) -> str:
-        """Affichage à destination d'un utilisateur.
-        On affiche l'id et le nom si possible.
+        # Affichage à destination d'un utilisateur.
+        # On affiche l'id et le nom si possible.
 
-        Returns:
-            str: affichage
-        """
         # Liste pour stocker les infos à afficher
         l_infos = []
         # Ajout de l'id
@@ -256,10 +271,6 @@ class StoreEntity(ABC):
         return f"{self.__class__.__name__}({', '.join(l_infos)})"
 
     def __repr__(self) -> str:
-        """Affichage à destination d'un développeur.
-        Pour le moment, pas de différence avec __str__.
-
-        Returns:
-            str: affichage
-        """
+        # Affichage à destination d'un développeur.
+        # Pour le moment, pas de différence avec __str__
         return str(self)

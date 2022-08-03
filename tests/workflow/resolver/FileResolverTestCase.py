@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from ignf_gpf_api.workflow.resolver.Errors import ResolveFileInvalidError, ResolveFileNotFoundError, ResolverError
 from ignf_gpf_api.workflow.resolver.FileResolver import FileResolver
 
@@ -12,7 +10,7 @@ class FileResolverTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.resolver.FileResolverTestCase
     """
 
-    file_path = Path(__file__).parent.parent.parent / "_data" / "workflow" / "resolver" / "FileResolver"
+    file_path = GpfTestCase.test_dir_path / "workflow" / "resolver" / "FileResolver"
 
     s_str_value: str = "contenu du fichier de type str"
     s_list_value: str = str('["info_1", "info_2"]')

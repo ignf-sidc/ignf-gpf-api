@@ -1,6 +1,8 @@
 import json
 from typing import Any, Dict, Optional, List, Union
+
 from ignf_gpf_api.Errors import GpfApiError
+from ignf_gpf_api.io.Color import Color
 
 
 class ConfigReaderError(GpfApiError):
@@ -71,11 +73,13 @@ class AbstractRequestError(ApiError):
     def __repr__(self) -> str:
         return "\n".join(
             [
-                f"Explications : {self.__doc__}",
-                f"url: {self.url}",
-                f"method: {self.method}",
-                f"params: {self.params}",
-                f"data: {self.data}",
+                "Erreur au requêtage de la Géoplateforme.",
+                f"Explication : {self.__doc__}",
+                "Détails : ",
+                f"   * url: {self.url}",
+                f"   * method: {self.method}",
+                f"   * params: {self.params}",
+                f"   * data: {self.data}",
             ]
         )
 
@@ -111,7 +115,7 @@ class NotAuthorizedError(AbstractRequestError):
         return "\n".join(
             [
                 f"{super().__repr__()}",
-                f"response: {self.response}",
+                f"   * response: {self.response}",
             ]
         )
 
@@ -130,23 +134,41 @@ class _WithResponseError(AbstractRequestError):
             response (str): données reçues
         """
         super().__init__(url, method, params, data)
-        self.response_dumps = json.dumps(response)
-        self.response = response
+        self.response_str = response
+        self.response_data = None
+        # On tente de parser la réponse
+        try:
+            self.response_data = json.loads(self.response_str)
+        except json.JSONDecodeError:
+            # Le parsing a échoué, pas grave
+            pass
 
     def __str__(self) -> str:
         return self.__repr__()
 
     def __repr__(self) -> str:
-        return "\n".join(
-            [
-                f"{super().__repr__()}",
-                f"response: {self.response_dumps}",
-            ]
-        )
+        # Affichage de base
+        l_str = [
+            f"{super().__repr__()}",
+            f"   * response: {self.response_str}",
+        ]
+        # Affichage si response_data
+        if self.response_data is not None:
+            # On tente de récupérer "error"
+            if "error" in self.response_data:
+                l_str.append(f"   * error: {Color.BOLD}{self.response_data['error']}{Color.END}")
+            # On tente de récupérer "error_description"
+            if "error_description" in self.response_data:
+                l_str.append(f"   * error_description: {Color.BOLD}{self.response_data['error_description']}{Color.END}")
+        return "\n".join(l_str)
 
 
 class BadRequestError(_WithResponseError):
     """Mauvaise requête"""
+
+
+class ConflictError(_WithResponseError):
+    """Conflit au traitement de la requête"""
 
 
 class StatusCodeError(_WithResponseError):
@@ -181,6 +203,6 @@ class StatusCodeError(_WithResponseError):
         return "\n".join(
             [
                 f"{super().__repr__()}",
-                f"status_code: {self.status_code}",
+                f"   * status_code: {self.status_code}",
             ]
         )

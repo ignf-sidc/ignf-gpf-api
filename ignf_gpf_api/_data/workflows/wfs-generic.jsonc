@@ -13,13 +13,13 @@
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
-                                    "{store_entity.upload.infos._id [INFOS(name=TEST_DATASET_ARCHIVE)]}"
+                                    "{store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_ARCHIVE)]}"
                                 ]
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "Base intermédiaire"
-                                    "name": "Base intermédiaire"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName_Base_intermédiaire"
+                                    "name": "{user.last_name}__Base_intermédiaire"
                                 }
                             },
                             "parameters": {}
@@ -49,13 +49,13 @@
                             "inputs": {
                                 "stored_data": [
                                     // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
-                                    "{store_entity.stored_data.infos._id [INFOS(name=Base intermédiaire, type=VECTOR-DB) TAGS(tuto=oui)]}"
+                                    "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Base_intermédiaire, type=VECTOR-DB) TAGS(tuto=oui)]}"
                                 ]
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "Pyramide vecteur"
-                                    "name": "Pyramide vecteur"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__Pyramide_vecteur"
+                                    "name": "{user.last_name}__Pyramide_vecteur"
                                 }
                             },
                             "parameters": {
@@ -102,8 +102,8 @@
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMTS-TMS",
-                            "name": "Flux vecteur",
-                            "layer_name": "flux_vecteur",
+                            "name": "{user.last_name}__Flux_vecteur",
+                            "layer_name": "{user.last_name}__flux_vecteur",
                             "type_infos": {
                                 "title": "Couche Canton du tutoriel",
                                 "abstract": "Exemple de flux à visualiser",
@@ -111,7 +111,7 @@
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
-                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=Pyramide vecteur, type=ROK4-PYRAMID-VECTOR), TAGS(tuto=oui)]}",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Pyramide_vecteur, type=ROK4-PYRAMID-VECTOR), TAGS(tuto=oui)]}",
                                         "bottom_level": "18",
                                         "top_level": "5"
                                     }
@@ -139,7 +139,7 @@
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=Flux vecteur), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",
