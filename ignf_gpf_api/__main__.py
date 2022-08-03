@@ -22,6 +22,7 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
 
 
 def main() -> None:
@@ -264,6 +265,7 @@ def workflow(o_args: argparse.Namespace) -> None:
         else:
             # Sinon, on définit des résolveurs
             GlobalResolver().add_resolver(StoreEntityResolver("store_entity"))
+            GlobalResolver().add_resolver(UserResolver("user"))
             # et on lance l'étape
             s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
             o_workflow.run_step(o_args.step, print, behavior=s_behavior)
