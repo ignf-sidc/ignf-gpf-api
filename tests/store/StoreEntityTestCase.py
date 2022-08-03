@@ -268,3 +268,17 @@ class StoreEntityTestCase(GpfTestCase):
             o_mock_request.assert_called_once_with("store_entity_get", route_params={"store_entity": "id_à_maj"})
             # Vérification que les infos de l'entité sont maj
             self.assertDictEqual(o_store_entity.get_store_properties(), d_new_data)
+
+    def test_eq(self) -> None:
+        """Vérifie le bon fonctionnement de eq."""
+        # Instanciation d'une Store entity
+        o_store_entity_1 = StoreEntity({"_id": "1"})
+        o_store_entity_2 = StoreEntity({"_id": "2"})
+        o_store_entity_3 = StoreEntity({"_id": "1"})
+
+        # on vérifie que le test sur deux objets identiques renvoie bien true
+        self.assertEqual(o_store_entity_1, o_store_entity_3)
+        # on  vérifie qu'à linverse le test sur deux instances différentes renvoie false
+        self.assertNotEqual(o_store_entity_1, o_store_entity_2)
+        # on  vérifie que le set se comporte comme attendu
+        self.assertEqual(len(set([o_store_entity_1, o_store_entity_2, o_store_entity_3])), 2)

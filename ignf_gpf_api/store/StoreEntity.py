@@ -242,6 +242,18 @@ class StoreEntity(ABC):
         return self._store_api_dict[key]
 
     ##############################################################
+    # Fonction test d'égalité
+    ##############################################################
+
+    def __eq__(self, obj: object) -> bool:
+        if isinstance(obj, StoreEntity):
+            return self.id == obj.id
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
+    ##############################################################
     # Fonctions de représentation
     ##############################################################
     def __str__(self) -> str:
