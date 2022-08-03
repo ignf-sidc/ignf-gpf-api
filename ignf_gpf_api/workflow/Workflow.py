@@ -132,7 +132,7 @@ class Workflow:
             Workflow: workflow instancié
         """
         # Chemin vers le schéma des workflows
-        p_schema = Path(__file__).parent.parent / "conf" / "json_schemas" / "workflow.json"
+        p_schema = Config.conf_dir_path / "json_schemas" / "workflow.json"
         # Vérification du schéma
         JsonHelper.validate_json(
             workflow_path,
@@ -161,7 +161,7 @@ class Workflow:
         l_errors: List[str] = []
 
         # Chemin vers le schéma des workflows
-        p_schema = Path(__file__).parent.parent / "conf" / "json_schemas" / "workflow.json"
+        p_schema = Config.conf_dir_path / "json_schemas" / "workflow.json"
         # Ouverture du schéma
         d_schema = JsonHelper.load(
             p_schema,

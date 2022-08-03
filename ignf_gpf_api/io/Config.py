@@ -14,7 +14,8 @@ class Config(metaclass=Singleton):
         __ini_file_path (string) : chemin vers le fichier de configuration BaGI
     """
 
-    conf_dir_path = Path(__file__).parent.parent / "conf"
+    conf_dir_path = Path(__file__).parent.parent.absolute() / "_conf"
+    data_dir_path = Path(__file__).parent.parent.absolute() / "_data"
     ini_file_path = conf_dir_path / "default.ini"
 
     def __init__(self) -> None:

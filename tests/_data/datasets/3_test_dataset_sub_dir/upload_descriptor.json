@@ -1,0 +1,21 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "CANTON"
+            ],
+            "upload_infos": {
+                "description": "Jeu test vecteur avec des clefs md5 toutes pourries.",
+                "name": "TEST MD5 POURRIES",
+                "srs": "EPSG:4326",
+                "type": "VECTOR"
+            },
+            "comments": [
+                "Ceci est un jeu test vecteur avec des clés md5 toutes pourries !"
+            ],
+            "tags": {
+                "reference": "2100-01-00002"
+            }
+        }
+    ]
+}

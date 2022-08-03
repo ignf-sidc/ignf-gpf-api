@@ -1,7 +1,6 @@
 from http import HTTPStatus
 from io import BufferedReader
 import json
-from pathlib import Path
 from typing import Dict, Tuple
 from unittest.mock import patch
 import requests
@@ -11,7 +10,7 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.io.ApiRequester import ApiRequester
-from ignf_gpf_api.io.Errors import RouteNotFoundError
+from ignf_gpf_api.io.Errors import RouteNotFoundError, ConflictError
 from tests.GpfTestCase import GpfTestCase
 
 # pylint:disable=protected-access
@@ -25,7 +24,6 @@ class ApiRequesterTestCase(GpfTestCase):
 
     # On va mocker la classe d'authentification globalement
     o_mock_authentifier = patch.object(Authentifier, "get_access_token_string", return_value="test_token")
-    config_path = Path(__file__).parent.parent / "_config"
 
     # Paramètres de requêtes
     url = "https://api.test.io/"
@@ -50,7 +48,7 @@ class ApiRequesterTestCase(GpfTestCase):
         Config._instance = None
         # On charge une config spéciale pour les tests d'authentification
         o_config = Config()
-        o_config.read(ApiRequesterTestCase.config_path / "test_requester.ini")
+        o_config.read(GpfTestCase.conf_dir_path / "test_requester.ini")
         # On mock la classe d'authentification
         cls.o_mock_authentifier.start()
 
@@ -165,6 +163,22 @@ class ApiRequesterTestCase(GpfTestCase):
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
+    def test_url_request_conflict(self) -> None:
+        """Test de url_request dans le cadre de 1 erreur conflict."""
+        # On mock...
+        with requests_mock.Mocker() as o_mock:
+            # Une requête non réussie
+            o_mock.post(self.url, status_code=HTTPStatus.CONFLICT)
+            # On s'attend à une exception
+            with self.assertRaises(ConflictError):
+                # On effectue une requête
+                ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
+            # On doit avoir un message d'erreur
+            # self.assertEqual(o_arc.exception.message, "La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
+            # Au contraire de GpfApiError, ConflictError ne comporte pas de membre message...
+            # On a dû faire 1 seule requête
+            self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
     def test_url_request_not_found(self) -> None:
         """Test de url_request dans le cadre d'une erreur 404 (not found)."""
         # On mock...
@@ -236,3 +250,14 @@ class ApiRequesterTestCase(GpfTestCase):
             self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
+
+    def test_range_next_page(self) -> None:
+        """Test de range_next_page."""
+        # On a 10 entités à récupérer et on en a récupéré 10 : on ne doit pas continuer
+        self.assertFalse(ApiRequester.range_next_page("1-10/10", 10))
+        # On a 10 entités à récupérer et on en a récupéré 5 : on doit continuer
+        self.assertTrue(ApiRequester.range_next_page("1-5/10", 5))
+        # Content-Range nul : on doit s'arrêter
+        self.assertFalse(ApiRequester.range_next_page(None, 5))
+        # Content-Range non parsable : on doit s'arrêter
+        self.assertFalse(ApiRequester.range_next_page("non_parsable", 0))

@@ -1,0 +1,34 @@
+site_name: ignf_gpf_api
+
+repo_url: https://github.com/ignf_sidc/ignf_gpf_api/
+
+theme:
+  name: ivory
+  highlightjs: true
+  hljs_languages:
+    - yaml
+  locale: fr
+
+extra_css:
+  - custom.css
+
+markdown_extensions:
+  - toc:
+      permalink: "#"
+
+plugins:
+  - search:
+      lang: fr
+#  - pheasant:
+#      version: ignf_gpf_api
+  - mkapi
+
+nav:
+  - index.md
+  - configuration.md
+  - comme-executable.md
+  - comme-module.md
+  - upload_descriptor.md
+  - workflow.md
+  - development.md
+  - API: mkapi/api/ignf_gpf_api|strict
