@@ -9,7 +9,7 @@ from ignf_gpf_api.io.Config import Config
 
 
 class JsonConverter(metaclass=Singleton):
-    """Classe de convertion des objects python en json. Le but est de convertir
+    """Classe de conversion des objects python en json. Le but est de convertir
     les objets qui ne sont pas nativement gérés par Python comme les dates."""
 
     def __init__(self) -> None:

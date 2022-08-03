@@ -1,5 +1,6 @@
 from ignf_gpf_api.io.Errors import (
     ConfigReaderError,
+    ConflictError,
     InternalServerError,
     NotAuthorizedError,
     NotFoundError,
@@ -32,6 +33,10 @@ class ErrorsTestCase(GpfTestCase):
         raise NotAuthorizedError("url", "method", {}, {}, "response")
 
     @staticmethod
+    def raise_conflict_error() -> None:
+        raise ConflictError("url", "method", {}, {}, "response")
+
+    @staticmethod
     def raise_status_code_error() -> None:
         raise StatusCodeError("url", "method", {}, {}, 100, "response")
 
@@ -45,5 +50,6 @@ class ErrorsTestCase(GpfTestCase):
         self.assertRaises(InternalServerError, ErrorsTestCase.raise_internal_server_error)
         self.assertRaises(NotFoundError, ErrorsTestCase.raise_not_found_error)
         self.assertRaises(NotAuthorizedError, ErrorsTestCase.raise_not_authorized_error)
+        self.assertRaises(ConflictError, ErrorsTestCase.raise_conflict_error)
         self.assertRaises(StatusCodeError, ErrorsTestCase.raise_status_code_error)
         self.assertRaises(RouteNotFoundError, ErrorsTestCase.raise_route_not_found_error)
