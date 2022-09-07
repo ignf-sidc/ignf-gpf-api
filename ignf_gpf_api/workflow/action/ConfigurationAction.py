@@ -59,6 +59,23 @@ class ConfigurationAction(ActionAbstract):
                 self.configuration.api_add_comment({"text": s_comment})
             Config().om.info(f"Configuration {self.configuration['name']} : les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
 
+    def find_configuration(self) -> Optional[Configuration]:
+        """Fonction permettant de récupérer une Configuration ressemblant à celle qui devrait être créée
+        en fonction des filtres définis dans default.ini
+
+        Returns:
+            Optional[StoredData]: données stockées retrouvée
+        """
+        # Récupération des critères de filtre
+        d_infos, d_tags = ActionAbstract.get_filters("configuration", self.definition_dict["body_parameters"], self.definition_dict["tags"])
+        # On peut maintenant filtrer les stored data selon ces critères
+        l_configuration = Configuration.api_list(infos_filter=d_infos, tags_filter=d_tags)
+        # S'il y a une ou plusieurs, on retourne la 1ère :
+        if l_configuration:
+            return l_configuration[0]
+        # sinon on retourne None
+        return None
+
     @property
     def configuration(self) -> Optional[Configuration]:
         return self.__configuration

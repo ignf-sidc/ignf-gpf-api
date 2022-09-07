@@ -59,7 +59,7 @@ class ProcessingExecutionAction(ActionAbstract):
         if self.output_new_entity:
             # TODO : gérer également les Livraison
             # On vérifie si une  Donnée Stockée équivalente à celle du dictionnaire de définition existe déjà
-            o_stored_data = self.__find_stored_data()
+            o_stored_data = self.find_stored_data()
             # Si on en a trouvée
             if o_stored_data is not None:
                 # Comportement d'arrêt du programme
@@ -151,27 +151,15 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def __find_stored_data(self) -> Optional[StoredData]:
-        """
-        Fonction permettant de récupérer une stored Data en fonction des filtres définis dans default.ini
+    def find_stored_data(self) -> Optional[StoredData]:
+        """Fonction permettant de récupérer une Stored Data ressemblant à celle qui devrait être créée par
+        l'exécution de traitement en fonction des filtres définis dans default.ini
 
         Returns:
             Optional[StoredData]: données stockées retrouvée
         """
-        # On tente de récupérer la stored_data selon les critères d'informations (nom...)
-        l_attributes = Config().get("processing_execution", "uniqueness_constraint_infos").split(";")
-        d_infos = {}
-        d_dico = self.definition_dict["body_parameters"]["output"]
-        for s_infos in l_attributes:
-            if s_infos != "":
-                if "stored_data" in d_dico:
-                    d_infos[s_infos] = d_dico["stored_data"][s_infos]
-        # On tente de récupérer la stored_data selon les critères de tags donnés en conf (uniqueness_constraint_tags)
-        l_tags = Config().get("processing_execution", "uniqueness_constraint_tags").split(";")
-        d_tags = {}
-        for s_tag in l_tags:
-            if s_tag != "":
-                d_tags[s_tag] = self.definition_dict["tags"][s_tag]
+        # Récupération des critères de filtre
+        d_infos, d_tags = ActionAbstract.get_filters("processing_execution", self.definition_dict["body_parameters"]["output"]["stored_data"], self.definition_dict["tags"])
         # On peut maintenant filtrer les stored data selon ces critères
         l_stored_data = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags)
         # S'il y a un ou plusieurs stored data, on retourne le 1er :
