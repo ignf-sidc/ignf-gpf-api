@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, Optional, Type
-from unittest.mock import patch, MagicMock
+from unittest.mock import PropertyMock, patch, MagicMock
 
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
@@ -64,29 +64,32 @@ class WorkflowTestCase(GpfTestCase):
             o_workflow.run_step("existe_pas")
         self.assertEqual(o_arc.exception.message, "L'étape existe_pas n'est pas définie dans le workflow nom")
 
-        o_mock_action = MagicMock()
+        o_mock_action = MagicMock(spec=ConfigurationAction)
         o_mock_action.resolve.return_value = None
         o_mock_action.run.return_value = None
+        o_mock_action.configuration = "configuration"
         # on mock Workflow.generate
         with patch.object(Workflow, "generate", return_value=o_mock_action) as o_mock_action_generate:
             # test pour une action
-            o_workflow.run_step("mise-en-base")
+            l_entities = o_workflow.run_step("mise-en-base")
             o_mock_action.run.assert_called_once_with()
             o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
             o_mock_action.resolve.assert_called_once_with()
             o_mock_action.run.assert_called_once_with()
+            self.assertListEqual(l_entities, ["configuration"])
 
             # reset des mock
             o_mock_action_generate.reset_mock()
             o_mock_action.reset_mock()
 
             # test pour 2 actions
-            o_workflow.run_step("mise-en-base2")
+            l_entities = o_workflow.run_step("mise-en-base2")
             self.assertEqual(o_mock_action_generate.call_count, 2)
             o_mock_action_generate.assert_any_call("mise-en-base2", {"type": "action2-1"}, None, None)
             o_mock_action_generate.assert_any_call("mise-en-base2", {"type": "action2-2"}, o_mock_action, None)
             self.assertEqual(o_mock_action.resolve.call_count, 2)
             self.assertEqual(o_mock_action.run.call_count, 2)
+            self.assertListEqual(l_entities, ["configuration", "configuration"])
 
         # test pour ProcessingExecutionAction
 
@@ -224,7 +227,7 @@ class WorkflowTestCase(GpfTestCase):
         # On valide le workflow wfs-generic.jsonc
         o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc")
         self.assertFalse(o_workflow_2.validate())
-        # On valide le workflow bad-workflow.jsonc
+        # On ne valide pas le workflow bad-workflow.jsonc
         p_workflow = GpfTestCase.data_dir_path / "workflows" / "bad-workflow.jsonc"
         o_workflow_2 = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
         l_errors = o_workflow_2.validate()
@@ -234,3 +237,51 @@ class WorkflowTestCase(GpfTestCase):
         self.assertEqual(l_errors[2], "L'étape « no-parent-no-action » n'a aucune action de défini.")
         self.assertEqual(l_errors[3], "L'action n°1 de l'étape « configuration-wfs » n'est pas instantiable (Aucune correspondance pour ce type d'action : type-not-found).")
         self.assertEqual(l_errors[4], "L'action n°2 de l'étape « configuration-wfs » n'a pas la clef obligatoire ('type').")
+
+    def test_get_actions(self) -> None:
+        """Test de get_actions."""
+        # Données test
+        d_action_0 = {"type": "action_0"}
+        d_action_1 = {"type": "action_1"}
+        d_action_2 = {"type": "action_2"}
+        d_workflow = {
+            "workflow": {
+                "steps": {
+                    "step_name": {
+                        "actions": [
+                            d_action_0,
+                            d_action_1,
+                            d_action_2,
+                        ],
+                    },
+                }
+            }
+        }
+        l_actions = ["action_0", "action_1", "action_2"]
+        # Instanciation workflow
+        o_workflow = Workflow("workflow_name", d_workflow)
+        # On mock generate
+        with patch.object(Workflow, "generate", side_effect=l_actions) as o_mock_generate:
+            # Appel fonction testée
+            l_action_get = o_workflow.get_actions("step_name")
+            # Vérification
+            self.assertListEqual(l_actions, l_action_get)
+            self.assertEqual(o_mock_generate.call_count, 3)
+            o_mock_generate.assert_any_call("step_name", d_action_0, None)
+            o_mock_generate.assert_any_call("step_name", d_action_1, "action_0")
+            o_mock_generate.assert_any_call("step_name", d_action_2, "action_1")
+
+    def test_get_action(self) -> None:
+        """Test de get_action."""
+        # Données test
+        l_actions = ["action_0", "action_1", "action_2"]
+        # Instanciation workflow
+        o_workflow = Workflow("workflow_name", {})
+        # On demande l'action i
+        for i, o_action in enumerate(l_actions):
+            with patch.object(o_workflow, "get_actions", return_value=l_actions) as o_mock_get_actions:
+                # Appel fonction testée
+                o_action_get = o_workflow.get_action("stem_name", i)
+                # Vérifications
+                self.assertEqual(o_action, o_action_get)
+                o_mock_get_actions.assert_called_once_with("stem_name")

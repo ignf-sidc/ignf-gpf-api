@@ -1,5 +1,6 @@
 import json
 from unittest.mock import patch, MagicMock
+from ignf_gpf_api.io.Config import Config
 
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
@@ -49,3 +50,22 @@ class ActionAbstractTestCase(GpfTestCase):
             o_action.resolve()
             assert o_action.definition_dict == d_resolved_dico
             o_mock_resolve.assert_called_once_with(str(json.dumps(d_definition, indent=4)))
+
+    def test_get_filters(self) -> None:
+        """Test de get_filters."""
+        d_info_full = {"info_1": "val_1", "info_2": "val_2", "info_3": "val_3"}
+        d_tags_full = {"tag_1": "val_1", "tag_2": "val_2", "tag_3": "val_3"}
+        # On mock la fonction Config.get
+        with patch.object(Config(), "get", side_effect=["info_1;info_2", "tag_3"]) as o_mock_get:
+            # Appel
+            d_infos, d_tags = ActionAbstract.get_filters("config_key", d_info_full, d_tags_full)
+            # Vérifications
+            # Fonction appelée 2 fois
+            self.assertEqual(o_mock_get.call_count, 2)
+            # Pour récupère la liste des infos à filter
+            o_mock_get.assert_any_call("config_key", "uniqueness_constraint_infos")
+            # Pour récupère la liste des tags à filter
+            o_mock_get.assert_any_call("config_key", "uniqueness_constraint_tags")
+            # Vérifications critères conservés
+            self.assertDictEqual(d_infos, {"info_1": "val_1", "info_2": "val_2"})
+            self.assertDictEqual(d_tags, {"tag_3": "val_3"})

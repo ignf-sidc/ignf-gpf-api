@@ -6,6 +6,7 @@ from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Dataset import Dataset
 from ignf_gpf_api.io.Config import Config
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 
 
 class UploadAction:
@@ -61,7 +62,7 @@ class UploadAction:
         """Crée l'upload après avoir vérifié s'il n'existe pas déjà..."""
         Config().om.info("Création d'une livraison...")
         # On tente de récupérer l'upload
-        o_upload = self.__find()
+        o_upload = self.find_upload()
         # S'il n'est pas null
         if o_upload is not None:
             # On sort en erreur si demandé
@@ -124,26 +125,16 @@ class UploadAction:
             self.__upload.api_close()
             Config().om.info(f"Livraison {self.__upload['name']} : livraison fermée avec succès. La livraison va maintenant être vérifiée par la Géoplateforme.")
 
-    def __find(self) -> Optional[Upload]:
+    def find_upload(self) -> Optional[Upload]:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
 
         Returns:
             Optional[Upload]: None si rien trouvé, sinon l'Upload trouvé
         """
-        # On tente de récupérer l'upload selon les critères d'attributs donnés en conf (uniqueness_constraint_infos)
-        l_attributes = Config().get("upload_creation", "uniqueness_constraint_infos").split(";")
-        d_attributs = {}
-        for s_attribut in l_attributes:
-            if s_attribut != "":
-                d_attributs[s_attribut] = self.__dataset.upload_infos[s_attribut]
-        # On tente de récupérer l'upload selon les critères de tags donnés en conf (uniqueness_constraint_tags)
-        l_tags = Config().get("upload_creation", "uniqueness_constraint_tags").split(";")
-        d_tags = {}
-        for s_tag in l_tags:
-            if s_tag != "":
-                d_tags[s_tag] = self.__dataset.tags[s_tag]
+        # Récupération des critères de filtre
+        d_infos, d_tags = ActionAbstract.get_filters("upload_creation", self.__dataset.upload_infos, self.__dataset.tags)
         # On peut maintenant filter les upload selon ces critères
-        l_uploads = Upload.api_list(infos_filter=d_attributs, tags_filter=d_tags)
+        l_uploads = Upload.api_list(infos_filter=d_infos, tags_filter=d_tags)
         # S'il y a un ou plusieurs upload, on retourne le 1er :
         if l_uploads:
             return l_uploads[0]

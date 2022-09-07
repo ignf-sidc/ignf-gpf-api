@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from ignf_gpf_api.workflow.Errors import StepActionError
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
@@ -63,3 +63,30 @@ class ActionAbstract(ABC):
     @abstractmethod
     def run(self) -> None:
         """lancement de l'exécution de l'action"""
+
+    @staticmethod
+    def get_filters(config_key: str, infos: Dict[str, Any], tags: Dict[str, Any]) -> Tuple[Dict[str, str], Dict[str, str]]:
+        """Génère les critères de filtres d'après les critères d'unicité et les paramètres de création d'entité.
+
+        Args:
+            config_key (str): clé permettant de récupérer les critère d'unicité en config
+            infos (Dict[str, Any]): paramètres d'attributs pour la création de l'entité
+            tags (Dict[str, Any]): paramètres de tags pour la création de l'entité
+
+        Returns:
+            Tuple[Dict[str, str], Dict[str, str]]: critère de filtres sur les infos et les tags
+        """
+        # On liste les filtres sur les informations (uniqueness_constraint_infos)
+        l_attributes = Config().get(config_key, "uniqueness_constraint_infos").split(";")
+        d_infos = {}
+        for s_infos in l_attributes:
+            if s_infos != "":
+                d_infos[s_infos] = infos[s_infos]
+        # On liste les filtres sur les tags (uniqueness_constraint_tags)
+        l_tags = Config().get(config_key, "uniqueness_constraint_tags").split(";")
+        d_tags = {}
+        for s_tag in l_tags:
+            if s_tag != "":
+                d_tags[s_tag] = tags[s_tag]
+        # On peut maintenant renvoyer les filtres
+        return d_infos, d_tags
