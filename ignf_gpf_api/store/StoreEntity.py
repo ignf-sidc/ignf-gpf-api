@@ -267,6 +267,9 @@ class StoreEntity(ABC):
         # Ajout du nom si possible
         if "name" in self._store_api_dict:
             l_infos.append(f"name={self['name']}")
+        # Ajout du layer_name si possible
+        if "layer_name" in self._store_api_dict:
+            l_infos.append(f"layer_name={self['layer_name']}")
         # Retour
         return f"{self.__class__.__name__}({', '.join(l_infos)})"
 

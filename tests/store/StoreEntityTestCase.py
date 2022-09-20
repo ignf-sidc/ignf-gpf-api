@@ -282,3 +282,20 @@ class StoreEntityTestCase(GpfTestCase):
         self.assertNotEqual(o_store_entity_1, o_store_entity_2)
         # on vérifie que le set se comporte comme attendu
         self.assertEqual(len(set([o_store_entity_1, o_store_entity_2, o_store_entity_3])), 2)
+        # on vérifie que le test sur deux types différents est également false
+        self.assertNotEqual(o_store_entity_1, 1)
+        self.assertNotEqual(o_store_entity_1, "str")
+
+    def test_str(self) -> None:
+        """Vérifie le bon fonctionnement de eq."""
+        # Instanciation de StoreEntities
+        o_store_entity_1 = StoreEntity({"_id": "1"})
+        o_store_entity_2 = StoreEntity({"_id": "2", "name": "name_2"})
+        o_store_entity_3 = StoreEntity({"_id": "3", "name": "name_3", "layer_name": "layer_name_3"})
+        o_store_entity_4 = StoreEntity({"_id": "4", "layer_name": "layer_name_4"})
+
+        # on vérifie que le str est ok
+        self.assertEqual(str(o_store_entity_1), "StoreEntity(id=1)")
+        self.assertEqual(str(o_store_entity_2), "StoreEntity(id=2, name=name_2)")
+        self.assertEqual(str(o_store_entity_3), "StoreEntity(id=3, name=name_3, layer_name=layer_name_3)")
+        self.assertEqual(str(o_store_entity_4), "StoreEntity(id=4, layer_name=layer_name_4)")
