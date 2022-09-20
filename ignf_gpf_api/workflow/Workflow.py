@@ -73,7 +73,7 @@ class Workflow:
             if isinstance(o_action, ProcessingExecutionAction):
                 s_status = o_action.monitoring_until_end(callback=callback)
                 if s_status != ProcessingExecution.STATUS_SUCCESS:
-                    s_error_message = f"Le ProcessingExecution {o_action} ne s'est pas bien passé. Sortie {s_status}"
+                    s_error_message = f"L'exécution de traitement {o_action} ne s'est pas bien passée. Sortie {s_status}."
                     Config().om.error(s_error_message)
                     raise WorkflowError(s_error_message)
             # On récupère l'entité
