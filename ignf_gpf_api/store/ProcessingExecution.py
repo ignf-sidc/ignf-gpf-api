@@ -60,6 +60,15 @@ class ProcessingExecution(StoreEntity):
         )
 
     @property
+    def creation(self) -> Optional[datetime]:
+        """Récupère la datetime de création de l'exécution du traitement.
+
+        Returns:
+            datetime: datetime de création de l'exécution du traitement
+        """
+        return self._get_datetime("creation")
+
+    @property
     def launch(self) -> Optional[datetime]:
         """Récupère la datetime de lancement de l'exécution du traitement.
 
