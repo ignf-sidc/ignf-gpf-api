@@ -299,3 +299,22 @@ class StoreEntityTestCase(GpfTestCase):
         self.assertEqual(str(o_store_entity_2), "StoreEntity(id=2, name=name_2)")
         self.assertEqual(str(o_store_entity_3), "StoreEntity(id=3, name=name_3, layer_name=layer_name_3)")
         self.assertEqual(str(o_store_entity_4), "StoreEntity(id=4, layer_name=layer_name_4)")
+
+    def test_get_datetime(self) -> None:
+        """Vérifie le bon fonctionnement de _get_datetime."""
+        # Instanciation de StoreEntities
+        o_store_entity = StoreEntity({"_id": "1", "datetime": "2022-09-20T10:45:04.396Z"})
+
+        # Cas sans la clef demandée
+        with patch.object(o_store_entity, "api_update", return_value=None) as o_mock_update:
+            o_datetime = o_store_entity._get_datetime("key")  # pylint:disable=protected-access
+            # Vérifications
+            self.assertIsNone(o_datetime)
+            o_mock_update.assert_called_once()
+
+        # Cas avec la clef demandée
+        with patch.object(o_store_entity, "api_update", return_value=None) as o_mock_update:
+            o_datetime = o_store_entity._get_datetime("datetime")  # pylint:disable=protected-access
+            # Vérifications
+            self.assertIsNotNone(o_datetime)
+            o_mock_update.assert_not_called()
