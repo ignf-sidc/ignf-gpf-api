@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, Optional, Type
-from unittest.mock import PropertyMock, patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.helper.JsonHelper import JsonHelper

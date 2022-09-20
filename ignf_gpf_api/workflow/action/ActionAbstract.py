@@ -81,7 +81,7 @@ class ActionAbstract(ABC):
         d_infos = {}
         for s_infos in l_attributes:
             if s_infos != "":
-                d_infos[s_infos] = infos[s_infos]
+                d_infos[s_infos] = infos.get(s_infos, None)
         # On liste les filtres sur les tags (uniqueness_constraint_tags)
         l_tags = Config().get(config_key, "uniqueness_constraint_tags").split(";")
         d_tags = {}
