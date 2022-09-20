@@ -132,3 +132,27 @@ class OfferingActionTestCase(GpfTestCase):
             o_mock_api_get.assert_called_once_with("id_configuration")
             o_mock_configuration.api_list_offerings.assert_called_once()
             self.assertIsNone(o_offering)
+
+    def test_find_configuration(self) -> None:
+        """Test de find_configuration."""
+        # Instanciation de OfferingAction
+        o_offering_action = self.__get_offering_action()
+
+        # mock de Configuration
+        o_mock_configuration = MagicMock()
+
+        # Mock 1 : trouvée
+        with patch.object(Configuration, "api_get", return_value=o_mock_configuration) as o_mock_api_get:
+            # Appel à la fonction
+            o_configuration = o_offering_action.find_configuration()
+            # Vérifications
+            o_mock_api_get.assert_called_once_with("id_configuration")
+            self.assertEqual(o_configuration, o_mock_configuration)
+
+        # Mock 2 : non trouvée
+        with patch.object(Configuration, "api_get", return_value=None) as o_mock_api_get:
+            # Appel à la fonction
+            o_configuration = o_offering_action.find_configuration()
+            # Vérifications
+            o_mock_api_get.assert_called_once_with("id_configuration")
+            self.assertIsNone(o_configuration)
