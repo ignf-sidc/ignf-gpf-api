@@ -85,6 +85,8 @@ class ConfigurationActionTestCase(GpfTestCase):
                 # test de l'appel à Configuration.api_create
                 if not config_already_exists:
                     o_mock_configuration_api_create.assert_called_once_with(d_action["body_parameters"])
+                else:
+                    o_mock_configuration_api_create.assert_not_called()
 
                 # test api_add_tags
                 if "tags" in d_action and d_action["tags"]:

@@ -278,7 +278,7 @@ class StoreEntityTestCase(GpfTestCase):
 
         # on vérifie que le test sur deux objets identiques renvoie bien true
         self.assertEqual(o_store_entity_1, o_store_entity_3)
-        # on  vérifie qu'à linverse le test sur deux instances différentes renvoie false
+        # on vérifie qu'à l'inverse le test sur deux instances différentes renvoie false
         self.assertNotEqual(o_store_entity_1, o_store_entity_2)
-        # on  vérifie que le set se comporte comme attendu
+        # on vérifie que le set se comporte comme attendu
         self.assertEqual(len(set([o_store_entity_1, o_store_entity_2, o_store_entity_3])), 2)
