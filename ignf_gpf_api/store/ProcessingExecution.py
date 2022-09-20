@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 
@@ -55,3 +58,30 @@ class ProcessingExecution(StoreEntity):
             method=ApiRequester.POST,
             route_params={self._entity_name: self.id},
         )
+
+    @property
+    def launch(self) -> Optional[datetime]:
+        """Récupère la datetime de lancement de l'exécution du traitement.
+
+        Returns:
+            datetime: datetime de lancement de l'exécution du traitement
+        """
+        return self._get_datetime("launch")
+
+    @property
+    def start(self) -> Optional[datetime]:
+        """Récupère la datetime de lancement de l'exécution du traitement.
+
+        Returns:
+            datetime: datetime de lancement de l'exécution du traitement
+        """
+        return self._get_datetime("start")
+
+    @property
+    def finish(self) -> Optional[datetime]:
+        """Récupère la datetime de lancement de l'exécution du traitement.
+
+        Returns:
+            datetime: datetime de lancement de l'exécution du traitement
+        """
+        return self._get_datetime("finish")

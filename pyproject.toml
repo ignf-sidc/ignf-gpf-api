@@ -27,6 +27,7 @@ dependencies = [
     "beartype",
     "toml",
     "types-toml",
+    "types-python-dateutil",
 ]
 
 [project.optional-dependencies]
