@@ -3,7 +3,7 @@ from typing import Any
 import jsonschema  # type: ignore
 from jsonc_parser.parser import JsoncParser  # type: ignore
 from jsonc_parser.errors import ParserError  # type: ignore
-from beartype._decor.main import beartype
+from beartype import beartype
 
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.helper.FileHelper import FileHelper
