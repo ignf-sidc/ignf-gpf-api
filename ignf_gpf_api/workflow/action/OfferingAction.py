@@ -48,13 +48,28 @@ class OfferingAction(ActionAbstract):
             except ConflictError:
                 Config().om.warning("L'offre que vous tentez de créer existe déjà !")
 
+    def find_configuration(self) -> Optional[Configuration]:
+        """Fonction permettant de récupérer la Configuration associée à l'Offering qui doit être crée par cette Action.
+
+        C'est à dire la Configuration indiquée dans `url_parameters` du `definition_dict` de cette Action.
+
+        Returns:
+            Optional[Configuration]: Configuration
+        """
+        # Récupération de l'id de la configuration et du endpoint
+        s_configuration_id = self.definition_dict["url_parameters"]["configuration"]
+        # Instanciation Configuration
+        o_configuration = Configuration.api_get(s_configuration_id)
+        # Retour
+        return o_configuration
+
     def find_offering(self) -> Optional[Offering]:
-        """Fonction permettant de récupérer une Offering ressemblant à celle qui devrait être créée.
+        """Fonction permettant de récupérer l'Offering qui devrait être créée (si elle existe déjà).
 
         C'est à dire une offering associée à la Configuration indiquée dans `url_parameters` et au endpoint indiqué dans `body_parameters`.
 
         Returns:
-            Optional[Offering]: données stockées retrouvée
+            Optional[Offering]: Offre retrouvée
         """
         # Récupération de l'id de la configuration et du endpoint
         s_configuration_id = self.definition_dict["url_parameters"]["configuration"]
