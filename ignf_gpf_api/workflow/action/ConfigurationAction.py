@@ -70,7 +70,7 @@ class ConfigurationAction(ActionAbstract):
         en fonction des filtres définis dans default.ini
 
         Returns:
-            Optional[StoredData]: données stockées retrouvée
+            Optional[Configuration]: configuration retrouvée
         """
         # Récupération des critères de filtre
         d_infos, d_tags = ActionAbstract.get_filters("configuration", self.definition_dict["body_parameters"], self.definition_dict.get("tags", {}))
