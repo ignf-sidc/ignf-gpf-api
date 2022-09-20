@@ -140,7 +140,7 @@ class WorkflowTestCase(GpfTestCase):
             o_mock_processing_execution_action.monitoring_until_end.return_value = "FAILURE"
             with self.assertRaises(WorkflowError) as o_arc:
                 o_workflow.run_step("mise-en-base")
-            self.assertEqual(o_arc.exception.message, f"Le ProcessingExecution {o_mock_processing_execution_action} ne s'est pas bien passé. Sortie FAILURE")
+            self.assertEqual(o_arc.exception.message, f"L'exécution de traitement {o_mock_processing_execution_action} ne s'est pas bien passée. Sortie FAILURE.")
 
             # reset des mock
             o_mock_action_generate.reset_mock()
@@ -150,7 +150,7 @@ class WorkflowTestCase(GpfTestCase):
             o_mock_processing_execution_action.monitoring_until_end.return_value = "ABORTED"
             with self.assertRaises(WorkflowError) as o_arc:
                 o_workflow.run_step("mise-en-base")
-            self.assertEqual(o_arc.exception.message, f"Le ProcessingExecution {o_mock_processing_execution_action} ne s'est pas bien passé. Sortie ABORTED")
+            self.assertEqual(o_arc.exception.message, f"L'exécution de traitement {o_mock_processing_execution_action} ne s'est pas bien passée. Sortie ABORTED.")
 
     def run_generation(self, expected_type: Type[ActionAbstract], name: str, dico_def: Dict[str, Any], parent: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> None:
         """lancement de la commande de génération
