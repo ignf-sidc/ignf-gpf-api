@@ -3,7 +3,6 @@ from typing import Any
 import jsonschema  # type: ignore
 from jsonc_parser.parser import JsoncParser  # type: ignore
 from jsonc_parser.errors import ParserError  # type: ignore
-from beartype import beartype
 
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.helper.FileHelper import FileHelper
@@ -13,7 +12,6 @@ class JsonHelper:
     """Classe d'aide pour gérer les fichiers JSON."""
 
     @staticmethod
-    @beartype
     def load(
         json_path: Path,
         file_not_found_pattern: str = "Fichier JSON {json_path} non trouvé",
@@ -45,7 +43,6 @@ class JsonHelper:
             raise GpfApiError(s_message) from e_json_decode_error
 
     @staticmethod
-    @beartype
     def loads(str_data: str, title: str, message_pattern: str = "Impossible de parser le JSON «{title}» : {error}\n{str_data}") -> Any:
         """Parse du JSON avec un message indiquant d'où vient l'erreur si jamais cela échoue
 
@@ -72,7 +69,6 @@ class JsonHelper:
             raise GpfApiError(s_message) from e_json_decode_error
 
     @staticmethod
-    @beartype
     def validate_json(
         json_path: Path,
         schema_path: Path,
@@ -121,7 +117,6 @@ class JsonHelper:
         JsonHelper.validate_object(o_json_data, o_schema_data, s_message_json, s_message_schema)
 
     @staticmethod
-    @beartype
     def validate_object(json_data: object, schema_data: object, json_not_valid_message: str, schema_not_valid_message: str) -> None:
         """Fonction de validation d'un fichier json face à un schéma JSON.
 
