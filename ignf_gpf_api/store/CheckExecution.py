@@ -1,10 +1,9 @@
-from datetime import datetime
-from typing import Optional
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.interface.CsfInterface import CsfInterface
 
 
-class CheckExecution(StoreEntity):
+class CheckExecution(CsfInterface, StoreEntity):
     """Classe Python représentant l'entité CheckExecution (exécution d'une vérification)."""
 
     _entity_name = "check_execution"
@@ -30,30 +29,3 @@ class CheckExecution(StoreEntity):
         )
         s_log = o_response.text
         return s_log
-
-    @property
-    def creation(self) -> Optional[datetime]:
-        """Récupère la datetime de création de l'exécution de vérification.
-
-        Returns:
-            datetime: datetime de création de l'exécution de vérification
-        """
-        return self._get_datetime("creation")
-
-    @property
-    def start(self) -> Optional[datetime]:
-        """Récupère la datetime de début de l'exécution de vérification.
-
-        Returns:
-            datetime: datetime de début de l'exécution de vérification
-        """
-        return self._get_datetime("start")
-
-    @property
-    def finish(self) -> Optional[datetime]:
-        """Récupère la datetime de fin de l'exécution de vérification.
-
-        Returns:
-            datetime: datetime de fin de l'exécution de vérification
-        """
-        return self._get_datetime("finish")
