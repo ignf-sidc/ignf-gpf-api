@@ -24,9 +24,9 @@ dependencies = [
     "types-requests",
     "jsonschema",
     "jsonc-parser",
-    "beartype",
     "toml",
     "types-toml",
+    "types-python-dateutil",
 ]
 
 [project.optional-dependencies]
