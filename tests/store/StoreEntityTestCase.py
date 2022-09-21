@@ -278,7 +278,43 @@ class StoreEntityTestCase(GpfTestCase):
 
         # on vérifie que le test sur deux objets identiques renvoie bien true
         self.assertEqual(o_store_entity_1, o_store_entity_3)
-        # on  vérifie qu'à linverse le test sur deux instances différentes renvoie false
+        # on vérifie qu'à l'inverse le test sur deux instances différentes renvoie false
         self.assertNotEqual(o_store_entity_1, o_store_entity_2)
-        # on  vérifie que le set se comporte comme attendu
+        # on vérifie que le set se comporte comme attendu
         self.assertEqual(len(set([o_store_entity_1, o_store_entity_2, o_store_entity_3])), 2)
+        # on vérifie que le test sur deux types différents est également false
+        self.assertNotEqual(o_store_entity_1, 1)
+        self.assertNotEqual(o_store_entity_1, "str")
+
+    def test_str(self) -> None:
+        """Vérifie le bon fonctionnement de eq."""
+        # Instanciation de StoreEntities
+        o_store_entity_1 = StoreEntity({"_id": "1"})
+        o_store_entity_2 = StoreEntity({"_id": "2", "name": "name_2"})
+        o_store_entity_3 = StoreEntity({"_id": "3", "name": "name_3", "layer_name": "layer_name_3"})
+        o_store_entity_4 = StoreEntity({"_id": "4", "layer_name": "layer_name_4"})
+
+        # on vérifie que le str est ok
+        self.assertEqual(str(o_store_entity_1), "StoreEntity(id=1)")
+        self.assertEqual(str(o_store_entity_2), "StoreEntity(id=2, name=name_2)")
+        self.assertEqual(str(o_store_entity_3), "StoreEntity(id=3, name=name_3, layer_name=layer_name_3)")
+        self.assertEqual(str(o_store_entity_4), "StoreEntity(id=4, layer_name=layer_name_4)")
+
+    def test_get_datetime(self) -> None:
+        """Vérifie le bon fonctionnement de _get_datetime."""
+        # Instanciation de StoreEntities
+        o_store_entity = StoreEntity({"_id": "1", "datetime": "2022-09-20T10:45:04.396Z"})
+
+        # Cas sans la clef demandée
+        with patch.object(o_store_entity, "api_update", return_value=None) as o_mock_update:
+            o_datetime = o_store_entity._get_datetime("key")  # pylint:disable=protected-access
+            # Vérifications
+            self.assertIsNone(o_datetime)
+            o_mock_update.assert_called_once()
+
+        # Cas avec la clef demandée
+        with patch.object(o_store_entity, "api_update", return_value=None) as o_mock_update:
+            o_datetime = o_store_entity._get_datetime("datetime")  # pylint:disable=protected-access
+            # Vérifications
+            self.assertIsNotNone(o_datetime)
+            o_mock_update.assert_not_called()

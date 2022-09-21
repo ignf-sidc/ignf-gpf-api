@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest.mock import patch
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
@@ -12,7 +13,7 @@ class ProcessingExecutionTestCase(GpfTestCase):
     """
 
     def test_api_logs(self) -> None:
-        "Vérifie le bon fonctionnement de api_logs."
+        """Vérifie le bon fonctionnement de api_logs."""
         s_data = "2022/05/18 14:29:25       INFO §USER§ Envoi du signal de début de l'exécution à l'API.\n2022/05/18 14:29:25       INFO §USER§ Signal transmis avec succès."
         # Instanciation d'une fausse réponse HTTP
         o_response = GpfTestCase.get_response(text=s_data)
@@ -31,7 +32,7 @@ class ProcessingExecutionTestCase(GpfTestCase):
             self.assertEqual(s_data, s_data_recupere)
 
     def test_api_launch(self) -> None:
-        "Vérifie le bon fonctionnement de api_launch."
+        """Vérifie le bon fonctionnement de api_launch."""
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # on appelle la fonction à tester : api_launch
@@ -46,7 +47,7 @@ class ProcessingExecutionTestCase(GpfTestCase):
             )
 
     def test_api_abort(self) -> None:
-        "Vérifie le bon fonctionnement de api_abort."
+        """Vérifie le bon fonctionnement de api_abort."""
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # on appelle la fonction à tester : api_abort
@@ -59,3 +60,16 @@ class ProcessingExecutionTestCase(GpfTestCase):
                 route_params={"processing_execution": "id_entité"},
                 method=ApiRequester.POST,
             )
+
+    def test_launch(self) -> None:
+        """Vérifie le bon fonctionnement de launch."""
+        # Instanciation
+        o_processing_execution = ProcessingExecution({"_id": "id_entité"})
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+        with patch.object(o_processing_execution, "_get_datetime", return_value=datetime.now()) as o_mock_get_datetime:
+            # on appelle la fonction à tester : launch
+            o_datetime = o_processing_execution.launch
+
+            # on vérifie que route_request est appelé correctement
+            o_mock_get_datetime.assert_called_once_with("launch")
+            self.assertEqual(o_datetime, o_mock_get_datetime.return_value)

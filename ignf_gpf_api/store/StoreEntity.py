@@ -1,6 +1,8 @@
 import json
 from abc import ABC
 from typing import Any, Dict, List, Optional, Type, TypeVar
+from datetime import datetime
+from dateutil import parser
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
@@ -267,6 +269,9 @@ class StoreEntity(ABC):
         # Ajout du nom si possible
         if "name" in self._store_api_dict:
             l_infos.append(f"name={self['name']}")
+        # Ajout du layer_name si possible
+        if "layer_name" in self._store_api_dict:
+            l_infos.append(f"layer_name={self['layer_name']}")
         # Retour
         return f"{self.__class__.__name__}({', '.join(l_infos)})"
 
@@ -274,3 +279,23 @@ class StoreEntity(ABC):
         # Affichage à destination d'un développeur.
         # Pour le moment, pas de différence avec __str__
         return str(self)
+
+    ##############################################################
+    # Fonctions autres
+    ##############################################################
+    def _get_datetime(self, key: str) -> Optional[datetime]:
+        """Récupère la datetime associée à la clef indiquée en parsant la chaîne.
+
+        Args:
+            key (str): clef
+
+        Returns:
+            Optional[datetime]: datetime parsée
+        """
+        if key not in self._store_api_dict:
+            self.api_update()
+        if key in self._store_api_dict:
+            o_datetime = parser.isoparse(self[key])
+            if isinstance(o_datetime, datetime):
+                return o_datetime
+        return None
