@@ -1,8 +1,9 @@
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.interface.CsfInterface import CsfInterface
 
 
-class CheckExecution(StoreEntity):
+class CheckExecution(CsfInterface, StoreEntity):
     """Classe Python représentant l'entité CheckExecution (exécution d'une vérification)."""
 
     _entity_name = "check_execution"

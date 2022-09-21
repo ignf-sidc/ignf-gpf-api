@@ -1,12 +1,13 @@
 {
     "cSpell.words": [
         "bbox",
-        "beartype",
+        "dateutil",
         "EPSG",
         "Géoplateforme",
         "geotuileur",
         "ignf",
         "insee",
+        "isoparse",
         "jsonschema",
         "mkapi",
         "mkdocs",

@@ -6,6 +6,7 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.Upload import Upload
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
 from tests.GpfTestCase import GpfTestCase
 
@@ -20,6 +21,36 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
 
     cmd : python3 -m unittest -b tests.workflow.action.ProcessingExecutionActionTestCase
     """
+
+    def test_find_upload(self) -> None:
+        """Test find_upload."""
+        o_pe1 = ProcessingExecution({"_id": "pe_1"})
+        o_pe2 = ProcessingExecution({"_id": "pe_2"})
+        # création du dict décrivant l'action
+        d_action:Dict[str, Any] = {
+            "type": "processing-execution",
+            "body_parameters": {
+                "output": {
+                    "stored_data": {
+                        "name": "name_stored_data",
+                    },
+                },
+            },
+            "tags": {
+                "tag": "val",
+            },
+        }
+        # exécution de UploadAction
+        o_ua = ProcessingExecutionAction("contexte", d_action)
+        # Mock de ActionAbstract.get_filters et Upload.api_list
+        with patch.object(ActionAbstract, "get_filters", return_value=({"info":"val"}, {"tag":"val"})) as o_mock_get_filters:
+            with patch.object(StoredData, "api_list", return_value=[o_pe1, o_pe2]) as o_mock_api_list :
+                # Appel de la fonction find_upload
+                o_stored_data = o_ua.find_stored_data()
+                # Vérifications
+                o_mock_get_filters.assert_called_once_with("processing_execution", d_action["body_parameters"]["output"]["stored_data"], d_action["tags"])
+                o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"})
+                self.assertEqual(o_stored_data, o_pe1)
 
     def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]], s_key: str, s_type_output: str) -> None:
         """lancement +test de ProcessingExecutionAction.run selon param
@@ -169,7 +200,6 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
             if f_callback is not None:
                 self.assertEqual(f_callback.call_count, len(l_status)+1)
                 self.assertEqual(f_callback.mock_calls, [call(o_mock_processing_execution)] * (len(l_status)+1))
-
 
     def interrupt_monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool, b_upload: bool, b_stored_data: bool, b_new_output: bool) -> None:
         # cas interruption par l'utilisateur.
