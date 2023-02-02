@@ -12,7 +12,7 @@ Suivez la page [configuration](configuration.md) pour définir le fichier de con
 
 ## Récupération du jeu de données
 
-Le jeu de données « 1_dataset_vector » contient des données archives à téléverser.
+Le jeu de données « 1_dataset_vector » contient des données vecteur à téléverser.
 
 Récupérez les données en lançant la commande :
 
