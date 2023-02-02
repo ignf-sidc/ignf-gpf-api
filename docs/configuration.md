@@ -1,14 +1,14 @@
 # Configuration
 
-Le module Python vient avec une configuration par défaut vous permettant de ne pas avoir à définir grand chose.
+Ce module Python vient avec une configuration par défaut vous permettant de ne pas avoir à définir grand chose.
 
-Vous pouvez cependant écraser chaque paramètre par défaut en reprisant sa valeur dans un nouveau fichier de configuration.
+Vous pouvez cependant écraser chaque paramètre par défaut en redéfinissant sa valeur dans un nouveau fichier de configuration.
 
 Certains paramètres (comme vos identifiants d'API) doivent être redéfinis.
 
 ## Votre fichier de configuration
 
-Créez un fichier `config.ini` avec au minimum :
+Créez un fichier `config.ini` à la racine du projet. Avec à minima :
 
 ```ini
 [store_authentification]
@@ -18,6 +18,8 @@ token_url=https://qlf-iam-gpf.ign.fr/auth/realms/master/protocol/openid-connect/
 login=LOGIN
 # Votre mot de passe
 password=PASSWORD
+# Groupe d’appartenance
+client_id=geotuileur
 
 [store_api]
 # L'url d'entrée de l'API (cf. doc)
@@ -32,6 +34,7 @@ Explication sur les paramètres :
     * `token_url` : URL pour récupérer le jeton d'authentification (consulter la doc de l'API si nécessaire) ;
     * `login` : votre nom d'utilisateur ;
     * `password` : votre mot de passe ;
+    * `client_id` : votre groupe d’appartenance
 * `store_api` : paramètres concernant votre Entrepôt sur la Géoplateforme :
     * `root_url` : URL racine de l'API (consulter la doc de l'API si nécessaire) ;
     * `datastore` : l'identifiant du datastore à gérer.
