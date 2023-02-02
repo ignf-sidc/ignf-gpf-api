@@ -34,7 +34,7 @@ Observez la structure du fichier :
 └── upload_descriptor.json
 ```
 
-Les données que la géoplateforme va traiter les pyramides de vecteurs sont situées dans le dossier `CANTON`.
+Les données que la Géoplateforme va traiter sont situées dans le dossier `CANTON`.
 Le fichier `CANTON.md5` permettra de valider les données téléversés côté Géoplateforme.
 
 Enfin, le fichier `upload_descriptor.json` permet de décrire la livraison à effectuer.
