@@ -78,7 +78,7 @@ Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur le
 
 ## Traitement et publication
 
-Le workflow « wfs-generic » permet de passer de la livraison à une lien permettant de télécharger la donnée. Il comporte 4 étapes :
+Le workflow « wfs-generic » permet de passer de la livraison à un flux WFS servant la donnée. Il comporte 4 étapes :
 * `mise-en-base` : mise en base des données vecteur livrées ;
 * `création-pyramide` : création de la pyramide de vecteur pour l'utilisation dans un flux ;
 * `configuration-wfs` : configuration d'un service de flux WFS permettant d'utiliser les données vecteur ;
