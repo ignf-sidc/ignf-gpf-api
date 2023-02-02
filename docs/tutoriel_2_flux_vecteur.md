@@ -35,7 +35,7 @@ Observez la structure du fichier :
 ```
 
 Les données que la Géoplateforme va traiter sont situées dans le dossier `CANTON`.
-Le fichier `CANTON.md5` permettra de valider les données téléversés côté Géoplateforme.
+Le fichier `CANTON.md5` permettra de valider les données téléversées côté Géoplateforme.
 
 Enfin, le fichier `upload_descriptor.json` permet de décrire la livraison à effectuer.
 
@@ -63,7 +63,7 @@ Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend
 
 ## Workflow
 
-Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géotraitement(s),
+Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géo-traitement(s),
 puis configurer un géo-service et le rendre accessible).
 
 Ces étapes sont décrites grâces à un workflow.
@@ -75,6 +75,18 @@ python -m ignf_gpf_api workflow -n wfs-generic.jsonc
 ```
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 4 étapes. Il faudra lancer une commande pour chacune d'elles.
+
+```mermaid
+---
+title: Workflow de publication de données vecteur en pyramide WFS
+---
+%% doc mermaid ici https://mermaid-js.github.io/mermaid/#/flowchart?id=flowcharts-basic-syntax
+flowchart TD
+    A("upload") -->|mise-en-base| B("donnée stockée : BDD")
+    B -->|création-pyramide| C(donnée stockée : pyramide)
+    C -->|configuration-wfs| D(configuration)
+    D -->|publication-wfs| E(offre)
+```
 
 ## Traitement et publication
 
@@ -106,4 +118,4 @@ INFO - Offre créée : Offering(id=62c708e72246434ac40ee3ad)
 
 Suivez le lien indiqué pour retrouver le flux WFS.
 
-Vous pouvez alors utiliser le flux
+Vous pouvez alors utiliser le flux.
