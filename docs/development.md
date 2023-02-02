@@ -51,11 +51,19 @@ Lancez les tests pour vérifier que tout fonctionne correctement :
 ./check.sh
 ```
 
+## Documentation
+
+Vous pouvez générer la doc en local via la commande :
+
+```sh
+mkdocs serve
+```
+
 ## Développement et tests
 
 Pour tester le programme, vous aurez besoin de créer un fichier `config.ini`, cf. [configuration](configuration.md).
 
-Les classes python sont couvertes avec un maximum de tests unitaires donc avec le développement/modification d'une classe/fonction il faut développer/modifier les tests unitaires de l'élément.
+Les classes python sont couvertes avec un maximum de tests unitaires merci de penser à couvrir le code ajouté ou à modifier les tests existants au besoin.
 
 Pensez à activer l'environnement avant de lancer les tests :
 
@@ -65,7 +73,7 @@ source env/bin/activate
 
 Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/python/environments#_work-with-python-interpreters)
 
-À la fin de votre développement, lancez `check.sh` pour vérifier que votre code respecte les critères de qualité du code.
+À la fin de votre développement, lancez `./check.sh` pour vérifier que votre code respecte les critères de qualité.
 
 ### Consigne développement
 
@@ -91,19 +99,12 @@ Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/pyth
   - Config().om.critical("message")
 - Configuration centralisée via la classe Config()​ (cf. [Utilisation comme module Python](comme-module.md))
 
-## Documentation
-
-Vous pouvez générer la doc en local via la commande :
-
-```sh
-mkdocs serve
-```
 
 ## Publication sur PyPI
 
 La publication du package sur PyPI est automatique sur Github après la [création d'une release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new) :
 * créez une release de test sur la branche **dev** versionnée selon le modèle `tx.y.z` (ex : t1.2.3) pour déployer une nouvelle version du module en test ;
-* créez une release de test sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production ;
+* créez une release sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production ;
 
 Si besoin, voici les commandes pour l'effectuer à la main :
 
