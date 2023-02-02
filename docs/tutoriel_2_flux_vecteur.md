@@ -63,7 +63,7 @@ Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend
 
 ## Workflow
 
-Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un géotraitement,
+Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géotraitement(s),
 puis configurer un géo-service et le rendre accessible).
 
 Ces étapes sont décrites grâces à un workflow.
