@@ -17,6 +17,7 @@
         "pathlib",
         "pylint",
         "pylintrc",
+        "pyotp",
         "pypi",
         "pypirc",
         "rcfile",
@@ -27,6 +28,7 @@
         "sidc",
         "testpypi",
         "tippecanoe",
+        "totp",
         "UNPUBLISHING",
         "venv",
         "virtualenv",
@@ -77,4 +79,5 @@
     ],
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
+    "pylint.importStrategy": "fromEnvironment",
 }
