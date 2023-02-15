@@ -22,6 +22,7 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.User import User
 from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
 
 
@@ -50,6 +51,9 @@ def main() -> None:
         dataset(o_args)
     elif o_args.task == "workflow":
         workflow(o_args)
+    elif o_args.task == "me":
+        o_user = User.api_get("me")
+        print(o_user.to_json(indent=4))
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -92,6 +96,8 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
     o_parser_auth.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
     o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+    # Parser pour me
+    o_parser_auth = o_sub_parsers.add_parser("me", help="me")
     return o_parser.parse_args(args)
 
 

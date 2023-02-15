@@ -29,6 +29,7 @@
         "testpypi",
         "tippecanoe",
         "totp",
+        "unicode",
         "UNPUBLISHING",
         "venv",
         "virtualenv",

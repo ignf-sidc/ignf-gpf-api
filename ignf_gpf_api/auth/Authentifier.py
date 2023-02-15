@@ -36,6 +36,11 @@ class Authentifier(metaclass=Singleton):
         s_totp_key: Optional[str] = Config().get("store_authentification", "totp_key")
         if s_totp_key:
             self.__totp = pyotp.TOTP(s_totp_key)
+        # Récupération des paramètres du proxy
+        self.__proxy = {
+            "http": Config().get("store_authentification", "http_proxy"),
+            "https": Config().get("store_authentification", "https_proxy"),
+        }
         # Permettra la sauvegarde du dernier jeton récupéré (pour éviter de multiples requêtes au serveur KeyCloak)
         self.__last_token: Optional[Token] = None
 
@@ -87,6 +92,7 @@ class Authentifier(metaclass=Singleton):
                 headers={
                     "content-type": "application/x-www-form-urlencoded",
                 },
+                proxies=self.__proxy,
             )
             if o_response.status_code == HTTPStatus.OK:
                 self.__last_token = Token(o_response.json())
