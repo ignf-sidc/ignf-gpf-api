@@ -1,8 +1,8 @@
 {
     "workflow": {
         "steps": {
-            // Étape n°1 : intégration des données vecteur livrées en base
-            "intégration-archive-livrée": {
+            // Étape n°1 : Mise en base de vecteurs livrés
+            "mise-en-base": {
                 "actions": [
                     {
                         // On crée une exécution de traitement
@@ -92,7 +92,7 @@
                     }
                 ],
                 "parents": [
-                    "intégration-archive-livrée"
+                    "mise-en-base"
                 ]
             },
             // Étape n°3 : configuration d'un flux WFS
