@@ -18,7 +18,7 @@ from ignf_gpf_api.io.Config import Config
 class StoreEntityResolver(AbstractResolver):
     """Classe permettant de résoudre des paramètres clé -> valeur.
 
-    Attributes :
+    Attributes:
         __name (str): nom de code du resolver
         __regex (Pattern[str]): regex du resolver
     """

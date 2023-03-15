@@ -1,13 +1,15 @@
 site_name: ignf_gpf_api
 
 repo_url: https://github.com/ignf_sidc/ignf_gpf_api/
+edit_uri: ""
 
 theme:
-  name: ivory
-  highlightjs: true
-  hljs_languages:
-    - yaml
-  locale: fr
+  name: material
+  language: fr
+  features:
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
 
 extra_css:
   - custom.css
@@ -15,14 +17,28 @@ extra_css:
 markdown_extensions:
   - toc:
       permalink: "#"
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
 
 plugins:
   - search:
       lang: fr
-#  - pheasant:
-#      version: ignf_gpf_api
-  - mkapi
-
+  - autorefs
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_toc_entry: false
+            heading_level: 2
+            filters: ["!^_[^_]", "!^__"]
+            merge_init_into_class: true
 nav:
   - index.md
   - configuration.md
@@ -31,4 +47,10 @@ nav:
   - upload_descriptor.md
   - workflow.md
   - development.md
-  - API: mkapi/api/ignf_gpf_api|strict
+  - Références:
+      - ignf_gpf_api.auth: reference/auth.md
+      - ignf_gpf_api.io: reference/io.md
+      - ignf_gpf_api.store: reference/store.md
+      - ignf_gpf_api.workflow: reference/workflow.md
+      - ignf_gpf_api.workflow.action: reference/workflow/action.md
+      - ignf_gpf_api.workflow.resolver: reference/workflow/resolver.md

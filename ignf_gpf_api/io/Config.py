@@ -8,10 +8,10 @@ from ignf_gpf_api.io.Errors import ConfigReaderError
 
 
 class Config(metaclass=Singleton):
-    """Lit le fichier de configuration (classe Singleton)
-    Attributes :
-        __config_parser (configparser) : ConfigParser
-        __ini_file_path (string) : chemin vers le fichier de configuration BaGI
+    """Lit le fichier de configuration (classe Singleton).
+    Attributes:
+        __config_parser (configparser): ConfigParser
+        __ini_file_path (string): Chemin vers le fichier de configuration BaGI
     """
 
     conf_dir_path = Path(__file__).parent.parent.absolute() / "_conf"

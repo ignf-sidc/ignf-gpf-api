@@ -51,7 +51,7 @@ python -m ignf_gpf_api --ini chemin/vers/config.ini
 
 ## Utilisation via un script
 
-Si vous utilisez ce module Python dans un script, il faudra ouvrir le fichier de configuration via la classe `Config` au début de celui-ci :
+Si vous utilisez ce module Python dans un script, il faudra ouvrir le fichier de configuration via la classe [Config][ignf_gpf_api.io.Config.Config] au début de celui-ci :
 
 ```python
 # Importez la classe Config

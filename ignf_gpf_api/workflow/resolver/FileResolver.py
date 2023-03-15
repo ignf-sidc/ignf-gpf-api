@@ -24,7 +24,7 @@ class FileResolver(AbstractResolver):
         ["{file.list(list.json)}"] => '["coucou1", "coucou2"]'
         {"{file.dict(dict.json)}":"value"} => '{"k1":"v1", "k2":"v2"}'
 
-    Attributes :
+    Attributes:
         __name (str): nom de code du resolver
     """
 

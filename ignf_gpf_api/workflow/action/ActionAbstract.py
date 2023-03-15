@@ -10,10 +10,10 @@ from ignf_gpf_api.io.Config import Config
 class ActionAbstract(ABC):
     """Classe représentant une action d'un workflow.
 
-    Attributes :
-        __workflow_context (str) : nom du context du workflow
-        __definition_dict (Dict[str, Any]) : définition de l'action
-        __parent_action (Optional["Action"]) : action parente
+    Attributes:
+        __workflow_context (str): nom du context du workflow
+        __definition_dict (Dict[str, Any]): définition de l'action
+        __parent_action (Optional["Action"]): action parente
     """
 
     def __init__(self, workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional["ActionAbstract"] = None) -> None:
