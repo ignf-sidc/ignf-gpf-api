@@ -54,7 +54,7 @@ class OfferingAction(ActionAbstract):
         C'est à dire la Configuration indiquée dans `url_parameters` du `definition_dict` de cette Action.
 
         Returns:
-            Optional[Configuration]: Configuration
+            Configuration
         """
         # Récupération de l'id de la configuration et du endpoint
         s_configuration_id = self.definition_dict["url_parameters"]["configuration"]
@@ -69,7 +69,7 @@ class OfferingAction(ActionAbstract):
         C'est à dire une offering associée à la Configuration indiquée dans `url_parameters` et au endpoint indiqué dans `body_parameters`.
 
         Returns:
-            Optional[Offering]: Offre retrouvée
+            Offre retrouvée
         """
         # Récupération de l'id de la configuration et du endpoint
         s_configuration_id = self.definition_dict["url_parameters"]["configuration"]

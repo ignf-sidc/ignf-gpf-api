@@ -24,7 +24,6 @@ class Authentifier(metaclass=Singleton):
     """
 
     def __init__(self) -> None:
-        """Constructeur."""
         # Sauvegarde de la conf comme attributs d'instance
         self.__token_url: str = Config().get("store_authentification", "token_url")
         self.__login: str = Config().get("store_authentification", "login")
@@ -98,7 +97,7 @@ class Authentifier(metaclass=Singleton):
             raise AuthentificationError(s_error_message) from e_error
 
     def get_http_header(self, json_content_type: bool = False) -> Dict[str, str]:
-        """Renvoie une entête HTTP d'authentification à destination de KeyCloak et consommable par une requête via le module requests.
+        """Renvoie une entête HTTP d'authentification à destination du KeyCloak et consommable par une requête via le module requests.
 
         Args:
             json_content_type (bool): indique si le `content-type` `application/json` doit être spécifié

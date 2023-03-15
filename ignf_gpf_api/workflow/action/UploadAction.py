@@ -30,10 +30,10 @@ class UploadAction:
 
     def run(self) -> Upload:
         """Crée la livraison décrite dans le dataset et livre les données avant de
-        retourner la livraisons crée.
+        retourner la livraison créée.
 
         Returns:
-            Upload: livraison créée
+            livraison créée
         """
         Config().om.info("Création et complétion d'une livraison...")
         # Création de la livraison
@@ -129,7 +129,7 @@ class UploadAction:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
 
         Returns:
-            Optional[Upload]: None si rien trouvé, sinon l'Upload trouvé
+            None si rien trouvé, sinon l'Upload trouvé
         """
         # Récupération des critères de filtre
         d_infos, d_tags = ActionAbstract.get_filters("upload_creation", self.__dataset.upload_infos, self.__dataset.tags)
@@ -147,15 +147,18 @@ class UploadAction:
 
     @staticmethod
     def monitor_until_end(upload: Upload, callback: Optional[Callable[[str], None]] = None) -> bool:
-        """Attend que toute les vérifications liées à la Livraison indiquée soient terminées (en erreur ou en succès) avant de rendre la main.
-        La fonction callback indiquée est exécutée en prenant en paramètre un message de suivi du nombre de vérifications par statut.
+        """Attend que toute les vérifications liées à la Livraison indiquée
+        soient terminées (en erreur ou en succès) avant de rendre la main.
+
+        La fonction callback indiquée est exécutée à chaque vérification en lui passant en paramètre un
+        message de suivi du nombre de vérifications par statut.
 
         Args:
             upload (Upload): Livraison à monitorer
-            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi. Defaults to None.
+            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi.
 
         Returns:
-            bool: True si toutes les vérifications sont ok, sinon False
+            True si toutes les vérifications sont ok, sinon False
         """
         i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
         s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
@@ -190,12 +193,14 @@ class UploadAction:
     @staticmethod
     def parse_tree(tree: List[Dict[str, Any]], prefix: str = "") -> Dict[str, int]:
         """Parse l'arborescence renvoyée par l'API en un dictionnaire associant le chemin de chaque fichier à sa taille.
-        L'objectif est de permettre de facilement identifier quel sont les fichiers à (re)livrer.
+        L'objectif est de permettre de facilement identifier quels sont les fichiers à (re)livrer.
+
         Args:
             tree (List[Dict[str, Any]]): arborescence à parser
             prefix (str): pré-fixe du chemin
+
         Returns:
-            Dict[str, int]: liste des fichiers envoyés et leur taille
+            liste des fichiers envoyés et leur taille
         """
         # Création du dictionnaire pour stocker les fichiers et leur taille
         d_files: Dict[str, int] = {}

@@ -59,7 +59,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     """Parse les paramètres utilisateurs.
 
     Args:
-        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé. Defaults to None.
+        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé.
 
     Returns:
         argparse.Namespace: paramètres

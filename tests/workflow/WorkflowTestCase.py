@@ -159,8 +159,8 @@ class WorkflowTestCase(GpfTestCase):
             expected_type (Type[ActionAbstract]): type de la classe attendu en sortie de la fonction
             name (str): nom du contexte du workflow
             dico_def (Dict[str, Any]): dictionnaire de l'action
-            parent (Optional[ActionAbstract], optional): parent de l'action. Defaults to None.
-            behavior (Optional[str], optional): comportement à adopter. Defaults to None.
+            parent (Optional[ActionAbstract], optional): parent de l'action.
+            behavior (Optional[str], optional): comportement à adopter.
         """
         # mock des fonction __init__ des classes action généré
         def new_init(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> None:

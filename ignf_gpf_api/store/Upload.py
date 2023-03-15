@@ -13,7 +13,11 @@ from ignf_gpf_api.store.Errors import StoreEntityError
 
 
 class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, PartialEditInterface, StoreEntity):
-    """Classe Python représentant l'entité Upload (livraison)."""
+    """Classe Python représentant l'entité Upload (livraison).
+
+    Cette classe permet d'effectuer les actions spécifiques liées aux livraisons : déclaration,
+    téléversement, fermeture, gestion des vérifications, etc.
+    """
 
     _entity_name = "upload"
     _entity_title = "livraison"

@@ -106,8 +106,7 @@ class Dataset:
         return self.__md5_files
 
     def __list_rec(self, root_dir: Path, path_rep: Path) -> None:
-        """
-        Fonction récursive permettant de lister des fichiers
+        """Fonction récursive permettant de lister des fichiers
 
         Args:
             root_dir (Path): Chemin absolu du dossier racine

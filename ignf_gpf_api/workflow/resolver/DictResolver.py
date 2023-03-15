@@ -13,7 +13,9 @@ class DictResolver(AbstractResolver):
     """
 
     def __init__(self, name: str, key_value: Dict[str, Any]) -> None:
-        """Constructeur.
+        """Classe instanciée grâce au nom du résolveur et à la liste des correspondances à résoudre.
+
+        La clé est la chaîne à remplacer et la valeur la chaîne de remplacement.
 
         Args:
             name (str): nom du résolveur

@@ -4,14 +4,14 @@ Le fichier descripteur de livraison est un fichier au format JSON permettant de 
 
 ## Définition
 
-Le fichier doit contenir une liste de `dataset` Chaque dataset représente une livraison et doit contenir les informations suivantes :
+Le fichier doit contenir une liste de `datasets`. Chaque *dataset* représente une *livraison* et doit contenir les informations suivantes :
 
-* la liste des dossiers à téléverser (attribut `data_dirs`) : les chemins **relatif** vers les dossiers à téléverser ;
+* la liste des dossiers à téléverser (attribut `data_dirs`) : les chemins **relatifs** vers les dossiers à téléverser ;
 * les informations de la livraison à créer :
-    * Nom (attribut `name`) : nom de la livraison (afin que vous puissiez l'identifier, choix libre)
-    * Description (attribut `description`) : description de la livraison (choix libre)
-    * Projection (attribut `srs`) : le code EPSG des données (ex : `EPSG:2154`)
-    * Type (attribut `type`) : le type des données livrée. Le type de la livraison conditionne les types de fichiers de données qui seront attendus et les traitements qui pourront prendre en entrée cette livraison. Rien n'interdit de déposer des données avec des extensions incohérentes avec le type de livraison, mais elles ne seront potentiellement pas prises en compte par les vérifications et les traitements.
+    * Nom (attribut `name`) : nom de la livraison (afin que vous puissiez l'identifier, choix libre) ;
+    * Description (attribut `description`) : description de la livraison (choix libre) ;
+    * Projection (attribut `srs`) : le code EPSG des données (ex : `EPSG:2154`) ;
+    * Type (attribut `type`) : le type des données livrées. Le type de la livraison conditionne les types de fichiers de données qui seront attendus et les traitements qui pourront prendre en entrée cette livraison. Rien n'interdit de déposer des données avec des extensions incohérentes avec le type de livraison, mais elles ne seront potentiellement pas prises en compte par les vérifications et les traitements.
         * `RASTER` -> PNG, TIFF, JPEG, JPEG2000 ;
         * `VECTOR` -> SHP, CSV, GeoJSON ;
         * `ARCHIVE` -> Tout type de fichiers ;
@@ -76,7 +76,7 @@ Nous souhaitons livrer les données suivantes :
     └── dalle_02_02.tif
 ```
 
-Nous avons de type de données différents (vecteur et raster). Nous devons donc créer deux livraisons distinctes.
+Nous avons deux types de données différents (vecteur et raster). Nous devons donc créer deux livraisons distinctes.
 
 Voici le fichier descripteur de livraison que l'on pourrait utiliser :
 
@@ -121,4 +121,6 @@ Voici le fichier descripteur de livraison que l'on pourrait utiliser :
 }
 ```
 
-[Envoyer les données](comme-executable.md#envoyer-des-donnees)
+## Envoie des données
+
+Une fois le fichier descripteur de livraison créé, vous pouvez [envoyer les données](comme-executable.md#envoyer-des-donnees) sur la Géoplateforme.

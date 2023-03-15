@@ -16,7 +16,7 @@ from ignf_gpf_api.io.Config import Config
 
 
 class StoreEntityResolver(AbstractResolver):
-    """Classe permettant de résoudre des paramètres clé -> valeur.
+    """Classe permettant de résoudre des paramètres faisant référence à une entité.
 
     Attributes:
         __name (str): nom de code du resolver
@@ -34,7 +34,7 @@ class StoreEntityResolver(AbstractResolver):
     }
 
     def __init__(self, name: str) -> None:
-        """Constructeur.
+        """À l'instanciation, le résolveur est nommé selon ce qui est indiqué dans la Config.
 
         Args:
             name (str): nom du résolveur

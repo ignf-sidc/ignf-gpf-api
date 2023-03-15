@@ -7,8 +7,9 @@ from ignf_gpf_api.workflow.resolver.Errors import ResolveUserError
 
 class UserResolver(AbstractResolver):
     """Classe permettant de récupérer les informations sur l'utilisateur authentifié.
+
     La plu-value sur la classe DictRevolver est que les info de l'utilisateur sont
-    directement récupérées par le constructeur de la classe.
+    directement récupérées par le constructeur de la classe (ça évite de gérer cela).
 
     Attributes :
         __name (str): nom de code du resolver
@@ -16,7 +17,7 @@ class UserResolver(AbstractResolver):
     """
 
     def __init__(self, name: str) -> None:
-        """Constructeur. Récupération des infos de l'utilisateur via l'API.
+        """A l'instanciation, on récupère les infos de l'utilisateur via l'API et on les stocke.
 
         Args:
             name (str): nom du résolveur

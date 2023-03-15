@@ -25,6 +25,7 @@ class StoreEntity(ABC):
     _entity_title: str = "Entité Abstraite"
 
     def __init__(self, store_api_dict: Dict[str, Any]) -> None:
+        """Classe instanciée à partir de la représentation envoyée par l'API d'une entité."""
         self._store_api_dict: Dict[str, Any] = store_api_dict
 
     ##############################################################
@@ -33,14 +34,15 @@ class StoreEntity(ABC):
 
     @property
     def id(self) -> str:
-        """Renvoie l'identifiant du StoreEntity.
+        """Renvoie l'identifiant de l'entité.
+
         Returns:
-            Identifiant du StoreEntity
+            Identifiant de l'entité.
         """
         return str(self._store_api_dict["_id"])
 
     def get_store_properties(self) -> Dict[str, Any]:
-        """Renvoie les propriétés de la StoreEntity telles que renvoyées par l'API.
+        """Renvoie les propriétés de l'entité' telles que renvoyées par l'API.
 
         Returns:
             Propriétés de l'entité (sous la même forme que celle renvoyée par l'API)
@@ -64,8 +66,8 @@ class StoreEntity(ABC):
         """Crée une nouvelle entité dans l'API.
 
         Args:
-            data: Données nécessaires pour la création
-            route_params: Paramètres de résolution de la route
+            data: Données nécessaires pour la création.
+            route_params: Paramètres de résolution de la route.
 
         Returns:
             (StoreEntity): Entité créée
@@ -109,7 +111,7 @@ class StoreEntity(ABC):
         Args:
             infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
             tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
-            page: Numéro page à récupérer, toutes si None. Default to None.
+            page: Numéro page à récupérer, toutes si None.
 
         Returns:
             (List[StoreEntity]): liste des entités retournées par l'API
@@ -161,7 +163,9 @@ class StoreEntity(ABC):
         ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
 
     def api_update(self) -> None:
-        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API."""
+        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API.
+        Seules les informations Python sont modifiées, à ne pas confondre avec une fonction d'édition.
+        """
         # Génération du nom de la route
         s_route = f"{self._entity_name}_get"
         # Requête
@@ -222,13 +226,13 @@ class StoreEntity(ABC):
     ##############################################################
 
     def to_json(self, indent: Optional[int] = None) -> str:
-        """Renvoie les propriétés de la StoreEntity en JSON éventuellement formatées.
+        """Renvoie les propriétés de l'entité en JSON éventuellement indentées.
 
         Args:
             indent: Nombre d'espaces pour chaque indentation.
 
         Returns:
-            Propriétés de la StoreEntity en JSON éventuellement formatées
+            Propriétés de l'entité en JSON éventuellement indentées.
         """
         return json.dumps(self._store_api_dict, indent=indent)
 

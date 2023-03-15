@@ -67,10 +67,10 @@ class ConfigurationAction(ActionAbstract):
 
     def find_configuration(self) -> Optional[Configuration]:
         """Fonction permettant de récupérer une Configuration ressemblant à celle qui devrait être créée
-        en fonction des filtres définis dans default.ini
+        en fonction des filtres définis dans la Config.
 
         Returns:
-            Optional[Configuration]: configuration retrouvée
+            configuration retrouvée
         """
         # Récupération des critères de filtre
         d_infos, d_tags = ActionAbstract.get_filters("configuration", self.definition_dict["body_parameters"], self.definition_dict.get("tags", {}))

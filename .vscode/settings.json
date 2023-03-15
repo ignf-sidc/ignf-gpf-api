@@ -6,6 +6,7 @@
         "EPSG",
         "fontawesome",
         "Géoplateforme",
+        "géoservice",
         "geotuileur",
         "ignf",
         "inlinehilite",
@@ -64,6 +65,11 @@
         "--strict",
         "--check-untyped-defs",
         "--show-column-numbers",
+    ],
+    "pylint.path": [
+        "~/.env/python",
+        "-m",
+        "pylint"
     ],
     "[python]": {
         "editor.formatOnSave": true,
