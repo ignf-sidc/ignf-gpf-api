@@ -11,15 +11,15 @@ from ignf_gpf_api.store.Upload import Upload
 
 
 class ProcessingExecutionAction(ActionAbstract):
-    """classe dédiée à la création des ProcessingExecution.
+    """Classe dédiée à la création des ProcessingExecution.
 
-    Attributes :
-        __workflow_context (str) : nom du context du workflow
-        __definition_dict (Dict[str, Any]) : définition de l'action
-        __parent_action (Optional["Action"]) : action parente
-        __processing_execution (Optional[ProcessingExecution]) : représentation Python de l'exécution de traitement créée
-        __Upload (Optional[Upload]) : représentation Python de la livraison en sortie (null si données stockée en sortie)
-        __StoredData (Optional[StoredData]) : représentation Python de la données stockée en sortie (null si livraison en sortie)
+    Attributes:
+        __workflow_context (str): nom du context du workflow
+        __definition_dict (Dict[str, Any]): définition de l'action
+        __parent_action (Optional["Action"]): action parente
+        __processing_execution (Optional[ProcessingExecution]): représentation Python de l'exécution de traitement créée
+        __Upload (Optional[Upload]): représentation Python de la livraison en sortie (null si données stockée en sortie)
+        __StoredData (Optional[StoredData]): représentation Python de la données stockée en sortie (null si livraison en sortie)
     """
 
     BEHAVIOR_STOP = "STOP"
@@ -153,10 +153,10 @@ class ProcessingExecutionAction(ActionAbstract):
 
     def find_stored_data(self) -> Optional[StoredData]:
         """Fonction permettant de récupérer une Stored Data ressemblant à celle qui devrait être créée par
-        l'exécution de traitement en fonction des filtres définis dans default.ini
+        l'exécution de traitement en fonction des filtres définis dans la Config.
 
         Returns:
-            Optional[StoredData]: données stockées retrouvée
+            données stockées retrouvée
         """
         # Récupération des critères de filtre
         d_infos, d_tags = ActionAbstract.get_filters("processing_execution", self.definition_dict["body_parameters"]["output"]["stored_data"], self.definition_dict["tags"])
@@ -169,15 +169,18 @@ class ProcessingExecutionAction(ActionAbstract):
         return None
 
     def monitoring_until_end(self, callback: Optional[Callable[[ProcessingExecution], None]] = None) -> str:
-        """Attend que la ProcessingExecution soit terminée (SUCCESS, FAILURE, ABORTED) avant de rendre la main.
-        La fonction callback indiquée est exécutée en prenant en paramètre le log du traitement et le status du traitement (callback(logs, status)).
+        """Attend que la ProcessingExecution soit terminée (statut `SUCCESS`, `FAILURE` ou `ABORTED`) avant de rendre la main.
+
+        La fonction callback indiquée est exécutée après **chaque vérification** en lui passant en paramètre
+        le log du traitement et le status du traitement (callback(logs, status)).
+
         Si l'utilisateur stoppe le programme, la ProcessingExecution est arrêtée avant de quitter.
 
         Args:
-            callback (Optional[Callable[[ProcessingExecution], None]], optional): fonction de callback à exécuter prend en argument le traitement (callback(processing-execution)). Defaults to None.
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): fonction de callback à exécuter prend en argument le traitement (callback(processing-execution)).
 
         Returns:
-            Optional[bool]: True si SUCCESS, False si FAILURE, None si ABORTED
+            True si SUCCESS, False si FAILURE, None si ABORTED
         """
         # NOTE :  Ne pas utiliser self.__processing_execution mais self.processing_execution pour faciliter les tests
         i_nb_sec_between_check = Config().get_int("processing_execution", "nb_sec_between_check_updates")
@@ -249,7 +252,9 @@ class ProcessingExecutionAction(ActionAbstract):
 
     @property
     def output_new_entity(self) -> bool:
-        """Indique s'il y a création d'une nouvelle entité (clé "name" et non "_id" présente dans le paramètre "output" du corps de requête)."""
+        """Indique s'il y aura création d'une nouvelle entité par rapport au paramètre de création de l'exécution de traitement
+        (la clé "name" et non la clé "_id" est présente dans le paramètre "output" du corps de requête).
+        """
         d_output = self.definition_dict["body_parameters"]["output"]
         if "upload" in d_output:
             d_el = self.definition_dict["body_parameters"]["output"]["upload"]

@@ -6,21 +6,22 @@ from ignf_gpf_api.io.Color import Color
 
 
 class OutputManager(metaclass=Singleton):
-    """Gestionnaire de sortie."""
+    """Classe de gestion du log."""
 
-    def __init__(self, file_logger: Optional[str] = None, formater: Optional[str] = None) -> None:
-        """initialisation de OutputManager
+    def __init__(self, file_logger: Optional[str] = None, pattern_formater: Optional[str] = None) -> None:
+        """La classe est instanciée à partir d'un fichier de log et d'un modèle de format de log.
 
         Args:
-            file_logger (Optional[str], optional): nom du fichier de log ou None si on ne vaux pas de log fichier. Defaults to None.
-            formater (Optional[str], optional): format du log (cf doc `logging`). Defaults to None.
+            file_logger (Optional[str], optional): Chemin vers le fichier de log ou `None` si on ne veux pas de fichier de log.
+            pattern_formater (Optional[str], optional): Modèle de format du log (cf doc
+                [logging](https://docs.python.org/fr/3/library/logging.html#logging.Formatter)) ou `None` si on veut le format par défaut.
         """
         # initialisation du loger
         self.__logger = logging.getLogger(__name__)
         self.__logger.setLevel(logging.INFO)
 
         # création formateur
-        o_formatter = logging.Formatter(formater)
+        o_formatter = logging.Formatter(pattern_formater)
 
         # ajout handler console : affichage des logs dans la console
         o_ch = logging.StreamHandler()
