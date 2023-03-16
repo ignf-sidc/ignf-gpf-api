@@ -20,7 +20,7 @@ Récupérez les données en lançant la commande :
 python -m ignf_gpf_api dataset -n 1_dataset_vector
 ```
 
-Observez la structure du fichier :
+Observez la structure des données :
 
 ```
 1_dataset_vector/
@@ -59,14 +59,14 @@ Livrer les données en indiquant le chemin du fichier descripteur au programme :
 python -m ignf_gpf_api upload -f 1_dataset_vector/upload_descriptor.json
 ```
 
-Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérification côté API avant de conclure que tout est bon.
+Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérifications côté API avant de conclure que tout est bon.
 
 ## Workflow
 
 Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géo-traitement(s),
 puis configurer un géo-service et le rendre accessible).
 
-Ces étapes sont décrites grâces à un workflow.
+Ces étapes sont décrites grâce à un workflow.
 
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 
@@ -91,6 +91,7 @@ flowchart TD
 ## Traitement et publication
 
 Le workflow « wfs-generic » permet de passer de la livraison à un flux WFS servant la donnée. Il comporte 4 étapes :
+
 * `mise-en-base` : mise en base des données vecteur livrées ;
 * `création-pyramide` : création de la pyramide de vecteur pour l'utilisation dans un flux ;
 * `configuration-wfs` : configuration d'un service de flux WFS permettant d'utiliser les données vecteur ;

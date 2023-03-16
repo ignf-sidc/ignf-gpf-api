@@ -33,7 +33,7 @@ def main() -> None:
 
     # Résolution de la config
     if not Path(o_args.config).exists():
-        Config().om.warning(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
+        raise GpfApiError(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
     Config().read(o_args.config)
 
     # Si debug on monte la config

@@ -1,6 +1,7 @@
 site_name: ignf_gpf_api
 
-repo_url: https://github.com/ignf_sidc/ignf_gpf_api/
+repo_url: https://github.com/ignf-sidc/ignf-gpf-api/
+repo_name: "ignf-sidc/ignf-gpf-api"
 edit_uri: ""
 
 theme:
@@ -24,6 +25,11 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 plugins:
   - search:
@@ -47,6 +53,9 @@ nav:
   - upload_descriptor.md
   - workflow.md
   - development.md
+  - Tutoriels:
+      - "Tutoriel 1 : publier une archive": tutoriel_1_archive.md
+      - "Tutoriel 2 : publier un flux vecteur": tutoriel_2_flux_vecteur.md
   - Références:
       - ignf_gpf_api.auth: reference/auth.md
       - ignf_gpf_api.io: reference/io.md
@@ -54,3 +63,6 @@ nav:
       - ignf_gpf_api.workflow: reference/workflow.md
       - ignf_gpf_api.workflow.action: reference/workflow/action.md
       - ignf_gpf_api.workflow.resolver: reference/workflow/resolver.md
+
+watch:
+  - ignf_gpf_api

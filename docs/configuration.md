@@ -1,14 +1,34 @@
 # Configuration
 
-Ce module Python vient avec une configuration par défaut vous permettant de ne pas avoir à définir grand chose.
-
+Ce module Python vient avec une configuration par défaut vous permettant de définir un minimum de paramètres.
 Vous pouvez cependant écraser chaque paramètre par défaut en redéfinissant sa valeur dans un nouveau fichier de configuration.
 
-Certains paramètres (comme vos identifiants d'API) doivent être redéfinis.
+Certains paramètres (comme vos identifiants d'API) **doivent** être redéfinis.
+
+La configuration est composée de sections elles-même composées d'options.
+
+Voici un exemple reprenant la structure d'un fichier de configuration :
+
+```ini
+[section_1]
+option_1=valeur_1_1
+option_2=valeur_1_2
+
+[section_2]
+option_1=valeur_2_1
+option_2=valeur_2_2
+option_3=valeur_2_3
+```
+
+Nous pouvons faire référence à la `valeur_1_1` par l'intitulé `section_1.option_1`.
 
 ## Votre fichier de configuration
 
-Créez un fichier `config.ini` à la racine du projet. Avec à minima :
+Créez un fichier `config.ini` à la racine du projet.
+
+Il faudra à minima renseigner vos identifiants API (section `store_authentification`) et l'entrepôt (*datastore*) sur lequel vous allez travailler (section `store_api`).
+
+Voici un exemple de ce que cela peut donner :
 
 ```ini
 [store_authentification]
@@ -43,7 +63,7 @@ Dans la configuration, vous devez indiquer l'identifiant du datastore à utilise
 
 Si vous ne savez pas quoi mettre, il est possible de lister les communautés auxquelles vous participez et, pour chacune d'elle, le datastore qui lui est associé. Cela vous permet de récupérer cet identifiant.
 
-Commande pour lister les communautés auxquelles vous appartenez :
+La commande pour lister les communautés auxquelles vous appartenez est la suivante :
 
 ```sh
 python -m ignf_gpf_api me
