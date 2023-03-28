@@ -1,0 +1,20 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "CANTON"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple vecteur3",
+                "name": "EXAMPLE_DATASET_VECTOR5",
+                "srs": "IGNF:LAMB93",
+                "type": "VECTOR"
+            },
+            "comments": [
+            ],
+            "tags": {
+                "tuto": "oui"
+            }
+        }
+    ]
+}
