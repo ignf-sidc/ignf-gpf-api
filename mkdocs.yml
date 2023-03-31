@@ -30,6 +30,7 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - attr_list # Extension pour ajouter des attributs HTML dans le Markdown
 
 plugins:
   - search:
@@ -48,6 +49,7 @@ plugins:
 nav:
   - index.md
   - configuration.md
+  - configuration_details.md
   - comme-executable.md
   - comme-module.md
   - upload_descriptor.md

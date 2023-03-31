@@ -26,14 +26,15 @@ dependencies = [
     "jsonc-parser",
     "toml",
     "types-toml",
+    "python-dateutil",
     "types-python-dateutil",
 ]
 
 [project.optional-dependencies]
 test = [
     "black<23",
-    "pylint==2.13",
-    "mypy==0.942",
+    "pylint==2.17",
+    "mypy==0.950",
     "requests_mock",
     "coverage",
 ]
