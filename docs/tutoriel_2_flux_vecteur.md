@@ -47,6 +47,7 @@ Ouvrez le fichier pour avoir plus de détails.
 Il est composé d'une liste de `datasets` représentant chacun une livraison distincte.
 
 Chaque dataset contient :
+
 * la liste des dossiers à téléverser ;
 * les informations de la livraison à créer (nom, description, srs et type) ;
 * les commentaires et les tags à ajouter à la livraison.
