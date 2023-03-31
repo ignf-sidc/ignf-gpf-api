@@ -4,7 +4,10 @@ from abc import ABC, abstractmethod
 class AbstractResolver(ABC):
     """Classe abstraite permettant de résoudre le paramétrage des fichiers d'action.
 
-    Attributes :
+    Vous pouvez créer vos propres classe de résolution en les héritant de
+    celle-ci et en les ajoutant au GlobalResolver.
+
+    Attributes:
         __name (str): nom de code du resolver
     """
 
@@ -20,7 +23,7 @@ class AbstractResolver(ABC):
             string_to_solve (str): chaîne à résoudre
 
         Returns:
-            str: chaîne résolue
+            chaîne résolue
         """
 
     @property

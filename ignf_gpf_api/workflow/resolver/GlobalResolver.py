@@ -8,9 +8,9 @@ from ignf_gpf_api.io.Config import Config
 
 
 class GlobalResolver(metaclass=Singleton):
-    """Classe permettant de résoudre une action en appelant les bons résolveurs.
+    """Classe permettant de résoudre une action en appelant les tous résolveurs listés.
 
-    Attributes :
+    Attributes:
         __resolvers (Dict[str, AbstractResolver]): association nom du résolveur / résolveur.
     """
 
@@ -22,11 +22,12 @@ class GlobalResolver(metaclass=Singleton):
         self.__resolvers: Dict[str, AbstractResolver] = {}
 
     def add_resolver(self, resolver: AbstractResolver) -> None:
-        """Ajout un résolveur à la liste."""
+        """Ajoute un résolveur à la liste."""
         self.__resolvers[resolver.name] = resolver
 
     def resolve(self, string_to_solve_global: str) -> str:
         """Résout la chaîne à traiter et retourne la chaîne obtenue.
+
         Résout TOUT le paramétrage trouvé.
 
         Args:
@@ -36,7 +37,7 @@ class GlobalResolver(metaclass=Singleton):
             ResolverNotFoundError: levée si un résolveur demandé n'est pas trouvé
 
         Returns:
-            str: chaîne résolue
+            chaîne résolue
         """
         return GlobalResolver._regex.sub(GlobalResolver.resolve_group, string_to_solve_global)
 
@@ -55,7 +56,7 @@ class GlobalResolver(metaclass=Singleton):
             ResolverNotFoundError: levée si le résolveur demandé n'est pas trouvé
 
         Returns:
-            str: chaîne de remplacement
+            chaîne de remplacement
         """
         d_resolution = match.groupdict()
         # La chaîne complète, à remplacer, est donnée par la clé "param"

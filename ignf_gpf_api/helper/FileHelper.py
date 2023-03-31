@@ -13,8 +13,8 @@ class FileHelper:
 
         Args:
             file_path (Path): chemin vers le fichier
-            file_not_found_pattern (str, optional): Pattern du messsage d'erreur si fichier non trouvé. Defaults to "Fichier {path} non trouvé".
-            encoding (str, optional): encodage du fichier. Defaults to "utf8".
+            file_not_found_pattern (str, optional): Pattern du message d'erreur si fichier non trouvé.
+            encoding (str, optional): encodage du fichier.
 
         Raises:
             GpfApiError: levée si le fichier n'existe pas.

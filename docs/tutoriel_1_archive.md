@@ -62,7 +62,7 @@ Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend
 
 Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire configurer un géo-service et le rendre accessible).
 
-Ces étapes sont décrites grâces à un workflow.
+Ces étapes sont décrites grâce à un workflow.
 
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 
@@ -107,7 +107,7 @@ INFO - Offre créée : Offering(id=62c708e72246434ac40ee3ad)
    - download|https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive
 ```
 
-Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez téléversées et qui sont maintenant disponibles en téléchargement.
+Suivez le lien indiqué pour retrouver la liste des fichiers que vous avez téléversés et qui sont maintenant disponibles en téléchargement.
 
 Vous pouvez alors télécharger le fichier de votre choix en ajoutant son nom à la suite du lien. Dans notre cas, ça serait :
 
@@ -118,13 +118,13 @@ https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/ar
 ## Résumer des commandes
 
 ```sh
-# récupération des données test
+# récupération des données d'exemple
 python -m ignf_gpf_api dataset -n 2_dataset_archive
-# livraison des données sur la geoplatforme
+# livraison des données sur la Géoplateforme
 python -m ignf_gpf_api upload -f 2_dataset_archive/upload_descriptor.json
-# récupération du workflow d'archive
+# récupération du workflow de traitement et publication d'une archive
 python -m ignf_gpf_api workflow -n archive-generic.jsonc
-# exécution des 3 étapes pour la publication de l'archive
+# exécution des 3 étapes pour le traitement et la publication de l'archive
 python -m ignf_gpf_api workflow -f archive-generic.jsonc -s intégration-archive-livrée
 python -m ignf_gpf_api workflow -f archive-generic.jsonc -s configuration-archive-livrée
 python -m ignf_gpf_api workflow -f archive-generic.jsonc -s publication-archive-livrée

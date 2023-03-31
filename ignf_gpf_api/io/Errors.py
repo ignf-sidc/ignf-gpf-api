@@ -6,7 +6,7 @@ from ignf_gpf_api.io.Color import Color
 
 
 class ConfigReaderError(GpfApiError):
-    """Est levée quand il y a un problème pendant la lecture du fichier de configuration.
+    """Erreur levée quand il y a un problème pendant la lecture du fichier de configuration par défaut.
 
     Attributes:
         __message (str): message décrivant le problème
@@ -14,7 +14,7 @@ class ConfigReaderError(GpfApiError):
 
 
 class RoutingReaderError(GpfApiError):
-    """Est levée quand il y a un problème pendant la lecture du fichier de configuration des routes.
+    """Erreur levée quand il y a un problème pendant la lecture du fichier de configuration des routes.
 
     Attributes:
         __message (str): message décrivant le problème
@@ -22,14 +22,14 @@ class RoutingReaderError(GpfApiError):
 
 
 class ApiError(Exception):
-    """Erreur API : classe abstraite"""
+    """Erreur API : classe abstraite pour gérer les erreurs API en général."""
 
 
 class RouteNotFoundError(ApiError):
     """Route non trouvée (problème de configuration)."""
 
     def __init__(self, route_name: str) -> None:
-        """Constructeur.
+        """Instanciée à partir du nom de la route non trouvée.
 
         Args:
             route_name (str): nom de la route manquante
@@ -50,10 +50,10 @@ class RouteNotFoundError(ApiError):
 
 
 class AbstractRequestError(ApiError):
-    """Erreur générique de requête à l'API"""
+    """Erreur API : erreur générique et sans réponse lors d'une requête à l'API."""
 
     def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]]) -> None:
-        """Constructeur.
+        """Instanciée à partir de l'URL, la méthode, les paramètres et les données posant problème.
 
         Args:
             url (str): url de la requête
@@ -85,18 +85,18 @@ class AbstractRequestError(ApiError):
 
 
 class InternalServerError(AbstractRequestError):
-    """Erreur interne à l'API (contactez le support)."""
+    """Erreur API : erreur interne à l'API (contactez le support)."""
 
 
 class NotFoundError(AbstractRequestError):
-    """Entité non trouvée."""
+    """Erreur API : entité non trouvée sur la Géoplateforme."""
 
 
 class NotAuthorizedError(AbstractRequestError):
-    """Action non autorisée"""
+    """Erreur API : action non autorisée."""
 
     def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]], response: str):
-        """Constructeur.
+        """Instanciée à partir de l'URL, la méthode, les paramètres et les données posant problème ainsi que la réponse de l'API.
 
         Args:
             url (str): url de la requête
@@ -121,10 +121,10 @@ class NotAuthorizedError(AbstractRequestError):
 
 
 class _WithResponseError(AbstractRequestError):
-    """Erreur avec réponse."""
+    """Erreur API : erreur générique avec réponse lors d'une requête à l'API."""
 
     def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]], response: str):
-        """Constructeur.
+        """Instanciée à partir de l'URL, la méthode, les paramètres et les données posant problème ainsi que la réponse de l'API.
 
         Args:
             url (str): url de la requête
@@ -164,15 +164,15 @@ class _WithResponseError(AbstractRequestError):
 
 
 class BadRequestError(_WithResponseError):
-    """Mauvaise requête"""
+    """Erreur API : mauvaise requête (contactez le support)."""
 
 
 class ConflictError(_WithResponseError):
-    """Conflit au traitement de la requête"""
+    """Erreur API : conflit au traitement de la requête (Est-ce que vous tentez de supprimer une ressource utilisée ?)."""
 
 
 class StatusCodeError(_WithResponseError):
-    """Erreur avec un "status code" non prévu par une erreur explicite..."""
+    """Erreur API : erreur avec un code de retour non prévu par une erreur explicite..."""
 
     def __init__(
         self,
@@ -183,7 +183,7 @@ class StatusCodeError(_WithResponseError):
         status_code: int,
         response: str,
     ):
-        """Constructeur.
+        """Instanciée à partir de l'URL, la méthode, les paramètres et les données posant problème ainsi que la réponse et le code de retour de l'API.
 
         Args:
             url (str): url de la requête

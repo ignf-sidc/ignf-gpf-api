@@ -19,7 +19,7 @@ class UploadTestCase(GpfTestCase):
         # On instancie une livraison pour laquelle on veut pousser des fichiers
         o_upload = Upload({"_id": "id_de_test"})
         # On récupère le nom de la clé associée au fichier
-        s_key_file = Config().get("upload_creation", "push_data_file_key")
+        s_key_file = Config().get("upload", "push_data_file_key")
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             o_opener = mock_open()
@@ -48,7 +48,7 @@ class UploadTestCase(GpfTestCase):
         # On instancie une livraison pour laquelle on veut pousser des fichiers
         o_upload = Upload({"_id": "id_de_test"})
         # On récupère le nom de la clé associée au fichier
-        s_key_file = Config().get("upload_creation", "push_md5_file_key")
+        s_key_file = Config().get("upload", "push_md5_file_key")
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             o_opener = mock_open()
