@@ -13,6 +13,7 @@ import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.helper.PrintLogHelper import PrintLogHelper
 from ignf_gpf_api.io.Errors import ConflictError
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.workflow.Workflow import Workflow
@@ -305,9 +306,12 @@ def workflow(o_args: argparse.Namespace) -> None:
             # Sinon, on définit des résolveurs
             GlobalResolver().add_resolver(StoreEntityResolver("store_entity"))
             GlobalResolver().add_resolver(UserResolver("user"))
-            # et on lance l'étape
+            # le comportement
             s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
-            o_workflow.run_step(o_args.step, print, behavior=s_behavior)
+            # on reset l'afficheur de log
+            PrintLogHelper.reset()
+            # et on lance l'étape en précisant l'afficheur de log et le comportement
+            o_workflow.run_step(o_args.step, lambda processing_execution: PrintLogHelper.print(processing_execution.api_logs()), behavior=s_behavior)
     else:
         l_children: List[str] = []
         for p_child in p_root.iterdir():
