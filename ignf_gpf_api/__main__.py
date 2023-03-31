@@ -13,7 +13,9 @@ import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.helper.PrintLogHelper import PrintLogHelper
 from ignf_gpf_api.io.Errors import ConflictError
+from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.workflow.Workflow import Workflow
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolver
@@ -32,7 +34,7 @@ def main() -> None:
 
     # Résolution de la config
     if not Path(o_args.config).exists():
-        Config().om.warning(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
+        raise GpfApiError(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
     Config().read(o_args.config)
 
     # Si debug on monte la config
@@ -42,6 +44,8 @@ def main() -> None:
     # Exécution de l'action demandée
     if o_args.task == "auth":
         auth(o_args)
+    elif o_args.task == "me":
+        me_()
     elif o_args.task == "config":
         config(o_args)
     elif o_args.task == "upload":
@@ -56,7 +60,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     """Parse les paramètres utilisateurs.
 
     Args:
-        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé. Defaults to None.
+        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé.
 
     Returns:
         argparse.Namespace: paramètres
@@ -70,6 +74,8 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     # Parser pour auth
     o_parser_auth = o_sub_parsers.add_parser("auth", help="Authentification")
     o_parser_auth.add_argument("--show", type=str, choices=["token", "header"], default=None, help="Donnée à renvoyer")
+    # Parser pour me
+    o_parser_auth = o_sub_parsers.add_parser("me", help="Mes informations")
     # Parser pour config
     o_parser_auth = o_sub_parsers.add_parser("config", help="Configuration")
     o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier où sauvegarder la configuration (si null, la configuration est affichée)")
@@ -109,6 +115,40 @@ def auth(o_args: argparse.Namespace) -> None:
         print(Authentifier().get_http_header())
     else:
         print("Authentification réussie.")
+
+
+def me_() -> None:
+    """Affiche les informations de l'utilisateur connecté."""
+    # Requêtage
+    o_response = ApiRequester().route_request("me_get")
+    # Formatage
+    d_info = o_response.json()
+    # Info de base
+    l_texts = [
+        "Vos informations :",
+        f"  * email : {d_info['email']}",
+        f"  * nom : {d_info['first_name']} {d_info['last_name']}",
+        f"  * votre id : {d_info['_id']}",
+    ]
+    # Gestion des communautés
+    if not d_info["communities_member"]:
+        l_texts.append("Vous n'êtes membre d'aucune communauté.")
+    else:
+        l_cm = d_info["communities_member"]
+        l_texts.append("")
+        l_texts.append(f"Vous êtes membre de {len(l_cm)} communauté(s) :")
+        for d_cm in l_cm:
+            d_community = d_cm["community"]
+            l_rights = [k.replace("_rights", "") for k, v in d_cm["rights"].items() if v is True]
+            s_rights = ", ".join(l_rights)
+            l_texts.append("")
+            l_texts.append(f"  * communauté « {d_community['name']} » :")
+            l_texts.append(f"      - id de la communauté : {d_community['_id']}")
+            l_texts.append(f"      - id du datastore : {d_community['datastore']}")
+            l_texts.append(f"      - nom technique : {d_community['technical_name']}")
+            l_texts.append(f"      - droits : {s_rights}")
+    # Affichage
+    print("\n".join(l_texts))
 
 
 def config(o_args: argparse.Namespace) -> None:
@@ -266,9 +306,12 @@ def workflow(o_args: argparse.Namespace) -> None:
             # Sinon, on définit des résolveurs
             GlobalResolver().add_resolver(StoreEntityResolver("store_entity"))
             GlobalResolver().add_resolver(UserResolver("user"))
-            # et on lance l'étape
+            # le comportement
             s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
-            o_workflow.run_step(o_args.step, print, behavior=s_behavior)
+            # on reset l'afficheur de log
+            PrintLogHelper.reset()
+            # et on lance l'étape en précisant l'afficheur de log et le comportement
+            o_workflow.run_step(o_args.step, lambda processing_execution: PrintLogHelper.print(processing_execution.api_logs()), behavior=s_behavior)
     else:
         l_children: List[str] = []
         for p_child in p_root.iterdir():

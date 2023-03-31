@@ -8,26 +8,28 @@ from ignf_gpf_api.Errors import GpfApiError
 
 
 class DescriptorFileReader:
-    """Lit et valide le fichier descriptif d'un ensemble de datasets.
+    """Classe permettant de lire et de valider le fichier descripteur de livraison.
 
-    Attributes :
-        __descriptor_dict (Optional[Dict[Any, Any]]) : contenu du fichier descriptif
-        __datasets (List[Dataset]): liste des datasets contenus dans le fichier descripteur de livraison
-        __parent_folder(path): path du dossier parent des données
+    Attributes:
+        __descriptor_dict (Optional[Dict[Any, Any]]): Contenu du fichier descriptif
+        __datasets (List[Dataset]): Liste des datasets contenus dans le fichier descripteur de livraison
+        __parent_folder(path): Chemin du dossier parent des données
     """
 
     def __init__(self, descriptor_file_path: Path) -> None:
-        """Constructeur
+        """La classe est instanciée à partir du fichier descripteur de livraison.
+
+        Les différents chemins indiqués sont alors vérifiés et les fichiers à téléverser sont listés.
 
         Args:
-            descriptor_file_path (Path): chemin vers le fichier descriptif de livraison
+            descriptor_file_path (Path): chemin vers le fichier descripteur de livraison
         """
         # Définition des attributs
         self.__descriptor_dict: Optional[Dict[Any, Any]] = None
         self.__datasets: List[Dataset] = []
         self.__parent_folder = descriptor_file_path.parent.absolute()
-        # Ouverture du fichier descriptif de livraison
-        self.__descriptor_dict = JsonHelper.load(descriptor_file_path, file_not_found_pattern="Fichier descriptif de livraison {json_path} non trouvé.")
+        # Ouverture du fichier descripteur de livraison
+        self.__descriptor_dict = JsonHelper.load(descriptor_file_path, file_not_found_pattern="Fichier descripteur de livraison {json_path} non trouvé.")
 
         # Ouverture du schéma JSON à respecter
         p_schema_file_path = Config.conf_dir_path / Config().get("json_schemas", "descriptor_file")

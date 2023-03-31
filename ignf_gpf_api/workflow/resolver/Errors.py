@@ -99,7 +99,7 @@ class ResolveFileInvalidError(GpfApiError):
 
 
 class ResolveUserError(GpfApiError):
-    """Classe d'erreur quand les informations de l'utilisateur ne sont pas récupérées
+    """Classe d'erreur quand les informations de l'utilisateur ne sont pas récupérées.
 
     Attributes:
         __message (str): message décrivant le problème

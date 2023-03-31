@@ -7,7 +7,11 @@ from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
 class ProcessingExecution(CsfInterface, StoreEntity):
-    """Classe Python représentant l'entité ProcessingExecution (exécution d'un traitement)."""
+    """Classe Python représentant l'entité ProcessingExecution (exécution d'un traitement).
+
+    Cette classe permet d'effectuer les actions spécifiques liées aux exécution de traitement : création,
+    lancement, gestion de l'exécution, récupération du log, etc.
+    """
 
     _entity_name = "processing_execution"
     _entity_title = "exécution d'un traitement"

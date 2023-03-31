@@ -18,9 +18,10 @@ python -m ignf_gpf_api --ini /autre/chemin/config.ini auth
 
 Cela devrait renvoyer :
 
-```txt
+``` txt
 Authentification réussie.
 ```
+
 
 ## Afficher toute la configuration
 
@@ -88,3 +89,11 @@ Ensuite, vous pouvez simplement lancer une étape :
 ```sh
 python -m ignf_gpf_api workflow -f mon_workflow.json -s mon_étape
 ```
+
+
+## Tutoriels
+
+Vous pouvez maintenant livrer et publier vos données en utilisant le module comme un exécutable. Voici quelques exemples :
+
+* [Tutoriel 1 : héberger une archive pour la rendre téléchargeable](tutoriel_1_archive.md)
+* [Tutoriel 2 : téléverser des données vecteur les publier en flux](tutoriel_2_flux_vecteur.md)
