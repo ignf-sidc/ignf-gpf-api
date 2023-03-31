@@ -26,7 +26,7 @@ class UploadAction:
         self.__dataset: Dataset = dataset
         self.__upload: Optional[Upload] = None
         # On suit le comportement donnée en paramètre ou à défaut celui de la config
-        self.__behavior: str = behavior if behavior is not None else Config().get("upload_creation", "behavior_if_exists")
+        self.__behavior: str = behavior if behavior is not None else Config().get("upload", "behavior_if_exists")
 
     def run(self) -> Upload:
         """Crée la livraison décrite dans le dataset et livre les données avant de
@@ -132,7 +132,7 @@ class UploadAction:
             None si rien trouvé, sinon l'Upload trouvé
         """
         # Récupération des critères de filtre
-        d_infos, d_tags = ActionAbstract.get_filters("upload_creation", self.__dataset.upload_infos, self.__dataset.tags)
+        d_infos, d_tags = ActionAbstract.get_filters("upload", self.__dataset.upload_infos, self.__dataset.tags)
         # On peut maintenant filter les upload selon ces critères
         l_uploads = Upload.api_list(infos_filter=d_infos, tags_filter=d_tags)
         # S'il y a un ou plusieurs upload, on retourne le 1er :
@@ -160,8 +160,8 @@ class UploadAction:
         Returns:
             True si toutes les vérifications sont ok, sinon False
         """
-        i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
-        s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
+        i_nb_sec_between_check = Config().get_int("upload", "nb_sec_between_check_updates")
+        s_check_message_pattern = Config().get("upload", "check_message_pattern")
         b_success: Optional[bool] = None
         Config().om.info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
         while b_success is None:

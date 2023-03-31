@@ -55,7 +55,7 @@ class Dataset:
         S'il existe, rien n'est fait.
         """
         p_abs_root_dir = self.__root_dir.absolute()
-        s_pattern = Config().get("upload_creation", "md5_pattern")
+        s_pattern = Config().get("upload", "md5_pattern")
 
         # On parcourt le dictionnaire des répertoires
         for p_dir in self.__data_dirs:

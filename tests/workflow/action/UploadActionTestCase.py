@@ -61,7 +61,7 @@ class UploadActionTestCase(GpfTestCase):
                 # Appel de la fonction find_upload
                 o_upload = o_ua.find_upload()
                 # Vérifications
-                o_mock_get_filters.assert_called_once_with("upload_creation", o_mock_dataset.upload_infos, o_mock_dataset.tags)
+                o_mock_get_filters.assert_called_once_with("upload", o_mock_dataset.upload_infos, o_mock_dataset.tags)
                 o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"})
                 self.assertEqual(o_upload, o_u1)
 
@@ -107,7 +107,7 @@ class UploadActionTestCase(GpfTestCase):
                 return ""
             if b == "behavior_if_exists":
                 return "STOP"
-            if b == "open_status":
+            if b == "status_open":
                 return "OPEN"
             raise Exception("cas non prévu", a, b)
 

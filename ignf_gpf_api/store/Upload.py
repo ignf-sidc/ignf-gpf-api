@@ -41,7 +41,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Génération du nom de la route
         s_route = f"{self._entity_name}_push_data"
         # Récupération du nom de la clé pour le fichier
-        s_file_key = Config().get("upload_creation", "push_data_file_key")
+        s_file_key = Config().get("upload", "push_data_file_key")
 
         # Ouverture du fichier et remplissage du tuple de fichier
         with file_path.open("rb") as o_file_binary:
@@ -88,7 +88,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Génération du nom de la route
         s_route = f"{self._entity_name}_push_md5"
         # Récupération du nom de la clé pour le fichier
-        s_file_key = Config().get("upload_creation", "push_md5_file_key")
+        s_file_key = Config().get("upload", "push_md5_file_key")
 
         # Ouverture du fichier et remplissage du tuple de fichier
         with file_path.open("rb") as o_file_binary:
@@ -158,7 +158,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         self.api_update()
         if "status" not in self._store_api_dict:
             raise StoreEntityError("Impossible de récupérer le status de l'upload")
-        return bool(Config().get("upload_status", "open_status") == self["status"])
+        return bool(Config().get("upload", "status_open") == self["status"])
 
     def api_tree(self) -> List[Dict[str, Any]]:
         """Récupère l'arborescence des fichiers téléversés associés à cette Livraison.
