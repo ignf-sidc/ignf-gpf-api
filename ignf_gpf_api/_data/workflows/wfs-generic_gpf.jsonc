@@ -1,0 +1,92 @@
+{
+    "workflow": {
+        "steps": {
+            // Étape n°1 : Mise en base de vecteurs livrés
+            "mise-en-base": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la Livraison associée grâce à son nom
+                                    "{store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_VECTOR)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName_Base_intermédiaire"
+                                    "name": "Base_intermediaire",
+                                    "storage_type": "POSTGRESQL"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "comments": [],
+                        // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "tags": {}// TO DO: Tester la mise en base avec des tags. Exemple de format: {"Nom_Tag" : "Valeur_Tag"}
+                    }
+                ],
+                // Pour Bag donc pas besoin pour tester la gpf
+                "parents": []
+            },
+            // Étape n°2 : configuration d'un flux WFS
+            "configuration-wfs": {
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMS-VECTOR",
+                            "name": "Flux_vecteur",
+                            "layer_name": "flux_vecteur",
+                            "type_infos": {
+                                "title": "Couche Canton du tutoriel",
+                                "abstract": "Exemple de flux à visualiser",
+                                "used_data": [
+                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
+                                    {
+                                        "relations": [
+                                            {
+                                                "name": "site",
+                                                // TO DO : style mis en dure ici mais à optimiser. mettre un resolver pour les fichiers statiques ?
+                                                "style": "bf4fa4ed-1cf0-4cea-9e98-88fa3e6e8dce"
+                                            }
+                                        ],
+                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=Base_intermediaire)]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des commentaires ajoutés à la Configuration
+                        "comments": [],
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {}// TO DO: Tester la mise en base avec des tags. Exemple de format: {"Nom_Tag" : "Valeur_Tag"}
+                    }
+                ]
+            },
+            // Étape n°3 : publication du flux WFS millésimé
+            "publication-wfs": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters": {
+                            // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=Flux_vecteur)]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
+                            // TO DO: optimiser le endpoint
+                            "endpoint": "41796939-b598-4c45-92ff-a6aae581e56e"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
