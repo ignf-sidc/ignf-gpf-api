@@ -14,7 +14,7 @@ class EventInterface(StoreEntity):
             List[Dict[str, Any]]: liste des événements
         """
         # Génération du nom de la route
-        s_route = f"{self._entity_name}_list_event"
+        s_route = f"{self._entity_name}_list_events"
         # Requête "get" à l'API
         o_response = ApiRequester().route_request(
             s_route,
