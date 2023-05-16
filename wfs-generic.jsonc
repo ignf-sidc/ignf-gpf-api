@@ -9,7 +9,7 @@
                         "type": "processing-execution",
                         "body_parameters": {
                             // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=vector2db)]}",
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
@@ -97,7 +97,7 @@
                     {
                         "type": "configuration",
                         "body_parameters": {
-                            "type": "WMS-VECTOR",
+                            "type": "WFS",
                             "name": "Flux_vecteur",
                             "layer_name": "flux_vecteur",
                             "type_infos": {
