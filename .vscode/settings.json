@@ -4,6 +4,7 @@
         "dateutil",
         "EPSG",
         "Géoplateforme",
+        "GEOSERVER",
         "geotuileur",
         "ignf",
         "insee",
