@@ -9,7 +9,7 @@
                         "type": "processing-execution",
                         "body_parameters": {
                             // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=vector2db)]}",
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
@@ -53,7 +53,7 @@
                                             {
                                                 "name": "site",
                                                 // TO DO : style mis en dure ici mais à optimiser. mettre un resolver pour les fichiers statiques ?
-                                                "style": "bf4fa4ed-1cf0-4cea-9e98-88fa3e6e8dce"
+                                                "style": "5c5daf4a-9488-440d-9dd4-ac8879f3fdf4"
                                             }
                                         ],
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
@@ -82,7 +82,7 @@
                             "visibility": "PRIVATE",
                             // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
                             // TO DO: optimiser le endpoint
-                            "endpoint": "41796939-b598-4c45-92ff-a6aae581e56e"
+                            "endpoint": "ae022611-13eb-4a18-8d04-9b7604a031cc"
                         }
                     }
                 ]

@@ -101,9 +101,9 @@ Le workflow « wfs-generic » permet de passer de la livraison à un flux WFS se
 Lancez les 3 commandes suivantes pour exécuter les 3 étapes :
 
 ```sh
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s mise-en-base
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s configuration-wfs
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s publication-wfs
+python -m ignf_gpf_api workflow -f wfs-generic_gpf.jsonc -s mise-en-base
+python -m ignf_gpf_api workflow -f wfs-generic_gpf.jsonc -s configuration-wfs
+python -m ignf_gpf_api workflow -f wfs-generic_gpf.jsonc -s publication-wfs
 ```
 
 La première commandes ne doit pas être instantanée : un traitement est effectué et les logs doivent vous être remontés.
