@@ -131,6 +131,7 @@ dmypy.json
 # Fichier de config personnel
 config.ini
 config_*.ini
+config-*.ini
 test.ini
 
 # Fichier python de test
