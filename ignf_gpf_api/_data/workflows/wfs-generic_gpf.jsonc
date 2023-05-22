@@ -26,9 +26,14 @@
                             "parameters": {}
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
-                        "comments": [],
+                        "comments": [
+                            "Tutoriel de mise en place d'un flux vecteur : création base intermédiaire"
+                        ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
-                        "tags": {}// TO DO: Tester la mise en base avec des tags. Exemple de format: {"Nom_Tag" : "Valeur_Tag"}
+                        "tags": {
+                            "tuto": "oui",
+                            "temp": "oui"
+                        }
                     }
                 ],
                 // Pour Bag donc pas besoin pour tester la gpf
@@ -42,7 +47,7 @@
                         "body_parameters": {
                             "type": "WMS-VECTOR",
                             "name": "Flux_vecteur",
-                            "layer_name": "flux_vecteur",
+                            "layer_name": "Flux_vecteur",
                             "type_infos": {
                                 "title": "Couche Canton du tutoriel",
                                 "abstract": "Exemple de flux à visualiser",
@@ -63,9 +68,14 @@
                             }
                         },
                         // Liste des commentaires ajoutés à la Configuration
-                        "comments": [],
+                        "comments": [
+                            "Tutoriel de mise en place d'un flux vecteur : configuration du flux"
+                        ],
                         // Liste des tags ajoutés à la Configuration
-                        "tags": {}// TO DO: Tester la mise en base avec des tags. Exemple de format: {"Nom_Tag" : "Valeur_Tag"}
+                        "tags": {
+                            "tuto": "oui",
+                            "temp": "oui"
+                        }
                     }
                 ]
             },

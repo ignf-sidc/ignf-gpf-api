@@ -11,6 +11,7 @@
                 "type": "VECTOR"
             },
             "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données vecteur"
             ],
             "tags": {
                 "tuto": "oui"
