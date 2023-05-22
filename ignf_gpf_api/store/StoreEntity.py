@@ -124,8 +124,7 @@ class StoreEntity(ABC):
         tags_filter = tags_filter if tags_filter is not None else {}
 
         # Fusion des filtres sur les attributs et les tags
-        d_params: Dict[str, Any] = infos_filter if infos_filter is not None else {}
-        d_params["tags[]"] = [f"{k}={v}" for k, v in tags_filter.items()]
+        d_params: Dict[str, Any] = {**infos_filter, **{f"tags[{k}]": v for k, v in tags_filter.items()}}
 
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_list"
