@@ -31,7 +31,7 @@ class OfferingAction(ActionAbstract):
         if o_offering is not None:
             # Récupération des liens
             o_offering.api_update()
-            s_urls = "\n   - ".join(o_offering["urls"])
+            s_urls = "\n   - ".join([d_url["url"] for d_url in o_offering["urls"]])
             Config().om.info(f"Offre créée : {self.__offering}\n   - {s_urls}")
         Config().om.info("Création d'une offre : terminé")
 
