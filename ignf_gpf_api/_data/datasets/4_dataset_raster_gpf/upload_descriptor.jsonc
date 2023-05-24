@@ -7,7 +7,7 @@
             "upload_infos": {
                 "description": "Jeu d'exemple raster",
                 "name": "EXAMPLE_DATASET_RASTER",
-                "srs": "",//TODO
+                "srs": "EPSG:5490",
                 "type": "RASTER"
             },
             "comments": [
