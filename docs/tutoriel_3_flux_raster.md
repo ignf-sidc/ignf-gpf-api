@@ -17,17 +17,24 @@ Le jeu de données « 1_dataset_raster » contient des données raster à télé
 Récupérez les données en lançant la commande :
 
 ```sh
-python -m ignf_gpf_api dataset -n 1_dataset_raster_gpf
+python -m ignf_gpf_api dataset -n 4_dataset_raster_gpf
 ```
 
 Observez la structure du fichier :
 
-```
-1_dataset_raster_gpf/
+```text
+4_dataset_raster_gpf/
 ├── test
-│   //TODO: mettre les noms des fichiers
+│   ├── 977-2018-0510-1979-U20N-0M50-E100.jp2
+│   ├── 977-2018-0510-1979-U20N-0M50-E100.tab
+│   ├── 977-2018-0510-1980-U20N-0M50-E100.jp2
+│   ├── 977-2018-0510-1980-U20N-0M50-E100.tab
+│   ├── 977-2018-0510-1981-U20N-0M50-E100.jp2
+│   ├── 977-2018-0510-1981-U20N-0M50-E100.tab
+│   ├── 977-2018-0510-1982-U20N-0M50-E100.jp2
+│   └── 977-2018-0510-1982-U20N-0M50-E100.tab
 ├── test.md5
-└── upload_descriptor.json
+└── upload_descriptor.jsonc
 ```
 
 Les données que la Géoplateforme va traiter sont situées dans le dossier `test`.
@@ -52,7 +59,7 @@ Chaque dataset contient :
 Livrer les données en indiquant le chemin du fichier descripteur au programme :
 
 ```sh
-python -m ignf_gpf_api upload -f 1_dataset_raster_gpf/upload_descriptor.json
+python -m ignf_gpf_api upload -f 4_dataset_raster_gpf/upload_descriptor.jsonc
 ```
 
 Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérification côté API avant de conclure que tout est bon. (Memo : cette partie est assez longue du à des problèmes de performance côté Wordline. Le problème a déjà été remonté.)
