@@ -13,7 +13,7 @@
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
-                                    "{store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_ARCHIVE)]}"
+                                    "{store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_VECTOR)]}"
                                 ]
                             },
                             "output": {
@@ -45,7 +45,7 @@
                         "type": "processing-execution",
                         "body_parameters": {
                             // On récupère l'id du traitement nommé "Création d'une pyramide vecteur"
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=Création d'une pyramide vecteur)]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Vector2Pyr)]}",
                             "inputs": {
                                 "stored_data": [
                                     // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
@@ -59,8 +59,6 @@
                                 }
                             },
                             "parameters": {
-                                // Tile Matrix Set à utiliser
-                                "tms": "PM",
                                 // Niveau du bas
                                 "bottom_level": "18",
                                 // Niveau du haut
@@ -71,12 +69,10 @@
                                         "table": "canton",
                                         "bottom_level": "18",
                                         "top_level": "5",
-                                        "attributes": "id,insee_dep,insee_reg,insee_can"
+                                        "attributes": ["id","insee_dep","insee_reg","insee_can"]
                                     }
                                 ],
-                                // BBOX : on veut conserver toute l'emprise, donc on laisse vide
-                                //"bbox": [], // A COMPLETER
-                                // Options de généralisation tippecanoe (par défaut: "-al -ap")
+                                // Options de généralisation tippecanoe
                                 "tippecanoe_options": "-S10"
                             }
                         },
@@ -144,7 +140,7 @@
                         "body_parameters": {
                             "visibility": "PRIVATE",
                             // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
-                            "endpoint": "6220b50fb579ed7b9ad7f4ae"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}"
                         }
                     }
                 ],
