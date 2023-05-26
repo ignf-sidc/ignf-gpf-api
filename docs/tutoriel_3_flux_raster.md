@@ -74,17 +74,47 @@ Ces étapes sont décrites grâces à un workflow.
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 
 ```sh
-python -m ignf_gpf_api workflow -n wms-generic_gpf.jsonc
+python -m ignf_gpf_api workflow -n generic-raster_gpf.jsonc
 ```
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 4 étapes. Il faudra lancer une commande pour chacune d'elles.
-// TODO: compléter partie aprés creation du workflow WMS soit faire le diagramme
+
+```mermaid
+---
+title: Workflow de publication de données Rasteur en WMS et WMST
+---
+%% doc mermaid ici https://mermaid-js.github.io/mermaid/#/flowchart?id=flowcharts-basic-syntax
+flowchart TD
+    A("upload") -->|pyramide| B("pyramide rasteur")
+    B -->|configuration-WMST| C("configuration WMST")
+    C -->|publication-WMST| D("offre WMST")
+    B -->|configuration-WMS| E("configuration WMS")
+    E -->|publication-WMS| F("offre WMS")
+```
 
 ## Traitement et publication
 
-Le workflow « wms-generic » permet de passer de la livraison à un flux WMS servant la donnée. Il comporte //TODO liste des étapes:
+Le workflow « wms-generic » permet de passer de la livraison à un flux WMS servant la donnée. Il comporte les étapes suivantes:
 
-// TODO commandes 
+* `pyramide` : création d'une pyramide avec les données en uploader
+* `configuration-WMST` : configuration d'un service de flux WMST à partir de la pyramide ;
+* `publication-WMST` : publication du service de flux WMST sur le bon endpoint.
+* `configuration-WMS` : configuration d'un service de flux WMS à partir de la pyramide ;
+* `publication-WMS` : publication du service de flux WMS sur le bon endpoint.
+
+La partie WMST et WMS sont indépendante : Il n'y a pas besoin
+
+Les commandes à lancé sont les suivantes :
+
+```sh
+python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s pyramide
+# partie publication WMST
+python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s configuration-WMST
+python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s publication-WMST
+# partie publication WMS
+python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s configuration-WMS
+python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s publication-WMS
+```
 
 La première commandes ne doit pas être instantanée : un traitement est effectué et les logs doivent vous être remontés.
 
