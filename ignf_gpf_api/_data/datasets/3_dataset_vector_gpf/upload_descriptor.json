@@ -6,7 +6,7 @@
             ],
             "upload_infos": {
                 "description": "Jeu d'exemple vecteur",
-                "name": "EXAMPLE_DATASET_VECTOR",
+                "name": "EXAMPLE_DATASET_VECTOR_BDD",
                 "srs": "EPSG:4326",
                 "type": "VECTOR"
             },
