@@ -12,13 +12,14 @@ from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.Endpoint import Endpoint
+from ignf_gpf_api.store.Static import Static
 from ignf_gpf_api.io.Config import Config
 
 
 class StoreEntityResolver(AbstractResolver):
-    """Classe permettant de résoudre des paramètres clé -> valeur.
+    """Classe permettant de résoudre des paramètres faisant référence à une entité.
 
-    Attributes :
+    Attributes:
         __name (str): nom de code du resolver
         __regex (Pattern[str]): regex du resolver
     """
@@ -31,10 +32,11 @@ class StoreEntityResolver(AbstractResolver):
         Offering.entity_name(): Offering,
         ProcessingExecution.entity_name(): ProcessingExecution,
         Endpoint.entity_name(): Endpoint,
+        Static.entity_name(): Static,
     }
 
     def __init__(self, name: str) -> None:
-        """Constructeur.
+        """À l'instanciation, le résolveur est nommé selon ce qui est indiqué dans la Config.
 
         Args:
             name (str): nom du résolveur

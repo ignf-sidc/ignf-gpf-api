@@ -8,13 +8,13 @@ from ignf_gpf_api.io.Config import Config
 class Dataset:
     """Classe portante les infos nécessaires à la création d'une livraison et issues du dataset.
 
-    Attributes :
-        __data_dirs (List[Path]) : liste des dossiers à envoyer à l'API
-        __upload_infos (Dict[str, str]) : informations permettant de créer la livraison
-        __comments (List[str]) : commentaires à ajouter à la livraison
-        __tags (Dict[str, str]) : tags à ajouter à la livraison
-        __data_files (List[Path]): liste des fichiers de donnée à importer sur l'entrepôt.
-        __md5_files (List[Path]): liste des fichiers md5 à importer sur l'entrepôt.
+    Attributes:
+        __data_dirs (List[Path]): Liste des dossiers à envoyer à l'API
+        __upload_infos (Dict[str, str]): Informations permettant de créer la livraison
+        __comments (List[str]): Commentaires à ajouter à la livraison
+        __tags (Dict[str, str]): Tags à ajouter à la livraison
+        __data_files (List[Path]): Liste des fichiers de donnée à importer sur l'entrepôt.
+        __md5_files (List[Path]): Liste des fichiers md5 à importer sur l'entrepôt.
         __root_dir (Path): Chemin racine du dataset (absolu ou relatif ?)
     """
 
@@ -55,7 +55,7 @@ class Dataset:
         S'il existe, rien n'est fait.
         """
         p_abs_root_dir = self.__root_dir.absolute()
-        s_pattern = Config().get("upload_creation", "md5_pattern")
+        s_pattern = Config().get("upload", "md5_pattern")
 
         # On parcourt le dictionnaire des répertoires
         for p_dir in self.__data_dirs:
@@ -106,8 +106,7 @@ class Dataset:
         return self.__md5_files
 
     def __list_rec(self, root_dir: Path, path_rep: Path) -> None:
-        """
-        Fonction récursive permettant de lister des fichiers
+        """Fonction récursive permettant de lister des fichiers
 
         Args:
             root_dir (Path): Chemin absolu du dossier racine

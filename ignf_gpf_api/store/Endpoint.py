@@ -17,7 +17,7 @@ class Endpoint(StoreEntity):
         Args:
             infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
             tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
-            page (Optional[int]): page à récupérer, toutes si None. Default to None.
+            page (Optional[int]): page à récupérer, toutes si None.
 
         Returns:
             List[T]: liste des entités retournées

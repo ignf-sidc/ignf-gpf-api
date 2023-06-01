@@ -12,13 +12,10 @@ T = TypeVar("T", bound="StoreEntity")
 
 
 class StoreEntity(ABC):
-    """StoreEntity : représentation Python d'une entité de l'entrepôt.
+    """Représentation Python d'une entité de l'entrepôt.
 
     Args:
-        store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
-
-    Attributes:
-        _store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
+        store_api_dict: Propriétés de l'entité telles que renvoyées par l'API
     """
 
     # ATTRIBUTS DE CLASSE (* => Attribut à écraser par les classes filles)
@@ -28,6 +25,7 @@ class StoreEntity(ABC):
     _entity_title: str = "Entité Abstraite"
 
     def __init__(self, store_api_dict: Dict[str, Any]) -> None:
+        """Classe instanciée à partir de la représentation envoyée par l'API d'une entité."""
         self._store_api_dict: Dict[str, Any] = store_api_dict
 
     ##############################################################
@@ -36,16 +34,18 @@ class StoreEntity(ABC):
 
     @property
     def id(self) -> str:
-        """Renvoie l'identifiant du StoreEntity
+        """Renvoie l'identifiant de l'entité.
+
         Returns:
-            str: l'identifiant du StoreEntity
+            Identifiant de l'entité.
         """
         return str(self._store_api_dict["_id"])
 
     def get_store_properties(self) -> Dict[str, Any]:
-        """Renvoie les propriétés de la StoreEntity
+        """Renvoie les propriétés de l'entité' telles que renvoyées par l'API.
+
         Returns:
-            Dict[str, Any]: propriétés de l'entité (sous la même forme que celle renvoyée par l'API)
+            Propriétés de l'entité (sous la même forme que celle renvoyée par l'API)
         """
         return self._store_api_dict
 
@@ -66,11 +66,11 @@ class StoreEntity(ABC):
         """Crée une nouvelle entité dans l'API.
 
         Args:
-            data (Optional[Dict[str, Any]]): Données nécessaires pour la création
-            route_params (Optional[Dict[str, Any]]): paramètres de résolution de la route. Defaults to None.
+            data: Données nécessaires pour la création.
+            route_params: Paramètres de résolution de la route.
 
         Returns:
-            StoreEntity: entité créée
+            (StoreEntity): Entité créée
         """
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_create"
@@ -89,10 +89,10 @@ class StoreEntity(ABC):
         """Récupère une entité depuis l'API.
 
         Args:
-            id_ (var): identifiant de l'entité
+            id_: Identifiant de l'entité
 
         Returns:
-            StoreEntity: l'entité instanciée correspondante
+            (StoreEntity): L'entité instanciée correspondante
         """
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_get"
@@ -109,12 +109,12 @@ class StoreEntity(ABC):
         """Liste les entités de l'API respectant les paramètres donnés.
 
         Args:
-            infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
-            tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
-            page (Optional[int]): page à récupérer, toutes si None. Default to None.
+            infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
+            tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
+            page: Numéro page à récupérer, toutes si None.
 
         Returns:
-            List[StoreEntity]: liste des entités retournées
+            (List[StoreEntity]): liste des entités retournées par l'API
         """
         # Nombre d'éléments max à lister par requête
         i_limit = Config().get_int("store_api", "nb_limit")
@@ -162,7 +162,9 @@ class StoreEntity(ABC):
         ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
 
     def api_update(self) -> None:
-        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API."""
+        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API.
+        Seules les informations Python sont modifiées, à ne pas confondre avec une fonction d'édition.
+        """
         # Génération du nom de la route
         s_route = f"{self._entity_name}_get"
         # Requête
@@ -175,14 +177,14 @@ class StoreEntity(ABC):
 
     @staticmethod
     def filter_dict_from_str(filters: Optional[str]) -> Dict[str, str]:
-        """Les filtres de store_entities basés sur les tags ou les propriétés sont écrits sous la forme `name=value,name=value`.
-        Cette fonction transforme une liste de tags sous cette forme en dictionnaire de la forme `{"name":"value","name":"value"}`.
+        """Les filtres basés les tags ou les propriétés sont écrits sous la forme `name=value,name=value`.
+        Cette fonction transforme une liste de clés-valeurs sous cette forme en dictionnaire de la forme `{"name":"value","name":"value"}`.
 
         Args:
-            filters (Optional[str]): Liste de filtres ayant la forme `name=value,name=value`
+            filters: Liste de filtres ayant la forme `name=value,name=value`
 
         Returns:
-            Dict[str, str]: Dictionnaire ayant la forme `{"name": "value", "name": "value"}`
+            Dictionnaire ayant la forme `{"name": "value", "name": "value"}`
 
         Examples:
             Conversion classique :
@@ -193,12 +195,12 @@ class StoreEntity(ABC):
             >>> filter_dict_from_str("name = value , name= value")
             {'name':'value','name':'value'}
 
-            La valeur None renvoie un dictionnaire vide
+            La valeur None renvoie un dictionnaire vide :
             >>> filter_dict_from_str(None)
             {}
 
         Raises:
-            StoreEntityError : si un filtre ne contient pas le caractère '='
+            StoreEntityError : Levée si un filtre ne contient pas le caractère `=`.
         """
         # Dictionnaire résultat
         d_filter: Dict[str, str] = {}
@@ -223,13 +225,13 @@ class StoreEntity(ABC):
     ##############################################################
 
     def to_json(self, indent: Optional[int] = None) -> str:
-        """Renvoie les données JSON de l'entité éventuellement formatées.
+        """Renvoie les propriétés de l'entité en JSON éventuellement indentées.
 
         Args:
-            indent (Optional[int], optional): Nombre d'espaces pour chaque indentation. Defaults to None.
+            indent: Nombre d'espaces pour chaque indentation.
 
         Returns:
-            str: Donnée JSON
+            Propriétés de l'entité en JSON éventuellement indentées.
         """
         return json.dumps(self._store_api_dict, indent=indent)
 

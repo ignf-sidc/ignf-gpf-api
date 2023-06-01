@@ -20,7 +20,7 @@ Récupérez les données en lançant la commande :
 python -m ignf_gpf_api dataset -n 3_dataset_vector_gpf
 ```
 
-Observez la structure du fichier :
+Observez la structure des données :
 
 ```
 3_dataset_vector_gpf/
@@ -59,14 +59,14 @@ Livrer les données en indiquant le chemin du fichier descripteur au programme :
 python -m ignf_gpf_api upload -f 3_dataset_vector_gpf/upload_descriptor.json
 ```
 
-Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérification côté API avant de conclure que tout est bon. (Memo : cette partie est assez longue du à des problèmes de performance côté Wordline. Le problème a déjà été remonté.)
+Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérifications côté API avant de conclure que tout est bon.
 
 ## Workflow
 
 Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géo-traitement(s),
 puis configurer un géo-service et le rendre accessible).
 
-Ces étapes sont décrites grâces à un workflow.
+Ces étapes sont décrites grâce à un workflow.
 
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 

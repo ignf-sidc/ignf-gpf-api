@@ -7,13 +7,15 @@ from ignf_gpf_api.workflow.resolver.Errors import ResolverError
 class DictResolver(AbstractResolver):
     """Classe permettant de résoudre des paramètres clé -> valeur.
 
-    Attributes :
+    Attributes:
         __name (str): nom de code du resolver
         __key_value (Dict[str, Any]): liste des paramètres à résoudre
     """
 
     def __init__(self, name: str, key_value: Dict[str, Any]) -> None:
-        """Constructeur.
+        """Classe instanciée grâce au nom du résolveur et à la liste des correspondances à résoudre.
+
+        La clé est la chaîne à remplacer et la valeur la chaîne de remplacement.
 
         Args:
             name (str): nom du résolveur
