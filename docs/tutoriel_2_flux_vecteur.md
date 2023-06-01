@@ -30,6 +30,7 @@ Observez la structure des données :
 │   ├── site.prj
 │   ├── site.shp
 │   └── site.shx
+├── style_site.sld
 ├── test.md5
 └── upload_descriptor.json
 ```
@@ -91,6 +92,14 @@ flowchart TD
     C -->|publication-wms| D("offre WMS")
 ```
 Memo: La création de pyramide n'est pas encore disponible avec cette version de la gpf. Elle devrait être livré en lot2A-r2 soit fin avril.
+
+
+## fichier statique
+
+Pour publier les données en WMS il faut appliquer un style aux données. La partie versement d'un style ne peut pas se faire avec ignf_gpf_api. Il faut donc ajouté le ficher de style à la mains avec swagger, Insomnia ou en ligne de commande. Tutoriel [ICI](https://gpf-beta.ign.fr/geoplateforme/tutoriels/vecteur/gestion_statique/)
+
+Un fichier statique pour le tuto est disponible dans le jeu de données test. Pour l'utiliser avec le workflow sans modification il faut le livrer avec `"name": "style_site"`.
+
 
 ## Traitement et publication
 
