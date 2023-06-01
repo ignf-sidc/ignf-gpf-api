@@ -92,9 +92,8 @@
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",
-                            // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
-                            // TO DO: optimiser le endpoint
-                            "endpoint": "ae012611-13eb-4a18-8d04-9b7604a031cc"
+                            // Endpoint de type WFS
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
                         }
                     }
                 ]
@@ -118,7 +117,7 @@
                                             {
                                                 "name": "site",
                                                 // TO DO : style mis en dure ici mais à optimiser. mettre un resolver pour les fichiers statiques ?
-                                                "style": "5c5daf4a-9488-440d-9dd4-ac8879f3fdf4"
+                                                "style": "1109ebf9-9524-4532-be7b-a775a06d8433"
                                             }
                                         ],
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
@@ -150,9 +149,8 @@
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",
-                            // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
-                            // TO DO: optimiser le endpoint
-                            "endpoint": "ae022611-13eb-4a18-8d04-9b7604a031cc"
+                            // Endpoint de type WMS
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
                         }
                     }
                 ]
