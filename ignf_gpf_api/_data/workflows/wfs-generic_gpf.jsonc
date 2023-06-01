@@ -116,8 +116,8 @@
                                         "relations": [
                                             {
                                                 "name": "site",
-                                                // TO DO : style mis en dure ici mais à optimiser. mettre un resolver pour les fichiers statiques ?
-                                                "style": "1109ebf9-9524-4532-be7b-a775a06d8433"
+                                                // récupération du ficher de style correspondant à la donnée
+                                                "style": "{store_entity.static.infos._id [INFOS(name=style_site)]}"
                                             }
                                         ],
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
