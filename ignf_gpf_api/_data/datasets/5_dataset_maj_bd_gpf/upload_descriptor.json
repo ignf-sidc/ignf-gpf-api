@@ -1,0 +1,58 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "lot_1"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple pour mise à jour BDD LOT 1",
+                "name": "EXAMPLE_DATASET_MAJ_BDD_1",
+                "srs": "EPSG:4326",
+                "type": "VECTOR"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données vecteur : LOT 1"
+            ],
+            "tags": {
+                "tuto": "oui",
+                "maj_BDD": "lot 1"
+            }
+        },
+        {
+            "data_dirs": [
+                "lot_2"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple pour mise à jour BDD LOT 2",
+                "name": "EXAMPLE_DATASET_MAJ_BDD_2",
+                "srs": "EPSG:4326",
+                "type": "VECTOR"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données vecteur : LOT 2"
+            ],
+            "tags": {
+                "tuto": "oui",
+                "maj_BDD": "lot 2"
+            }
+        },
+        {
+            "data_dirs": [
+                "lot_3"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple pour mise à jour BDD LOT 3",
+                "name": "EXAMPLE_DATASET_MAJ_BDD_3",
+                "srs": "EPSG:4326",
+                "type": "VECTOR"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données vecteur : LOT 3"
+            ],
+            "tags": {
+                "tuto": "oui",
+                "maj_BDD": "lot 3"
+            }
+        }
+    ]
+}
