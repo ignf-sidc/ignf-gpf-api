@@ -32,17 +32,17 @@ Observez la structure des données :
 │   └── site.shx
 ├── style_site.sld
 ├── test.md5
-└── upload_descriptor.json
+└── upload_descriptor.jsonc
 ```
 
 Les données que la Géoplateforme va traiter sont situées dans le dossier `test`.
 Le fichier `test.md5` permettra de valider les données téléversées côté Géoplateforme.
 
-Enfin, le fichier `upload_descriptor.json` permet de décrire la livraison à effectuer.
+Enfin, le fichier `upload_descriptor.jsonc` permet de décrire la livraison à effectuer.
 
 ## Fichier descripteur de livraison
 
-Ouvrez le fichier `upload_descriptor.json` pour avoir plus de détails.
+Ouvrez le fichier `upload_descriptor.jsonc` pour avoir plus de détails.
 
 Il est composé d'une liste de `datasets` représentant chacun une livraison distincte.
 
@@ -57,7 +57,7 @@ Chaque dataset contient :
 Livrer les données en indiquant le chemin du fichier descripteur au programme :
 
 ```sh
-python -m ignf_gpf_api upload -f 3_dataset_vector_gpf/upload_descriptor.json
+python -m ignf_gpf_api upload -f 3_dataset_vector_gpf/upload_descriptor.jsonc
 ```
 
 Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérifications côté API avant de conclure que tout est bon.

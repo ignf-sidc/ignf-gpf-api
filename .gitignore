@@ -137,3 +137,5 @@ test.ini
 # Fichier python de test
 test.py
 test_*.py
+/*_dataset_*
+/*.jsonc
