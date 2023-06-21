@@ -68,12 +68,12 @@ class ProcessingExecutionAction(ActionAbstract):
                 # Comportement de suppression des entités détectées
                 if self.__behavior == self.BEHAVIOR_DELETE:
                     Config().om.warning(f"Une donnée stockée équivalente à {o_stored_data} va être supprimée puis recréée.")
-                    Config().om.warning("Si une exécution de traitement liée à la donnée équivalente existe, elle sera supprimée.")
-                    # Récupération des traitements qui ont créé la donnée stockée équivalente
-                    l_process = ProcessingExecution.api_list(infos_filter={"output_stored_data": o_stored_data.id})
-                    for o_process in l_process:
-                        # Suppression du traitement
-                        o_process.api_delete()
+                    # Config().om.warning("Si une exécution de traitement liée à la donnée équivalente existe, elle sera supprimée.")
+                    # # Récupération des traitements qui ont créé la donnée stockée équivalente
+                    # l_process = ProcessingExecution.api_list(infos_filter={"output_stored_data": o_stored_data.id})
+                    # for o_process in l_process:
+                    #     # Suppression du traitement
+                    #     o_process.api_delete()
                     # Suppression de la donnée stockée
                     o_stored_data.api_delete()
                     # création de la ProcessingExecution
