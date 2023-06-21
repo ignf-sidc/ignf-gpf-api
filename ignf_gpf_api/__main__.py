@@ -24,10 +24,9 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.User import User
 from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
-
-from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 
 
 def main() -> None:

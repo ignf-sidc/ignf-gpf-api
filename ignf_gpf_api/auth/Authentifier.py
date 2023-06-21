@@ -26,7 +26,7 @@ class Authentifier(metaclass=Singleton):
 
     def __init__(self) -> None:
         # Sauvegarde de la conf comme attributs d'instance
-        self.__token_url: str = Config().get("store_authentification", "token_url")
+        self.__token_url: str = str(Config().get("store_authentification", "token_url"))
         self.__nb_attempts: int = Config().get_int("store_authentification", "nb_attempts")
         self.__sec_between_attempt: int = Config().get_int("store_authentification", "sec_between_attempt")
         self.__request_params = self.__get_request_params()
@@ -37,8 +37,8 @@ class Authentifier(metaclass=Singleton):
             self.__totp = pyotp.TOTP(s_totp_key)
         # Récupération des paramètres du proxy
         self.__proxy = {
-            "http": Config().get("store_authentification", "http_proxy"),
-            "https": Config().get("store_authentification", "https_proxy"),
+            "http": str(Config().get("store_authentification", "http_proxy")),
+            "https": str(Config().get("store_authentification", "https_proxy")),
         }
         # Permettra la sauvegarde du dernier jeton récupéré (pour éviter de multiples requêtes au serveur KeyCloak)
         self.__last_token: Optional[Token] = None
@@ -53,19 +53,19 @@ class Authentifier(metaclass=Singleton):
             Dict[str, str]: params de connection
         """
         # Récupération du type d'authentification
-        s_grant_type = Config().get("store_authentification", "grant_type")
+        s_grant_type = str(Config().get("store_authentification", "grant_type"))
         d_params = {"grant_type": s_grant_type}
         # Completion selon le type
         if s_grant_type == "password":
-            d_params["username"] = Config().get("store_authentification", "login")
-            d_params["password"] = Config().get("store_authentification", "password")
-            d_params["client_id"] = Config().get("store_authentification", "client_id")
-            s_client_secret = Config().get("store_authentification", "client_secret")
+            d_params["username"] = str(Config().get("store_authentification", "login"))
+            d_params["password"] = str(Config().get("store_authentification", "password"))
+            d_params["client_id"] = str(Config().get("store_authentification", "client_id"))
+            s_client_secret = str(Config().get("store_authentification", "client_secret"))
             if s_client_secret is not None:
                 d_params["client_secret"] = s_client_secret
         elif s_grant_type == "client_credentials":
-            d_params["client_id"] = Config().get("store_authentification", "client_id")
-            d_params["client_secret"] = Config().get("store_authentification", "client_secret")
+            d_params["client_id"] = str(Config().get("store_authentification", "client_id"))
+            d_params["client_secret"] = str(Config().get("store_authentification", "client_secret"))
         else:
             raise AuthentificationError(f"Type d'authentification « {s_grant_type} » inconnue. Vérifiez le paramétrage 'store_authentification.grant_type'.")
         return d_params

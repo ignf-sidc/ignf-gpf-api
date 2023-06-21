@@ -32,7 +32,7 @@ class DescriptorFileReader:
         self.__descriptor_dict = JsonHelper.load(descriptor_file_path, file_not_found_pattern="Fichier descripteur de livraison {json_path} non trouvé.")
 
         # Ouverture du schéma JSON à respecter
-        p_schema_file_path = Config.conf_dir_path / Config().get("json_schemas", "descriptor_file")
+        p_schema_file_path = Config.conf_dir_path / str(Config().get("json_schemas", "descriptor_file"))
         d_schema = JsonHelper.load(p_schema_file_path, file_not_found_pattern="Schéma de fichier descriptif de livraison {json_path} non trouvé. Contactez le support.")
 
         # Valide le fichier descriptif

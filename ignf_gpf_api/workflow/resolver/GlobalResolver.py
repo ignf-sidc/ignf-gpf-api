@@ -14,7 +14,7 @@ class GlobalResolver(metaclass=Singleton):
         __resolvers (Dict[str, AbstractResolver]): association nom du résolveur / résolveur.
     """
 
-    _regex: Pattern[str] = re.compile(Config().get("workflow_resolution_regex", "global_regex"))
+    _regex: Pattern[str] = re.compile(str(Config().get("workflow_resolution_regex", "global_regex")))
     _solved_strings: Dict[str, str] = {}
 
     def __init__(self) -> None:

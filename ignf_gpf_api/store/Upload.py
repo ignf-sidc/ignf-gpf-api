@@ -41,7 +41,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Génération du nom de la route
         s_route = f"{self._entity_name}_push_data"
         # Récupération du nom de la clé pour le fichier
-        s_file_key = Config().get("upload", "push_data_file_key")
+        s_file_key = str(Config().get("upload", "push_data_file_key"))
 
         # Ouverture du fichier et remplissage du tuple de fichier
         with file_path.open("rb") as o_file_binary:
@@ -88,7 +88,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Génération du nom de la route
         s_route = f"{self._entity_name}_push_md5"
         # Récupération du nom de la clé pour le fichier
-        s_file_key = Config().get("upload", "push_md5_file_key")
+        s_file_key = str(Config().get("upload", "push_md5_file_key"))
 
         # Ouverture du fichier et remplissage du tuple de fichier
         with file_path.open("rb") as o_file_binary:

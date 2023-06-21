@@ -24,7 +24,7 @@ class ApiRequester(metaclass=Singleton):
     PATCH = "PATCH"
     DELETE = "DELETE"
 
-    regex_content_range = re.compile(Config().get("store_api", "regex_content_range"))
+    regex_content_range = re.compile(str(Config().get("store_api", "regex_content_range")))
 
     def __init__(self) -> None:
         # Récupération du convertisseur Json
@@ -33,8 +33,8 @@ class ApiRequester(metaclass=Singleton):
         self.__sec_between_attempt = Config().get_int("store_api", "sec_between_attempt")
         # Récupération des paramètres du proxy
         self.__proxy = {
-            "http": Config().get("store_api", "http_proxy"),
-            "https": Config().get("store_api", "https_proxy"),
+            "http": str(Config().get("store_api", "http_proxy")),
+            "https": str(Config().get("store_api", "https_proxy")),
         }
 
     def route_request(
