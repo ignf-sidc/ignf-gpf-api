@@ -27,6 +27,8 @@ from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.User import User
 from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
 
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
+
 
 def main() -> None:
     """Fonction d'entrée."""
@@ -317,7 +319,18 @@ def workflow(o_args: argparse.Namespace) -> None:
             # on reset l'afficheur de log
             PrintLogHelper.reset()
             # et on lance l'étape en précisant l'afficheur de log et le comportement
-            o_workflow.run_step(o_args.step, lambda processing_execution: PrintLogHelper.print(processing_execution.api_logs()), behavior=s_behavior)
+            def callback_run_step(processing_execution: ProcessingExecution) -> None:
+                """fonction callback pour l'affichage des logs lors du suivi d'un traitement
+
+                Args:
+                    processing_execution (ProcessingExecution): processing exécution en cours
+                """
+                try:
+                    PrintLogHelper.print(processing_execution.api_logs())
+                except Exception:
+                    PrintLogHelper.print("Logs indisponibles pour le moment...")
+
+            o_workflow.run_step(o_args.step, callback_run_step, behavior=s_behavior)
     else:
         l_children: List[str] = []
         for p_child in p_root.iterdir():
