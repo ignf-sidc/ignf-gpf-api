@@ -182,6 +182,13 @@
                             "type": "WMS-RASTER",
                             "name": "{user.last_name} Flux raster WMS pyramide fusion",
                             "layer_name": "{user.last_name}__Flux_raster_wms_pyramide_fusion",
+                            "metadata": [
+                                {
+                                    "format": "application/xml",
+                                    "url": "https://geoservices.ign.fr/sites/default/files/2022-10/IGNF_BDORTHOr_2-0.xml",
+                                    "type": "ISO19115:2003"
+                                }
+                            ],
                             "type_infos": {
                                 "title": "raster du tutoriel",
                                 "abstract": "Exemple de flux à visualiser",

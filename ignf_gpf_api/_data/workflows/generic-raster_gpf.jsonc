@@ -25,8 +25,7 @@
                             "parameters": {
                                 "tms": "PM",
                                 "compression": "jpg",
-                                "interpolation": "bicubic",
-                                "mask": false
+                                "interpolation": "bicubic"
                             }
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
@@ -50,8 +49,15 @@
                             "type": "WMTS-TMS",
                             "name": "{user.last_name} Flux raster WMST",
                             "layer_name": "{user.last_name}__Flux_raster_wmst",
+                            "metadata": [
+                                {
+                                    "format": "application/xml",
+                                    "url": "https://geoservices.ign.fr/sites/default/files/2022-10/IGNF_BDORTHOr_2-0.xml",
+                                    "type": "ISO19115:2003"
+                                }
+                            ],
                             "type_infos": {
-                                "title": "raster du tutoriel",
+                                "title": "{user.last_name} -- raster du tutoriel",
                                 "abstract": "Exemple de flux à visualiser",
                                 "keywords": [
                                     "Tutoriel", "Raster"
@@ -62,7 +68,7 @@
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__pyramide), TAGS(tuto=oui)]}",
                                         "bottom_level": "18",
-                                        "top_level": "5"
+                                        "top_level": "0"
                                     }
                                 ]
                             },
@@ -113,19 +119,27 @@
                             "type": "WMS-RASTER",
                             "name": "{user.last_name} Flux raster WMS",
                             "layer_name": "{user.last_name}__Flux_raster_wms",
+                            "metadata": [
+                                {
+                                    "format": "application/xml",
+                                    "url": "https://geoservices.ign.fr/sites/default/files/2022-10/IGNF_BDORTHOr_2-0.xml",
+                                    "type": "ISO19115:2003"
+                                }
+                            ],
                             "type_infos": {
-                                "title": "raster du tutoriel",
+                                "title": "{user.last_name} -- raster du tutoriel",
                                 "abstract": "Exemple de flux à visualiser",
                                 "keywords": [
                                     "Tutoriel", "Raster"
                                 ],
+                                "interpolation": "NEAREST-NEIGHBOUR",
                                 "used_data": [
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__pyramide), TAGS(tuto=oui)]}",
                                         "bottom_level": "18",
-                                        "top_level": "5"
+                                        "top_level": "0"
                                     }
                                 ]
                             },
