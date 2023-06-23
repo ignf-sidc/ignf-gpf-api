@@ -61,7 +61,7 @@ class AuthentifierTestCase(GpfTestCase):
             # Requête 1 : vérification du type
             self.assertEqual(o_history[0].method.lower(), "post", "method == post")
             # Requête 1 : vérification du text
-            s_text = "grant_type=password&username=TEST_LOGIN&password=TEST_PASSWORD&client_id=TEST_CLIENT_ID&client_secret=None"
+            s_text = "grant_type=password&username=TEST_LOGIN&password=TEST_PASSWORD&client_id=TEST_CLIENT_ID&client_secret="
             self.assertEqual(o_history[0].text, s_text, "check text")
 
     def test_get_access_token_string_2_attempts(self) -> None:

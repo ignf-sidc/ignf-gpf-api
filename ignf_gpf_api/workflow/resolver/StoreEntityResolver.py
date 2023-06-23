@@ -42,7 +42,7 @@ class StoreEntityResolver(AbstractResolver):
             name (str): nom du résolveur
         """
         super().__init__(name)
-        self.__regex: Pattern[str] = re.compile(str(Config().get("workflow_resolution_regex", "store_entity_regex")))
+        self.__regex: Pattern[str] = re.compile(Config().get_str("workflow_resolution_regex", "store_entity_regex"))
 
     def resolve(self, string_to_solve: str) -> str:
         # On parse la chaîne à résoudre
