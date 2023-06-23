@@ -57,7 +57,7 @@ class FileResolver(AbstractResolver):
         __name (str): nom de code du resolver
     """
 
-    _file_regex = re.compile(Config().get("workflow_resolution_regex", "file_regex"))
+    _file_regex = re.compile(Config().get_str("workflow_resolution_regex", "file_regex"))
 
     def __resolve_str(self, string_to_solve: str, s_path: str) -> str:
         """fonction privé qui se charge d'extraire une string d'un fichier texte
