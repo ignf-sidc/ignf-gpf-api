@@ -150,8 +150,8 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10}),
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 2, "limit": 10}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 2, "limit": 10}),
                 ],
             )
             # Vérifications sur l_entities
@@ -173,7 +173,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
                 ],
             )
             # Vérifications sur l_entities
@@ -194,7 +194,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -209,7 +209,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -224,7 +224,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
