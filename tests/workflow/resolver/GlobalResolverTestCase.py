@@ -18,6 +18,8 @@ class GlobalResolverTestCase(GpfTestCase):
         "John_country": "England",
         "John_city": "London",
         "John_street": "rue_Londres",
+        "city": ["Paris", "London"],
+        "store": {"Paris": "Champs-Elysée", "London": "rue_Londres"},
     }
     profession = {
         "chef": "Jacques",
@@ -43,6 +45,10 @@ class GlobalResolverTestCase(GpfTestCase):
         """Vérifie le bon fonctionnement de la fonction resolve."""
         # Cas simples : une seule résolution
         self.assertEqual(GlobalResolver().resolve("{localization.Jacques_country}"), "France")
+        self.assertEqual(GlobalResolver().resolve('{"localization":"Jacques_country"}'), "France")
+        self.assertEqual(GlobalResolver().resolve('["localization","Jacques_country"]'), "France")
+        self.assertEqual(GlobalResolver().resolve('{"localization":"store"}'), "{'Paris': 'Champs-Elysée', 'London': 'rue_Londres'}")
+        self.assertEqual(GlobalResolver().resolve('["localization","city"]'), "['Paris', 'London']")
         self.assertEqual(GlobalResolver().resolve("{profession.sailor}"), "John")
         # Cas avancés : deux résolutions l'une dans l'autre
         self.assertEqual(GlobalResolver().resolve("{localization.{profession.sailor}_country}"), "England")
