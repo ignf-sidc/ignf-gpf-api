@@ -101,3 +101,21 @@ class ActionAbstract(ABC):
                 d_tags[s_tag] = tags[s_tag]
         # On peut maintenant renvoyer les filtres
         return d_infos, d_tags
+
+    ##############################################################
+    # Fonctions de représentation
+    ##############################################################
+    def __str__(self) -> str:
+        # Affichage à destination d'un utilisateur.
+        # On affiche l'id et le nom si possible.
+
+        # Liste pour stocker les infos à afficher
+        l_infos = []
+        # Ajout de l'id
+        l_infos.append(f"workflow={self.workflow_context}")
+        return f"{self.__class__.__name__}({', '.join(l_infos)})"
+
+    def __repr__(self) -> str:
+        # Affichage à destination d'un développeur.
+        # Pour le moment, pas de différence avec __str__
+        return str(self)
