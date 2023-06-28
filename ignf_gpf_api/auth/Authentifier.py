@@ -3,6 +3,7 @@ import traceback
 from http import HTTPStatus
 from typing import Dict, Optional
 import requests
+import pyotp
 
 from ignf_gpf_api.pattern.Singleton import Singleton
 from ignf_gpf_api.auth.Token import Token
@@ -25,14 +26,49 @@ class Authentifier(metaclass=Singleton):
 
     def __init__(self) -> None:
         # Sauvegarde de la conf comme attributs d'instance
-        self.__token_url: str = Config().get("store_authentification", "token_url")
-        self.__login: str = Config().get("store_authentification", "login")
-        self.__password: str = Config().get("store_authentification", "password")
-        self.__client_id: str = Config().get("store_authentification", "client_id")
+        self.__token_url: str = Config().get_str("store_authentification", "token_url")
         self.__nb_attempts: int = Config().get_int("store_authentification", "nb_attempts")
         self.__sec_between_attempt: int = Config().get_int("store_authentification", "sec_between_attempt")
+        self.__request_params = self.__get_request_params()
+        # Gestion TOTP
+        self.__totp: Optional[pyotp.TOTP] = None
+        s_totp_key: Optional[str] = Config().get("store_authentification", "totp_key")
+        if s_totp_key:
+            self.__totp = pyotp.TOTP(s_totp_key)
+        # Récupération des paramètres du proxy
+        self.__proxy = {
+            "http": Config().get_str("store_authentification", "http_proxy"),
+            "https": Config().get_str("store_authentification", "https_proxy"),
+        }
         # Permettra la sauvegarde du dernier jeton récupéré (pour éviter de multiples requêtes au serveur KeyCloak)
         self.__last_token: Optional[Token] = None
+
+    def __get_request_params(self) -> Dict[str, str]:
+        """Lit la config, la compile et renvoie un dictionnaire contenant les prams de connection.
+
+        Raises:
+            AuthentificationError: levée si type d'authentification inconnu
+
+        Returns:
+            Dict[str, str]: params de connection
+        """
+        # Récupération du type d'authentification
+        s_grant_type = Config().get_str("store_authentification", "grant_type")
+        d_params = {"grant_type": s_grant_type}
+        # Completion selon le type
+        if s_grant_type == "password":
+            d_params["username"] = Config().get_str("store_authentification", "login")
+            d_params["password"] = Config().get_str("store_authentification", "password")
+            d_params["client_id"] = Config().get_str("store_authentification", "client_id")
+            s_client_secret = Config().get_str("store_authentification", "client_secret")
+            if s_client_secret is not None:
+                d_params["client_secret"] = s_client_secret
+        elif s_grant_type == "client_credentials":
+            d_params["client_id"] = Config().get_str("store_authentification", "client_id")
+            d_params["client_secret"] = Config().get_str("store_authentification", "client_secret")
+        else:
+            raise AuthentificationError(f"Type d'authentification « {s_grant_type} » inconnue. Vérifiez le paramétrage 'store_authentification.grant_type'.")
+        return d_params
 
     def __request_new_token(self, nb_attempts: int) -> None:
         """Récupère un nouveau jeton de zéro et le sauvegarde.
@@ -47,18 +83,18 @@ class Authentifier(metaclass=Singleton):
         """
         o_response = None
         try:
+            # Préparation données d'authentification
+            d_data = self.__request_params.copy()
+            if self.__totp:
+                d_data["totp"] = self.__totp.now()
             # Requête KeyCloak de récupération du jeton
             o_response = requests.post(
                 self.__token_url,
-                data={
-                    "grant_type": "password",
-                    "username": self.__login,
-                    "password": self.__password,
-                    "client_id": self.__client_id,
-                },
+                data=d_data,
                 headers={
                     "content-type": "application/x-www-form-urlencoded",
                 },
+                proxies=self.__proxy,
             )
             if o_response.status_code == HTTPStatus.OK:
                 self.__last_token = Token(o_response.json())

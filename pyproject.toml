@@ -28,6 +28,7 @@ dependencies = [
     "types-toml",
     "python-dateutil",
     "types-python-dateutil",
+    "pyotp",
 ]
 
 [project.optional-dependencies]

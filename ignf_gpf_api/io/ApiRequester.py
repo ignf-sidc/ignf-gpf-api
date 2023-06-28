@@ -24,13 +24,18 @@ class ApiRequester(metaclass=Singleton):
     PATCH = "PATCH"
     DELETE = "DELETE"
 
-    regex_content_range = re.compile(Config().get("store_api", "regex_content_range"))
+    regex_content_range = re.compile(Config().get_str("store_api", "regex_content_range"))
 
     def __init__(self) -> None:
         # Récupération du convertisseur Json
         self.__jsonConverter = JsonConverter()
         self.__nb_attempts = Config().get_int("store_api", "nb_attempts")
         self.__sec_between_attempt = Config().get_int("store_api", "sec_between_attempt")
+        # Récupération des paramètres du proxy
+        self.__proxy = {
+            "http": Config().get_str("store_api", "http_proxy"),
+            "https": Config().get_str("store_api", "https_proxy"),
+        }
 
     def route_request(
         self,
@@ -101,6 +106,8 @@ class ApiRequester(metaclass=Singleton):
         Returns:
             réponse si succès
         """
+        Config().om.debug(f"url_request({url}, {method}, {params}, {data})")
+
         i_nb_attempts = 0
         while True:
             i_nb_attempts += 1
@@ -171,14 +178,12 @@ class ApiRequester(metaclass=Singleton):
         Returns:
             réponse si succès
         """
-        d_proxies = {
-            "http": None,
-            "https": None,
-        }
+        Config().om.debug(f"__url_request({url}, {method}, {params}, {data})")
+
         # Définition du header
         d_headers = Authentifier().get_http_header(json_content_type=files is None)
         # Execution de la requête
-        r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=d_proxies, files=files)  # type:ignore
+        r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=self.__proxy, files=files)
 
         # Vérification du résultat...
         if r.status_code >= 200 and r.status_code < 300:

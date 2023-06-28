@@ -1,4 +1,5 @@
 from unittest.mock import patch, MagicMock
+from typing import Any
 
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.store.Configuration import Configuration
@@ -52,7 +53,21 @@ class OfferingActionTestCase(GpfTestCase):
         # mock de offering
         o_mock_offering = MagicMock()
         o_mock_offering.api_launch.return_value = None
-        o_mock_offering.__getitem__.return_value = "getitem"
+
+        def side_effect(arg: str) -> Any:
+            """side_effect pour récupération des élément de offering, gestion du cas des url qui sont un dictionnaire
+
+            Args:
+                arg (str): clef à affiché
+
+            Returns:
+                Any: valeur de retour
+            """
+            if arg == "urls":
+                return [{"url": "http://1"}, {"url": "http://2"}]
+            return "getitem"
+
+        o_mock_offering.__getitem__.side_effect = side_effect
 
         with patch.object(o_offering_action, "find_offering", return_value=o_mock_offering) as o_mock_offering_action_list_offering:
             with patch.object(Offering, "api_create", return_value=None) as o_mock_offering_api_create:

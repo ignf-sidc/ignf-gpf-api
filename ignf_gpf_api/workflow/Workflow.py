@@ -73,7 +73,7 @@ class Workflow:
         # Pour chaque action définie dans le workflow, instanciation de l'objet Action puis création sur l'entrepôt
         for d_action_raw in d_step_definition["actions"]:
             # création de l'action
-            o_action = Workflow.generate(f"{step_name}", d_action_raw, o_parent_action, behavior)
+            o_action = Workflow.generate(step_name, d_action_raw, o_parent_action, behavior)
             # résolution
             o_action.resolve()
             # exécution de l'action

@@ -37,7 +37,8 @@ class Config(metaclass=Singleton):
             self.__config_parser.read_file(f_ini)
 
         # Définition du niveau de log pour l'OutputManager par défaut
-        self.__output_manager.set_log_level(self.get("logging", "log_level"))
+        s_level: str = self.get_str("logging", "log_level", "INFO")
+        self.__output_manager.set_log_level(s_level)
 
     def set_output_manager(self, output_manager: Any) -> None:
         self.__output_manager = output_manager
@@ -68,7 +69,7 @@ class Config(metaclass=Singleton):
         """
         return self.__config_parser
 
-    def get(self, section: str, option: str, fallback: Optional[str] = None) -> str:
+    def get(self, section: str, option: str, fallback: Optional[str] = None) -> Optional[str]:
         """Récupère la valeur associée au paramètre demandé.
 
         Args:
@@ -77,7 +78,23 @@ class Config(metaclass=Singleton):
             fallback (Optional[str], optional): valeur par défaut.
 
         Returns:
-            la valeur du paramètre
+            Optional[str]: la valeur du paramètre
+        """
+        s_value: Optional[str] = self.__config_parser.get(section, option, fallback=fallback)
+        if s_value == "":
+            return None
+        return s_value
+
+    def get_str(self, section: str, option: str, fallback: Optional[str] = None) -> str:
+        """Récupère la valeur du paramètre demandé.
+
+        Args:
+            section (str): section du paramètre
+            option (str): option du paramètre
+            fallback (Optional[str], optional): valeur par défaut. Defaults to None.
+
+        Returns:
+            Optional[str]: la valeur du paramètre
         """
         return self.__config_parser.get(section, option, fallback=fallback)  # type: ignore
 
@@ -126,4 +143,4 @@ class Config(metaclass=Singleton):
         Returns:
             chemin racine du dossier temporaire à utiliser
         """
-        return Path(self.get("miscellaneous", "tmp_workdir"))
+        return Path(self.get_str("miscellaneous", "tmp_workdir"))

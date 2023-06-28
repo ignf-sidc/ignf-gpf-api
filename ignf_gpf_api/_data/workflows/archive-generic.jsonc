@@ -9,7 +9,7 @@
                         "type": "processing-execution",
                         "body_parameters": {
                             // On récupère l'id du traitement nommé "Intégration d'archives livrées"
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration d'archives livrées)]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=archive)]}",
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
@@ -52,7 +52,8 @@
                                 "used_data": [
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom et l'un de ses tags
-                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Archive), TAGS(tuto=oui)]}"
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Archive), TAGS(tuto=oui)]}",
+                                        "sub_name": "archive"
                                     }
                                 ]
                             }

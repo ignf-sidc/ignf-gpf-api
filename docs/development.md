@@ -99,15 +99,31 @@ Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/pyth
   - Config().om.critical("message")
 - Configuration centralisée via la classe Config()​ (cf. [Utilisation comme module Python](comme-module.md))
 
+## Déploiement des version dev et prod sur PyPI
 
-## Publication sur PyPI
+### Mise à jour des branches prod et dev
 
-La publication du package sur PyPI est automatique sur Github après la [création d'une release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new) :
+Pour effectuer un déploiment de la librairie ignf-gpf-api, il faut d'abord modifier le numéro de version dans le fichier __init__.py dans le dossier ignf_gpf_api/ignf_gpf_api/ .
+
+Puis il faut résoudre ou faire les pull request entre dev et prod en fonction de l'avancement du projet pour avoir des branches dev et prod à jour.
+
+```py
+__version__ = <x.y.z>
+```
+
+### Création de la (pre)-release
+
+Pour publier une nouvelle version, qui va être ensuite publiée comme librairie sur PyPi, il faut [créer une (pre)-release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new) :
 * créez une release de test sur la branche **dev** versionnée selon le modèle `tx.y.z` (ex : t1.2.3) pour déployer une nouvelle version du module en test ;
 * créez une release sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production ;
 
-Si besoin, voici les commandes pour l'effectuer à la main :
+### Publication sur PyPI
 
+La publication du package sur PyPI est automatique sur Github grâce aux actions [CI Dev](https://github.com/ignf-sidc/ignf-gpf-api/actions/workflows/ci-dev.yml) et [CI Prod](https://github.com/ignf-sidc/ignf-gpf-api/actions/workflows/ci-prod.yml) :
+
+
+Si besoin, voici les commandes pour l'effectuer à la main :
+ 
 ```sh
 export FLIT_PASSWORD=<token>
 ```

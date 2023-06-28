@@ -88,13 +88,13 @@ class ActionAbstract(ABC):
             critère de filtres sur les infos et les tags
         """
         # On liste les filtres sur les informations (uniqueness_constraint_infos)
-        l_attributes = Config().get(config_key, "uniqueness_constraint_infos").split(";")
+        l_attributes = Config().get_str(config_key, "uniqueness_constraint_infos", "").split(";")
         d_infos = {}
         for s_infos in l_attributes:
             if s_infos != "":
                 d_infos[s_infos] = infos.get(s_infos, None)
         # On liste les filtres sur les tags (uniqueness_constraint_tags)
-        l_tags = Config().get(config_key, "uniqueness_constraint_tags").split(";")
+        l_tags = Config().get_str(config_key, "uniqueness_constraint_tags", "").split(";")
         d_tags = {}
         for s_tag in l_tags:
             if s_tag != "":

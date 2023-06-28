@@ -48,5 +48,5 @@ class DatasetTestCase(GpfTestCase):
         s_data_md5 = p_md5.read_text(encoding="UTF-8")
         for p_file in o_dataset.data_files:
             s_md5 = FileHelper.md5_hash(p_file)
-            s_line = f"{s_md5}  data/{p_file.relative_to(p_root)}"
+            s_line = f"{s_md5}  {p_file.relative_to(p_root)}"
             self.assertIn(s_line, s_data_md5)
