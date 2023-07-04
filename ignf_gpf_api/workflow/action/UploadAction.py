@@ -103,20 +103,56 @@ class UploadAction:
             Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:
-        """Téléverse les fichiers de données."""
+        """Téléverse les fichiers de données (listés dans le dataset)."""
         if self.__upload is not None:
-            Config().om.info(f"Livraison {self.__upload['name']} : téléversement des {len(self.__dataset.data_files)} fichiers de données...")
+            # Liste les fichiers déjà téléversés sur l'entrepôt et récupère leur taille
+            l_arborescence = self.__upload.api_tree()
+            d_destination_taille = UploadAction.parse_tree(l_arborescence)
+
             for p_file_path, s_api_path in self.__dataset.data_files.items():
+                # Regarde si le fichier du dataset est déjà dans la liste des fichiers téléversés sur l'entrepôt
+                # NB: sur l'entrepôt, tous les fichiers "data" sont dans le dossier parent "data" TODO vérifier que c'est toujours le cas !
+                s_data_api_path = f"data/{s_api_path}"
+                if s_data_api_path in d_destination_taille:
+                    # le fichier est déjà livré, on check sa taille :
+                    if d_destination_taille[s_data_api_path] == p_file_path.stat().st_size:
+                        # le fichier a été complètement téléversé. On passe au fichier suivant.
+                        continue
+
+                    # le fichier n'a pas été téléversé en totalité.
+                    # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié téléversé.
+                    # Sinon il faudra reprendre le téléversement (!)
+                    self.__upload.api_delete_data_file(s_data_api_path)
+
+                # sinon, on doit livrer le fichier
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
-            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.data_files)} fichiers de données ont été téléversés avec succès.")
+            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.data_files)} fichiers de données ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
-        """Téléverse les fichiers de clefs."""
+        """Téléverse les fichiers de clefs (listés dans le dataset)."""
         if self.__upload is not None:
-            Config().om.info(f"Livraison {self.__upload['name']} : téléversement des {len(self.__dataset.md5_files)} fichiers de clefs...")
+            # Liste les fichiers md5 téléversés sur l'entrepôt et récupère leur taille
+            l_arborescence = self.__upload.api_tree()
+            d_destination_taille = UploadAction.parse_tree(l_arborescence)
+
             for p_file_path in self.__dataset.md5_files:
+                # Regarde si le fichier du dataset est déjà dans la liste des fichiers téléversés sur l'entrepôt
+                # NB: sur l'entrepot, tous les fichiers md5 sont à la racine
+                s_api_path = p_file_path.name
+                if s_api_path in d_destination_taille:
+                    # le fichier est déjà livré, on check sa taille :
+                    if d_destination_taille[s_api_path] == p_file_path.stat().st_size:
+                        # le fichier a été complètement téléversé. On passe au fichier suivant.
+                        continue
+
+                    # le fichier n'a pas été téléversé en totalité.
+                    # Si le mode "Append" n'est pas disponible sur le serveur, il faut supprimer le fichier à moitié téléversé.
+                    # Sinon il faudra reprendre le téléversement (!)
+                    self.__upload.api_delete_data_file(s_api_path)
+
+                # sinon, on doit livrer le fichier
                 self.__upload.api_push_md5_file(p_file_path)
-            Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.md5_files)} fichiers de clefs ont été téléversés avec succès.")
+            Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.md5_files)} fichiers md5 ont été ajoutés avec succès.")
 
     def __close(self) -> None:
         """Ferme la livraison."""

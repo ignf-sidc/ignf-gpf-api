@@ -110,16 +110,14 @@ class UploadActionTestCase(GpfTestCase):
             return Upload(d_dict)
 
         def config_get(a: str, b: str) -> Optional[str]:  # pylint:disable=invalid-name,unused-argument
-            if a == "upload":
-                if b == "uniqueness_constraint_infos":
-                    return "name"
-                if b == "uniqueness_constraint_tags":
-                    return ""
-                if b == "behavior_if_exists":
-                    return "STOP"
-            if a == "upload":
-                if b == "status_open":
-                    return "OPEN"
+            if b == "uniqueness_constraint_infos":
+                return "name"
+            if b == "uniqueness_constraint_tags":
+                return ""
+            if b == "behavior_if_exists":
+                return "STOP"
+            if b == "status_open":
+                return "OPEN"
             raise Exception("cas non prévu", a, b)
 
         with patch.object(UploadAction, "find_upload", return_value=return_value_find_upload) as o_mock_find_upload, \
