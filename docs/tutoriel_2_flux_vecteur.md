@@ -57,7 +57,7 @@ Chaque dataset contient :
 Livrer les données en indiquant le chemin du fichier descripteur au programme :
 
 ```sh
-python -m ignf_gpf_api upload -f 3_dataset_vector_gpf/upload_descriptor.jsonc
+python -m ignf_gpf_api upload -f 3_dataset_vector_gpf/upload_descriptor.json
 ```
 
 Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend la fin des vérifications côté API avant de conclure que tout est bon.
