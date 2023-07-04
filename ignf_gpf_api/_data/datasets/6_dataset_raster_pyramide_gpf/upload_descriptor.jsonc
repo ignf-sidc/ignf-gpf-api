@@ -1,0 +1,55 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "pyramide1"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple raster pyramide1",
+                "name": "EXAMPLE_DATASET_RASTER1",
+                "srs": "EPSG:5490",
+                "type": "RASTER"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données raster"
+            ],
+            "tags": {
+                "tuto": "oui"
+            }
+        },
+        {
+            "data_dirs": [
+                "pyramide2"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple raster pyramide2",
+                "name": "EXAMPLE_DATASET_RASTER2",
+                "srs": "EPSG:5490",
+                "type": "RASTER"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données raster"
+            ],
+            "tags": {
+                "tuto": "oui"
+            }
+        },
+        {
+            "data_dirs": [
+                "pyramide3"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple raster pyramide3",
+                "name": "EXAMPLE_DATASET_RASTER3",
+                "srs": "EPSG:5490",
+                "type": "RASTER"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données raster"
+            ],
+            "tags": {
+                "tuto": "oui"
+            }
+        }
+    ]
+}

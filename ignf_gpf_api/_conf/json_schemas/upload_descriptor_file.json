@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Schéma JSON pour un fichier descripteur de livraison",
+    "description": "",
+    "type": "object",
+    "required": [
+        "datasets"
+    ],
+    "properties": {
+        "datasets": {
+            "type": "array",
+            "minLength": 1,
+            "items": {
+                "type": "object",
+                "required": [
+                    "data_dirs",
+                    "upload_infos",
+                    "tags"
+                ],
+                "properties": {
+                    "data_dirs": {
+                        "type": "array",
+                        "minLength": 1,
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "upload_infos": {
+                        "type": "object",
+                        "required": [
+                            "description",
+                            "name",
+                            "srs",
+                            "type"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "description": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "srs": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "RASTER",
+                                    "VECTOR",
+                                    "ARCHIVE"
+                                ]
+                            }
+                        }
+                    },
+                    "tags": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+    www:
+        build:
+          context: .
+          dockerfile: Dockerfile
+          args:
+            - tag=${TAG}
+        container_name: "${PREFIX}__ignf_gpf_api"
+        ports:
+          - "${PORT}:80"
+        env_file:
+          .env
+        restart: always

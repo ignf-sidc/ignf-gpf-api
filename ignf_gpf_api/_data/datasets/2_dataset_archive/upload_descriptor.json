@@ -1,0 +1,21 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "CANTON"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple archive",
+                "name": "EXAMPLE_DATASET_ARCHIVE",
+                "srs": "EPSG:4326",
+                "type": "ARCHIVE"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des archives !"
+            ],
+            "tags": {
+                "tuto": "oui"
+            }
+        }
+    ]
+}

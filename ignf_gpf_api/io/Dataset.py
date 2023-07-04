@@ -1,34 +1,35 @@
 from pathlib import Path
 from typing import Any, Dict, List
-import hashlib
+from ignf_gpf_api.helper.FileHelper import FileHelper
+
 from ignf_gpf_api.io.Config import Config
 
 
 class Dataset:
     """Classe portante les infos nécessaires à la création d'une livraison et issues du dataset.
 
-    Attributes :
-        __data_dirs (List[Path]) : liste des dossiers à envoyer à l'API
-        __upload_infos (Dict[str, str]) : informations permettant de créer la livraison
-        __comments (List[str]) : commentaires à ajouter à la livraison
-        __tags (Dict[str, str]) : tags à ajouter à la livraison
-        __data_files (List[Path]): liste des fichiers de donnée à importer sur l'entrepôt.
-        __md5_files (List[Path]): liste des fichiers md5 à importer sur l'entrepôt.
+    Attributes:
+        __data_dirs (List[Path]): Liste des dossiers à envoyer à l'API
+        __upload_infos (Dict[str, str]): Informations permettant de créer la livraison
+        __comments (List[str]): Commentaires à ajouter à la livraison
+        __tags (Dict[str, str]): Tags à ajouter à la livraison
+        __data_files (List[Path]): Liste des fichiers de donnée à importer sur l'entrepôt.
+        __md5_files (List[Path]): Liste des fichiers md5 à importer sur l'entrepôt.
         __root_dir (Path): Chemin racine du dataset (absolu ou relatif ?)
     """
 
-    def __init__(self, d_dataset: Dict[Any, Any], p_root_dir: Path) -> None:
+    def __init__(self, dataset: Dict[Any, Any], p_root_dir: Path) -> None:
         """Constructeur
 
         Args:
-            d_dataset (Dict[Any, Any]): dataset tel que dans le fichier descriptif de livraison
+            dataset (Dict[Any, Any]): dataset tel que dans le fichier descriptif de livraison
             p_root_dir (Path): Chemin racine à partir duquel sont défini les data_dirs
         """
         # Définition des attributs
-        self.__data_dirs: List[Path] = [Path(i) for i in d_dataset["data_dirs"]]  # Chemins relatifs
-        self.__upload_infos: Dict[str, str] = d_dataset["upload_infos"]
-        self.__comments: List[str] = d_dataset["comments"]
-        self.__tags: Dict[str, str] = d_dataset["tags"]
+        self.__data_dirs: List[Path] = [Path(i) for i in dataset["data_dirs"]]  # Chemins relatifs
+        self.__upload_infos: Dict[str, str] = dataset["upload_infos"]
+        self.__comments: List[str] = dataset["comments"]
+        self.__tags: Dict[str, str] = dataset["tags"]
         self.__data_files: Dict[Path, str] = {}
         self.__md5_files: List[Path] = []
         self.__root_dir: Path = p_root_dir
@@ -54,7 +55,7 @@ class Dataset:
         S'il existe, rien n'est fait.
         """
         p_abs_root_dir = self.__root_dir.absolute()
-        s_pattern = Config().get("upload_creation", "md5_pattern")
+        s_pattern = Config().get("upload", "md5_pattern")
 
         # On parcourt le dictionnaire des répertoires
         for p_dir in self.__data_dirs:
@@ -70,7 +71,7 @@ class Dataset:
                 for p_file in self.__data_files:
                     if p_md5_dir in p_file.parents:
                         p_file_trunc = p_file.relative_to(self.__root_dir)
-                        d_md5[p_file_trunc] = self.__file_md5_hash(p_file)
+                        d_md5[p_file_trunc] = FileHelper.md5_hash(p_file)
 
                 # A la fin on rempli le fichier .md5
                 with open(p_md5_dir_suf, "w", encoding="utf-8") as o_md5_file:
@@ -105,8 +106,7 @@ class Dataset:
         return self.__md5_files
 
     def __list_rec(self, root_dir: Path, path_rep: Path) -> None:
-        """
-        Fonction récursive permettant de lister des fichiers
+        """Fonction récursive permettant de lister des fichiers
 
         Args:
             root_dir (Path): Chemin absolu du dossier racine
@@ -127,19 +127,3 @@ class Dataset:
                 p_api = p_rep_elt.relative_to(self.__root_dir)
                 # Remplissage du dictionnaire __data_files
                 self.__data_files[p_rep_elt] = str(p_api.parent)
-
-    def __file_md5_hash(self, file_path: Path) -> str:
-        """
-        Méthode permettant de calculer la clef md5 d'un fichier
-
-        Args:
-            file_path (Path): chemin d'un fichier
-
-        Returns:
-            str: clef md5 du fichier
-        """
-        s_file_hash = hashlib.md5()
-        with file_path.open("rb") as o_file:
-            for o_chunk in iter(lambda: o_file.read(4096), b""):
-                s_file_hash.update(o_chunk)
-        return s_file_hash.hexdigest()

@@ -1,0 +1,21 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "CANTON"
+            ],
+            "upload_infos": {
+                "description": "Jeu d'exemple vecteur",
+                "name": "EXAMPLE_DATASET_VECTOR",
+                "srs": "EPSG:2154",
+                "type": "VECTOR"
+            },
+            "comments": [
+                "Ceci est un jeu de données d'exemple contenant des données vecteur"
+            ],
+            "tags": {
+                "tuto": "oui"
+            }
+        }
+    ]
+}

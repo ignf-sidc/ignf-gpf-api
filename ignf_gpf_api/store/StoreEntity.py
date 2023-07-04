@@ -1,6 +1,8 @@
 import json
 from abc import ABC
 from typing import Any, Dict, List, Optional, Type, TypeVar
+from datetime import datetime
+from dateutil import parser
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
@@ -10,10 +12,10 @@ T = TypeVar("T", bound="StoreEntity")
 
 
 class StoreEntity(ABC):
-    """StoreEntity : représentation Python d'une entité de l'entrepôt.
+    """Représentation Python d'une entité de l'entrepôt.
 
-    Attributes :
-        _store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
+    Args:
+        store_api_dict: Propriétés de l'entité telles que renvoyées par l'API
     """
 
     # ATTRIBUTS DE CLASSE (* => Attribut à écraser par les classes filles)
@@ -23,12 +25,7 @@ class StoreEntity(ABC):
     _entity_title: str = "Entité Abstraite"
 
     def __init__(self, store_api_dict: Dict[str, Any]) -> None:
-        """Constructeur. On récupère l'id et le reste des données.
-        On lance la fonction de vérification.
-
-        Args:
-            store_api_dict (Dict[str, Any]) : propriétés de l'entité dans la même forme que celle renvoyée par l'API
-        """
+        """Classe instanciée à partir de la représentation envoyée par l'API d'une entité."""
         self._store_api_dict: Dict[str, Any] = store_api_dict
 
     ##############################################################
@@ -37,38 +34,50 @@ class StoreEntity(ABC):
 
     @property
     def id(self) -> str:
-        """Renvoie l'identifiant du StoreEntity
+        """Renvoie l'identifiant de l'entité.
+
         Returns:
-            str: l'identifiant du StoreEntity
+            Identifiant de l'entité.
         """
         return str(self._store_api_dict["_id"])
 
     def get_store_properties(self) -> Dict[str, Any]:
-        """Renvoie les propriétés de la StoreEntity
+        """Renvoie les propriétés de l'entité' telles que renvoyées par l'API.
+
         Returns:
-            Dict[str, Any]: propriétés de l'entité (sous la même forme que celle renvoyée par l'API)
+            Propriétés de l'entité (sous la même forme que celle renvoyée par l'API)
         """
         return self._store_api_dict
+
+    @classmethod
+    def entity_name(cls) -> str:
+        return cls._entity_name
+
+    @classmethod
+    def entity_title(cls) -> str:
+        return cls._entity_title
 
     ##############################################################
     # Fonction d'interface avec l'API
     ##############################################################
 
     @classmethod
-    def api_create(cls: Type[T], data: Optional[Dict[str, Any]]) -> T:
+    def api_create(cls: Type[T], data: Optional[Dict[str, Any]], route_params: Optional[Dict[str, Any]] = None) -> T:
         """Crée une nouvelle entité dans l'API.
 
         Args:
-            data (Optional[Dict[str, Any]]): Données nécessaires pour la création
+            data: Données nécessaires pour la création.
+            route_params: Paramètres de résolution de la route.
 
         Returns:
-            StoreEntity: entité créée
+            (StoreEntity): Entité créée
         """
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_create"
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
+            route_params=route_params,
             method=ApiRequester.POST,
             data=data,
         )
@@ -80,10 +89,10 @@ class StoreEntity(ABC):
         """Récupère une entité depuis l'API.
 
         Args:
-            id_ (var): identifiant de l'entité
+            id_: Identifiant de l'entité
 
         Returns:
-            StoreEntity: l'entité instanciée correspondante
+            (StoreEntity): L'entité instanciée correspondante
         """
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_get"
@@ -96,35 +105,55 @@ class StoreEntity(ABC):
         return cls(o_response.json())
 
     @classmethod
-    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None) -> List[T]:
+    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
         """Liste les entités de l'API respectant les paramètres donnés.
 
         Args:
-            infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
-            tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
+            infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
+            tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
+            page: Numéro page à récupérer, toutes si None.
 
         Returns:
-            List[StoreEntity]: liste des entités retournées
+            (List[StoreEntity]): liste des entités retournées par l'API
         """
+        # Nombre d'éléments max à lister par requête
+        i_limit = Config().get_int("store_api", "nb_limit")
+
         # Gestion des paramètres nuls
         infos_filter = infos_filter if infos_filter is not None else {}
         tags_filter = tags_filter if tags_filter is not None else {}
 
         # Fusion des filtres sur les attributs et les tags
-        d_params: Dict[str, Any] = infos_filter if infos_filter is not None else {}
-        d_params["tags[]"] = [f"{k}={v}" for k, v in tags_filter.items()]
+        d_params: Dict[str, Any] = {**infos_filter, **{f"tags[{k}]": v for k, v in tags_filter.items()}}
 
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_list"
 
-        # Requête
-        o_response = ApiRequester().route_request(
-            s_route,
-            params=d_params,
-        )
+        # Liste pour stocker les entités
+        l_entities: List[T] = []
 
-        # Instanciation
-        return [cls(x) for x in o_response.json()]
+        # Numéro de la page demandée
+        i_page = 1 if page is None else page
+
+        # Flag indiquant s'il faut requêter la prochaine page
+        b_next_page = True
+
+        # On requête tant qu'on est à la page spécifiquement demandée ou qu'on veut toutes les pages et que la dernière n'était pas vide
+        while i_page == page or (page is None and b_next_page is True):
+            # On liste les entités à la bonne page
+            o_response = ApiRequester().route_request(
+                s_route,
+                params={**d_params, **{"page": i_page, "limit": i_limit}},
+            )
+            # On les ajoute à la liste
+            l_entities += [cls(i) for i in o_response.json()]
+            # On regarde le Content-Range de la réponse pour savoir si on doit refaire une requête pour récupérer la fin
+            b_next_page = ApiRequester.range_next_page(o_response.headers.get("Content-Range"), len(l_entities))
+            # On passe à la page suivante
+            i_page += 1
+
+        # On renvoie la liste des entités récupérées
+        return l_entities
 
     def api_delete(self) -> None:
         """Supprime l'entité de l'API."""
@@ -133,7 +162,9 @@ class StoreEntity(ABC):
         ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
 
     def api_update(self) -> None:
-        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API."""
+        """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API.
+        Seules les informations Python sont modifiées, à ne pas confondre avec une fonction d'édition.
+        """
         # Génération du nom de la route
         s_route = f"{self._entity_name}_get"
         # Requête
@@ -145,22 +176,37 @@ class StoreEntity(ABC):
         self._store_api_dict = o_response.json()
 
     @staticmethod
-    def filter_dict_from_str(s_filters: Optional[str]) -> Dict[str, str]:
-        """Les filtres de store_entities basés sur les tags ou les propriétés sont écrits sous la forme name=value,name=value
-        Cette fonction transforme une liste de tags sous cette forme en dictionnaire de la forme {"name":"value","name":"value"}
+    def filter_dict_from_str(filters: Optional[str]) -> Dict[str, str]:
+        """Les filtres basés les tags ou les propriétés sont écrits sous la forme `name=value,name=value`.
+        Cette fonction transforme une liste de clés-valeurs sous cette forme en dictionnaire de la forme `{"name":"value","name":"value"}`.
 
         Args:
-            s_filters (Optional[str]): liste de filtres ayant la forme : name=value,name=value
+            filters: Liste de filtres ayant la forme `name=value,name=value`
+
         Returns:
-            Dict[str, str]: dictionnaire ayant la forme {"name":"value","name":"value"}
+            Dictionnaire ayant la forme `{"name": "value", "name": "value"}`
+
+        Examples:
+            Conversion classique :
+            >>> filter_dict_from_str("name=value,name=value")
+            {'name':'value','name':'value'}
+
+            Les espaces ne changent rien :
+            >>> filter_dict_from_str("name = value , name= value")
+            {'name':'value','name':'value'}
+
+            La valeur None renvoie un dictionnaire vide :
+            >>> filter_dict_from_str(None)
+            {}
+
         Raises:
-            StoreEntityError : si un filtre ne contient pas le caractère '='
+            StoreEntityError : Levée si un filtre ne contient pas le caractère `=`.
         """
         # Dictionnaire résultat
         d_filter: Dict[str, str] = {}
-        if s_filters is not None:
+        if filters is not None:
             # On extrait les filtres séparés par une virgule
-            l_filter = s_filters.split(",")
+            l_filter = filters.split(",")
 
             # Pour chaque filtre
             for s_filter in l_filter:
@@ -179,13 +225,13 @@ class StoreEntity(ABC):
     ##############################################################
 
     def to_json(self, indent: Optional[int] = None) -> str:
-        """Renvoie les données JSON de l'entité éventuellement formatées.
+        """Renvoie les propriétés de l'entité en JSON éventuellement indentées.
 
         Args:
-            indent (Optional[int], optional): Nombre d'espace pour chaque indentation. Defaults to None.
+            indent: Nombre d'espaces pour chaque indentation.
 
         Returns:
-            str: Donnée JSON
+            Propriétés de l'entité en JSON éventuellement indentées.
         """
         return json.dumps(self._store_api_dict, indent=indent)
 
@@ -194,26 +240,29 @@ class StoreEntity(ABC):
     ##############################################################
 
     def __getitem__(self, key: str) -> Any:
-        """Les entités se comportent comme des dictionnaires pour l'accès aux attributs
-
-        Args:
-            key (str): attribut à récupérer
-
-        Returns:
-            Any: Valeur associée à l'attribut
-        """
+        # La classe se comporte comme un dictionnaire
+        # et permet de récupérer les info de _store_api_dict
         return self._store_api_dict[key]
+
+    ##############################################################
+    # Fonction test d'égalité
+    ##############################################################
+
+    def __eq__(self, obj: object) -> bool:
+        if isinstance(obj, StoreEntity):
+            return self.id == obj.id
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     ##############################################################
     # Fonctions de représentation
     ##############################################################
     def __str__(self) -> str:
-        """Affichage à destination d'un utilisateur.
-        On affiche l'id et le nom si possible.
+        # Affichage à destination d'un utilisateur.
+        # On affiche l'id et le nom si possible.
 
-        Returns:
-            str: affichage
-        """
         # Liste pour stocker les infos à afficher
         l_infos = []
         # Ajout de l'id
@@ -221,14 +270,33 @@ class StoreEntity(ABC):
         # Ajout du nom si possible
         if "name" in self._store_api_dict:
             l_infos.append(f"name={self['name']}")
+        # Ajout du layer_name si possible
+        if "layer_name" in self._store_api_dict:
+            l_infos.append(f"layer_name={self['layer_name']}")
         # Retour
         return f"{self.__class__.__name__}({', '.join(l_infos)})"
 
     def __repr__(self) -> str:
-        """Affichage à destination d'un développeur.
-        Pour le moment, pas de différence avec __str__.
+        # Affichage à destination d'un développeur.
+        # Pour le moment, pas de différence avec __str__
+        return str(self)
+
+    ##############################################################
+    # Fonctions autres
+    ##############################################################
+    def _get_datetime(self, key: str) -> Optional[datetime]:
+        """Récupère la datetime associée à la clef indiquée en parsant la chaîne.
+
+        Args:
+            key (str): clef
 
         Returns:
-            str: affichage
+            Optional[datetime]: datetime parsée
         """
-        return str(self)
+        if key not in self._store_api_dict:
+            self.api_update()
+        if key in self._store_api_dict:
+            o_datetime = parser.isoparse(self[key])
+            if isinstance(o_datetime, datetime):
+                return o_datetime
+        return None

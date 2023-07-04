@@ -1,4 +1,4 @@
-"""API Python pour simplifier l'utilisation de l'API Entrepôt Géoplateforme."""
+"""API Python pour simplifier l'utilisation de l'API Entrepôt Géo-plateforme."""
 
 import configparser
 import io
@@ -12,18 +12,25 @@ import shutil
 import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
-from ignf_gpf_api.action.UploadAction import UploadAction
+from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.helper.PrintLogHelper import PrintLogHelper
+from ignf_gpf_api.io.Errors import ConflictError
+from ignf_gpf_api.io.ApiRequester import ApiRequester
+from ignf_gpf_api.workflow.Workflow import Workflow
+from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
+from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolver
+from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.io.OutputManager import OutputManager
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
+from ignf_gpf_api.store.User import User
+from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
 
 
 def main() -> None:
     """Fonction d'entrée."""
-    # Instanciation du logger
-    Config().set_output_manager(OutputManager())
     # Résolution des paramètres utilisateurs
     o_args = parse_args()
 
@@ -32,22 +39,33 @@ def main() -> None:
         raise GpfApiError(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
     Config().read(o_args.config)
 
+    # Si debug on monte la config
+    if o_args.debug:
+        Config().om.set_log_level("DEBUG")
+
     # Exécution de l'action demandée
     if o_args.task == "auth":
         auth(o_args)
+    elif o_args.task == "me":
+        me_()
     elif o_args.task == "config":
         config(o_args)
     elif o_args.task == "upload":
         upload(o_args)
     elif o_args.task == "dataset":
         dataset(o_args)
+    elif o_args.task == "workflow":
+        workflow(o_args)
+    elif o_args.task == "me":
+        o_user = User.api_get("me")
+        print(o_user.to_json(indent=4))
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     """Parse les paramètres utilisateurs.
 
     Args:
-        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé. Defaults to None.
+        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé.
 
     Returns:
         argparse.Namespace: paramètres
@@ -56,10 +74,13 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser = argparse.ArgumentParser(prog="ignf_gpf_api", description="Exécutable pour interagir avec l'API Entrepôt de la Géoplateforme.")
     o_parser.add_argument("--ini", dest="config", default="config.ini", help="Chemin vers le fichier de config à utiliser (config.ini par défaut)")
     o_parser.add_argument("--version", action="version", version=f"%(prog)s v{ignf_gpf_api.__version__}")
+    o_parser.add_argument("--debug", dest="debug", required=False, default=False, action="store_true", help="Passe l'appli en mode debug (plus de messages affichés)")
     o_sub_parsers = o_parser.add_subparsers(dest="task", metavar="TASK", required=True, help="Tâche à effectuer")
     # Parser pour auth
     o_parser_auth = o_sub_parsers.add_parser("auth", help="Authentification")
     o_parser_auth.add_argument("--show", type=str, choices=["token", "header"], default=None, help="Donnée à renvoyer")
+    # Parser pour me
+    o_parser_auth = o_sub_parsers.add_parser("me", help="Mes informations")
     # Parser pour config
     o_parser_auth = o_sub_parsers.add_parser("config", help="Configuration")
     o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier où sauvegarder la configuration (si null, la configuration est affichée)")
@@ -74,8 +95,16 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser_auth.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
     # Parser pour dataset
     o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
-    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à enregistrer")
-    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier descriptor à créer")
+    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à extraire")
+    o_parser_auth.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
+    # Parser pour workflow
+    o_parser_auth = o_sub_parsers.add_parser("workflow", help="Workflow")
+    o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser OU chemin où extraire le dataset")
+    o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
+    o_parser_auth.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
+    o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+    # Parser pour me
+    o_parser_auth = o_sub_parsers.add_parser("me", help="me")
     return o_parser.parse_args(args)
 
 
@@ -93,6 +122,40 @@ def auth(o_args: argparse.Namespace) -> None:
         print(Authentifier().get_http_header())
     else:
         print("Authentification réussie.")
+
+
+def me_() -> None:
+    """Affiche les informations de l'utilisateur connecté."""
+    # Requêtage
+    o_response = ApiRequester().route_request("me_get")
+    # Formatage
+    d_info = o_response.json()
+    # Info de base
+    l_texts = [
+        "Vos informations :",
+        f"  * email : {d_info['email']}",
+        f"  * nom : {d_info['first_name']} {d_info['last_name']}",
+        f"  * votre id : {d_info['_id']}",
+    ]
+    # Gestion des communautés
+    if not d_info["communities_member"]:
+        l_texts.append("Vous n'êtes membre d'aucune communauté.")
+    else:
+        l_cm = d_info["communities_member"]
+        l_texts.append("")
+        l_texts.append(f"Vous êtes membre de {len(l_cm)} communauté(s) :")
+        for d_cm in l_cm:
+            d_community = d_cm["community"]
+            l_rights = [k.replace("_rights", "") for k, v in d_cm["rights"].items() if v is True]
+            s_rights = ", ".join(l_rights)
+            l_texts.append("")
+            l_texts.append(f"  * communauté « {d_community['name']} » :")
+            l_texts.append(f"      - id de la communauté : {d_community['_id']}")
+            l_texts.append(f"      - id du datastore : {d_community['datastore']}")
+            l_texts.append(f"      - nom technique : {d_community['technical_name']}")
+            l_texts.append(f"      - droits : {s_rights}")
+    # Affichage
+    print("\n".join(l_texts))
 
 
 def config(o_args: argparse.Namespace) -> None:
@@ -150,8 +213,10 @@ def config(o_args: argparse.Namespace) -> None:
 
 
 def upload(o_args: argparse.Namespace) -> None:
-    """Authentifie l'utilisateur et retourne les informations de connexion demandées.
-    Si aucune information est demandée, confirme juste la bonne authentification.
+    """Création/Gestion des Livraison (Upload).
+    Si un fichier descriptor est précisé, on effectue la livraison.
+    Si un id est précisé, on affiche la livraison.
+    Sinon on liste les Livraisons avec éventuellement des filtres.
 
     Args:
         o_args (argparse.Namespace): paramètres utilisateurs
@@ -160,9 +225,13 @@ def upload(o_args: argparse.Namespace) -> None:
         p_file = Path(o_args.file)
         o_dfu = DescriptorFileReader(p_file)
         for o_dataset in o_dfu.datasets:
-            o_ua = UploadAction(o_dataset, behavior=o_args.behavior)
+            s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
+            o_ua = UploadAction(o_dataset, behavior=s_behavior)
             o_upload = o_ua.run()
-            print(f"Livraison {o_upload} créée avec succès.")
+            if UploadAction.monitor_until_end(o_upload, print):
+                print(f"Livraison {o_upload} créée avec succès.")
+            else:
+                print(f"Livraison {o_upload} créée en erreur !")
     elif o_args.id is not None:
         o_upload = Upload.api_get(o_args.id)
         print(o_upload)
@@ -175,22 +244,26 @@ def upload(o_args: argparse.Namespace) -> None:
 
 
 def dataset(o_args: argparse.Namespace) -> None:
-    """List les jeux de données test proposés et si demandé en export un.
+    """Liste les jeux de données d'exemple proposés et, si demandé par l'utilisateur, en export un.
 
     Args:
         o_args (argparse.Namespace): paramètres utilisateurs
     """
-    p_root = Path(__file__).parent.parent / "tests" / "_data" / "test_datasets"
+    p_root = Config.data_dir_path / "datasets"
     if o_args.name is not None:
-        print(f"Exportation du jeux de donnée '{o_args.name}'...")
-        p_output = Path(o_args.file) if o_args.file is not None else Path(f"{o_args.name}.json")
-        print(f"Chemin de sortie : {p_output}")
-        # Copie du fichier JSON
-        p_from = p_root / f"{o_args.name}.json"
-        shutil.copy(p_from, p_output)
-        # Copie du répertoire
-        shutil.copytree(p_from.with_suffix(""), p_output.with_suffix(""))
-        print("Exportation terminée.")
+        s_dataset = str(o_args.name)
+        print(f"Exportation du jeu de donnée '{s_dataset}'...")
+        p_from = p_root / s_dataset
+        if p_from.exists():
+            p_output = Path(o_args.folder) if o_args.folder is not None else Path(s_dataset)
+            if p_output.exists():
+                p_output = p_output / s_dataset
+            print(f"Chemin de sortie : {p_output}")
+            # Copie du répertoire
+            shutil.copytree(p_from, p_output)
+            print("Exportation terminée.")
+        else:
+            raise GpfApiError(f"Jeu de données '{s_dataset}' introuvable.")
     else:
         l_children: List[str] = []
         for p_child in p_root.iterdir():
@@ -199,13 +272,84 @@ def dataset(o_args: argparse.Namespace) -> None:
         print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
 
 
+def workflow(o_args: argparse.Namespace) -> None:
+    """Vérifie ou exécute un workflow.
+
+    Args:
+        o_args (argparse.Namespace): paramètres utilisateurs
+    """
+    p_root = Config.data_dir_path / "workflows"
+    if o_args.name is not None:
+        s_workflow = str(o_args.name)
+        print(f"Exportation du workflow '{s_workflow}'...")
+        p_from = p_root / s_workflow
+        if p_from.exists():
+            p_output = Path(o_args.file) if o_args.file is not None else Path(s_workflow)
+            if p_output.exists() and p_output.is_dir():
+                p_output = p_output / s_workflow
+            print(f"Chemin de sortie : {p_output}")
+            # Copie du répertoire
+            shutil.copyfile(p_from, p_output)
+            print("Exportation terminée.")
+        else:
+            raise GpfApiError(f"Workflow '{s_workflow}' introuvable.")
+    elif o_args.file is not None:
+        # Ouverture du fichier
+        p_workflow = Path(o_args.file).absolute()
+        Config().om.info(f"Ouverture du workflow {p_workflow}...")
+        o_workflow = Workflow(p_workflow.stem, JsonHelper.load(p_workflow))
+        # Y'a-t-il une étape d'indiquée
+        if o_args.step is None:
+            # Si pas d'étape indiquée, on valide le workflow
+            Config().om.info("Validation du workflow...")
+            l_errors = o_workflow.validate()
+            if l_errors:
+                s_errors = "\n   * ".join(l_errors)
+                Config().om.error(f"{len(l_errors)} erreurs ont été trouvées dans le workflow.")
+                Config().om.info(f"Liste des erreurs :\n   * {s_errors}")
+                raise GpfApiError("Workflow invalide.")
+            Config().om.info("Le workflow est valide.", green_colored=True)
+        else:
+            # Sinon, on définit des résolveurs
+            GlobalResolver().add_resolver(StoreEntityResolver("store_entity"))
+            GlobalResolver().add_resolver(UserResolver("user"))
+            # le comportement
+            s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
+            # on reset l'afficheur de log
+            PrintLogHelper.reset()
+            # et on lance l'étape en précisant l'afficheur de log et le comportement
+            def callback_run_step(processing_execution: ProcessingExecution) -> None:
+                """fonction callback pour l'affichage des logs lors du suivi d'un traitement
+
+                Args:
+                    processing_execution (ProcessingExecution): processing exécution en cours
+                """
+                try:
+                    PrintLogHelper.print(processing_execution.api_logs())
+                except Exception:
+                    PrintLogHelper.print("Logs indisponibles pour le moment...")
+
+            o_workflow.run_step(o_args.step, callback_run_step, behavior=s_behavior)
+    else:
+        l_children: List[str] = []
+        for p_child in p_root.iterdir():
+            if p_child.is_file():
+                l_children.append(p_child.name)
+        print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
+
+
 if __name__ == "__main__":
     try:
         main()
+        sys.exit(0)
     except GpfApiError as e_gpf_api_error:
-        print(e_gpf_api_error.message)
-        sys.exit(1)
+        Config().om.critical(e_gpf_api_error.message)
+    except ConflictError:
+        # gestion "globale" des ConflictError (ConfigurationAction et OfferingAction
+        # possèdent chacune leur propre gestion)
+        Config().om.critical("La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
     except Exception as e_exception:
-        print("Erreur non spécifiée :")
-        print(traceback.format_exc())
-        sys.exit(1)
+        Config().om.critical("Erreur non spécifiée :")
+        Config().om.error(traceback.format_exc())
+        Config().om.critical("Erreur non spécifiée.")
+    sys.exit(1)

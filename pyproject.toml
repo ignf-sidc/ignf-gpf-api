@@ -1,5 +1,5 @@
 [build-system]
-requires = ["flit >=3.7"]
+requires = ["flit >=3.7,<4"]
 build-backend = "flit.buildapi"
 
 [project]
@@ -15,28 +15,34 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
 ]
-dynamic = ["version", "description"]
+dynamic = ["version"]
+description = "Python API to simplify the use of the GPF HTTPS API."
 
 dependencies = [
-    "requests >=2.6",
+    "requests>=2.6",
     "configparser",
     "types-requests",
     "jsonschema",
     "jsonc-parser",
-    "beartype",
     "toml",
     "types-toml",
+    "python-dateutil",
+    "types-python-dateutil",
+    "pyotp",
 ]
 
 [project.optional-dependencies]
 test = [
     "black<23",
-    "pylint==2.13",
-    "mypy==0.942",
+    "pylint==2.17",
+    "mypy==0.950",
     "requests_mock",
     "coverage",
 ]
-doc = ["sphinx"]
+doc = [
+    "mkdocs-material==9.*",
+    "mkdocstrings[python]",
+]
 
 [project.urls]
 Source = "https://github.com/VSasyan/ignf-gpf-api"
