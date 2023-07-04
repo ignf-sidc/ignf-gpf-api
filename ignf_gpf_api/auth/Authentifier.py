@@ -133,7 +133,7 @@ class Authentifier(metaclass=Singleton):
             raise AuthentificationError(s_error_message) from e_error
 
     def get_http_header(self, json_content_type: bool = False) -> Dict[str, str]:
-        """Renvoie une entête HTTP d'authentification à destination du KeyCloak et consommable par une requête via le module requests.
+        """Renvoie une entête HTTP d'authentification à destination de KeyCloak et consommable par une requête via le module requests.
 
         Args:
             json_content_type (bool): indique si le `content-type` `application/json` doit être spécifié

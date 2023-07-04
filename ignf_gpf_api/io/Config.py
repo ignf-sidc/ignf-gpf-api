@@ -8,8 +8,7 @@ from ignf_gpf_api.io.Errors import ConfigReaderError
 
 
 class Config(metaclass=Singleton):
-    """Classe singleton de gestion de la configuration.
-
+    """Lit le fichier de configuration (classe Singleton).
     Attributes:
         __config_parser (configparser): ConfigParser
         __ini_file_path (string): Chemin vers le fichier de configuration BaGI

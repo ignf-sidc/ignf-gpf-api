@@ -22,6 +22,41 @@ Cela devrait renvoyer :
 Authentification réussie.
 ```
 
+## Mes datastores
+
+Dans la configuration, vous devez indiquer l'identifiant du datastore à utiliser.
+
+Si vous ne le connaissez pas, il est possible de lister les communautés auxquelles vous participez et, pour chacune d'elle, le datastore qui lui est associé.
+
+Commande pour lister les communautés auxquelles vous appartenez :
+
+```sh
+python -m ignf_gpf_api me
+```
+
+Cela devrait renvoyer :
+
+```
+Vos informations :
+  * email : prenom.nom@me.io
+  * nom : Prénom Nom
+  * votre id : 100000000000000000000024
+
+Vous êtes membre de 1 communauté(s) :
+
+  * communauté « Bac à sable » :
+      - id de la communauté : 200000000000000000000024
+      - id du datastore : 300000000000000000000024
+      - nom technique : bac-a-sable
+      - droits : community, uploads, processings, datastore, stored_data, broadcast
+```
+
+Dans cet exemple, l'identifiant du datastore à utiliser est `300000000000000000000024`.
+
+!!! warning "Attention"
+
+    Cela ne fonctionnera que si les autres paramètres (nom d'utilisateur, mot de passe et urls) sont corrects.
+
 
 ## Afficher toute la configuration
 

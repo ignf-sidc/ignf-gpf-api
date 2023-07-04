@@ -4,7 +4,11 @@
 
 ::: ignf_gpf_api.io.Config
 
+::: ignf_gpf_api.io.Dataset
+
 ::: ignf_gpf_api.io.DescriptorFileReader
+
+::: ignf_gpf_api.io.JsonConverter
 
 ::: ignf_gpf_api.io.OutputManager
 

@@ -36,7 +36,7 @@ class FileResolver(AbstractResolver):
         ["valeur 1", "valeur 2"]
         ```
 
-        Chaîne à remplacer : `{"values": "{file.str(list.json)"]}`
+        Chaîne à remplacer : `{"values": "{file.list(list.json)"]}`
 
         Résultat : `{"values": ["valeur 1", "valeur 2"]}`
 
