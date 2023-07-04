@@ -83,7 +83,7 @@ class UploadAction:
                 Config().om.info(f"Livraison identique {o_upload} trouvée, le programme va la reprendre et la compléter.")
                 self.__upload = o_upload
         else:
-            # Si le livraison est nulle, on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
+            # Si la livraison est nulle, on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
             self.__upload = Upload.api_create(self.__dataset.upload_infos)
             Config().om.info(f"Livraison {self.__upload['name']} créée avec succès.")
 
@@ -106,17 +106,20 @@ class UploadAction:
         """Téléverse les fichiers de données (listés dans le dataset)."""
         if self.__upload is not None:
             # Liste les fichiers déjà téléversés sur l'entrepôt et récupère leur taille
+            Config().om.info(f"Livraison {self.__upload['name']} : récupération de l'arborescence des données déjà téléversées...")
             l_arborescence = self.__upload.api_tree()
             d_destination_taille = UploadAction.parse_tree(l_arborescence)
 
             for p_file_path, s_api_path in self.__dataset.data_files.items():
                 # Regarde si le fichier du dataset est déjà dans la liste des fichiers téléversés sur l'entrepôt
                 # NB: sur l'entrepôt, tous les fichiers "data" sont dans le dossier parent "data" TODO vérifier que c'est toujours le cas !
-                s_data_api_path = f"data/{s_api_path}"
+                s_data_api_path = f"{s_api_path}/{p_file_path.name}"
+                Config().om.info(f"Livraison {self.__upload['name']} : livraison de {s_data_api_path}...")
                 if s_data_api_path in d_destination_taille:
                     # le fichier est déjà livré, on check sa taille :
                     if d_destination_taille[s_data_api_path] == p_file_path.stat().st_size:
                         # le fichier a été complètement téléversé. On passe au fichier suivant.
+                        Config().om.info(f"Livraison {self.__upload['name']} : livraison de {s_data_api_path}: déjà livré")
                         continue
 
                     # le fichier n'a pas été téléversé en totalité.
@@ -126,6 +129,7 @@ class UploadAction:
 
                 # sinon, on doit livrer le fichier
                 self.__upload.api_push_data_file(p_file_path, s_api_path)
+                Config().om.info(f"Livraison {self.__upload['name']} : livraison de {s_data_api_path}: terminé")
             Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.data_files)} fichiers de données ont été ajoutés avec succès.")
 
     def __push_md5_files(self) -> None:
@@ -139,10 +143,12 @@ class UploadAction:
                 # Regarde si le fichier du dataset est déjà dans la liste des fichiers téléversés sur l'entrepôt
                 # NB: sur l'entrepot, tous les fichiers md5 sont à la racine
                 s_api_path = p_file_path.name
+                Config().om.info(f"Livraison {self.__upload['name']} : livraison de {s_api_path}...")
                 if s_api_path in d_destination_taille:
                     # le fichier est déjà livré, on check sa taille :
                     if d_destination_taille[s_api_path] == p_file_path.stat().st_size:
                         # le fichier a été complètement téléversé. On passe au fichier suivant.
+                        Config().om.info(f"Livraison {self.__upload['name']} : livraison de {s_api_path}: déjà livré")
                         continue
 
                     # le fichier n'a pas été téléversé en totalité.
@@ -152,6 +158,7 @@ class UploadAction:
 
                 # sinon, on doit livrer le fichier
                 self.__upload.api_push_md5_file(p_file_path)
+                Config().om.info(f"Livraison {self.__upload['name']} : livraison de {s_api_path}: terminé")
             Config().om.info(f"Livraison {self.__upload}: les {len(self.__dataset.md5_files)} fichiers md5 ont été ajoutés avec succès.")
 
     def __close(self) -> None:
@@ -248,10 +255,10 @@ class UploadAction:
             else:
                 s_chemin = str(d_element["name"])
             # Fichier ou dossier ?
-            if d_element["type"] == "file":
+            if d_element["type"].lower() == "file":
                 # Fichier, on l'ajoute à notre dictionnaire
                 d_files[s_chemin] = int(d_element["size"])
-            elif d_element["type"] == "directory":
+            elif d_element["type"].lower() == "directory":
                 # Dossier, on itère dessus avec le nom du dossier comme préfixe
                 d_sub_files = UploadAction.parse_tree(d_element["children"], prefix=s_chemin)
                 # On fusionne ces fichiers à notre dict principal
