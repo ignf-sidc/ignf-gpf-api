@@ -1,10 +1,10 @@
 from typing import List
 from unittest.mock import patch
-from ignf_gpf_api.store.Endpoint import Endpoint
 
+from ignf_gpf_api.store.Endpoint import Endpoint
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.Upload import Upload
-
+from ignf_gpf_api.store.Store import Store
 from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverError
 from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolver
 
@@ -114,3 +114,29 @@ class StoreEntityResolverTestCase(GpfTestCase):
             self.assertEqual(o_arc.exception.message, f"Erreur du résolveur 'store_entity' avec la chaîne '{s_to_solve}'.")
             # Vérifications o_mock_api_list
             o_mock_api_list.assert_called_once_with(infos_filter={"type": "ARCHIVE"}, tags_filter={}, page=1)
+
+    def test_resolve_store(self) -> None:
+        """Vérifie le bon fonctionnement de la fonction resolve pour un store.
+        On peut utiliser `name` pour filter sur le `name` et sur le `technical_name`.
+        """
+
+        o_store_entity_resolver = StoreEntityResolver("store_entity")
+        l_entities = [
+            Store({"_id": "1", "name": "Datastore 1", "technical_name": "ds1"}),
+        ]
+
+        # On mock la fonction api_list, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(Store, "api_list", return_value=l_entities) as o_mock_api_list:
+            s_result = o_store_entity_resolver.resolve("store.infos._id [INFOS(name=ds1)]")
+            # Vérifications o_mock_api_list
+            o_mock_api_list.assert_called_once_with(infos_filter={"name": "ds1"}, tags_filter={}, page=1)
+            # Vérification id récupérée
+            self.assertEqual(s_result, "1")
+
+        # On mock la fonction api_list, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(Store, "api_list", return_value=l_entities) as o_mock_api_list:
+            s_result = o_store_entity_resolver.resolve("store.infos._id [INFOS(name=Datastore 1)]")
+            # Vérifications o_mock_api_list
+            o_mock_api_list.assert_called_once_with(infos_filter={"name": "Datastore 1"}, tags_filter={}, page=1)
+            # Vérification id récupérée
+            self.assertEqual(s_result, "1")
