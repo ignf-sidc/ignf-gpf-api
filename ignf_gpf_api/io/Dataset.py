@@ -55,7 +55,7 @@ class Dataset:
         S'il existe, rien n'est fait.
         """
         p_abs_root_dir = self.__root_dir.absolute()
-        s_pattern = Config().get("upload_creation", "md5_pattern")
+        s_pattern = Config().get("upload", "md5_pattern")
 
         # On parcourt le dictionnaire des répertoires
         for p_dir in self.__data_dirs:
@@ -106,8 +106,7 @@ class Dataset:
         return self.__md5_files
 
     def __list_rec(self, root_dir: Path, path_rep: Path) -> None:
-        """
-        Fonction récursive permettant de lister des fichiers
+        """Fonction récursive permettant de lister des fichiers
 
         Args:
             root_dir (Path): Chemin absolu du dossier racine

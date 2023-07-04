@@ -3,7 +3,6 @@ from typing import Dict, Optional, Pattern, Type
 
 from ignf_gpf_api.workflow.resolver.AbstractResolver import AbstractResolver
 from ignf_gpf_api.workflow.resolver.Errors import NoEntityFoundError, ResolverError
-from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
 from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.Processing import Processing
 from ignf_gpf_api.store.StoredData import StoredData
@@ -13,11 +12,12 @@ from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.Offering import Offering
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.Endpoint import Endpoint
+from ignf_gpf_api.store.Static import Static
 from ignf_gpf_api.io.Config import Config
 
 
 class StoreEntityResolver(AbstractResolver):
-    """Classe permettant de résoudre des paramètres clé -> valeur.
+    """Classe permettant de résoudre des paramètres faisant référence à une entité.
 
     Attributes:
         __name (str): nom de code du resolver
@@ -32,20 +32,19 @@ class StoreEntityResolver(AbstractResolver):
         Offering.entity_name(): Offering,
         ProcessingExecution.entity_name(): ProcessingExecution,
         Endpoint.entity_name(): Endpoint,
+        Static.entity_name(): Static,
     }
 
     def __init__(self, name: str) -> None:
-        """Constructeur.
+        """À l'instanciation, le résolveur est nommé selon ce qui est indiqué dans la Config.
 
         Args:
             name (str): nom du résolveur
         """
         super().__init__(name)
-        self.__regex: Pattern[str] = re.compile(Config().get("workflow_resolution_regex", "store_entity_regex"))
+        self.__regex: Pattern[str] = re.compile(Config().get_str("workflow_resolution_regex", "store_entity_regex"))
 
     def resolve(self, string_to_solve: str) -> str:
-        # On résout la chaîne à résoudre si jamais on a des paramètres dans des paramètres...
-        string_to_solve = GlobalResolver().resolve(string_to_solve)
         # On parse la chaîne à résoudre
         o_result = self.regex.search(string_to_solve)
         if o_result is None:

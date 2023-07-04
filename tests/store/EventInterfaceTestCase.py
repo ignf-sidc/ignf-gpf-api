@@ -23,7 +23,7 @@ class EventInterfaceTestCase(GpfTestCase):
             l_data_recupere = o_event_interface.api_events()
             # on vérifie que route_request est appelé correctement
             o_mock_request.assert_called_once_with(
-                "store_entity_list_event",
+                "store_entity_list_events",
                 route_params={"store_entity": "id_entité"},
             )
             # on vérifie la similitude des données retournées

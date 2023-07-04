@@ -10,7 +10,7 @@ git clone git@github.com:ignf-sidc/ignf-gpf-api.git
 
 Ouvrez le dossier nouvellement crée avec votre éditeur favoris (ici [Visual Studio Code](https://code.visualstudio.com/)) :
 
-```
+```sh
 code ignf-gpf-api
 ```
 
@@ -26,7 +26,7 @@ Puis mettez à jour `pip` et `virtualenv` :
 python3 -m pip install --user --upgrade pip virtualenv setuptools
 ```
 
-Créez un environnement isolé :
+Créez un environnement isolé : (il sera créé dans le dossier où la commande est lancée donc il est préférable de se placer dans le dossier `ignf-gpf-api`)
 
 ```sh
 python3 -m venv env
@@ -51,12 +51,6 @@ Lancez les tests pour vérifier que tout fonctionne correctement :
 ./check.sh
 ```
 
-## Développement
-
-Pour tester le programme, vous aurez besoin de créer un fichier `config.ini`, cf. [configuration](configuration.md).
-
-À la fin de votre développement, lancez `check.sh` pour vérifier que votre code respecte les critères de qualité du code.
-
 ## Documentation
 
 Vous pouvez générer la doc en local via la commande :
@@ -65,24 +59,83 @@ Vous pouvez générer la doc en local via la commande :
 mkdocs serve
 ```
 
-## Publication sur PyPI
+## Développement et tests
 
-La publication du package sur PyPI est automatique sur Github après la [création d'une release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new).
+Pour tester le programme, vous aurez besoin de créer un fichier `config.ini`, cf. [configuration](configuration.md).
+
+Les classes python sont couvertes avec un maximum de tests unitaires merci de penser à couvrir le code ajouté ou à modifier les tests existants au besoin.
+
+Pensez à activer l'environnement avant de lancer les tests :
+
+```sh
+source env/bin/activate
+```
+
+Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/python/environments#_work-with-python-interpreters)
+
+À la fin de votre développement, lancez `./check.sh` pour vérifier que votre code respecte les critères de qualité.
+
+### Consigne développement
+
+- Nomenclature Python (classes en PascalCase, constantes en UPPER_CASE, le reste en snake_case)​
+- Variables suffixées par leur type (cf. "variable-rgx" du .pylintrc)​
+  - `s_` : string​
+  - `i_` : integer​
+  - `f_` : float​
+  - `l_` : list (et autres enumerable)​
+  - `d_` : dict​
+  - `b_` : bool​
+  - `e_` : error​
+  - `p_` : Path​
+  - `o_` : object​
+- Programmation typée (vérifiée avec mypy; [memo type](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html))
+- Toutes les classes et fonctions doivent être documentées.
+- Utilisation de pathlib.Path et non de os.path​
+- Gérer l'affichage des messages avec `Config().om​`, ne pas utiliser de `print()` ou autre logger.
+  - Config().om.debug("message")
+  - Config().om.info("message")
+  - Config().om.warning("message")
+  - Config().om.error("message")
+  - Config().om.critical("message")
+- Configuration centralisée via la classe Config()​ (cf. [Utilisation comme module Python](comme-module.md))
+
+## Déploiement des version dev et prod sur PyPI
+
+### Mise à jour des branches prod et dev
+
+Pour effectuer un déploiment de la librairie ignf-gpf-api, il faut d'abord modifier le numéro de version dans le fichier __init__.py dans le dossier ignf_gpf_api/ignf_gpf_api/ .
+
+Puis il faut résoudre ou faire les pull request entre dev et prod en fonction de l'avancement du projet pour avoir des branches dev et prod à jour.
+
+```py
+__version__ = <x.y.z>
+```
+
+### Création de la (pre)-release
+
+Pour publier une nouvelle version, qui va être ensuite publiée comme librairie sur PyPi, il faut [créer une (pre)-release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new) :
+* créez une release de test sur la branche **dev** versionnée selon le modèle `tx.y.z` (ex : t1.2.3) pour déployer une nouvelle version du module en test ;
+* créez une release sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production ;
+
+### Publication sur PyPI
+
+La publication du package sur PyPI est automatique sur Github grâce aux actions [CI Dev](https://github.com/ignf-sidc/ignf-gpf-api/actions/workflows/ci-dev.yml) et [CI Prod](https://github.com/ignf-sidc/ignf-gpf-api/actions/workflows/ci-prod.yml) :
+
 
 Si besoin, voici les commandes pour l'effectuer à la main :
-
+ 
 ```sh
 export FLIT_PASSWORD=<token>
 ```
 
 Publication sur TestPyPI :
 
-```
+```sh
 flit publish --pypirc .pypirc --repository testpypi
 ```
 
 Publication sur PyPI :
 
-```
+```sh
 flit publish --pypirc .pypirc --repository pypi
 ```

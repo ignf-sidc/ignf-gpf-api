@@ -130,6 +130,13 @@ dmypy.json
 
 # Fichier de config personnel
 config.ini
+config_*.ini
+config-*.ini
 test.ini
+
+# Fichier python de test
 test.py
 test_*.py
+/*_dataset_*
+/*.jsonc
+/dpsg2023-06-00043

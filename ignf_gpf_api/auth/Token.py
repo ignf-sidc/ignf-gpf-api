@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 
 class Token:
-    """Représente un jeton KeyCloak.
+    """Représente un jeton KeyCloak. Ce jeton est caractérisé par ensemble d'informations clé-valeur et une date d'expiration.
 
     Attributes:
         __token_dict (dict): Stockage du jeton `{"access_token": "valeur-du-jeton", "expires_in": temps-en-secondes}`
@@ -12,7 +12,7 @@ class Token:
     """
 
     def __init__(self, token_dict: Dict[str, Any]) -> None:
-        """Initialise le jeton et calcule la date d'expiration à partir de son délai d'expiration.
+        """À l'instanciation : on stocke l'ensemble d'informations clé-valeur et on calcule la date d'expiration à partir de son délai d'expiration.
 
         Args:
             token_dict (dict): Jeton tel que renvoyé par le service d'authentification : `{"access_token": "valeur-du-jeton", "expires_in": temps-en-secondes}`

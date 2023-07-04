@@ -16,7 +16,7 @@ from ignf_gpf_api.io.Config import Config
 
 
 class ApiRequester(metaclass=Singleton):
-    """Classe de requête à l'API GPF : gestion proxy, HTTPS et gestion des erreurs."""
+    """Classe singleton pour gérer l'enrobage des requêtes à l'API GPF : gestion du proxy, du HTTPS et des erreurs."""
 
     GET = "GET"
     POST = "POST"
@@ -24,13 +24,18 @@ class ApiRequester(metaclass=Singleton):
     PATCH = "PATCH"
     DELETE = "DELETE"
 
-    regex_content_range = re.compile(Config().get("store_api", "regex_content_range"))
+    regex_content_range = re.compile(Config().get_str("store_api", "regex_content_range"))
 
     def __init__(self) -> None:
         # Récupération du convertisseur Json
         self.__jsonConverter = JsonConverter()
         self.__nb_attempts = Config().get_int("store_api", "nb_attempts")
         self.__sec_between_attempt = Config().get_int("store_api", "sec_between_attempt")
+        # Récupération des paramètres du proxy
+        self.__proxy = {
+            "http": Config().get_str("store_api", "http_proxy"),
+            "https": Config().get_str("store_api", "https_proxy"),
+        }
 
     def route_request(
         self,
@@ -41,26 +46,26 @@ class ApiRequester(metaclass=Singleton):
         data: Optional[Union[Dict[str, Any], List[Any]]] = None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]] = None,
     ) -> requests.Response:
-        """Exécute une requête à l'API à partir du nom d'une route.
+        """Exécute une requête à l'API à partir du nom d'une route. La requête est retentée plusieurs fois s'il y a un problème.
 
         Args:
             route_name (str): Route à utiliser
-            route_params (Optional[Dict[str, Any]], optional): Paramètres obligatoires pour compléter la route. Defaults to None.
-            params (Optional[Dict[str, Any]], optional): Paramètres optionnels de l'URL. Defaults to None.
-            method (str, optional): méthode de la requête. Defaults to "GET".
-            data (Optional[Dict[str, Any]], optional): Données de la requête. Defaults to None.
-            files (Optional[Dict[str, Tuple[Any]]], optional): Liste des fichiers à envoyer {"file":('fichier.ext', File)}. Default to None.
+            route_params (Optional[Dict[str, Any]], optional): Paramètres obligatoires pour compléter la route.
+            params (Optional[Dict[str, Any]], optional): Paramètres optionnels de l'URL.
+            method (str, optional): méthode de la requête.
+            data (Optional[Dict[str, Any]], optional): Données de la requête.
+            files (Optional[Dict[str, Tuple[Any]]], optional): Liste des fichiers à envoyer {"file":('fichier.ext', File)}.
 
         Raises:
             RouteNotFoundError: levée si la route demandée n'est pas définie dans les paramètres
             InternalServerError: levée si erreur interne de l'API
             NotFoundError: levée si l'entité demandée n'est pas trouvée par l'API
-            NotAuthorizedError: levée si l'action effectuée demande d'autre autorisations
+            NotAuthorizedError: levée si l'action effectuée demande d'autres autorisations
             BadRequestError: levée si la requête envoyée n'est pas correcte
             StatusCodeError: levée si un "status code" non prévu est récupéré
 
         Returns:
-            requests.Response: réponse vérifiée
+            réponse vérifiée
         """
         Config().om.debug(f"route_request({route_name}, {method}, {route_params}, {params})")
 
@@ -89,18 +94,20 @@ class ApiRequester(metaclass=Singleton):
         data: Optional[Union[Dict[str, Any], List[Any]]] = None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]] = None,
     ) -> requests.Response:
-        """Effectue une requête à l'API à partir d'une url. La retente plusieurs fois s'il y a un problème.
+        """Effectue une requête à l'API à partir d'une url. La requête est retentée plusieurs fois s'il y a un problème.
 
         Args:
             url (str): url absolue de la requête
-            method (str, optional): méthode de la requête. Defaults to "GET".
-            params (Optional[Dict[str, Any]], optional): paramètres. Defaults to None.
-            data (Optional[Union[Dict[str, Any], List[Any]]], optional): données. Defaults to None.
-            files (Optional[Dict[str, Tuple[Any]]], optional): fichiers. Defaults to None.
+            method (str, optional): méthode de la requête
+            params (Optional[Dict[str, Any]], optional): paramètres de la requête (ajouté à l'url)
+            data (Optional[Union[Dict[str, Any], List[Any]]], optional): contenue de la requête (ajouté au corp)
+            files (Optional[Dict[str, Tuple[Any]]], optional): fichiers à envoyer
 
         Returns:
-            requests.Response: réponse si succès
+            réponse si succès
         """
+        Config().om.debug(f"url_request({url}, {method}, {params}, {data})")
+
         i_nb_attempts = 0
         while True:
             i_nb_attempts += 1
@@ -132,10 +139,8 @@ class ApiRequester(metaclass=Singleton):
             except ConflictError as e_error:
                 # Affiche la pile d'exécution
                 Config().om.debug(traceback.format_exc())
-                # S'il y a un conflit, on ne retente pas, on affiche une explication
-                s_message = "La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?"
-                Config().om.error(s_message)
-                raise GpfApiError(s_message) from e_error
+                # S'il y a un conflit, on ne retente pas, on ne fait rien. On propage l'erreur.
+                raise e_error
 
             except (ApiError, requests.RequestException) as e_error:
                 # Pour les autres erreurs, on retente selon les paramètres indiqués.
@@ -165,22 +170,20 @@ class ApiRequester(metaclass=Singleton):
 
         Args:
             url (str): url absolue de la requête
-            method (str, optional): méthode de la requête. Defaults to "GET".
-            params (Optional[Dict[str, Any]], optional): paramètres. Defaults to None.
-            data (Optional[Union[Dict[str, Any], List[Any]]], optional): données. Defaults to None.
-            files (Optional[Dict[str, Tuple[Any]]], optional): fichiers. Defaults to None.
+            method (str, optional): méthode de la requête.
+            params (Optional[Dict[str, Any]], optional): paramètres.
+            data (Optional[Union[Dict[str, Any], List[Any]]], optional): données.
+            files (Optional[Dict[str, Tuple[Any]]], optional): fichiers.
 
         Returns:
-            requests.Response: réponse si succès
+            réponse si succès
         """
-        d_proxies = {
-            "http": None,
-            "https": None,
-        }
+        Config().om.debug(f"__url_request({url}, {method}, {params}, {data})")
+
         # Définition du header
         d_headers = Authentifier().get_http_header(json_content_type=files is None)
         # Execution de la requête
-        r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=d_proxies, files=files)  # type:ignore
+        r = requests.request(url=url, params=params, json=data, method=method, headers=d_headers, proxies=self.__proxy, files=files)
 
         # Vérification du résultat...
         if r.status_code >= 200 and r.status_code < 300:
@@ -209,15 +212,15 @@ class ApiRequester(metaclass=Singleton):
 
     @staticmethod
     def range_next_page(content_range: Optional[str], length: int) -> bool:
-        """Fonction analysant le Content-Range d'une réponse pour indiquer s'il
+        """Fonction analysant le `Content-Range` d'une réponse pour indiquer s'il
         faut faire d'autres requêtes ou si tout est déjà récupéré.
 
         Args:
             content_range (Optional[str]): Content-Range renvoyé par l'API
-            length (int): nombre d'élément déjà récupéré
+            length (int): nombre d'éléments déjà récupérés
 
         Returns:
-            bool: True s'il faut continuer, False sinon
+            True s'il faut continuer, False sinon
         """
         # On regarde le Content-Range de la réponse pour savoir si on doit refaire une requête pour récupérer la fin
         if content_range is None:

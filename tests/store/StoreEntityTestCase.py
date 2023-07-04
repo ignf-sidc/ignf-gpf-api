@@ -150,8 +150,8 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10}),
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 2, "limit": 10}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 2, "limit": 10}),
                 ],
             )
             # Vérifications sur l_entities
@@ -173,7 +173,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10}),
+                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
                 ],
             )
             # Vérifications sur l_entities
@@ -194,7 +194,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -209,7 +209,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -224,7 +224,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[]": ["k_tag=v_tag"], "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -268,3 +268,53 @@ class StoreEntityTestCase(GpfTestCase):
             o_mock_request.assert_called_once_with("store_entity_get", route_params={"store_entity": "id_à_maj"})
             # Vérification que les infos de l'entité sont maj
             self.assertDictEqual(o_store_entity.get_store_properties(), d_new_data)
+
+    def test_eq(self) -> None:
+        """Vérifie le bon fonctionnement de eq."""
+        # Instanciation d'une Store entity
+        o_store_entity_1 = StoreEntity({"_id": "1"})
+        o_store_entity_2 = StoreEntity({"_id": "2"})
+        o_store_entity_3 = StoreEntity({"_id": "1"})
+
+        # on vérifie que le test sur deux objets identiques renvoie bien true
+        self.assertEqual(o_store_entity_1, o_store_entity_3)
+        # on vérifie qu'à l'inverse le test sur deux instances différentes renvoie false
+        self.assertNotEqual(o_store_entity_1, o_store_entity_2)
+        # on vérifie que le set se comporte comme attendu
+        self.assertEqual(len(set([o_store_entity_1, o_store_entity_2, o_store_entity_3])), 2)
+        # on vérifie que le test sur deux types différents est également false
+        self.assertNotEqual(o_store_entity_1, 1)
+        self.assertNotEqual(o_store_entity_1, "str")
+
+    def test_str(self) -> None:
+        """Vérifie le bon fonctionnement de eq."""
+        # Instanciation de StoreEntities
+        o_store_entity_1 = StoreEntity({"_id": "1"})
+        o_store_entity_2 = StoreEntity({"_id": "2", "name": "name_2"})
+        o_store_entity_3 = StoreEntity({"_id": "3", "name": "name_3", "layer_name": "layer_name_3"})
+        o_store_entity_4 = StoreEntity({"_id": "4", "layer_name": "layer_name_4"})
+
+        # on vérifie que le str est ok
+        self.assertEqual(str(o_store_entity_1), "StoreEntity(id=1)")
+        self.assertEqual(str(o_store_entity_2), "StoreEntity(id=2, name=name_2)")
+        self.assertEqual(str(o_store_entity_3), "StoreEntity(id=3, name=name_3, layer_name=layer_name_3)")
+        self.assertEqual(str(o_store_entity_4), "StoreEntity(id=4, layer_name=layer_name_4)")
+
+    def test_get_datetime(self) -> None:
+        """Vérifie le bon fonctionnement de _get_datetime."""
+        # Instanciation de StoreEntities
+        o_store_entity = StoreEntity({"_id": "1", "datetime": "2022-09-20T10:45:04.396Z"})
+
+        # Cas sans la clef demandée
+        with patch.object(o_store_entity, "api_update", return_value=None) as o_mock_update:
+            o_datetime = o_store_entity._get_datetime("key")  # pylint:disable=protected-access
+            # Vérifications
+            self.assertIsNone(o_datetime)
+            o_mock_update.assert_called_once()
+
+        # Cas avec la clef demandée
+        with patch.object(o_store_entity, "api_update", return_value=None) as o_mock_update:
+            o_datetime = o_store_entity._get_datetime("datetime")  # pylint:disable=protected-access
+            # Vérifications
+            self.assertIsNotNone(o_datetime)
+            o_mock_update.assert_not_called()

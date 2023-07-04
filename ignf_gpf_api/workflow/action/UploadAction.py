@@ -6,6 +6,7 @@ from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.io.Dataset import Dataset
 from ignf_gpf_api.io.Config import Config
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 
 
 class UploadAction:
@@ -25,14 +26,14 @@ class UploadAction:
         self.__dataset: Dataset = dataset
         self.__upload: Optional[Upload] = None
         # On suit le comportement donnée en paramètre ou à défaut celui de la config
-        self.__behavior: str = behavior if behavior is not None else Config().get("upload_creation", "behavior_if_exists")
+        self.__behavior: str = behavior if behavior is not None else Config().get_str("upload", "behavior_if_exists")
 
     def run(self) -> Upload:
         """Crée la livraison décrite dans le dataset et livre les données avant de
-        retourner la livraisons crée.
+        retourner la livraison créée.
 
         Returns:
-            Upload: livraison créée
+            livraison créée
         """
         Config().om.info("Création et complétion d'une livraison...")
         # Création de la livraison
@@ -61,7 +62,7 @@ class UploadAction:
         """Crée l'upload après avoir vérifié s'il n'existe pas déjà..."""
         Config().om.info("Création d'une livraison...")
         # On tente de récupérer l'upload
-        o_upload = self.__find()
+        o_upload = self.find_upload()
         # S'il n'est pas null
         if o_upload is not None:
             # On sort en erreur si demandé
@@ -124,26 +125,16 @@ class UploadAction:
             self.__upload.api_close()
             Config().om.info(f"Livraison {self.__upload['name']} : livraison fermée avec succès. La livraison va maintenant être vérifiée par la Géoplateforme.")
 
-    def __find(self) -> Optional[Upload]:
+    def find_upload(self) -> Optional[Upload]:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
 
         Returns:
-            Optional[Upload]: None si rien trouvé, sinon l'Upload trouvé
+            None si rien trouvé, sinon l'Upload trouvé
         """
-        # On tente de récupérer l'upload selon les critères d'attributs donnés en conf (uniqueness_constraint_infos)
-        l_attributes = Config().get("upload_creation", "uniqueness_constraint_infos").split(";")
-        d_attributs = {}
-        for s_attribut in l_attributes:
-            if s_attribut != "":
-                d_attributs[s_attribut] = self.__dataset.upload_infos[s_attribut]
-        # On tente de récupérer l'upload selon les critères de tags donnés en conf (uniqueness_constraint_tags)
-        l_tags = Config().get("upload_creation", "uniqueness_constraint_tags").split(";")
-        d_tags = {}
-        for s_tag in l_tags:
-            if s_tag != "":
-                d_tags[s_tag] = self.__dataset.tags[s_tag]
+        # Récupération des critères de filtre
+        d_infos, d_tags = ActionAbstract.get_filters("upload", self.__dataset.upload_infos, self.__dataset.tags)
         # On peut maintenant filter les upload selon ces critères
-        l_uploads = Upload.api_list(infos_filter=d_attributs, tags_filter=d_tags)
+        l_uploads = Upload.api_list(infos_filter=d_infos, tags_filter=d_tags)
         # S'il y a un ou plusieurs upload, on retourne le 1er :
         if l_uploads:
             return l_uploads[0]
@@ -156,18 +147,21 @@ class UploadAction:
 
     @staticmethod
     def monitor_until_end(upload: Upload, callback: Optional[Callable[[str], None]] = None) -> bool:
-        """Attend que toute les vérifications liées à la Livraison indiquée soient terminées (en erreur ou en succès) avant de rendre la main.
-        La fonction callback indiquée est exécutée en prenant en paramètre un message de suivi du nombre de vérifications par statut.
+        """Attend que toute les vérifications liées à la Livraison indiquée
+        soient terminées (en erreur ou en succès) avant de rendre la main.
+
+        La fonction callback indiquée est exécutée à chaque vérification en lui passant en paramètre un
+        message de suivi du nombre de vérifications par statut.
 
         Args:
             upload (Upload): Livraison à monitorer
-            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi. Defaults to None.
+            callback (Optional[Callable[[str], None]]): fonction de callback à exécuter avec le message de suivi.
 
         Returns:
-            bool: True si toutes les vérifications sont ok, sinon False
+            True si toutes les vérifications sont ok, sinon False
         """
-        i_nb_sec_between_check = Config().get_int("upload_creation", "nb_sec_between_check_updates")
-        s_check_message_pattern = Config().get("upload_creation", "check_message_pattern")
+        i_nb_sec_between_check = Config().get_int("upload", "nb_sec_between_check_updates")
+        s_check_message_pattern = Config().get_str("upload", "check_message_pattern")
         b_success: Optional[bool] = None
         Config().om.info(f"Monitoring des vérifications toutes les {i_nb_sec_between_check} secondes...")
         while b_success is None:
@@ -199,12 +193,14 @@ class UploadAction:
     @staticmethod
     def parse_tree(tree: List[Dict[str, Any]], prefix: str = "") -> Dict[str, int]:
         """Parse l'arborescence renvoyée par l'API en un dictionnaire associant le chemin de chaque fichier à sa taille.
-        L'objectif est de permettre de facilement identifier quel sont les fichiers à (re)livrer.
+        L'objectif est de permettre de facilement identifier quels sont les fichiers à (re)livrer.
+
         Args:
             tree (List[Dict[str, Any]]): arborescence à parser
             prefix (str): pré-fixe du chemin
+
         Returns:
-            Dict[str, int]: liste des fichiers envoyés et leur taille
+            liste des fichiers envoyés et leur taille
         """
         # Création du dictionnaire pour stocker les fichiers et leur taille
         d_files: Dict[str, int] = {}

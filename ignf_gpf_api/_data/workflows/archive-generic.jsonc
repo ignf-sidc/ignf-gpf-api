@@ -9,7 +9,7 @@
                         "type": "processing-execution",
                         "body_parameters": {
                             // On récupère l'id du traitement nommé "Intégration d'archives livrées"
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration d'archives livrées)]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=archive)]}",
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
@@ -18,8 +18,8 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "Archive"
-                                    "name": "Archive"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__Archive"
+                                    "name": "{user.last_name}__Archive"
                                 }
                             },
                             "parameters": {}
@@ -44,15 +44,16 @@
                         "type": "configuration",
                         "body_parameters": {
                             "type": "DOWNLOAD",
-                            "name": "Configuration_Archive",
-                            "layer_name": "archive",
+                            "name": "{user.last_name}__Configuration_Archive",
+                            "layer_name": "{user.last_name}__archive",
                             "type_infos": {
                                 "title": "Couche Canton du tutoriel",
                                 "abstract": "Exemple d'archive à télécharger",
                                 "used_data": [
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom et l'un de ses tags
-                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=Archive), TAGS(tuto=oui)]}"
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Archive), TAGS(tuto=oui)]}",
+                                        "sub_name": "archive"
                                     }
                                 ]
                             }
@@ -78,7 +79,7 @@
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=Configuration_Archive), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Configuration_Archive), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",

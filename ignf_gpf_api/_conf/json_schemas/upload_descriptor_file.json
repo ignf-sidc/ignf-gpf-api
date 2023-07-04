@@ -42,8 +42,7 @@
                                 "type": "string"
                             },
                             "srs": {
-                                "type": "string",
-                                "pattern": "^EPSG:[0-9]{4,5}$"
+                                "type": "string"
                             },
                             "type": {
                                 "type": "string",

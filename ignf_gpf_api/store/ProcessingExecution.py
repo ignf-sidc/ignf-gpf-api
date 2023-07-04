@@ -1,9 +1,17 @@
+from datetime import datetime
+from typing import Optional
+
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.interface.CsfInterface import CsfInterface
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
-class ProcessingExecution(StoreEntity):
-    """Classe Python représentant l'entité ProcessingExecution (exécution d'un traitement)."""
+class ProcessingExecution(CsfInterface, StoreEntity):
+    """Classe Python représentant l'entité ProcessingExecution (exécution d'un traitement).
+
+    Cette classe permet d'effectuer les actions spécifiques liées aux exécution de traitement : création,
+    lancement, gestion de l'exécution, récupération du log, etc.
+    """
 
     _entity_name = "processing_execution"
     _entity_title = "exécution d'un traitement"
@@ -55,3 +63,12 @@ class ProcessingExecution(StoreEntity):
             method=ApiRequester.POST,
             route_params={self._entity_name: self.id},
         )
+
+    @property
+    def launch(self) -> Optional[datetime]:
+        """Récupère la datetime de lancement de l'exécution du traitement.
+
+        Returns:
+            datetime: datetime de lancement de l'exécution du traitement
+        """
+        return self._get_datetime("launch")

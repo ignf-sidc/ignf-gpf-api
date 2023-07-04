@@ -77,7 +77,7 @@ python -m ignf_gpf_api config -s store_authentification -o password
 
 Il est possible de récupérer des jeux de données d'exemple via l'exécutable.
 
-Lancez la commande suivante pour liste les jeux disponibles :
+Lancez la commande suivante pour lister les jeux disponibles :
 
 ```sh
 python -m ignf_gpf_api dataset
@@ -107,11 +107,11 @@ python -m ignf_gpf_api upload -f mon_fichier_descripteur.json
 Les jeux de données d'exemple sont fournis avec le fichier descripteur (voir [Récupérer des jeux de données d'exemple](#recuperer-des-jeux-de-donnees-dexemple)).
 
 
-## Réaliser des traitements et publier mes données
+## Réaliser des traitements et publier des données
 
 Pour réaliser des traitements et publier des données géographiques, vous devez générer un [fichier workflow](workflow.md).
 
-C'est un fichier au format JSON permettant de décrire en une suite d'étape les traitements et les publications à effectuer.
+C'est un fichier au format JSON permettant de décrire, en une suite d'étapes, les traitements et les publications à effectuer.
 
 Vous pouvez valider votre workflow :
 
@@ -124,3 +124,11 @@ Ensuite, vous pouvez simplement lancer une étape :
 ```sh
 python -m ignf_gpf_api workflow -f mon_workflow.json -s mon_étape
 ```
+
+
+## Tutoriels
+
+Vous pouvez maintenant livrer et publier vos données en utilisant le module comme un exécutable. Voici quelques exemples :
+
+* [Tutoriel 1 : héberger une archive pour la rendre téléchargeable](tutoriel_1_archive.md)
+* [Tutoriel 2 : téléverser des données vecteur les publier en flux](tutoriel_2_flux_vecteur.md)

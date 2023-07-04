@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from pathlib import Path
 from unittest.mock import patch, MagicMock
+from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 
 from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.store.Upload import Upload
@@ -41,11 +42,33 @@ class UploadActionTestCase(GpfTestCase):
         # On détruit le Singleton Config
         Config._instance = None
 
+    def test_find_upload(self) -> None:
+        """Test find_upload."""
+        o_u1 = Upload({"_id": "upload_1"})
+        o_u2 = Upload({"_id": "upload_2"})
+        # création du dataset
+        o_mock_dataset = MagicMock()
+        o_mock_dataset.data_files = {Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"}
+        o_mock_dataset.md5_files = [Path("./a"), Path("./2")]
+        o_mock_dataset.upload_infos = {"_id": "upload_base", "name": "upload_name"}
+        o_mock_dataset.tags = {"tag1": "val1", "tag2": "val2"}
+        o_mock_dataset.comments = ["comm1", "comm2", "comm3"]
+        # exécution de UploadAction
+        o_ua = UploadAction(o_mock_dataset)
+        # Mock de ActionAbstract.get_filters et Upload.api_list
+        with patch.object(ActionAbstract, "get_filters", return_value=({"info":"val"}, {"tag":"val"})) as o_mock_get_filters:
+            with patch.object(Upload, "api_list", return_value=[o_u1, o_u2]) as o_mock_api_list :
+                # Appel de la fonction find_upload
+                o_upload = o_ua.find_upload()
+                # Vérifications
+                o_mock_get_filters.assert_called_once_with("upload", o_mock_dataset.upload_infos, o_mock_dataset.tags)
+                o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"})
+                self.assertEqual(o_upload, o_u1)
+
     def run_args(
         self,
         behavior: Optional[str],
-        return_value_api_list: List[Upload],
-        param_list_api: Dict[str, Dict[str, str]],
+        return_value_find_upload: Optional[Upload],
         api_create: bool,
         api_delete: bool,
         run_fail: bool,
@@ -60,8 +83,7 @@ class UploadActionTestCase(GpfTestCase):
 
         Args:
             behavior (Optional[str]): mode lorsque la livraison existe déjà
-            return_value_api_list (List[Upload]): liste des upload retourné par le mock de Upload.api_list
-            param_list_api (Dict[str, Dict[str, str]]): paramètres avec les quels sont appelé le mock de Upload.api_list
+            return_value_find_upload (Optional[Upload]): liste des upload retourné par le mock de Upload.api_list
             api_create (bool): vérification de l'exécution de Upload.api_create (True => api_create exécuté; False => api_create non exécuté)
             api_delete (bool): vérification de l'exécution de Upload.api_delete (True => api_delete exécuté; False => api_delete non exécuté)
             run_fail (bool): vérification de l'exécution avec erreur de UploadAction.run (True => run plant; False => run s'exécute sans erreur)
@@ -85,11 +107,11 @@ class UploadActionTestCase(GpfTestCase):
                 return ""
             if b == "behavior_if_exists":
                 return "STOP"
-            if b == "open_status":
+            if b == "status_open":
                 return "OPEN"
             raise Exception("cas non prévu", a, b)
 
-        with patch.object(Upload, "api_list", return_value=return_value_api_list) as o_mock_api_list, \
+        with patch.object(UploadAction, "find_upload", return_value=return_value_find_upload) as o_mock_find_upload, \
             patch.object(Upload, "api_create", wraps=create) as o_mock_api_create, \
             patch.object(Upload, "api_close", MagicMock()) as o_mock_close, \
             patch.object(Upload, "api_delete", MagicMock()) as o_mock_api_delete, \
@@ -116,8 +138,8 @@ class UploadActionTestCase(GpfTestCase):
                 return
             o_ua.run()
 
-            # vérif de o_mock_api_list
-            o_mock_api_list.assert_called_once_with(**param_list_api)
+            # vérif de o_mock_find_upload
+            o_mock_find_upload.assert_called_once_with()
 
             # vérif de o_mock_api_create
             if api_create:
@@ -162,13 +184,12 @@ class UploadActionTestCase(GpfTestCase):
         """Lance le test de UploadAction.run selon plusieurs cas de figures."""
         self.run_args(
             behavior=None,
-            return_value_api_list=[],
+            return_value_find_upload=None,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=True,
             api_delete=False,
             run_fail=False,
@@ -176,70 +197,65 @@ class UploadActionTestCase(GpfTestCase):
         # tout mode sans doublon
         self.run_args(
             behavior="STOP",
-            return_value_api_list=[],
+            return_value_find_upload=None,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=True,
             api_delete=False,
             run_fail=False,
         )
         self.run_args(
             behavior="DELETE",
-            return_value_api_list=[],
+            return_value_find_upload=None,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=True,
             api_delete=False,
             run_fail=False,
         )
         self.run_args(
             behavior="CONTINUE",
-            return_value_api_list=[],
+            return_value_find_upload=None,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=True,
             api_delete=False,
             run_fail=False,
         )
 
         # mode stop mais avec doublon => ça plante
-        l_return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})]
+        o_return_value_find_upload = Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})
         self.run_args(
             behavior="STOP",
-            return_value_api_list=l_return_value_api_list,
+            return_value_find_upload=o_return_value_find_upload,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=True,
             api_delete=False,
             run_fail=True,
-            message_exception=f"Impossible de créer la livraison, une livraison identique {l_return_value_api_list[0]} existe déjà.",
+            message_exception=f"Impossible de créer la livraison, une livraison identique {o_return_value_find_upload} existe déjà.",
         )
         # mode DELETE mais avec doublon => suppression mais OK
         self.run_args(
             behavior="DELETE",
-            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})],
+            return_value_find_upload = Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"}),
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=True,
             api_delete=True,
             run_fail=False,
@@ -248,33 +264,31 @@ class UploadActionTestCase(GpfTestCase):
         # mode CONTINUE mais avec doublon (ouvert) => pas suppression ni création
         self.run_args(
             behavior="CONTINUE",
-            return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"})],
+            return_value_find_upload = Upload({"_id": "upload_existant", "name": "Upload existant", "status": "OPEN"}),
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=False,
             api_delete=False,
             run_fail=False,
         )
 
         # mode CONTINUE mais avec doublon (fermé) => ça plante
-        l_return_value_api_list=[Upload({"_id": "upload_existant", "name": "Upload existant", "status": "CLOSE"})]
+        o_return_value_find_upload = Upload({"_id": "upload_existant", "name": "Upload existant", "status": "CLOSE"})
         self.run_args(
             behavior="CONTINUE",
-            return_value_api_list=l_return_value_api_list,
+            return_value_find_upload=o_return_value_find_upload,
             data_files={Path("./a"): "a", Path("./b"): "b", Path("./c"): "c"},
             md5_files=[Path("./a"), Path("./2")],
             upload_infos={"_id": "upload_base", "name": "upload_name"},
             tags={"tag1": "val1", "tag2": "val2"},
             comments=["comm1", "comm2", "comm3"],
-            param_list_api={"infos_filter": {"name": "upload_name"}, "tags_filter": {}},
             api_create=False,
             api_delete=False,
             run_fail=True,
-            message_exception=f"Impossible de continuer, la livraison {l_return_value_api_list[0]} est fermée.",
+            message_exception=f"Impossible de continuer, la livraison {o_return_value_find_upload} est fermée.",
         )
 
     def test_monitor_until_end_ok(self) -> None:

@@ -15,9 +15,9 @@ class JsonConverter(metaclass=Singleton):
     def __init__(self) -> None:
         """initialisation : liste des routes et adresse site"""
         # Stockage en attributs de classe des patterns
-        self.__datetime_pattern = Config().get("json_converter", "datetime_pattern")
-        self.__date_pattern = Config().get("json_converter", "date_pattern")
-        self.__time_pattern = Config().get("json_converter", "time_pattern")
+        self.__datetime_pattern = Config().get_str("json_converter", "datetime_pattern")
+        self.__date_pattern = Config().get_str("json_converter", "date_pattern")
+        self.__time_pattern = Config().get_str("json_converter", "time_pattern")
 
     def dumps(self, data: Dict[Any, Any]) -> str:
         """Cette fonction permet de convertir les classes python en string JSON.

@@ -8,27 +8,56 @@ from ignf_gpf_api.workflow.resolver.Errors import ResolveFileInvalidError, Resol
 
 
 class FileResolver(AbstractResolver):
-    """Classe permettant de résoudre des paramètres fichiers.
-    Exemple de fichiers :
-        titi.txt => "coucou"
-        list.json => ["coucou1", "coucou2"]
-        dict.json => {"k1":"v1", "k2":"v2"}
+    """Classe permettant de résoudre des paramètres faisant référence à des fichiers.
 
-    Quoi faire :
-        str => lire le fichier et point barre
-        list => vérifier que c'est une liste et renvoi la liste en JSON str
-        dict => vérifier que c'est un dict et renvoi la liste en JSON str
+    Ce résolveur permet d'insérer le contenu d'un fichier au moment de la résolution.
 
-    Exemples :
-        "{file.str(titi.txt)}" => "coucou"
-        ["{file.list(list.json)}"] => '["coucou1", "coucou2"]'
-        {"{file.dict(dict.json)}":"value"} => '{"k1":"v1", "k2":"v2"}'
+    Ce fichier peut être un fichier texte basique, une liste au format JSON ou un dictionnaire au format JSON.
+
+
+    Fichier texte :
+
+        Contenu du fichier `exemple.txt` :
+
+        ```txt
+        coucou
+        ```
+
+        Chaîne à remplacer : `Je veux dire : {file.str(exemple.txt)}`
+
+        Résultat : `Je veux dire : coucou`
+
+
+    Fichier de liste :
+
+        Contenu du fichier `list.json` :
+
+        ```json
+        ["valeur 1", "valeur 2"]
+        ```
+
+        Chaîne à remplacer : `{"values": "{file.list(list.json)"]}`
+
+        Résultat : `{"values": ["valeur 1", "valeur 2"]}`
+
+
+    Fichier de clé-valeur :
+
+        Contenu du fichier `dict.json` :
+
+        ```json
+        {"k1":"v1", "k2":"v2"}
+        ```
+
+        Chaîne à remplacer : `{"parameters": {"{file.dict(dict.json)}":"value"}}`
+
+        Résultat : `{"parameters": {"k1":"v1", "k2":"v2"}}`
 
     Attributes:
         __name (str): nom de code du resolver
     """
 
-    _file_regex = re.compile(Config().get("workflow_resolution_regex", "file_regex"))
+    _file_regex = re.compile(Config().get_str("workflow_resolution_regex", "file_regex"))
 
     def __resolve_str(self, string_to_solve: str, s_path: str) -> str:
         """fonction privé qui se charge d'extraire une string d'un fichier texte
@@ -38,7 +67,7 @@ class FileResolver(AbstractResolver):
             s_path (str): string du path du fichier à ouvrir
 
         Returns:
-            str: texte contenu dans le fichier
+            texte contenu dans le fichier
         """
         p_path_text = Path(s_path)
         if p_path_text.exists():
@@ -55,7 +84,7 @@ class FileResolver(AbstractResolver):
             string_to_solve (str): chaîne à résoudre
             s_path (str): string du path du fichier à ouvrir
         Returns:
-            str: liste contenu dans le fichier
+            liste contenue dans le fichier
         """
         s_data = self.__resolve_str(string_to_solve, s_path)
         # on vérifie que cela est bien une liste
@@ -78,7 +107,7 @@ class FileResolver(AbstractResolver):
             s_path (str): string du path du fichier à ouvrir
 
         Returns:
-            str: dictionnaire contenu dans le fichier
+            dictionnaire contenu dans le fichier
         """
         s_data = self.__resolve_str(string_to_solve, s_path)
         # on vérifie que cela est bien un dictionnaire
@@ -94,7 +123,7 @@ class FileResolver(AbstractResolver):
 
     def resolve(self, string_to_solve: str) -> str:
         """Fonction permettant de renvoyer sous forme de string la resolution
-        des paramètres de fichier passées en entrée.
+        des paramètres de fichier passés en entrée.
 
         Args:
             string_to_solve (str): chaîne à résoudre (type de fichier à traiter et chemin)
@@ -103,7 +132,7 @@ class FileResolver(AbstractResolver):
             ResolverError: si le type n'est pas reconnu
 
         Returns:
-            str: le contenu du fichier en entrée sous forme de string
+            le contenu du fichier en entrée sous forme de string
         """
         s_result = ""
         # On cherche les résolutions à effectuer

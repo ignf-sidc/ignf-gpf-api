@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from ignf_gpf_api.workflow.Errors import StepActionError
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
@@ -8,7 +8,13 @@ from ignf_gpf_api.io.Config import Config
 
 
 class ActionAbstract(ABC):
-    """Classe représentant une action d'un workflow.
+    """Classe abstraite représentant une action d'un workflow.
+
+    Lancer une action revient à créer une entité dans l'API. Par exemple :
+
+    * faire un traitement revient à créer une Exécution de Traitement ;
+    * configurer un géoservice revient à créer une Configuration ;
+    * publier un géoservice revient à créer une Offre.
 
     Attributes:
         __workflow_context (str): nom du context du workflow
@@ -32,7 +38,7 @@ class ActionAbstract(ABC):
         La première action a le numéro 0.
 
         Returns:
-            int: index de l'action dans la liste des actions de cette étape
+            index de l'action dans la liste des actions de cette étape
         """
         if self.parent_action is not None:
             return self.parent_action.index + 1
@@ -47,7 +53,11 @@ class ActionAbstract(ABC):
         return self.__parent_action
 
     def resolve(self) -> None:
-        """Résout la définition de l'action"""
+        """Résout la définition de l'action.
+
+        L'action peut faire référence à des entités via des filtres, on
+        veut donc résoudre ces éléments afin de soumettre une requête valide à l'API.
+        """
         Config().om.info(f"Résolution de l'action '{self.workflow_context}-{self.index}'...")
         # Pour faciliter la résolution, on repasse la définition de l'action en json
         s_definition = str(json.dumps(self.__definition_dict, indent=4, ensure_ascii=False))
@@ -62,4 +72,32 @@ class ActionAbstract(ABC):
 
     @abstractmethod
     def run(self) -> None:
-        """lancement de l'exécution de l'action"""
+        """Lancement de l'action."""
+
+    @staticmethod
+    def get_filters(config_key: str, infos: Dict[str, Any], tags: Dict[str, Any]) -> Tuple[Dict[str, str], Dict[str, str]]:
+        """Génère les critères de filtres (pour voir si cette action n'a pas déjà été lancée)
+        d'après les critères d'unicité et les paramètres de création d'entité.
+
+        Args:
+            config_key (str): clé permettant de récupérer les critère d'unicité en config
+            infos (Dict[str, Any]): paramètres d'attributs pour la création de l'entité
+            tags (Dict[str, Any]): paramètres de tags pour la création de l'entité
+
+        Returns:
+            critère de filtres sur les infos et les tags
+        """
+        # On liste les filtres sur les informations (uniqueness_constraint_infos)
+        l_attributes = Config().get_str(config_key, "uniqueness_constraint_infos", "").split(";")
+        d_infos = {}
+        for s_infos in l_attributes:
+            if s_infos != "":
+                d_infos[s_infos] = infos.get(s_infos, None)
+        # On liste les filtres sur les tags (uniqueness_constraint_tags)
+        l_tags = Config().get_str(config_key, "uniqueness_constraint_tags", "").split(";")
+        d_tags = {}
+        for s_tag in l_tags:
+            if s_tag != "":
+                d_tags[s_tag] = tags[s_tag]
+        # On peut maintenant renvoyer les filtres
+        return d_infos, d_tags

@@ -2,7 +2,6 @@
 
 import configparser
 import io
-import json
 import sys
 import argparse
 import traceback
@@ -14,6 +13,8 @@ import ignf_gpf_api
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.auth.Authentifier import Authentifier
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
+from ignf_gpf_api.helper.PrintLogHelper import PrintLogHelper
+from ignf_gpf_api.io.Errors import ConflictError
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.workflow.Workflow import Workflow
 from ignf_gpf_api.workflow.resolver.GlobalResolver import GlobalResolver
@@ -23,6 +24,9 @@ from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
+from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
+from ignf_gpf_api.store.User import User
+from ignf_gpf_api.workflow.resolver.UserResolver import UserResolver
 
 
 def main() -> None:
@@ -32,7 +36,7 @@ def main() -> None:
 
     # Résolution de la config
     if not Path(o_args.config).exists():
-        Config().om.warning(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
+        raise GpfApiError(f"Le fichier de configuration précisé ({o_args.config}) n'existe pas.")
     Config().read(o_args.config)
 
     # Si debug on monte la config
@@ -52,13 +56,16 @@ def main() -> None:
         dataset(o_args)
     elif o_args.task == "workflow":
         workflow(o_args)
+    elif o_args.task == "me":
+        o_user = User.api_get("me")
+        print(o_user.to_json(indent=4))
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     """Parse les paramètres utilisateurs.
 
     Args:
-        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé. Defaults to None.
+        args (Optional[Sequence[str]], optional): paramètres à parser, si None sys.argv utilisé.
 
     Returns:
         argparse.Namespace: paramètres
@@ -96,6 +103,8 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
     o_parser_auth.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
     o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+    # Parser pour me
+    o_parser_auth = o_sub_parsers.add_parser("me", help="me")
     return o_parser.parse_args(args)
 
 
@@ -303,9 +312,24 @@ def workflow(o_args: argparse.Namespace) -> None:
         else:
             # Sinon, on définit des résolveurs
             GlobalResolver().add_resolver(StoreEntityResolver("store_entity"))
-            # et on lance l'étape
+            GlobalResolver().add_resolver(UserResolver("user"))
+            # le comportement
             s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
-            o_workflow.run_step(o_args.step, print, behavior=s_behavior)
+            # on reset l'afficheur de log
+            PrintLogHelper.reset()
+            # et on lance l'étape en précisant l'afficheur de log et le comportement
+            def callback_run_step(processing_execution: ProcessingExecution) -> None:
+                """fonction callback pour l'affichage des logs lors du suivi d'un traitement
+
+                Args:
+                    processing_execution (ProcessingExecution): processing exécution en cours
+                """
+                try:
+                    PrintLogHelper.print(processing_execution.api_logs())
+                except Exception:
+                    PrintLogHelper.print("Logs indisponibles pour le moment...")
+
+            o_workflow.run_step(o_args.step, callback_run_step, behavior=s_behavior)
     else:
         l_children: List[str] = []
         for p_child in p_root.iterdir():
@@ -320,6 +344,10 @@ if __name__ == "__main__":
         sys.exit(0)
     except GpfApiError as e_gpf_api_error:
         Config().om.critical(e_gpf_api_error.message)
+    except ConflictError:
+        # gestion "globale" des ConflictError (ConfigurationAction et OfferingAction
+        # possèdent chacune leur propre gestion)
+        Config().om.critical("La requête envoyée à l'Entrepôt génère un conflit. N'avez-vous pas déjà effectué l'action que vous essayez de faire ?")
     except Exception as e_exception:
         Config().om.critical("Erreur non spécifiée :")
         Config().om.error(traceback.format_exc())
