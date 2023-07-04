@@ -2,36 +2,15 @@ from typing import Dict, List, Optional, Type, TypeVar
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-from ignf_gpf_api.store.Errors import StoreEntityError
 
 T = TypeVar("T", bound="StoreEntity")
 
 
-class Store(StoreEntity):
+class Datastore(StoreEntity):
     """Classe Python représentant l'entité Store (entrepôt)."""
 
-    _entity_name = "store"
+    _entity_name = "datastore"
     _entity_title = "entrepôt"
-
-    @classmethod
-    def api_get(cls: Type[T], id_: str) -> T:
-        """Récupère une entité depuis l'API.
-
-        Args:
-            id_: Identifiant de l'entité
-
-        Returns:
-            (StoreEntity): L'entité instanciée correspondante
-        """
-        # On liste les store
-        l_stores = cls.api_list()
-        # Pour chaque store
-        for o_store in l_stores:
-            # On regarde si c'est le bon
-            if o_store.id == id_:
-                return o_store
-        # Si on arrive içi on lève une erreur
-        raise StoreEntityError(f"Impossible de trouver un Store (entrepôt) d'id {id_}.")
 
     @classmethod
     def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
