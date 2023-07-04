@@ -65,17 +65,12 @@ class StoreEntity(ABC):
     def api_create(cls: Type[T], data: Optional[Dict[str, Any]], route_params: Optional[Dict[str, Any]] = None) -> T:
         """Crée une nouvelle entité dans l'API.
 
-                Args:
-        <<<<<<< HEAD
-                    data: Données nécessaires pour la création
-                    route_params: Paramètres de résolution de la route
-        =======
-                    data: Données nécessaires pour la création.
-                    route_params: Paramètres de résolution de la route.
-        >>>>>>> prod
+        Args:
+            data: Données nécessaires pour la création.
+            route_params: Paramètres de résolution de la route.
 
-                Returns:
-                    (StoreEntity): Entité créée
+        Returns:
+            (StoreEntity): Entité créée
         """
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_create"
@@ -113,17 +108,13 @@ class StoreEntity(ABC):
     def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
         """Liste les entités de l'API respectant les paramètres donnés.
 
-                Args:
-                    infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
-                    tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
-        <<<<<<< HEAD
-                    page: Numéro page à récupérer, toutes si None. Default to None.
-        =======
-                    page: Numéro page à récupérer, toutes si None.
-        >>>>>>> prod
+        Args:
+            infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
+            tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
+            page: Numéro page à récupérer, toutes si None.
 
-                Returns:
-                    (List[StoreEntity]): liste des entités retournées par l'API
+        Returns:
+            (List[StoreEntity]): liste des entités retournées par l'API
         """
         # Nombre d'éléments max à lister par requête
         i_limit = Config().get_int("store_api", "nb_limit")
