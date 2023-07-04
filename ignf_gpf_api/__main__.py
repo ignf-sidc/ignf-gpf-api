@@ -134,7 +134,7 @@ def me_() -> None:
     l_texts = [
         "Vos informations :",
         f"  * email : {d_info['email']}",
-        f"  * nom : {d_info['first_name']} {d_info['last_name']}",
+        f"  * nom : {d_info.get('first_name')} {d_info.get('last_name')}",
         f"  * votre id : {d_info['_id']}",
     ]
     # Gestion des communautés
@@ -146,7 +146,11 @@ def me_() -> None:
         l_texts.append(f"Vous êtes membre de {len(l_cm)} communauté(s) :")
         for d_cm in l_cm:
             d_community = d_cm["community"]
-            l_rights = [k.replace("_rights", "") for k, v in d_cm["rights"].items() if v is True]
+            print(d_cm["rights"])
+            if isinstance(d_cm["rights"], dict):
+                l_rights = [k.replace("_rights", "") for k, v in d_cm["rights"].items() if v is True]
+            else:
+                l_rights = d_cm["rights"]
             s_rights = ", ".join(l_rights)
             l_texts.append("")
             l_texts.append(f"  * communauté « {d_community['name']} » :")
