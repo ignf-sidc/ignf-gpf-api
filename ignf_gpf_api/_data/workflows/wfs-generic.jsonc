@@ -31,11 +31,139 @@
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "temp": "non"
                         }
                     }
                 ],
                 "parents": []
+            },
+            // Étape n°2 : configuration d'un flux WFS
+            "configuration-wfs-bdd": {
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WFS",
+                            "name": "{user.last_name}__Flux_vecteur_wfs_bdd",
+                            "layer_name": "{user.last_name}__Flux_vecteur_wfs_bdd",
+                            "type_infos": {
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                "native_name": "canton",
+                                                "public_name": "canton",
+                                                "title": "Couche Canton du tutoriel - WFS - BDD",
+                                                "keywords": [
+                                                    "Tutoriel", "canton"
+                                                ],
+                                                "abstract": "Cantons autour de Paris"
+                        
+                                            }
+                                        ],
+                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Base_intermédiaire)]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des commentaires ajoutés à la Configuration
+                        "comments": [
+                            "Tutoriel de mise en place d'un flux vecteur : configuration du flux wfs"
+                        ],
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {
+                            "tuto": "oui",
+                            "temp": "oui"
+                        },
+                        "parents": [
+                            "mise-en-base"
+                        ]
+                    }
+                ]
+            },
+            // Étape n°3 : publication du flux WFS millésimé
+            "publication-wfs-bdd": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters": {
+                            // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wfs_bdd)]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            // Endpoint de type WFS
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
+                        },
+                        "parents": [
+                            "configuration-wfs-bdd"
+                        ]
+                    }
+                ]
+            },
+            // Étape n°2 : configuration d'un flux WMS
+            "configuration-wms-bdd": {
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMS-VECTOR",
+                            "name": "{user.last_name}__Flux_vecteur_wms_bdd",
+                            "layer_name": "{user.last_name}__Flux_vecteur_wms_bdd",
+                            "type_infos": {
+                                "title": "Couche Canton du tutoriel - WMS - BDD",
+                                "abstract": "Exemple de flux à visualiser",
+                                "used_data": [
+                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
+                                    {
+                                        "relations": [
+                                            {
+                                                "name": "canton",
+                                                // récupération du ficher de style correspondant à la donnée
+                                                "style": "{store_entity.static.infos._id [INFOS(name=style_canton)]}"
+                                            }
+                                        ],
+                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Base_intermédiaire)]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des commentaires ajoutés à la Configuration
+                        "comments": [
+                            "Tutoriel de mise en place d'un flux vecteur : configuration du flux wms"
+                        ],
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {
+                            "tuto": "oui",
+                            "temp": "oui"
+                        },
+                        "parents": [
+                            "mise-en-base"
+                        ]
+                    }
+                ]
+            },
+            // Étape n°3 : publication du flux WMS
+            "publication-wms-bdd": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters": {
+                            // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wms_bdd)]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            // Endpoint de type WMS
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
+                        },
+                        "parents": [
+                            "configuration-wms"
+                        ]
+                    }
+                ]
             },
             // Étape n°2 : création de la pyramide vecteur
             "création-pyramide": {
@@ -92,16 +220,16 @@
                 ]
             },
             // Étape n°3 : configuration d'un flux WFS
-            "configuration-wfs": {
+            "configuration-wfs-py": {
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMTS-TMS",
-                            "name": "{user.last_name}__Flux_vecteur",
-                            "layer_name": "{user.last_name}__flux_vecteur",
+                            "name": "{user.last_name}__Flux_vecteur_wfs_py",
+                            "layer_name": "{user.last_name}__Flux_vecteur_wfs_py",
                             "type_infos": {
-                                "title": "Couche Canton du tutoriel",
+                                "title": "Couche Canton du tutoriel - WFS - pyramide",
                                 "abstract": "Exemple de flux à visualiser",
                                 "used_data": [
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
@@ -129,13 +257,13 @@
                 ]
             },
             // Étape n°4 : publication du flux WFS millésimé
-            "publication-wfs": {
+            "publication-wfs-py": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wfs_py), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",
@@ -145,7 +273,7 @@
                     }
                 ],
                 "parents": [
-                    "configuration-wfs"
+                    "configuration-wfs-py"
                 ]
             }
         }
