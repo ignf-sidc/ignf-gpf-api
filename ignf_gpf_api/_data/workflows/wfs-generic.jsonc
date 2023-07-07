@@ -75,11 +75,11 @@
                         "tags": {
                             "tuto": "oui",
                             "temp": "oui"
-                        },
-                        "parents": [
-                            "mise-en-base"
-                        ]
+                        }
                     }
+                ],
+                "parents": [
+                    "mise-en-base"
                 ]
             },
             // Étape n°3 : publication du flux WFS millésimé
@@ -95,11 +95,11 @@
                             "visibility": "PRIVATE",
                             // Endpoint de type WFS
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
-                        },
-                        "parents": [
-                            "configuration-wfs-bdd"
-                        ]
+                        }
                     }
+                ],
+                "parents": [
+                    "configuration-wfs-bdd"
                 ]
             },
             // Étape n°2 : configuration d'un flux WMS
@@ -138,11 +138,11 @@
                         "tags": {
                             "tuto": "oui",
                             "temp": "oui"
-                        },
-                        "parents": [
-                            "mise-en-base"
-                        ]
+                        }
                     }
+                ],
+                "parents": [
+                    "mise-en-base"
                 ]
             },
             // Étape n°3 : publication du flux WMS
@@ -158,11 +158,11 @@
                             "visibility": "PRIVATE",
                             // Endpoint de type WMS
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
-                        },
-                        "parents": [
-                            "configuration-wms"
-                        ]
+                        }
                     }
+                ],
+                "parents": [
+                    "configuration-wms-bdd"
                 ]
             },
             // Étape n°2 : création de la pyramide vecteur
