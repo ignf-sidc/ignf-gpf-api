@@ -104,7 +104,7 @@ Si vous modifier le nom du fichier de style il faut modifier dans le workflow la
 
 ## Traitement et publication
 
-Le workflow « wfs-generic » permet de passer de la livraison de 3 flux servant la donnée. Il comporte 8 étapes :
+Le workflow « wfs-generic » permet de passer de la livraison à 3 flux servant la donnée. Il comporte 8 étapes :
 
 * `mise-en-base` : mise en base des données vecteur livrées ;
 * Publication WFS depuis la base :
