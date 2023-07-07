@@ -187,21 +187,15 @@
                                 }
                             },
                             "parameters": {
-                                // Niveau du bas
-                                "bottom_level": "18",
-                                // Niveau du haut
-                                "top_level": "5",
                                 // Tables à utiliser, sur quels niveaux et avec quels attributs
                                 "composition": [
                                     {
                                         "table": "canton",
-                                        "bottom_level": "18",
-                                        "top_level": "5",
-                                        "attributes": ["id","insee_dep","insee_reg","insee_can"]
+                                        "bottom_level": "9",
+                                        "top_level": "0",
+                                        "attributes": ["id","insee_dep","insee_reg","insee_can", "wkb_geometry"]
                                     }
-                                ],
-                                // Options de généralisation tippecanoe
-                                "tippecanoe_options": "-S10"
+                                ]
                             }
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
@@ -220,24 +214,34 @@
                 ]
             },
             // Étape n°3 : configuration d'un flux WFS
-            "configuration-wfs-py": {
+            "configuration-tms-py": {
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMTS-TMS",
-                            "name": "{user.last_name}__Flux_vecteur_wfs_py",
-                            "layer_name": "{user.last_name}__Flux_vecteur_wfs_py",
+                            "name": "{user.last_name}__Flux_vecteur_tms_py",
+                            "layer_name": "{user.last_name}__Flux_vecteur_tms_py",
+                            "metadata": [
+                                {
+                                    "format": "application/xml",
+                                    "url": "https://geoservices.ign.fr/sites/default/files/2023-01/IGNF_BDTOPOr_3-3.xml",
+                                    "type": "ISO19115:2003"
+                                }
+                            ],
                             "type_infos": {
-                                "title": "Couche Canton du tutoriel - WFS - pyramide",
+                                "title": "Couche Canton du tutoriel - TMS - pyramide",
                                 "abstract": "Exemple de flux à visualiser",
+                                "keywords": [
+                                    "Tutoriel", "Pyramide", "Vecteur"
+                                ],
                                 "used_data": [
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Pyramide_vecteur, type=ROK4-PYRAMID-VECTOR), TAGS(tuto=oui)]}",
-                                        "bottom_level": "18",
-                                        "top_level": "5"
+                                        "bottom_level": "9",
+                                        "top_level": "0"
                                     }
                                 ]
                             }
@@ -256,14 +260,14 @@
                     "création-pyramide"
                 ]
             },
-            // Étape n°4 : publication du flux WFS millésimé
-            "publication-wfs-py": {
+            // Étape n°4 : publication du flux TMS millésimé
+            "publication-tms-py": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wfs_py), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_tms_py), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
                             "visibility": "PRIVATE",
@@ -273,7 +277,7 @@
                     }
                 ],
                 "parents": [
-                    "configuration-wfs-py"
+                    "configuration-tms-py"
                 ]
             }
         }

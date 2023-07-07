@@ -91,8 +91,8 @@ flowchart TD
     B -->|configuration-wms-bdd| C2("configuration WMS sur BDD")
     C2 -->|publication-wms-bdd| D2("offre WMS sur BDD")
     B -->|création-pyramide| C3(donnée stockée : pyramide)
-    C3 -->|configuration-wfs-py| D3(configuration WFS sur pyramide)
-    D3 -->|publication-wfs-py| E3(offre  WFS sur pyramide)
+    C3 -->|configuration-tms-py| D3(configuration TMS sur pyramide)
+    D3 -->|publication-tms-py| E3(offre  TMS sur pyramide)
 ```
 
 ## fichier statique
@@ -104,7 +104,7 @@ Si vous modifier le nom du fichier de style il faut modifier dans le workflow la
 
 ## Traitement et publication
 
-Le workflow « wfs-generic » permet de passer de la livraison à un flux WFS servant la donnée. Il comporte 8 étapes :
+Le workflow « wfs-generic » permet de passer de la livraison de 3 flux servant la donnée. Il comporte 8 étapes :
 
 * `mise-en-base` : mise en base des données vecteur livrées ;
 * Publication WFS depuis la base :
@@ -114,10 +114,9 @@ Le workflow « wfs-generic » permet de passer de la livraison à un flux WFS se
   * `configuration-wms-bdd` : configuration d'un service de flux WMS permettant d'utiliser les données vecteur ;
   * `publication-wms-bdd` : publication du service de flux WMS sur le bon endpoint.
 * Mise en pyramide et publication :
-  * `mise-en-base` : mise en base des données vecteur livrées ;
   * `création-pyramide` : création de la pyramide de vecteur pour l'utilisation dans un flux ;
-  * `configuration-wfs-py` : configuration d'un service de flux WFS permettant d'utiliser les données vecteur ;
-  * `publication-wfs-py` : publication du service de flux WFS sur le bon endpoint.
+  * `configuration-tms-py` : configuration d'un service de flux TMS permettant d'utiliser les données vecteur ;
+  * `publication-tms-py` : publication du service de flux TMS sur le bon endpoint.
 
 Les étapes "configuration + publication" des flux WMS et WFS sont indépendantes.
 
