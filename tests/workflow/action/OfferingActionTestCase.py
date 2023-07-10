@@ -54,8 +54,8 @@ class OfferingActionTestCase(GpfTestCase):
         o_mock_offering = MagicMock()
         o_mock_offering.api_launch.return_value = None
 
-        def side_effect(arg: str) -> Any:
-            """side_effect pour récupération des élément de offering, gestion du cas des url qui sont un dictionnaire
+        def side_effect_dict(arg: str) -> Any:
+            """side_effect pour récupération des élément de offering, gestion du cas des url qui sont dans un dictionnaire
 
             Args:
                 arg (str): clef à affiché
@@ -67,18 +67,33 @@ class OfferingActionTestCase(GpfTestCase):
                 return [{"url": "http://1"}, {"url": "http://2"}]
             return "getitem"
 
-        o_mock_offering.__getitem__.side_effect = side_effect
+        def side_effect_text(arg: str) -> Any:
+            """side_effect pour récupération des élément de offering, gestion du cas des url qui sont donné directement
 
-        with patch.object(o_offering_action, "find_offering", return_value=o_mock_offering) as o_mock_offering_action_list_offering:
-            with patch.object(Offering, "api_create", return_value=None) as o_mock_offering_api_create:
-                # on lance l'exécution de run
-                o_offering_action.run()
+            Args:
+                arg (str): clef à affiché
 
-                # test de l'appel à OfferingAction.find_offering
-                o_mock_offering_action_list_offering.assert_called_once()
+            Returns:
+                Any: valeur de retour
+            """
+            if arg == "urls":
+                return ["http://1", "http://2"]
+            return "getitem"
 
-                # test de l'appel à Offering.api_create
-                o_mock_offering_api_create.assert_not_called()
+        for f_effect in [side_effect_dict, side_effect_text]:
+
+            o_mock_offering.__getitem__.side_effect = f_effect
+
+            with patch.object(o_offering_action, "find_offering", return_value=o_mock_offering) as o_mock_offering_action_list_offering:
+                with patch.object(Offering, "api_create", return_value=None) as o_mock_offering_api_create:
+                    # on lance l'exécution de run
+                    o_offering_action.run()
+
+                    # test de l'appel à OfferingAction.find_offering
+                    o_mock_offering_action_list_offering.assert_called_once()
+
+                    # test de l'appel à Offering.api_create
+                    o_mock_offering_api_create.assert_not_called()
 
     def test_find_offering_exists_and_ok(self) -> None:
         """Test de find_offering quand une offering est trouvée et que le endpoint correspond."""
