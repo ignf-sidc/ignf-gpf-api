@@ -267,12 +267,11 @@ class StoreEntity(ABC):
         l_infos = []
         # Ajout de l'id
         l_infos.append(f"id={self.id}")
-        # Ajout du nom si possible
-        if "name" in self._store_api_dict:
-            l_infos.append(f"name={self['name']}")
-        # Ajout du layer_name si possible
-        if "layer_name" in self._store_api_dict:
-            l_infos.append(f"layer_name={self['layer_name']}")
+        # Ajout de certains attributs si possible
+        l_attributes = ["name", "layer_name", "technical_name"]
+        for s_attribut in l_attributes:
+            if s_attribut in self._store_api_dict:
+                l_infos.append(f"{s_attribut}={self[s_attribut]}")
         # Retour
         return f"{self.__class__.__name__}({', '.join(l_infos)})"
 

@@ -69,3 +69,9 @@ class ActionAbstractTestCase(GpfTestCase):
             # Vérifications critères conservés
             self.assertDictEqual(d_infos, {"info_1": "val_1", "info_2": "val_2"})
             self.assertDictEqual(d_tags, {"tag_3": "val_3"})
+
+    def test_str(self) -> None:
+        """test de __str__"""
+        d_definition = {"test": "val"}
+        o_action = ConcreteAction("nom", d_definition, None)
+        self.assertEqual("ConcreteAction(workflow=nom)", str(o_action))

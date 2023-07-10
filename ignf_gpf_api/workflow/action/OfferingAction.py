@@ -31,8 +31,13 @@ class OfferingAction(ActionAbstract):
         if o_offering is not None:
             # Récupération des liens
             o_offering.api_update()
-            s_urls = "\n   - ".join([d_url["url"] for d_url in o_offering["urls"]])
-            Config().om.info(f"Offre créée : {self.__offering}\n   - {s_urls}")
+            if len(o_offering["urls"]) > 0 and isinstance(o_offering["urls"][0], dict):
+                # si les url sont récupérées sous forme de dict on affiche l'url uniquement
+                s_urls = "\n   - ".join([d_url["url"] for d_url in o_offering["urls"]])
+            else:
+                # si les url sont récupérées sous forme de liste
+                s_urls = "\n   - ".join(o_offering["urls"])
+            Config().om.info(f"Offre créée : {self.__offering}\n{s_urls}")
         Config().om.info("Création d'une offre : terminé")
 
     def __create_offering(self) -> None:

@@ -328,3 +328,15 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
                 # initialisation de ProcessingExecutionAction
                 o_pea = ProcessingExecutionAction("contexte", d_definition_dict)
                 self.assertEqual(o_pea.output_new_entity, b_new)
+
+
+    def test_str(self) -> None:
+        """test de __str__"""
+        d_definition = {"_id": "ancien"}
+        # test sans processing execution
+        o_action = ProcessingExecutionAction("nom", d_definition)
+        self.assertEqual("ProcessingExecutionAction(workflow=nom)", str(o_action))
+        # test avec processing execution
+        with patch('ignf_gpf_api.workflow.action.ProcessingExecutionAction.ProcessingExecutionAction.processing_execution', new_callable=PropertyMock) as o_mock_processing_execution:
+            o_mock_processing_execution.return_value = MagicMock(id='test uuid')
+            self.assertEqual("ProcessingExecutionAction(workflow=nom, processing_execution=test uuid)", str(o_action))
