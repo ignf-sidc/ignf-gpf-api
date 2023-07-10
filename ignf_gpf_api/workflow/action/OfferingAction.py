@@ -32,10 +32,10 @@ class OfferingAction(ActionAbstract):
             # Récupération des liens
             o_offering.api_update()
             if len(o_offering["urls"]) > 0 and isinstance(o_offering["urls"][0], dict):
-                # si les url sont récupérer sous forme de dict on affiche l'url uniquement
+                # si les url sont récupérées sous forme de dict on affiche l'url uniquement
                 s_urls = "\n   - ".join([d_url["url"] for d_url in o_offering["urls"]])
             else:
-                # si les url sont récupérer directement
+                # si les url sont récupérées sous forme de liste
                 s_urls = "\n   - ".join(o_offering["urls"])
             Config().om.info(f"Offre créée : {self.__offering}\n{s_urls}")
         Config().om.info("Création d'une offre : terminé")
