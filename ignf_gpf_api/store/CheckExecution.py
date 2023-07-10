@@ -1,3 +1,4 @@
+import json
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.interface.CsfInterface import CsfInterface
@@ -28,4 +29,12 @@ class CheckExecution(CsfInterface, StoreEntity):
             route_params={self._entity_name: self.id},
         )
         s_log = o_response.text
+        try:
+            if s_log in ["", "[]"]:
+                return ""
+            # les logs sont retourné sous forme de liste on tente le passage de liste à un texte propre.
+            l_log = json.loads(s_log)
+            s_log = "\n".join(l_log)
+        except Exception:
+            pass
         return s_log

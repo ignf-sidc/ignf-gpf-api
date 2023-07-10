@@ -212,7 +212,7 @@ class WorkflowTestCase(GpfTestCase):
         # On teste le workflow wfs-generic.jsonc
         o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc", "wfs generic")
         self.assertEqual(o_workflow_2.name, "wfs generic")
-        self.assertEqual(len(o_workflow_2.steps), 4)
+        self.assertEqual(len(o_workflow_2.steps), 8)
         # On teste un fichier inexistant
         with self.assertRaises(GpfApiError) as o_arc:
             Workflow.open_workflow(Path("pas_là.json"))

@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from typing import Optional
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
@@ -37,6 +38,14 @@ class ProcessingExecution(CsfInterface, StoreEntity):
             route_params={self._entity_name: self.id},
         )
         s_log = o_response.text
+        try:
+            if s_log in ["", "[]"]:
+                return ""
+            # les logs sont retourné sous forme de liste on tente le passage de liste à un texte propre.
+            l_log = json.loads(s_log)
+            s_log = "\n".join(l_log)
+        except Exception:
+            pass
         # on renvoie les logs
         return s_log
 
