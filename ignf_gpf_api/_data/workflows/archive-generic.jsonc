@@ -9,7 +9,7 @@
                         "type": "processing-execution",
                         "body_parameters": {
                             // On récupère l'id du traitement nommé "Intégration d'archives livrées"
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=archive)]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Recopie d'une archive livrée)]}",
                             "inputs": {
                                 "upload": [
                                     // On récupère l'id de la Livraison associée grâce à son nom
