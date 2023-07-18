@@ -1,0 +1,31 @@
+(p38) mpayoux@LNV2006P064:~/code/bag/ignf-gpf-api/tests_bdcarto$ python -m ignf_gpf_api upload -f upload_descriptor.jsonc
+INFO - Le fichier md5 BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15.md5 n'existe pas, il va être créé
+INFO - Création et complétion d'une livraison...
+INFO - Création d'une livraison...
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 créée avec succès.
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : ajout des 0 tags...
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : les 0 tags ont été ajoutés avec succès.
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : ajout des 0 commentaires...
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : les 0 commentaires ont été ajoutés avec succès.
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : téléversement des 34 fichiers de données...
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : les 34 fichiers de données ont été téléversés avec succès.
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : téléversement des 1 fichiers de clefs...
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : les 1 fichiers de clefs ont été téléversés avec succès.
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : fermeture de la livraison...
+INFO - Livraison BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15 : livraison fermée avec succès. La livraison va maintenant être vérifiée par la Géoplateforme.
+INFO - Livraison créée et complétée : Upload(id=00ad8cc8-2c22-4526-82d6-8454349943c7, name=BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15)
+INFO - Création et complétion d'une livraison : terminé
+INFO - Monitoring des vérifications toutes les 10 secondes...
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 2 en cours, 0 en échec, 0 en succès
+Vérifications : 0 en attente, 1 en cours, 0 en échec, 1 en succès
+Vérifications : 0 en attente, 0 en cours, 0 en échec, 2 en succès
+INFO - Vérifications : 0 en attente, 0 en cours, 0 en échec, 2 en succès
+Livraison Upload(id=00ad8cc8-2c22-4526-82d6-8454349943c7, name=BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15) créée avec succès.
+

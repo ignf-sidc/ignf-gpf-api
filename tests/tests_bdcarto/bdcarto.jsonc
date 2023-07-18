@@ -1,0 +1,720 @@
+{ // workflow destiné à tester la génération d'un graphe de procédure un peu complexe (10 étapes non linéaires)
+    "workflow": {
+        "steps": {
+            // Étape n°1 : mise en base de la donnée importée
+            "mise-en-base": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la livraison nommée selon le pattern et associée à cette DPSG
+                                    "{store_entity.upload.infos._id [INFOS(name=BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée comme la livraison
+                                    "name": "BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            // On récupère le paramètre "dpsg"
+                            //"dpsg": "{param.dpsg}"
+                        }
+                    }
+                ],
+                "parents": []
+            },
+
+            // Étape n°2 : configuration d'un flux WFS pour la dernière édition (latest)
+            "configuration-wfs-latest": {
+                "actions": [ // METTRE A JOUR EN PHASE AVEC L'API
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WFS", //??
+                            "name": "BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15_WFS_LATEST",
+                            "layer_name": "BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15_WFS_LATEST",
+                            "type_infos": {
+                                "title": "TITRE",
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                "native_name": "arrondissement",
+                                                "public_name": "arrondissement", // facultatif
+                                                "title": "Arrondissement",
+                                                "abstract": "Arrondissement"
+                                            },
+                                            {
+                                                "native_name": "commune",
+                                                "public_name": "commune", // facultatif
+                                                "title": "Commune",
+                                                "abstract": "Commune"
+                                            },
+                                            {
+                                                "native_name": "cours_d_eau",
+                                                "public_name": "cours_d_eau", // facultatif
+                                                "title": "Cours d'eau",
+                                                "abstract": "Cours d'eau"
+                                            },
+                                            {
+                                                "native_name": "departement",
+                                                "public_name": "departement", // facultatif
+                                                "title": "Departement",
+                                                "abstract": "Departement"
+                                            },
+                                            {
+                                                "native_name": "bassin_versant_topographique",
+                                                "public_name": "bassin_versant_topographique", // facultatif
+                                                "title": "Bassin versant topographique",
+                                                "abstract": "Bassin versant topographique"
+                                            },
+                                            {
+                                                "native_name": "collectivite_territoriale",
+                                                "public_name": "collectivite_territoriale", // facultatif
+                                                "title": "Collectivité territoriale",
+                                                "abstract": "Collectivité territoriale"
+                                            },
+                                            {
+                                                "native_name": "troncon_de_voie_ferree",
+                                                "public_name": "troncon_de_voie_ferree", // facultatif
+                                                "title": "Troncon de voie ferree",
+                                                "abstract": "Troncon de voie ferree"
+                                            },
+                                            {
+                                                "native_name": "commune_associee_ou_deleguee",
+                                                "public_name": "commune_associee_ou_deleguee", // facultatif
+                                                "title": "Commune associée ou déléguée",
+                                                "abstract": "Commune associée ou déléguée"
+                                            },
+                                            {
+                                                "native_name": "region",
+                                                "public_name": "region", // facultatif
+                                                "title": "Region",
+                                                "abstract": "Region"
+                                            },
+                                            {
+                                                "native_name": "reservoir",
+                                                "public_name": "reservoir", // facultatif
+                                                "title": "Réservoir",
+                                                "abstract": "Réservoir"
+                                            },
+                                            {
+                                                "native_name": "aerodrome",
+                                                "public_name": "aerodrome", // facultatif
+                                                "title": "Aerodrome",
+                                                "abstract": "Aerodrome"
+                                            },
+                                            {
+                                                "native_name": "cimetiere",
+                                                "public_name": "cimetiere", // facultatif
+                                                "title": "Cimetiere",
+                                                "abstract": "Cimetiere"
+                                            },
+                                            {
+                                                "native_name": "construction_lineaire",
+                                                "public_name": "construction_lineaire", // facultatif
+                                                "title": "Construction linéaire",
+                                                "abstract": "Construction linéaire"
+                                            },
+                                            {
+                                                "native_name": "construction_surfacique",
+                                                "public_name": "construction_surfacique", // facultatif
+                                                "title": "Construction surfacique",
+                                                "abstract": "Construction surfacique"
+                                            },
+                                            {
+                                                "native_name": "detail_hydrographique",
+                                                "public_name": "detail_hydrographique", // facultatif
+                                                "title": "Détail hydrogrpahique",
+                                                "abstract": "Détail hydrographique"
+                                            },
+                                            {
+                                                "native_name": "detail_orographique",
+                                                "public_name": "detail_orographique", // facultatif
+                                                "title": "Détail orogrpahique",
+                                                "abstract": "Détail orographique"
+                                            },
+                                            {
+                                                "native_name": "ligne_electrique",
+                                                "public_name": "ligne_electrique", // facultatif
+                                                "title": "Ligne electrique",
+                                                "abstract": "Ligne electrique"
+                                            },
+                                            {
+                                                "native_name": "lieu_dit_non_habite",
+                                                "public_name": "lieu_dit_non_habite", // facultatif
+                                                "title": "Lieu dit non habité",
+                                                "abstract": "Lieu dit non habité"
+                                            },
+                                            {
+                                                "native_name": "transport_par_cable",
+                                                "public_name": "transport_par_cable", // facultatif
+                                                "title": "Transport par cable",
+                                                "abstract": "Transport par cable"
+                                            },
+                                            {
+                                                "native_name": "occupation_du_sol",
+                                                "public_name": "occupation_du_sol", // facultatif
+                                                "title": "Occupation du sol",
+                                                "abstract": "Occupation du sol"
+                                            },
+                                            {
+                                                "native_name": "parc_ou_reserve",
+                                                "public_name": "parc_ou_reserve", // facultatif
+                                                "title": "Parc ou réserve",
+                                                "abstract": "Parc ou réserve"
+                                            },
+                                            {
+                                                "native_name": "plan_d_eau",
+                                                "public_name": "plan_d_eau", // facultatif
+                                                "title": "Plan d'eau",
+                                                "abstract": "Plan d'eau"
+                                            },
+                                            {
+                                                "native_name": "piste_d_aerodrome",
+                                                "public_name": "piste_d_aerodrome", // facultatif
+                                                "title": "Piste d'aérodrome",
+                                                "abstract": "Piste d'aérodrome"
+                                            },
+                                            {
+                                                "native_name": "epci",
+                                                "public_name": "epci", // facultatif
+                                                "title": "EPCI",
+                                                "abstract": "EPCI"
+                                            },
+                                            {
+                                                "native_name": "surface_hydrographique",
+                                                "public_name": "surface_hydrographique", // facultatif
+                                                "title": "Surface hydrographique",
+                                                "abstract": "Surface hydrographique"
+                                            },
+                                            {
+                                                "native_name": "troncon_hydrographique",
+                                                "public_name": "troncon_hydrographique", // facultatif
+                                                "title": "Troncon hydrographique",
+                                                "abstract": "Troncon hydrographique"
+                                            },
+                                            {
+                                                "native_name": "rond_point",
+                                                "public_name": "rond_point", // facultatif
+                                                "title": "Rond point",
+                                                "abstract": "Rond point"
+                                            },
+                                            {
+                                                "native_name": "route_numerotee_ou_nommee",
+                                                "public_name": "route_numerotee_ou_nommee", // facultatif
+                                                "title": "Route numérotée ou nommée",
+                                                "abstract": "Route numérotée ou nommée"
+                                            },
+                                            {
+                                                "native_name": "voie_ferree_nommee",
+                                                "public_name": "voie_ferree_nommee", // facultatif
+                                                "title": "Voie ferrée nommée",
+                                                "abstract": "Voie ferrée nommée"
+                                            },
+                                            {
+                                                "native_name": "zone_d_habitation",
+                                                "public_name": "zone_d_habitation", // facultatif
+                                                "title": "Zone d'habitation",
+                                                "abstract": "Zone d'habitation"
+                                            },
+                                            {
+                                                "native_name": "equipement_de_transport",
+                                                "public_name": "equipement_de_transport", // facultatif
+                                                "title": "Equipement de transport",
+                                                "abstract": "Equipement de transport"
+                                            },
+                                            {
+                                                "native_name": "noeud_hydrographique",
+                                                "public_name": "noeud_hydrographique", // facultatif
+                                                "title": "Noeud hydrographique",
+                                                "abstract": "Noeud hydrographique"
+                                            },
+                                            {
+                                                "native_name": "troncon_de_route",
+                                                "public_name": "troncon_de_route", // facultatif
+                                                "title": "Troncon de route",
+                                                "abstract": "Troncon de route"
+                                            },
+                                            {
+                                                "native_name": "zone_d_activite_ou_d_interet",
+                                                "public_name": "zone_d_activite_ou_d_interet", // facultatif
+                                                "title": "Zone d'activite ou d'interet",
+                                                "abstract": "Zone d'activité ou d'interet"
+                                            }
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15, type=VECTOR-DB)]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {
+                            //"dpsg": "{param.dpsg}"
+                        }
+                    }
+                ],
+                "parents": [
+                    "mise-en-base"
+                ]
+            },
+
+            // Étape n°3 : publication du flux WFS latest pour validation
+            "publication-wfs-latest-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=BDCARTO_5-0_TOUSTHEMES_GPKG_WGS84_D001_2022-09-15_WFS_LATEST)]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
+                        }
+                    }
+                ],
+                "parents": ["configuration-wfs-latest"]
+            }
+/* 
+            // Étape n°4 : publication du flux WFS latest
+            "publication-wfs-latest": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%_WFS_LATEST), TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
+                        }
+                    }
+                ],
+                "parents": ["publication-wfs-latest-validation"]
+            },
+
+            // Étape n°5 : configuration d'un flux WMS vecteur
+            "configuration-wms-vecteur": {
+                "actions": [ // METTRE A JOUR EN PHASE AVEC L'API
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Administratif
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "arrondissement",
+                                                 "style" : "a8839aa2-755f-40ac-890d-0bfdec03dadc", //bdcarto_limite_arrondissement.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "commune",
+                                                 "style" : "66daac1f-31c9-4870-ba98-b21937c6a604", //bdcarto_commune.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "departement",
+                                                 "style" : "08524abd-946a-464f-ad8f-63a7af340ca6", //bdcarto_departement.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "limite_administrative",
+                                                 "style" : "1c974385-ec82-4626-9994-30e64081f2e2", //bdcarto_limite_administrative.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "region",
+                                                 "style" : "b3cf212f-bd73-4e4a-8004-ea707aab6285", //bdcarto_region_departement.sld,
+                                                 "ftl" : "" //
+                                            }
+                                    
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    },
+
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Equipement
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "aerodrome",
+                                                 "style" : "", //bdcarto_aerorodrome.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "cimetiere",
+                                                 "style" : "", //bdcarto_cimetiere.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "construction_elevee",
+                                                 "style" : "", //bdcarto_construction_elevee.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "digue",
+                                                 "style" : "", //bdcarto_digue.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "enceinte_militaire",
+                                                 "style" : "", //bdcarto_enceinte_militaire.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "ligne_electrique",
+                                                "style" : "", //bdcarto_ligne_electrique.sld,
+                                                "ftl" : "" //
+                                           },
+                                           {
+                                                "name" : "metro_aerien",
+                                                "style" : "", //bdcarto_metro_aerien.sld,
+                                                "ftl" : "" //
+                                           },
+                                           {
+                                                "name" : "transport_cable",
+                                                "style" : "", //bdcarto_transport_cable.sld,
+                                                "ftl" : "" //
+                                           }
+                                
+                                    
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    },
+
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Hydrographie
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "laisse",
+                                                 "style" : "", //bdcarto_laisse.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "cimetiere",
+                                                 "style" : "", //bdcarto_ponctel_hydrographique.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "surface_hydrographique",
+                                                 "style" : "", //bdcarto_surface_hydrographique.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "troncon_hydrographique",
+                                                 "style" : "", //bdcarto_troncon_hydrgraphique.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "troncon_hydrographique",
+                                                 "style" : "", //bdcarto_troncon_hydrgraphique_names.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "zone_hydrographique_texture",
+                                                "style" : "", //bdcarto_zone_hydrographique_texture.sld,
+                                                "ftl" : "" //
+                                           }
+
+                                    
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    },
+
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Toponyme
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "etablissement",
+                                                 "style" : "", //bdcarto_etablissement.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "massif_boise",
+                                                 "style" : "", //bdcarto_ponctel_hydrographique.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "massif_boise",
+                                                 "style" : "", //bdcarto_massif_boise_names.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "point_remarquable_relief",
+                                                 "style" : "", //bdcarto_point_remarquable_relief.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "point_remarquable_relief",
+                                                 "style" : "", //bdcarto_point_remarquable_relief.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "zone_activite",
+                                                "style" : "", //bdcarto_zone_activite.sld,
+                                                "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "zone_reglementee_touristique",
+                                                "style" : "", //bdcarto_zone_reglementee_touristique.sld,
+                                                "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "zone_reglementee_touristique",
+                                                "style" : "", //bdcarto_zone_reglementee_touristique_names.sld,
+                                                "ftl" : "" //
+                                            }
+
+                                    
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    },
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Habillage
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "zone_occupation_sol",
+                                                 "style" : "", //bdcarto_zone_occupation_sol.sld,
+                                                 "ftl" : "" //
+                                            }
+
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    },
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Reseau Ferre
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "noeud_ferre",
+                                                 "style" : "", //bdcarto_noeud_ferre.sld,
+                                                 "ftl" : "" //
+                                            },
+
+                                            {
+                                                "name" : "troncon_voie_ferree",
+                                                "style" : "", //bdcarto_troncon_voie_ferree.sld,
+                                                "ftl" : "" //
+                                            }
+
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    },
+
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Reseau routier
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "acces_equipement",
+                                                 "style" : "", //bdcarto_acces_equipement.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "communication_restreinte",
+                                                 "style" : "", //bdcarto_communication_restreinte.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "equipement_routier",
+                                                 "style" : "", //bdcarto_equipement_routier.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "franchissement",
+                                                 "style" : "", //bdcarto_franchissement.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "itineraire",
+                                                 "style" : "", //bdcarto_itineraire.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "liaison_maritime",
+                                                "style" : "", //bdcarto_liaison_maritime.sld,
+                                                "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "noeud_routier",
+                                                "style" : "", //bdcarto_noeud_routier.sld,
+                                                "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "troncon_route",
+                                                "style" : "", //bdcarto_troncon_route.sld,
+                                                "ftl" : "" //
+                                            },
+                                            {
+                                                "name" : "troncon_route",
+                                                "style" : "", //bdcarto_troncon_route_names.sld,
+                                                "ftl" : "" //
+                                            }
+
+                                    
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    }
+
+                ],
+                "parents": ["mise-en-base"]
+            },
+
+            // Étape n°6 : publication du flux WMS vecteur pour validation
+            "publication-wms-vecteur-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%_WMS), TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "6220b50fb579ed7b9ad7f4ae" // PROVISOIRE!
+                        }
+                    }
+                ],
+                "parents": ["configuration-wms-vecteur"]
+            },
+
+            // Étape n°7 : publication du flux WMS vecteur
+            "publication-wms-vecteur": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=BDCARTO_%-%_TOUSTHEMES_SHP_%_%_%_WMS), TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "6220b50fb579ed7b9ad7f4ae" // PROVISOIRE!
+                        }
+                    }
+                ],
+                "parents": ["publication-wms-vecteur-validation"]
+            }
+
+     */        
+
+            
+
+           
+
+            
+
+            
+
+            
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "datasets": [
+        {
+            "data_dirs": [
+                "IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01"
+            ],
+            "upload_infos": {
+                "description": "Jeu de donnees iris-ge",
+                "name": "IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01",
+                "srs": "EPSG:4326",
+                "type": "VECTOR"
+            },
+            "comments": [],
+            "tags": {}
+        }
+    ]
+}
+
+
+

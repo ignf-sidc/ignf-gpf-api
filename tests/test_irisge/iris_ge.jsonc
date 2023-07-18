@@ -1,0 +1,236 @@
+{ // workflow destiné à tester la génération d'un graphe de procédure un peu complexe (10 étapes non linéaires)
+    "workflow": {
+        "steps": {
+            // Étape n°1 : mise en base de la donnée importée
+            "mise-en-base": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Intégration de données vecteur livrées en base)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la livraison nommée selon le pattern et associée à cette DPSG
+                                    "{store_entity.upload.infos._id [INFOS(name=IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée comme la livraison
+                                    "name": "IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            // On récupère le paramètre "dpsg"
+                            //"dpsg": "{param.dpsg}"
+                        }
+                    }
+                ],
+                "parents": []
+            },
+
+            // Étape n°2 : configuration d'un flux WFS pour la dernière édition (latest)
+            "configuration-wfs-latest": {
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WFS", 
+                            "name": "IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01_WFS_LATEST",
+                            "layer_name": "IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01_WFS_LATEST",
+                            "type_infos": {
+                                "title": "TITRE",
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "native_name" : "iris",
+                                                 "public_name" : "iris", 
+                                                 "title" : "IRIS", 
+                                                 "abstract" : "IRIS" 
+                                            }
+                                            
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01, type=VECTOR-DB)]}"
+                                    }
+
+                                ]
+                            }
+                        }
+                        // Liste des tags ajoutés à la Configuration
+                        //"tags": {"dpsg": "{param.dpsg}"}
+                    }
+                ],
+                "parents": ["mise-en-base"]
+            },
+
+            // Étape n°3 : publication du flux WFS latest pour validation
+            "publication-wfs-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=IRIS-GE_3-0_GPKG_WGS84G_D001-ED2023-01-01_WFS_LATEST)]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
+                        }
+                    }
+                ],
+                "parents": ["configuration-wfs-latest"]
+            },
+
+            // Étape n°4 : Dérivation des données en base -> symbo
+            "derivation-bdd": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=)]}",
+                            "inputs": {
+                                "upload": [
+                                    // On récupère l'id de la livraison nommée selon le pattern Admin Express et associée à cette DPSG
+                                    "{store_entity.upload.infos._id [INFOS(name=), TAGS(dpsg={param.dpsg})]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée comme la livraison
+                                    "name": "{store_entity.upload.infos.name [INFOS(name=), TAGS(dpsg={param.dpsg})]}"
+                                }
+                            },
+                            "parameters": {}
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            // On récupère le paramètre "dpsg"
+                            "dpsg": "{param.dpsg}"
+                        }
+                    }
+                ],
+                "parents": []
+            },
+
+            // Étape n°5 : création d'un pyramide indépendante ???
+
+            // Étape n°6 : configuration d'un flux WMS vecteur
+            "configuration-wms-vecteur": {
+                "actions": [ //
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}_WMS",
+                            "type_infos": {
+                                "title": "TITRE", //Administratif
+                                "abstract": "RÉSUMÉ",
+                                "used_data": [
+                                    {
+                                        "relations": [
+                                            {
+                                                 "name" : "nom_iris_ge",
+                                                 "style" : "", //nom_iris_ge.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "iris_ge_color",
+                                                 "style" : "", //iris_ge_color.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "nom_iris_ge_commune",
+                                                 "style" : "", //nom_iris_ge_commune.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "iris_ge_commune",
+                                                 "style" : "", //iris_ge_commune.sld,
+                                                 "ftl" : "" //
+                                            },
+                                            {
+                                                 "name" : "iris_ge_departement",
+                                                 "style" : "", //iris_ge_departement.sld,
+                                                 "ftl" : "" //
+                                            }
+                                    
+                                        ],
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(, type=VECTOR-DB), TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            }
+                        },
+                        // Liste des tags ajoutés à la Configuration
+                        "tags": {"dpsg": "{param.dpsg}"}
+                    }
+
+                    
+
+                ],
+                "parents": ["mise-en-base"]
+            },
+
+            // Étape n°7 : publication du flux WMS vecteur pour validation
+            "publication-wms-vecteur-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=), TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
+                        }
+                    }
+                ],
+                "parents": ["configuration-wms-vecteur"]
+            },
+
+            // Étape n°8 : publication du flux WMS vecteur
+
+            //1 nom_iris_ge.sld
+            //2 iris_ge_color.sld
+            //3 nom_iris_ge_commune.sld
+            //4 iris_ge_commune.sld
+            //5 iris_ge_departement.sld 
+            
+            "publication-wms-vecteur": {
+                "actions": [
+                        {
+                            "type": "offering",
+                            "url_parameters" : {
+                                "configuration": "{store_entity.configuration.infos._id [INFOS(name=)]}"
+                            },
+                            "body_parameters": {
+                                "visibility": "PUBLIC",
+                                "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
+                            }
+                        }
+                ],
+                "parents": ["publication-wms-vecteur-validation"]
+            }
+
+            
+
+            
+
+           
+
+            
+
+            
+
+            
+        }
+    }
+}
