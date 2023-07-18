@@ -272,7 +272,8 @@
                         "body_parameters": {
                             "visibility": "PRIVATE",
                             // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
-                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}",
+                            "open": true
                         }
                     }
                 ],
