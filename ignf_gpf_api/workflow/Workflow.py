@@ -40,6 +40,7 @@ class Workflow:
         """
         self.__name = name
         self.__raw_definition_dict = raw_dict
+        self.__datastore = raw_dict["datastore"] if "datastore" in raw_dict else None
 
     def get_raw_dict(self) -> Dict[str, Any]:
         """Renvoie le dictionnaire de définition du workflow.
@@ -49,13 +50,14 @@ class Workflow:
         """
         return self.__raw_definition_dict
 
-    def run_step(self, step_name: str, callback: Optional[Callable[[ProcessingExecution], None]] = None, behavior: Optional[str] = None) -> List[StoreEntity]:
+    def run_step(self, step_name: str, callback: Optional[Callable[[ProcessingExecution], None]] = None, behavior: Optional[str] = None, datastore: Optional[str] = None) -> List[StoreEntity]:
         """Lance une étape du workflow à partir de son nom. Liste les entités créées par chaque action et le retourne.
 
         Args:
             step_name (str): nom de l'étape
             callback (Optional[Callable[[ProcessingExecution], None]], optional): callback de suivi si création d'une exécution de traitement. Defaults to None.
             behavior (Optional[str]): comportement à adopter si une entité existe déjà sur l'entrepôt. Defaults to None.
+            datastore (Optional[str]): id du datastore à utiliser. Si None, le datastore sera Le premier trouvé dans l'action puis dans workflow puis dans configuration. Defaults to None.
 
         Raises:
             WorkflowError: levée si un problème apparaît pendant l'exécution du workflow
@@ -76,9 +78,19 @@ class Workflow:
             o_action = Workflow.generate(step_name, d_action_raw, o_parent_action, behavior)
             # résolution
             o_action.resolve()
+            # choix du datastore
+            ## par défaut datastore du workflow, si None il sera récupérer dans la configuration
+            s_use_datastore = self.__datastore
+            if datastore:
+                # datastore dans l'appel à la fonction on prend
+                s_use_datastore = datastore
+            elif "datastore" in o_action.definition_dict:
+                # datastore dans l'étape
+                s_use_datastore = o_action.definition_dict["datastore"]
+
             # exécution de l'action
             Config().om.info(f"Exécution de l'action '{o_action.workflow_context}-{o_action.index}'...")
-            o_action.run()
+            o_action.run(s_use_datastore)
             # on attend la fin de l'exécution si besoin
             if isinstance(o_action, ProcessingExecutionAction):
                 s_status = o_action.monitoring_until_end(callback=callback)
