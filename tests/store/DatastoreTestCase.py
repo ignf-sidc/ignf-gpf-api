@@ -8,7 +8,7 @@ from tests.GpfTestCase import GpfTestCase
 class DatastoreTestCase(GpfTestCase):
     """Tests Upload class.
 
-    cmd : python3 -m unittest -b tests.store.DataDatastoreTestCase
+    cmd : python3 -m unittest -b tests.store.DatastoreTestCase
     """
 
     json_request = {
