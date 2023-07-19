@@ -15,9 +15,11 @@ class UploadTestCase(GpfTestCase):
     """
 
     def test_api_push_data_file(self) -> None:
-        "Vérifie le bon fonctionnement de api_push_data_file."
+        """Vérifie le bon fonctionnement de api_push_data_file.
+        Dans ce test, on suppose que le datastore est défini (cf. route_params).
+        """
         # On instancie une livraison pour laquelle on veut pousser des fichiers
-        o_upload = Upload({"_id": "id_de_test"})
+        o_upload = Upload({"_id": "id_de_test"}, "id_datastore")
         # On récupère le nom de la clé associée au fichier
         s_key_file = Config().get("upload", "push_data_file_key")
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
@@ -36,7 +38,7 @@ class UploadTestCase(GpfTestCase):
                 o_mock_request.assert_called_once_with(
                     "upload_push_data",
                     method=ApiRequester.POST,
-                    route_params={"upload": "id_de_test"},
+                    route_params={"datastore": "id_datastore", "upload": "id_de_test"},
                     params={"path": s_api_path},
                     files={s_key_file: (p_file_path.name, o_opener.return_value)},
                 )
@@ -44,7 +46,9 @@ class UploadTestCase(GpfTestCase):
                 o_mock_open.assert_called_once_with("rb")
 
     def test_api_push_md5_file(self) -> None:
-        "Vérifie le bon fonctionnement de api_push_md5_file."
+        """Vérifie le bon fonctionnement de api_push_md5_file.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On instancie une livraison pour laquelle on veut pousser des fichiers
         o_upload = Upload({"_id": "id_de_test"})
         # On récupère le nom de la clé associée au fichier
@@ -62,14 +66,16 @@ class UploadTestCase(GpfTestCase):
                 o_mock_request.assert_called_once_with(
                     "upload_push_md5",
                     method=ApiRequester.POST,
-                    route_params={"upload": "id_de_test"},
+                    route_params={"datastore": None, "upload": "id_de_test"},
                     files={s_key_file: (p_file_path.name, o_opener.return_value)},
                 )
                 # Vérification sur o_mock_open (lecture binary)
                 o_mock_open.assert_called_once_with("rb")
 
     def test_api_delete_data_file_1(self) -> None:
-        "Vérifie le bon fonctionnement de api_delete_data_file si le chemin ne contient pas data/."
+        """Vérifie le bon fonctionnement de api_delete_data_file si le chemin ne contient pas data/.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On instancie une livraison pour laquelle on veut supprimer des fichiers
         # peu importe si la livraison comporte ou pas des fichiers
         o_upload = Upload({"_id": "id_de_test"})
@@ -85,12 +91,14 @@ class UploadTestCase(GpfTestCase):
             o_mock_request.assert_called_once_with(
                 "upload_delete_data",
                 method=ApiRequester.DELETE,
-                route_params={"upload": "id_de_test"},
+                route_params={"datastore": None, "upload": "id_de_test"},
                 params={"path": s_api_path},
             )
 
     def test_api_delete_data_file_2(self) -> None:
-        "Vérifie le bon fonctionnement de api_delete_data_file si le chemin contient data/."
+        """Vérifie le bon fonctionnement de api_delete_data_file si le chemin contient data/.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On instancie une livraison pour laquelle on veut supprimer des fichiers
         # peu importe si la livraison comporte ou pas des fichiers
         o_upload = Upload({"_id": "id_de_test"})
@@ -106,12 +114,14 @@ class UploadTestCase(GpfTestCase):
             o_mock_request.assert_called_once_with(
                 "upload_delete_data",
                 method=ApiRequester.DELETE,
-                route_params={"upload": "id_de_test"},
+                route_params={"datastore": None, "upload": "id_de_test"},
                 params={"path": s_api_path[5:]},  # le data/ a dû être retiré
             )
 
     def test_api_delete_md5_file(self) -> None:
-        "Vérifie le bon fonctionnement de api_delete_md5_file."
+        """Vérifie le bon fonctionnement de api_delete_md5_file.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On instancie une livraison pour laquelle on veut supprimer des fichiers md5
         # peu importe si la livraison comporte ou pas des fichiers
         o_upload = Upload({"_id": "id_de_test"})
@@ -127,12 +137,14 @@ class UploadTestCase(GpfTestCase):
             o_mock_request.assert_called_once_with(
                 "upload_delete_md5",
                 method=ApiRequester.DELETE,
-                route_params={"upload": "id_de_test"},
+                route_params={"datastore": None, "upload": "id_de_test"},
                 params={"path": s_api_path},
             )
 
     def test_api_open(self) -> None:
-        "Vérifie le bon fonctionnement de api_open."
+        """Vérifie le bon fonctionnement de api_open.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue l'ouverture d'une livraison
@@ -143,12 +155,18 @@ class UploadTestCase(GpfTestCase):
                 # On appelle la fonction api_open
                 o_upload_2_open.api_open()
                 # Vérification sur o_mock_request
-                o_mock_request.assert_called_once_with("upload_open", method=ApiRequester.POST, route_params={"upload": "id_à_ouvrir"})
+                o_mock_request.assert_called_once_with(
+                    "upload_open",
+                    method=ApiRequester.POST,
+                    route_params={"datastore": None, "upload": "id_à_ouvrir"},
+                )
                 # Vérification de l'appel à api_update
                 o_mock_api_update.assert_called_once()
 
     def test_api_close(self) -> None:
-        "Vérifie le bon fonctionnement de api_close."
+        """Vérifie le bon fonctionnement de api_close.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On effectue la fermeture d'une livraison
@@ -159,12 +177,18 @@ class UploadTestCase(GpfTestCase):
                 # On appelle la fonction api_close
                 o_upload_2_close.api_close()
                 # Vérification sur o_mock_request
-                o_mock_request.assert_called_once_with("upload_close", method=ApiRequester.POST, route_params={"upload": "id_à_fermer"})
+                o_mock_request.assert_called_once_with(
+                    "upload_close",
+                    method=ApiRequester.POST,
+                    route_params={"datastore": None, "upload": "id_à_fermer"},
+                )
                 # Vérification de l'appel à api_update
                 o_mock_api_update.assert_called_once()
 
     def test_api_tree(self) -> None:
-        "Vérifie le bon fonctionnement de api_tree."
+        """Vérifie le bon fonctionnement de api_tree.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         l_tree_wanted = [{"key_1": "value_1", "key_2": "value_2"}]
         # Instanciation d'une fausse réponse HTTP
         o_response = GpfTestCase.get_response(json=l_tree_wanted)
@@ -175,12 +199,17 @@ class UploadTestCase(GpfTestCase):
             # On appelle api_tree
             l_tree = o_upload.api_tree()
             # Vérification sur o_mock_request (route upload_tree avec comme params de route l'id)
-            o_mock_request.assert_called_once_with("upload_tree", route_params={"upload": "identifiant"})
+            o_mock_request.assert_called_once_with(
+                "upload_tree",
+                route_params={"datastore": None, "upload": "identifiant"},
+            )
             # Vérifications sur l_tree
             self.assertEqual(l_tree, l_tree_wanted)
 
     def test_api_list_checks(self) -> None:
-        "Vérifie le bon fonctionnement de api_list_checks."
+        """Vérifie le bon fonctionnement de api_list_checks.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         d_list_checks_wanted: Dict[str, List[Dict[str, Any]]] = {"key_1": [], "key_2": []}
         # Instanciation d'une fausse réponse HTTP
         o_response = GpfTestCase.get_response(json=d_list_checks_wanted)
@@ -191,12 +220,17 @@ class UploadTestCase(GpfTestCase):
             # On appelle api_list_checks
             d_list_checks = o_upload.api_list_checks()
             # Vérification sur o_mock_request (route api_list_checks avec comme params de route l'id)
-            o_mock_request.assert_called_once_with("upload_list_checks", route_params={"upload": "identifiant"})
+            o_mock_request.assert_called_once_with(
+                "upload_list_checks",
+                route_params={"datastore": None, "upload": "identifiant"},
+            )
             # Vérifications sur list_checks
             self.assertEqual(d_list_checks, d_list_checks_wanted)
 
     def test_api_run_checks(self) -> None:
-        "Vérifie le bon fonctionnement de api_run_checks."
+        """Vérifie le bon fonctionnement de api_run_checks.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
         with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
             # On instancie une livraison
@@ -206,4 +240,9 @@ class UploadTestCase(GpfTestCase):
             # On appelle la fonction api_run_checks
             o_upload_run_checks.api_run_checks(l_list_checks_ids)
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("upload_run_checks", method=ApiRequester.POST, route_params={"upload": "id"}, data=["id1", "id2"])
+            o_mock_request.assert_called_once_with(
+                "upload_run_checks",
+                method=ApiRequester.POST,
+                route_params={"datastore": None, "upload": "id"},
+                data=["id1", "id2"],
+            )
