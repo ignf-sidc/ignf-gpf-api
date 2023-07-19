@@ -39,7 +39,8 @@
                                             "enum": [
                                                 "processing-execution",
                                                 "configuration",
-                                                "offering"
+                                                "offering",
+                                                "datastore"
                                             ]
                                         },
                                         "url_parameters": {
@@ -56,6 +57,9 @@
                                         },
                                         "tags": {
                                             "type": "object"
+                                        },
+                                        "datastore": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -70,6 +74,11 @@
                     }
                 }
             }
+        },
+        "datastore": {
+            "type" : "string"
         }
-    }
+    },
+    "required": [ "workflow" ],
+    "additionalProperties": false
 }
