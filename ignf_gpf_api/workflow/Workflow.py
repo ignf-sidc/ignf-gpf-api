@@ -54,8 +54,8 @@ class Workflow:
 
         Args:
             step_name (str): nom de l'étape
-            callback (Optional[Callable[[ProcessingExecution], None]], optional): callback de suivi si création d'une exécution de traitement.
-            behavior (Optional[str]): comportement à adopter si une entité existe déjà sur l'entrepôt.
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): callback de suivi si création d'une exécution de traitement. Defaults to None.
+            behavior (Optional[str]): comportement à adopter si une entité existe déjà sur l'entrepôt. Defaults to None.
 
         Raises:
             WorkflowError: levée si un problème apparaît pendant l'exécution du workflow
@@ -178,8 +178,8 @@ class Workflow:
         Args:
             workflow_context (str): nom du context du workflow
             definition_dict (Dict[str, Any]): dictionnaire définissant l'action
-            parent_action (Optional[ActionAbstract], optional): action précédente (si étape à plusieurs action).
-            behavior (Optional[str]): comportement à adopter si l'entité créée par l'action existe déjà sur l'entrepôt
+            parent_action (Optional[ActionAbstract], optional): action précédente (si étape à plusieurs action). Defaults to None.
+            behavior (Optional[str]): comportement à adopter si l'entité créée par l'action existe déjà sur l'entrepôt. Defaults to None.
 
         Returns:
             instance permettant de lancer l'action
@@ -198,7 +198,7 @@ class Workflow:
 
         Args:
             workflow_path (Path): chemin vers le fichier de workflow.
-            workflow_name (Optional[str], optional): nom du workflow, si None, le nom du fichier est utilisé.
+            workflow_name (Optional[str], optional): nom du workflow, si None, le nom du fichier est utilisé.. Defaults to None.
 
         Returns:
             workflow instancié
