@@ -1,7 +1,7 @@
 import time
 from typing import Any, Callable, Dict, Optional
-from ignf_gpf_api.Errors import GpfApiError
 
+from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
 from ignf_gpf_api.store.StoredData import StoredData
@@ -37,7 +37,7 @@ class ProcessingExecutionAction(ActionAbstract):
     def run(self, datastore: Optional[str] = None) -> None:
         Config().om.info("Création d'une exécution de traitement et complétion de l'entité en sortie...")
         # Création de l'exécution du traitement (attributs processing_execution et Upload/StoredData défini)
-        self.__create_processing_execution()
+        self.__create_processing_execution(datastore)
         # Ajout des tags sur l'Upload ou la StoredData
         self.__add_tags()
         # Ajout des commentaires sur l'Upload ou la StoredData
@@ -49,7 +49,7 @@ class ProcessingExecutionAction(ActionAbstract):
         Config().om.info(f"Exécution de traitement créée et lancée ({self.processing_execution}) et entité en sortie complétée ({o_output_entity}).")
         Config().om.info("Création d'une exécution de traitement et complétion de l'entité en sortie : terminé")
 
-    def __create_processing_execution(self) -> None:
+    def __create_processing_execution(self, datastore: Optional[str] = None) -> None:
         """Création du ProcessingExecution sur l'API à partir des paramètres de définition de l'action.
         Récupération des attributs processing_execution et Upload/StoredData.
         """
@@ -59,7 +59,7 @@ class ProcessingExecutionAction(ActionAbstract):
         if self.output_new_entity:
             # TODO : gérer également les Livraison
             # On vérifie si une  Donnée Stockée équivalente à celle du dictionnaire de définition existe déjà
-            o_stored_data = self.find_stored_data()
+            o_stored_data = self.find_stored_data(datastore)
             # Si on en a trouvée
             if o_stored_data is not None:
                 # Comportement d'arrêt du programme
@@ -70,9 +70,8 @@ class ProcessingExecutionAction(ActionAbstract):
                     Config().om.warning(f"Une donnée stockée équivalente à {o_stored_data} va être supprimée puis recréée.")
                     # Suppression de la donnée stockée
                     o_stored_data.api_delete()
-                    # création de la ProcessingExecution
-                    self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
-                    d_info = self.__processing_execution.get_store_properties()["output"]
+                    # on force à None pour que la création soit faite
+                    self.__processing_execution = None
                 # Comportements non supportés
                 else:
                     raise GpfApiError(f"Le comportement {self.__behavior} n'est pas reconnu, l'exécution de traitement est annulée.")
@@ -80,7 +79,7 @@ class ProcessingExecutionAction(ActionAbstract):
         # A ce niveau là, si on a encore self.__processing_execution qui est None, c'est qu'on peut créer l'Exécution de Traitement sans problème
         if self.__processing_execution is None:
             # création de la ProcessingExecution
-            self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"])
+            self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"], datastore=datastore)
             d_info = self.__processing_execution.get_store_properties()["output"]
 
         if d_info is None:
@@ -90,10 +89,10 @@ class ProcessingExecutionAction(ActionAbstract):
         # Récupération des entités de l'exécution de traitement
         if "upload" in d_info:
             # récupération de l'upload
-            self.__upload = Upload.api_get(d_info["upload"]["_id"])
+            self.__upload = Upload.api_get(d_info["upload"]["_id"], datastore=datastore)
         elif "stored_data" in d_info:
             # récupération de la stored_data
-            self.__stored_data = StoredData.api_get(d_info["stored_data"]["_id"])
+            self.__stored_data = StoredData.api_get(d_info["stored_data"]["_id"], datastore=datastore)
         else:
             raise StepActionError(f"Aucune correspondance pour {d_info.keys()}")
 
@@ -145,7 +144,7 @@ class ProcessingExecutionAction(ActionAbstract):
         else:
             raise StepActionError("aucune procession-execution de trouvé. Impossible de lancer le traitement")
 
-    def find_stored_data(self) -> Optional[StoredData]:
+    def find_stored_data(self, datastore: Optional[str] = None) -> Optional[StoredData]:
         """Fonction permettant de récupérer une Stored Data ressemblant à celle qui devrait être créée par
         l'exécution de traitement en fonction des filtres définis dans la Config.
 
@@ -153,9 +152,9 @@ class ProcessingExecutionAction(ActionAbstract):
             données stockées retrouvée
         """
         # Récupération des critères de filtre
-        d_infos, d_tags = ActionAbstract.get_filters("processing_execution", self.definition_dict["body_parameters"]["output"]["stored_data"], self.definition_dict["tags"])
+        d_infos, d_tags = self.get_filters("processing_execution", self.definition_dict["body_parameters"]["output"]["stored_data"], self.definition_dict["tags"])
         # On peut maintenant filtrer les stored data selon ces critères
-        l_stored_data = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags)
+        l_stored_data = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags, datastore=datastore)
         # S'il y a un ou plusieurs stored data, on retourne le 1er :
         if l_stored_data:
             return l_stored_data[0]

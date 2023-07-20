@@ -8,6 +8,7 @@ from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.workflow.action.ActionAbstract import ActionAbstract
 from ignf_gpf_api.workflow.action.ProcessingExecutionAction import ProcessingExecutionAction
+from ignf_gpf_api.Errors import GpfApiError
 from tests.GpfTestCase import GpfTestCase
 
 
@@ -22,8 +23,8 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.action.ProcessingExecutionActionTestCase
     """
 
-    def test_find_upload(self) -> None:
-        """Test find_upload."""
+    def test_find_stored_data(self) -> None:
+        """Test find_stored_data."""
         o_pe1 = ProcessingExecution({"_id": "pe_1"})
         o_pe2 = ProcessingExecution({"_id": "pe_2"})
         # création du dict décrivant l'action
@@ -31,28 +32,35 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
             "type": "processing-execution",
             "body_parameters": {
                 "output": {
-                    "stored_data": {
-                        "name": "name_stored_data",
-                    },
-                },
+                    "stored_data": {"name": "name_stored_data"}
+                }
             },
-            "tags": {
-                "tag": "val",
-            },
+            "tags": {"tag": "val"}
         }
-        # exécution de UploadAction
+        # exécution de ProcessingExecutionAction
         o_ua = ProcessingExecutionAction("contexte", d_action)
-        # Mock de ActionAbstract.get_filters et Upload.api_list
-        with patch.object(ActionAbstract, "get_filters", return_value=({"info":"val"}, {"tag":"val"})) as o_mock_get_filters:
-            with patch.object(StoredData, "api_list", return_value=[o_pe1, o_pe2]) as o_mock_api_list :
-                # Appel de la fonction find_upload
-                o_stored_data = o_ua.find_stored_data()
-                # Vérifications
-                o_mock_get_filters.assert_called_once_with("processing_execution", d_action["body_parameters"]["output"]["stored_data"], d_action["tags"])
-                o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"})
-                self.assertEqual(o_stored_data, o_pe1)
 
-    def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]], s_key: str, s_type_output: str) -> None:
+        for s_datastore in [None, "datastore"]:
+            ## execution sans datastore
+            # Mock de ActionAbstract.get_filters et Upload.api_list
+            with patch.object(ActionAbstract, "get_filters", return_value=({"info":"val"}, {"tag":"val"})) as o_mock_get_filters:
+                with patch.object(StoredData, "api_list", return_value=[o_pe1, o_pe2]) as o_mock_api_list :
+                    # Appel de la fonction find_upload
+                    o_stored_data = o_ua.find_stored_data(s_datastore)
+                    # Vérifications
+                    o_mock_get_filters.assert_called_once_with("processing_execution", d_action["body_parameters"]["output"]["stored_data"], d_action["tags"])
+                    o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"}, datastore=s_datastore)
+                    self.assertEqual(o_stored_data, o_pe1)
+
+    def run_args(self,
+        tags: Optional[Dict[str,Any]],
+        comments: Optional[List[str]],
+        s_key: str,
+        s_type_output: str,
+        datastore: Optional[str],
+        output_already_exist: bool = False,
+        behavior: Optional[str] = None,
+    ) -> None:
         """lancement +test de ProcessingExecutionAction.run selon param
 
         Args:
@@ -67,7 +75,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
             d_action["comments"] = comments
 
         # initialisation de ProcessingExecutionAction
-        o_pea = ProcessingExecutionAction("contexte", d_action)
+        o_pea = ProcessingExecutionAction("contexte", d_action, behavior=behavior)
 
         # mock de processing execution
         d_store_properties = {"output": {s_type_output: {"_id": "id"}}}
@@ -85,23 +93,58 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
         o_mock_stored_data.api_add_tags.return_value = None
         o_mock_stored_data.api_add_comment.return_value = None
 
+        # résultat de ProcessingExecutionAction."find_stored_data"
+        o_exist_output = None
+        if output_already_exist:
+            o_mock_exist_output = MagicMock()
+            o_mock_exist_output.api_delete.return_value = None
+            o_exist_output = o_mock_exist_output
+
         # suppression de la mise en page forcée pour le with
         with patch.object(Upload, "api_get", return_value=o_mock_upload) as o_mock_processing_upload_api_get, \
             patch.object(StoredData, "api_get", return_value=o_mock_stored_data) as o_mock_processing_store_data_api_get, \
-            patch.object(ProcessingExecution, "api_create", return_value=o_mock_precession) as o_mock_processing_execution_api_create \
+            patch.object(ProcessingExecution, "api_create", return_value=o_mock_precession) as o_mock_processing_execution_api_create, \
+            patch.object(ProcessingExecutionAction, "find_stored_data", return_value=o_exist_output) as o_mock_find_stored_data, \
+            patch.object(ProcessingExecutionAction, "output_new_entity", new_callable=PropertyMock, return_value=output_already_exist), \
+            patch.object(Config, "get_str", return_value="STOP") \
         :
-            # on lance l'exécution de run
-            o_pea.run()
+            # dans le cas de ou il y a un entité qui existe déjà
+            if output_already_exist:
+                if behavior == "STOP" or not behavior:
+                    # on attend une erreur
+                    with self.assertRaises(GpfApiError) as o_err:
+                        o_pea.run(datastore)
+                    self.assertEqual(o_err.exception.message, f"Impossible de créer l’exécution de traitement, une donnée stockée en sortie équivalente {o_exist_output} existe déjà.")
+                    return
+
+                if behavior == "DELETE":
+                    # suppression de l'existant puis normal
+                    o_pea.run(datastore)
+                    # un appel à find_stored_data
+                    o_mock_find_stored_data.assert_called_once_with(datastore)
+                    o_mock_exist_output.api_delete.assert_called_once_with()
+                else:
+                    # behavior faux
+                    # on attend une erreur
+                    with self.assertRaises(GpfApiError) as o_err:
+                        o_pea.run(datastore)
+                    self.assertEqual(o_err.exception.message, f"Le comportement {behavior} n'est pas reconnu, l'exécution de traitement est annulée.")
+                    return
+
+            else:
+                # on lance l'exécution de run
+                o_pea.run(datastore)
+                o_mock_find_stored_data.assert_not_called()
 
             # test de l'appel à ProcessingExecution.api_create
-            o_mock_processing_execution_api_create.assert_called_once_with(d_action['body_parameters'])
+            o_mock_processing_execution_api_create.assert_called_once_with(d_action['body_parameters'], datastore=datastore)
             # un appel à ProcessingExecution().get_store_properties
             o_mock_precession.get_store_properties.assert_called_once_with()
 
             # verif appel à Upload/StoredData
             if "stored_data" in d_store_properties["output"]:
                 # test  .api_get
-                o_mock_processing_store_data_api_get.assert_called_once_with("id")
+                o_mock_processing_store_data_api_get.assert_called_once_with("id", datastore=datastore)
                 o_mock_processing_upload_api_get.assert_not_called()
 
                 # test api_add_tags
@@ -123,7 +166,7 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
 
             elif "upload" in  d_store_properties["output"]:
                 # test  .api_get
-                o_mock_processing_upload_api_get.assert_called_once_with("id")
+                o_mock_processing_upload_api_get.assert_called_once_with("id", datastore=datastore)
                 o_mock_processing_store_data_api_get.assert_not_called()
 
                 # test api_add_tags
@@ -148,16 +191,23 @@ class ProcessingExecutionActionTestCase(GpfTestCase):
     def test_run(self) -> None:
         """test de run"""
         # test upload
-        for s_type_output in [ "upload", "stored_data"]:
-            s_key = "name"
-            ## sans tag + sans commentaire
-            self.run_args(None, None, s_key, s_type_output)
-            ## tag vide + commentaire vide
-            self.run_args({}, [], s_key, s_type_output)
-            ## 1 tag + 1 commentaire
-            self.run_args({"tag1": "val1"}, ["comm1"], s_key, s_type_output)
-            ## 2 tag + 4 commentaire
-            self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output)
+        for s_datastore in [None, "datastore"]:
+            for s_type_output in [ "upload", "stored_data"]:
+                s_key = "name"
+                ## sans tag + sans commentaire
+                self.run_args(None, None, s_key, s_type_output, s_datastore)
+                ## tag vide + commentaire vide
+                self.run_args({}, [], s_key, s_type_output, s_datastore)
+                ## 1 tag + 1 commentaire
+                self.run_args({"tag1": "val1"}, ["comm1"], s_key, s_type_output, s_datastore)
+                ## 2 tag + 4 commentaire
+                self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output, s_datastore)
+
+        # tests particuliers pour cas ou la sortie existe déjà
+        self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output, s_datastore, True, "STOP")
+        self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output, s_datastore, True, "DELETE")
+        self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output, s_datastore, True, "Toto")
+        self.run_args({"tag1": "val1", "tag2": "val2"}, ["comm1", "comm2", "comm3", "comm4"], s_key, s_type_output, s_datastore, True, None)
 
     def monitoring_until_end_args(self, s_status_end: str, b_waits: bool, b_callback: bool) -> None:
         """lancement + test de ProcessingExecutionAction.monitoring_until_end() selon param
