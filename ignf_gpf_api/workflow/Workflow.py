@@ -55,9 +55,9 @@ class Workflow:
 
         Args:
             step_name (str): nom de l'étape
-            callback (Optional[Callable[[ProcessingExecution], None]], optional): callback de suivi si création d'une exécution de traitement. Defaults to None.
-            behavior (Optional[str]): comportement à adopter si une entité existe déjà sur l'entrepôt. Defaults to None.
-            datastore (Optional[str]): id du datastore à utiliser. Si None, le datastore sera Le premier trouvé dans l'action puis dans workflow puis dans configuration. Defaults to None.
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): callback de suivi si création d'une exécution de traitement.
+            behavior (Optional[str]): comportement à adopter si une entité existe déjà sur l'entrepôt.
+            datastore (Optional[str]): id du datastore à utiliser. Si None, le datastore sera le premier trouvé dans l'action puis dans workflow puis dans configuration.
 
         Raises:
             WorkflowError: levée si un problème apparaît pendant l'exécution du workflow
