@@ -34,7 +34,7 @@ class ProcessingExecutionAction(ActionAbstract):
         self.__stored_data: Optional[StoredData] = None
         self.__behavior: str = behavior if behavior is not None else Config().get_str("processing_execution", "behavior_if_exists")
 
-    def run(self) -> None:
+    def run(self, datastore: Optional[str] = None) -> None:
         Config().om.info("Création d'une exécution de traitement et complétion de l'entité en sortie...")
         # Création de l'exécution du traitement (attributs processing_execution et Upload/StoredData défini)
         self.__create_processing_execution()

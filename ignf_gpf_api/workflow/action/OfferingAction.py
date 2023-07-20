@@ -22,7 +22,7 @@ class OfferingAction(ActionAbstract):
         # Autres attributs
         self.__offering: Optional[Offering] = None
 
-    def run(self) -> None:
+    def run(self, datastore: Optional[str] = None) -> None:
         Config().om.info("Création d'une offre...")
         # Ajout de l'Offering
         self.__create_offering()
