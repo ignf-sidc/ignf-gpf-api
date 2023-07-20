@@ -81,7 +81,6 @@ class OfferingActionTestCase(GpfTestCase):
             return "getitem"
 
         for f_effect in [side_effect_dict, side_effect_text]:
-
             o_mock_offering.__getitem__.side_effect = f_effect
 
             with patch.object(o_offering_action, "find_offering", return_value=o_mock_offering) as o_mock_offering_action_list_offering:
@@ -96,7 +95,10 @@ class OfferingActionTestCase(GpfTestCase):
                     o_mock_offering_api_create.assert_not_called()
 
     def test_find_offering_exists_and_ok(self) -> None:
-        """Test de find_offering quand une offering est trouvée et que le endpoint correspond."""
+        """Test de find_offering quand une offering est trouvée et que le endpoint correspond.
+
+        Dans ce test, on suppose que le datastore est défini (cf. find_offering).
+        """
         # Instanciation de OfferingAction
         o_offering_action = self.__get_offering_action()
 
@@ -112,16 +114,19 @@ class OfferingActionTestCase(GpfTestCase):
         # Mock
         with patch.object(Configuration, "api_get", return_value=o_mock_configuration) as o_mock_api_get:
             # Appel à la fonction
-            o_offering = o_offering_action.find_offering()
+            o_offering = o_offering_action.find_offering("datastore_id")
             # Vérifications
             o_mock_api_get.assert_called_once_with("id_configuration")
-            o_mock_configuration.api_list_offerings.assert_called_once()
+            o_mock_configuration.api_list_offerings.assert_called_once(datastore="datastore_id")
             o_mock_offering.api_update.assert_called_once()
             o_mock_offering.api_update.api_list_offerings()
             self.assertEqual(o_offering, o_mock_offering)
 
     def test_find_offering_exists_and_ko(self) -> None:
-        """Test de find_offering quand une offering est trouvée mais que le endpoint ne correspond."""
+        """Test de find_offering quand une offering est trouvée mais que le endpoint ne correspond.
+
+        Dans ce test, on suppose que le datastore n'est pas défini (cf. find_offering).
+        """
         # Instanciation de OfferingAction
         o_offering_action = self.__get_offering_action()
 
@@ -146,7 +151,10 @@ class OfferingActionTestCase(GpfTestCase):
             self.assertIsNone(o_offering)
 
     def test_find_offering_not_exists(self) -> None:
-        """Test de find_offering quand aucune offering n'est trouvée."""
+        """Test de find_offering quand aucune offering n'est trouvée.
+
+        Dans ce test, on suppose que le datastore n'est pas défini (cf. find_offering).
+        """
         # Instanciation de OfferingAction
         o_offering_action = self.__get_offering_action()
 
