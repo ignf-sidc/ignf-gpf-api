@@ -97,7 +97,7 @@ class OfferingActionTestCase(GpfTestCase):
     def test_find_offering_exists_and_ok(self) -> None:
         """Test de find_offering quand une offering est trouvée et que le endpoint correspond.
 
-        Dans ce test, on suppose que le datastore est défini (cf. find_offering).
+        Dans ce test, on suppose que le datastore est défini.
         """
         # Instanciation de OfferingAction
         o_offering_action = self.__get_offering_action()
@@ -125,35 +125,40 @@ class OfferingActionTestCase(GpfTestCase):
     def test_find_offering_exists_and_ko(self) -> None:
         """Test de find_offering quand une offering est trouvée mais que le endpoint ne correspond.
 
-        Dans ce test, on suppose que le datastore n'est pas défini (cf. find_offering).
+        Dans ce test, on suppose que le datastore est défini.
         """
-        # Instanciation de OfferingAction
-        o_offering_action = self.__get_offering_action()
 
         # mock de Offering
-        o_mock_offering = MagicMock()
-        o_mock_offering.api_update.return_value = None
-        o_mock_offering.__getitem__.return_value = {"_id": "id_endpoint_not_good"}
+        o_mock_offering_ko = MagicMock()
+        o_mock_offering_ko.api_update.return_value = None
+        o_mock_offering_ko.__getitem__.return_value = {"_id": "id_endpoint_not_good"}
 
         # mock de Configuration
-        o_mock_configuration = MagicMock()
-        o_mock_configuration.api_list_offerings.return_value = [o_mock_offering]
+        o_mock_configuration_ko = MagicMock()
+        o_mock_configuration_ko.api_list_offerings.return_value = [o_mock_offering_ko]
 
         # Mock
-        with patch.object(Configuration, "api_get", return_value=o_mock_configuration) as o_mock_api_get:
-            # Appel à la fonction
-            o_offering = o_offering_action.find_offering()
-            # Vérifications
-            o_mock_api_get.assert_called_once_with("id_configuration")
-            o_mock_configuration.api_list_offerings.assert_called_once()
-            o_mock_offering.api_update.assert_called_once()
-            o_mock_offering.api_update.api_list_offerings()
+        with patch.object(Configuration, "api_get", return_value=o_mock_configuration_ko) as o_mock_api_get:
+            # Instanciation de OfferingAction
+            o_offering_action = self.__get_offering_action()
+            # Appel à la fonction find_offering qui appelle les fonctions
+            # mockées (api_get, api_list_offerings, api_update)
+            o_offering = o_offering_action.find_offering("id_datastore_quelconque")
+
+            # Vérifications ( sur find_offering() )
+            # la Configuration.api_get() est bien appelée
+            o_mock_api_get.assert_called_once_with("id_configuration", datastore="id_datastore_quelconque")
+            # la liste des offres est correctement appelée
+            o_mock_configuration_ko.api_list_offerings.assert_called_once()
+            # les infos de l'offering sont correctement récupérées
+            o_mock_offering_ko.api_update.assert_called_once()
+            # aucune offre ne correspond au endpoint
             self.assertIsNone(o_offering)
 
     def test_find_offering_not_exists(self) -> None:
         """Test de find_offering quand aucune offering n'est trouvée.
 
-        Dans ce test, on suppose que le datastore n'est pas défini (cf. find_offering).
+        Dans ce test, on suppose que le datastore n'est pas défini.
         """
         # Instanciation de OfferingAction
         o_offering_action = self.__get_offering_action()
