@@ -19,8 +19,11 @@ class ConfigurationActionTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.action.ConfigurationActionTestCase
     """
 
-    def test_find_upload(self) -> None:
-        """Test find_upload."""
+    def test_find_configuration(self) -> None:
+        """Test find_configuration.
+
+        Dans ce test, on suppose que le datastore est défini (cf. find_configuration).
+        """
         o_c1 = Configuration({"_id": "pe_1"})
         o_c2 = Configuration({"_id": "pe_2"})
         # création du dict décrivant l'action
@@ -34,16 +37,16 @@ class ConfigurationActionTestCase(GpfTestCase):
                 "tag": "val",
             },
         }
-        # exécution de UploadAction
+        # exécution de ConfigurationAction
         o_ca = ConfigurationAction("contexte", d_action)
-        # Mock de ActionAbstract.get_filters et Upload.api_list
+        # Mock de ActionAbstract.get_filters et Configuration.api_list
         with patch.object(ActionAbstract, "get_filters", return_value=({"info": "val"}, {"tag": "val"})) as o_mock_get_filters:
             with patch.object(Configuration, "api_list", return_value=[o_c1, o_c2]) as o_mock_api_list:
-                # Appel de la fonction find_upload
-                o_stored_data = o_ca.find_configuration()
+                # Appel de la fonction find_configuration
+                o_stored_data = o_ca.find_configuration("datastore_id")
                 # Vérifications
                 o_mock_get_filters.assert_called_once_with("configuration", d_action["body_parameters"], d_action["tags"])
-                o_mock_api_list.assert_called_once_with(infos_filter={"info": "val"}, tags_filter={"tag": "val"})
+                o_mock_api_list.assert_called_once_with(infos_filter={"info": "val"}, tags_filter={"tag": "val"}, datastore="datastore_id")
                 self.assertEqual(o_stored_data, o_c1)
 
     def run_args(self, tags: Optional[Dict[str, Any]], comments: Optional[List[str]], config_already_exists: bool) -> None:
