@@ -44,6 +44,11 @@ class StoreEntity(ABC):
 
     @property
     def datastore(self) -> Optional[str]:
+        """Renvoie l'identifiant du datastore de l'entité
+
+        Returns:
+            identifiant du datastore de l'entité None si non défini
+        """
         return self._datastore
 
     def get_store_properties(self) -> Dict[str, Any]:
