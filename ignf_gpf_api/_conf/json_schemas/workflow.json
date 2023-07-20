@@ -39,8 +39,7 @@
                                             "enum": [
                                                 "processing-execution",
                                                 "configuration",
-                                                "offering",
-                                                "datastore"
+                                                "offering"
                                             ]
                                         },
                                         "url_parameters": {
