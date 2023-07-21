@@ -127,7 +127,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertEqual(o_store_entity.datastore, None)
 
     def test_api_create_2(self) -> None:
-        """Vérifie le bon fonctionnement de api_create avec route_params."""
+        """Vérifie le bon fonctionnement de api_create avec route_params et datastore nul."""
         # on créé un store entity dans l'api (avec un dictionnaire)
         # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
         # 1/ on vérifie l'appel ApiRequester.route_request
