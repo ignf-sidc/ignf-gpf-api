@@ -150,8 +150,8 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
-                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 2, "limit": 10}),
+                    call("store_entity_list", route_params=None, params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
+                    call("store_entity_list", route_params=None, params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 2, "limit": 10}),
                 ],
             )
             # Vérifications sur l_entities
@@ -173,7 +173,7 @@ class StoreEntityTestCase(GpfTestCase):
             self.assertListEqual(
                 o_mock_request.call_args_list,
                 [
-                    call("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
+                    call("store_entity_list", route_params=None, params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10}),
                 ],
             )
             # Vérifications sur l_entities
@@ -194,7 +194,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", route_params=None, params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -209,7 +209,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", route_params=None, params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -224,7 +224,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On effectue le listing d'une entité
             l_entities = StoreEntity.api_list(infos_filter={"k_info": "v_info"}, tags_filter={"k_tag": "v_tag"})
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_list", params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
+            o_mock_request.assert_called_once_with("store_entity_list", route_params=None, params={"k_info": "v_info", "tags[k_tag]": "v_tag", "page": 1, "limit": 10})
             # Vérifications sur l_entities
             self.assertIsInstance(l_entities, list)
             self.assertEqual(len(l_entities), 2)
@@ -246,7 +246,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On appelle la fonction api_delete
             o_store_entity.api_delete()
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_delete", route_params={"store_entity": "id_à_supprimer"}, method=ApiRequester.DELETE)
+            o_mock_request.assert_called_once_with("store_entity_delete", route_params={"datastore": None, "store_entity": "id_à_supprimer"}, method=ApiRequester.DELETE)
 
     def test_api_update(self) -> None:
         """Vérifie le bon fonctionnement de api_update."""
@@ -265,7 +265,7 @@ class StoreEntityTestCase(GpfTestCase):
             # On appelle la fonction api_update
             o_store_entity.api_update()
             # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with("store_entity_get", route_params={"store_entity": "id_à_maj"})
+            o_mock_request.assert_called_once_with("store_entity_get", route_params={"datastore": None, "store_entity": "id_à_maj"})
             # Vérification que les infos de l'entité sont maj
             self.assertDictEqual(o_store_entity.get_store_properties(), d_new_data)
 
