@@ -84,8 +84,8 @@ class StoreEntity(ABC):
         """
         s_datastore = None
         # Test du dictionnaire route_params
-        if isinstance(route_params, dict) and 'datastore' in route_params:
-            s_datastore = route_params.get('datastore')
+        if isinstance(route_params, dict) and "datastore" in route_params:
+            s_datastore = route_params.get("datastore")
 
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_create"
@@ -182,11 +182,7 @@ class StoreEntity(ABC):
         """Supprime l'entité de l'API."""
         s_route = f"{self._entity_name}_delete"
         # Requête
-        ApiRequester().route_request(
-            s_route,
-            method=ApiRequester.DELETE,
-            route_params={"datastore": self.datastore, self._entity_name: self.id}
-        )
+        ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={"datastore": self.datastore, self._entity_name: self.id})
 
     def api_update(self) -> None:
         """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API.
