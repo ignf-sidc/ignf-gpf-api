@@ -66,8 +66,8 @@ class StoreEntityTestCase(GpfTestCase):
             StoreEntity.filter_dict_from_str("pas de signe égal")
         self.assertEqual(o_arc.exception.message, "filter_tags_dict_from_str : le filtre 'pas de signe égal' ne contient pas le caractère '='")
 
-    def test_api_get(self) -> None:
-        """Vérifie le bon fonctionnement de api_get si tout va bien."""
+    def test_api_get_1(self) -> None:
+        """Vérifie le bon fonctionnement de api_get si tout va bien, sans choix du datastore"""
         # Instanciation d'une fausse réponse HTTP
         o_response = GpfTestCase.get_response(json={"_id": "123456789"})
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
@@ -82,6 +82,24 @@ class StoreEntityTestCase(GpfTestCase):
             # Vérifications sur o_store_entity
             self.assertIsInstance(o_store_entity, StoreEntity)
             self.assertEqual(o_store_entity.id, "123456789")
+
+    def test_api_get_2(self) -> None:
+        """Vérifie le bon fonctionnement de api_get si tout va bien, avec choix du datastore"""
+        # Instanciation d'une fausse réponse HTTP
+        o_response = GpfTestCase.get_response(json={"_id": "123456789"})
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
+            # On effectue la création d'un objet
+            o_store_entity = StoreEntity.api_get("1234", "datastore1")
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "store_entity_get",
+                route_params={"datastore": "datastore1", StoreEntity.entity_name(): "1234"},
+            )
+            # Vérifications sur o_store_entity
+            self.assertIsInstance(o_store_entity, StoreEntity)
+            self.assertEqual(o_store_entity.id, "123456789")
+            self.assertEqual(o_store_entity.datastore, "datastore1")
 
     def test_api_create_1(self) -> None:
         """Vérifie le bon fonctionnement de api_create sans route_params."""
@@ -106,6 +124,7 @@ class StoreEntityTestCase(GpfTestCase):
             # Vérifications sur o_store_entity
             self.assertIsInstance(o_store_entity, StoreEntity)
             self.assertEqual(o_store_entity.id, "123456789")
+            self.assertEqual(o_store_entity.datastore, None)
 
     def test_api_create_2(self) -> None:
         """Vérifie le bon fonctionnement de api_create avec route_params."""
@@ -130,6 +149,32 @@ class StoreEntityTestCase(GpfTestCase):
             # Vérifications sur o_store_entity
             self.assertIsInstance(o_store_entity, StoreEntity)
             self.assertEqual(o_store_entity.id, "123456789")
+            self.assertEqual(o_store_entity.datastore, None)
+
+    def test_api_create_3(self) -> None:
+        """Vérifie le bon fonctionnement de api_create avec route_params et datastore non nul"""
+        # on créé un store entity dans l'api (avec un dictionnaire)
+        # on vérifie que la fct de creation a bien instancié le store entity avec le dictionnaire envoyé
+        # 1/ on vérifie l'appel ApiRequester.route_request
+        # 2/ on vérifie l'objet instancié (id et datastore)
+
+        # Instanciation d'une fausse réponse HTTP
+        o_response = GpfTestCase.get_response(json={"_id": "123456789"})
+        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
+            # On effectue la création d'un objet
+            o_store_entity = StoreEntity.api_create({"key_1": "value_1"}, route_params={"datastore": "datastore1", "toto": "titi"})
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "store_entity_create",
+                route_params={"datastore": "datastore1", "toto": "titi"},
+                method=ApiRequester.POST,
+                data={"key_1": "value_1"},
+            )
+            # Vérifications sur o_store_entity
+            self.assertIsInstance(o_store_entity, StoreEntity)
+            self.assertEqual(o_store_entity.id, "123456789")
+            self.assertEqual(o_store_entity.datastore, "datastore1")
 
     def test_api_list_multi_pages(self) -> None:
         """Vérifie le bon fonctionnement de api_list si plusieurs pages."""
