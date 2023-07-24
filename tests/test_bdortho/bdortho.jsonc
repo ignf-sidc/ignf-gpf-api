@@ -1,0 +1,625 @@
+{ // workflow destiné à tester la génération d'un graphe de procédure un peu complexe (10 étapes non linéaires)
+    "workflow": {
+        "steps": {
+            //Ortho HR (20cm)
+            // Étape n°1 : calcul d'une pyramide raster unitaire indépendante
+            "calcul-pyramide-raster-20": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Calcul de pyramide raster"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster)]}",
+                            "inputs": {
+                                "upload": [
+                                    "{store_entity.upload.infos._id [INFOS(name=)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée comme la livraison
+                                    "name": "{store_entity.upload.infos.name [INFOS(name=)]}"
+                                }
+                            },
+                            "parameters": [
+                                {
+                                    "tms" : ,
+                                    "width" : ,
+                                    "parallelization": 2,
+                                    "height" : ,
+                                    "compression" : ,
+                                    "interpolation" : ,
+                                    "bottom" : ,
+                                    "top" : ,
+                                    "mask" : ,
+                                    }
+                                    
+                                
+                            ]
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {}
+                    }
+                ],
+                "parents": []
+            },
+            // Étape n°2 : génération d'un assemblage de pyramides issues des pyramides unitaires stockées
+            "fusion-pyramide-raster-20": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Fusion de pyramides raster"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name= Fusion de pyramides raster)]}",
+                            "inputs": {
+                                "stored_data": [
+                                    // On récupère l'id des pyramides raster unitaires à fusionner
+                                    "{store_entity.stored_data.infos._id [INFOS(name=)]}",
+                                    "{store_entity.stored_data.infos._id [INFOS(name=)]}"
+                                    //....
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    "name": "{store_entity.upload.infos.name [INFOS(name=)]}"
+                                }
+                            },
+                            "parameters": [
+                                {
+                                    "parallelization": 2,
+                                    "top": 1,
+                                    "bottom": 19,
+                                    "bbox" : ,
+                                  }
+                            ]
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {}
+                    }
+                ],
+                "parents": ["calcul-pyramide-raster-20"]
+            },
+            // Etape n°3 : configuration WMS
+            // + graphe de mosaiquage
+            "configuration-wms-raster-20": { //https://geoplateforme-qualification.ccs-ign-plage-prod.ccs.cegedim.cloud/tutoriels/raster/publication_wms/
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMS-RASTER",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //, TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            
+                            "type_infos": {
+                                "title": "", 
+                                "abstract": "",
+                                "interpolation" : "NEAREST-NEIGHBOUR",
+                                "used_data": [
+                                    {
+                                        "bottom_level": "10",
+                                        "top_level": "0",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=, type=ROK4-PYRAMID-RASTER)" //TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            },
+                            
+                            "metadata": {
+                                "format": "application/xml",
+                                "url": "https://geoservices.ign.fr/sites/default/files/2021-07/IGNF_SCAN1000r_2-1.xml",
+                                "type": "ISO19115:2003"
+                            },
+                            
+                            "getfeatureinfo": {
+                                "stored_data": true
+                            }
+                        }
+                    }
+                ],
+                "parents": ["fusion-pyramide-raster-20"]
+            },
+
+            // Etape n°4: publication WMS pour validation
+            "publication-wms-raster-20-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "" ,
+                            "open": true
+                        }
+                    }
+                ],
+                "parents": ["configuration-wms-raster-20"]
+            },
+
+            // Etape n°5 : publication WMS
+            "publication-raster-wms-20": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "" ,
+                            "open":true
+                        }
+                    }
+                ],
+                "parents": ["publication-wms-raster-20-validation"]
+            },
+
+            // Etape n°6 : configuration WMTS
+             // + graphe de mosaiquage
+            "configuration-wmts-raster-20": { //https://geoplateforme-qualification.ccs-ign-plage-prod.ccs.cegedim.cloud/tutoriels/raster/publication_wms/
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS-TMS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //, TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            
+                            "type_infos": {
+                                "title": "", 
+                                "abstract": "RÉSUMÉ",
+                                "interpolation" : "NEAREST-NEIGHBOUR",
+                                "used_data": [
+                                    {
+                                        "bottom_level": "10",
+                                        "top_level": "0",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=, type=ROK4-PYRAMID-RASTER)" //TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            },
+                            
+                            "metadata": {
+                                "format": "application/xml",
+                                "url": "https://geoservices.ign.fr/sites/default/files/2021-07/IGNF_SCAN1000r_2-1.xml",
+                                "type": "ISO19115:2003"
+                            },
+                            
+                            "getfeatureinfo": {
+                                "stored_data": true
+                            }
+                        }
+                    }
+                ],
+                "parents": ["fusion-pyramide-raster-20"]
+            },
+
+
+            // Etape n°7 : publication WMTS pour validation
+            "publication-wmts-raster-20-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "",
+                            "open":true
+                        }
+                    }
+                ],
+                "parents": ["configuration-wmts-raster-20"]
+            },
+         
+
+            // Etape n°8 : publication WMTS 
+            "publication-wmts-raster-20": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "",
+                            "open":true
+                            
+                        }
+                    }
+                ],
+                "parents": ["publication-wmts-raster-20-validation"]
+            },
+
+
+
+
+            //Ortho (50cm)
+            // Étape n°9 : calcul d'une pyramide raster unitaire indépendante
+            "calcul-pyramide-raster-50": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Calcul de pyramide raster"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster)]}",
+                            "inputs": {
+                                "upload": [
+                                    "{store_entity.upload.infos._id [INFOS(name=)]}"
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    // On crée une nouvelle donnée stockée nommée comme la livraison
+                                    "name": "{store_entity.upload.infos.name [INFOS(name=)]}"
+                                }
+                            },
+                            "parameters": [
+                                {
+                                    "tms" : ,
+                                    "width" : ,
+                                    "parallelization": 2,
+                                    "height" : ,
+                                    "compression" : ,
+                                    "interpolation" : ,
+                                    "bottom" : ,
+                                    "top" : ,
+                                    "mask" : ,
+                                    }
+                                    
+                            ]
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {}
+                    }
+                ],
+                "parents": []
+            },
+            // Étape n°10 : génération d'un assemblage de pyramides issues des pyramides unitaires stockées
+            "fusion-pyramide-raster-50": {
+                "actions": [
+                    {
+                        // On crée une exécution de traitement
+                        "type": "processing-execution",
+                        "body_parameters": {
+                            // On récupère l'id du traitement nommé "Fusion de pyramides raster"
+                            "processing": "{store_entity.processing.infos._id [INFOS(name= Fusion de pyramides raster)]}",
+                            "inputs": {
+                                "stored_data": [
+                                    // On récupère l'id des pyramides raster unitaires à fusionner
+                                    "{store_entity.stored_data.infos._id [INFOS(name=)]}",
+                                    "{store_entity.stored_data.infos._id [INFOS(name=)]}"
+                                    //....
+                                ]
+                            },
+                            "output": {
+                                "stored_data": {
+                                    "name": "{store_entity.upload.infos.name [INFOS(name=)]}"
+                                }
+                            },
+                            "parameters": [
+                                {
+                                    "parallelization": 2,
+                                    "top": 1,
+                                    "bottom": 19,
+                                    "bbox": ,
+                                  }
+                            ]
+                        },
+                        // Liste des tags ajoutés à la donnée stockée en sortie de l'exécution du traitement
+                        "tags": {}
+                    }
+                ],
+                "parents": ["calcul-pyramide-raster-50"]
+            },
+
+            // Etape n°11 : configuration WMS
+            // + graphe de mosaiquage
+            "configuration-wms-raster-50": { //https://geoplateforme-qualification.ccs-ign-plage-prod.ccs.cegedim.cloud/tutoriels/raster/publication_wms/
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMS-RASTER",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //, TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "type_infos": {
+                                "title": "", 
+                                "abstract": "RÉSUMÉ",
+                                "interpolation" : "NEAREST-NEIGHBOUR",
+                                "used_data": [
+                                    {
+                                        "bottom_level": "10",
+                                        "top_level": "0",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=, type=ROK4-PYRAMID-RASTER)" //TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "format": "application/xml",
+                                "url": "https://geoservices.ign.fr/sites/default/files/2021-07/IGNF_SCAN1000r_2-1.xml",
+                                "type": "ISO19115:2003"
+                            },
+                            "getfeatureinfo": {
+                                "stored_data": true
+                            }
+                        }
+                    }
+                ],
+                "parents": ["fusion-pyramide-raster-50"]
+            },
+
+            // Etape n°12 : publication WMS pour validation
+            "publication-wms-raster-50-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "",
+                            "open":true
+                        
+                        }
+                    }
+                ],
+                "parents": ["configuration-wms-raster-50"]
+            },
+
+            // Etape n°13 : publication WMS
+            "publication-raster-wms-50": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "",
+                            "open":true
+                        }
+                    }
+                ],
+                "parents": ["publication-wms-raster-50-validation"]
+            },
+
+            // Etape n°14 : configuration WMTS
+            // + graphe de mosaiquage
+            "configuration-wmts-raster-50": { //https://geoplateforme-qualification.ccs-ign-plage-prod.ccs.cegedim.cloud/tutoriels/raster/publication_wms/
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //, TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "type_infos": {
+                                "title": "", 
+                                "abstract": "RÉSUMÉ",
+                                "interpolation" : "NEAREST-NEIGHBOUR",
+                                "used_data": [
+                                    {
+                                        "bottom_level": "10",
+                                        "top_level": "0",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=, type=ROK4-PYRAMID-RASTER)" //TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "format": "application/xml",
+                                "url": "https://geoservices.ign.fr/sites/default/files/2021-07/IGNF_SCAN1000r_2-1.xml",
+                                "type": "ISO19115:2003"
+                            },
+                            "getfeatureinfo": {
+                                "stored_data": true
+                            }
+                        }
+                    }
+                ],
+                "parents": ["fusion-pyramide-raster-50"]
+            },
+
+
+            // Etape n°15 : publication WMTS pour validation
+            "publication-wmts-raster-50-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "",
+                            "open":true
+                        }
+                    }
+                ],
+                "parents": ["configuration-wmts-raster-50"]
+            },
+         
+
+            // Etape n°16 : publication WMTS 
+            "publication-wmts-raster-50": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "",
+                            "open":true
+                        }
+                    }
+                ],
+                "parents": ["publication-wmts-raster-50-validation"]
+            },
+
+
+
+
+
+            // Etape n°17 : photo compo = join cache
+            // spot5 + guyane + nouvelle calédonie + joincache ortho 50cm
+            "join-cache-photocompo": {
+                "actions": [
+                    
+                ],
+                "parents": []
+            },
+
+            
+
+            // Etape n°18 : configuration WMS
+            //photo compo + joincache HR + pyramide THR + planet observer + graphe de mosaiquage
+            "configuration-wms-raster-complexe": { //https://geoplateforme-qualification.ccs-ign-plage-prod.ccs.cegedim.cloud/tutoriels/raster/publication_wms/
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMS-RASTER",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //, TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "type_infos": {
+                                "title": "", 
+                                "abstract": "RÉSUMÉ",
+                                "interpolation" : "NEAREST-NEIGHBOUR",
+                                "used_data": [
+                                    {
+                                        "bottom_level": "10",
+                                        "top_level": "0",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=, type=ROK4-PYRAMID-RASTER)" //TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "format": "application/xml",
+                                "url": "https://geoservices.ign.fr/sites/default/files/2021-07/IGNF_SCAN1000r_2-1.xml",
+                                "type": "ISO19115:2003"
+                            },
+                            "getfeatureinfo": {
+                                "stored_data": true
+                            }
+                        }
+                    }
+                ],
+                "parents": ["join-cache-photo-compo"]
+            },
+
+            // Etape n°19 : publication WMS pour validation
+            "publication-wms-raster-complexe-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "" 
+                        }
+                    }
+                ],
+                "parents": ["configuration-wms-raster-complexe"]
+            },
+
+            // Etape n°20 : publication WMS
+            "publication-raster-wms-complexe": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": "" 
+                        }
+                    }
+                ],
+                "parents": ["publication-wms-raster-complexe-validation"]
+            },
+
+            // Etape n°21 : configuration WMTS
+            //photo compo + joincache HR + pyramide THR + planet observer + graphe de mosaiquage
+            "configuration-wmts-raster-complexe": { //https://geoplateforme-qualification.ccs-ign-plage-prod.ccs.cegedim.cloud/tutoriels/raster/publication_wms/
+                "actions": [
+                    {
+                        "type": "configuration",
+                        "body_parameters": {
+                            "type": "WMTS",
+                            "name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //, TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "layer_name": "{store_entity.stored_data.infos.name [INFOS(name=, type=ROK4-PYRAMID-RASTER)", //TAGS(dpsg={param.dpsg})]}_WFS_LATEST",
+                            "type_infos": {
+                                "title": "", 
+                                "abstract": "RÉSUMÉ",
+                                "interpolation" : "NEAREST-NEIGHBOUR",
+                                "used_data": [
+                                    {
+                                        "bottom_level": "10",
+                                        "top_level": "0",
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name=, type=ROK4-PYRAMID-RASTER)" //TAGS(dpsg={param.dpsg})]}"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "format": "application/xml",
+                                "url": "https://geoservices.ign.fr/sites/default/files/2021-07/IGNF_SCAN1000r_2-1.xml",
+                                "type": "ISO19115:2003"
+                            },
+                            "getfeatureinfo": {
+                                "stored_data": true
+                            }
+                        }
+                    }
+                ],
+                "parents": ["join-cache-photocomp"]
+            },
+
+
+            // Etape n°22 : publication WMTS pour validation
+            "publication-wmts-raster-complexe-validation": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": ""
+                        }
+                    }
+                ],
+                "parents": ["configuration-wmts-raster-complexe"]
+            },
+         
+
+            // Etape n°23 : publication WMTS 
+            "publication-wmts-complexe": {
+                "actions": [
+                    {
+                        "type": "offering",
+                        "url_parameters" : {
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name=),"// TAGS(dpsg={param.dpsg})]}"
+                        },
+                        "body_parameters": {
+                            "visibility": "PRIVATE",
+                            "endpoint": ""
+                        }
+                    }
+                ],
+                "parents": ["publication-wmts-raster-complexe-validation"]
+            }
+        }
+    }
+}
