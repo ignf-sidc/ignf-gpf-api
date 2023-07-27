@@ -153,7 +153,7 @@ class ProcessingExecutionAction(ActionAbstract):
             données stockées retrouvée
         """
         # Récupération des critères de filtre
-        d_infos, d_tags = ActionAbstract.get_filters("processing_execution", self.definition_dict["body_parameters"]["output"]["stored_data"], self.definition_dict["tags"])
+        d_infos, d_tags = ActionAbstract.get_filters("processing_execution", self.definition_dict["body_parameters"]["output"]["stored_data"], self.definition_dict.get("tags", {}))
         # On peut maintenant filtrer les stored data selon ces critères
         l_stored_data = StoredData.api_list(infos_filter=d_infos, tags_filter=d_tags)
         # S'il y a un ou plusieurs stored data, on retourne le 1er :
