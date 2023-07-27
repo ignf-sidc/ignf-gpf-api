@@ -121,14 +121,14 @@ class StoreEntity(ABC):
         return cls(o_response.json(), datastore)
 
     @classmethod
-    def api_list(cls: Type[T], datastore: Optional[str] = None, infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
+    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None, datastore: Optional[str] = None) -> List[T]:
         """Liste les entités de l'API respectant les paramètres donnés.
 
         Args:
-            datastore: Identifiant du datastore
             infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
             tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
             page: Numéro page à récupérer, toutes si None.
+            datastore: Identifiant du datastore
 
         Returns:
             (List[StoreEntity]): liste des entités retournées par l'API

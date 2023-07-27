@@ -15,10 +15,10 @@ class Endpoint(StoreEntity):
         """Liste les points de montage de l'API respectant les paramètres donnés.
 
         Args:
-            infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
-            tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
-            page (Optional[int]): page à récupérer, toutes si None.
-            datastore (Optional[str]): id du datastore à utiliser.
+            infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
+            tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
+            page: Numéro page à récupérer, toutes si None.
+            datastore: Identifiant du datastore
 
         Returns:
             List[T]: liste des entités retournées

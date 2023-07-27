@@ -18,9 +18,9 @@ class Datastore(StoreEntity):
 
         Args:
             infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
-            tags_filter: non utilisé (ajouté juste pour la signature).
-            page: non utilisé (ajouté juste pour la signature).
-            datastore (Optional[str]): non utilisé (ajouté juste pour la signature).
+            tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
+            page: Numéro page à récupérer, toutes si None.
+            datastore: Identifiant du datastore
 
         Returns:
             (List[StoreEntity]): liste des entités retournées par l'API
