@@ -82,7 +82,7 @@ class StoreEntity(ABC):
         Returns:
             (StoreEntity): Entité créée
         """
-        s_datastore = None
+        s_datastore: Optional[str] = None
         # Test du dictionnaire route_params
         if isinstance(route_params, dict) and "datastore" in route_params:
             s_datastore = route_params.get("datastore")
@@ -110,17 +110,12 @@ class StoreEntity(ABC):
         Returns:
             (StoreEntity): L'entité instanciée correspondante
         """
-        # Création du dict route params
-        if datastore is None:
-            d_route_params = {cls._entity_name: id_}
-        else:
-            d_route_params = {"datastore": datastore, cls._entity_name: id_}
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_get"
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
-            route_params=d_route_params,
+            route_params={"datastore": datastore, cls._entity_name: id_},
         )
         # Instanciation
         return cls(o_response.json(), datastore)
@@ -130,6 +125,7 @@ class StoreEntity(ABC):
         """Liste les entités de l'API respectant les paramètres donnés.
 
         Args:
+            datastore: Identifiant du datastore
             infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
             tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
             page: Numéro page à récupérer, toutes si None.
@@ -141,7 +137,6 @@ class StoreEntity(ABC):
         i_limit = Config().get_int("store_api", "nb_limit")
 
         # Gestion des paramètres nuls
-        d_datastore = {"datastore": datastore} if datastore is not None else None
         infos_filter = infos_filter if infos_filter is not None else {}
         tags_filter = tags_filter if tags_filter is not None else {}
 
@@ -165,7 +160,7 @@ class StoreEntity(ABC):
             # On liste les entités à la bonne page
             o_response = ApiRequester().route_request(
                 s_route,
-                route_params=d_datastore,
+                route_params={"datastore": datastore},
                 params={**d_params, **{"page": i_page, "limit": i_limit}},
             )
             # On les ajoute à la liste
@@ -182,7 +177,11 @@ class StoreEntity(ABC):
         """Supprime l'entité de l'API."""
         s_route = f"{self._entity_name}_delete"
         # Requête
-        ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={"datastore": self.datastore, self._entity_name: self.id})
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.DELETE,
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
+        )
 
     def api_update(self) -> None:
         """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API.
