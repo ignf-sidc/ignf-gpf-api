@@ -24,9 +24,10 @@ class StoreEntity(ABC):
     # (*) Nom "utilisateur" de l'entité (pour afficher une message par exemple)
     _entity_title: str = "Entité Abstraite"
 
-    def __init__(self, store_api_dict: Dict[str, Any]) -> None:
+    def __init__(self, store_api_dict: Dict[str, Any], datastore: Optional[str] = None) -> None:
         """Classe instanciée à partir de la représentation envoyée par l'API d'une entité."""
         self._store_api_dict: Dict[str, Any] = store_api_dict
+        self._datastore: Optional[str] = datastore
 
     ##############################################################
     # Propriétés d'accès
@@ -40,6 +41,15 @@ class StoreEntity(ABC):
             Identifiant de l'entité.
         """
         return str(self._store_api_dict["_id"])
+
+    @property
+    def datastore(self) -> Optional[str]:
+        """Renvoie l'identifiant du datastore de l'entité
+
+        Returns:
+            identifiant du datastore de l'entité None si non défini
+        """
+        return self._datastore
 
     def get_store_properties(self) -> Dict[str, Any]:
         """Renvoie les propriétés de l'entité' telles que renvoyées par l'API.
@@ -72,6 +82,11 @@ class StoreEntity(ABC):
         Returns:
             (StoreEntity): Entité créée
         """
+        s_datastore: Optional[str] = None
+        # Test du dictionnaire route_params
+        if isinstance(route_params, dict) and "datastore" in route_params:
+            s_datastore = route_params.get("datastore")
+
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_create"
         # Requête
@@ -82,14 +97,15 @@ class StoreEntity(ABC):
             data=data,
         )
         # Instanciation
-        return cls(o_response.json())
+        return cls(o_response.json(), datastore=s_datastore)
 
     @classmethod
-    def api_get(cls: Type[T], id_: str) -> T:
+    def api_get(cls: Type[T], id_: str, datastore: Optional[str] = None) -> T:
         """Récupère une entité depuis l'API.
 
         Args:
             id_: Identifiant de l'entité
+            datastore: Identifiant du datastore
 
         Returns:
             (StoreEntity): L'entité instanciée correspondante
@@ -99,16 +115,17 @@ class StoreEntity(ABC):
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={cls._entity_name: id_},
+            route_params={"datastore": datastore, cls._entity_name: id_},
         )
         # Instanciation
-        return cls(o_response.json())
+        return cls(o_response.json(), datastore)
 
     @classmethod
-    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
+    def api_list(cls: Type[T], datastore: Optional[str] = None, infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
         """Liste les entités de l'API respectant les paramètres donnés.
 
         Args:
+            datastore: Identifiant du datastore
             infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
             tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
             page: Numéro page à récupérer, toutes si None.
@@ -143,6 +160,7 @@ class StoreEntity(ABC):
             # On liste les entités à la bonne page
             o_response = ApiRequester().route_request(
                 s_route,
+                route_params={"datastore": datastore},
                 params={**d_params, **{"page": i_page, "limit": i_limit}},
             )
             # On les ajoute à la liste
@@ -159,7 +177,11 @@ class StoreEntity(ABC):
         """Supprime l'entité de l'API."""
         s_route = f"{self._entity_name}_delete"
         # Requête
-        ApiRequester().route_request(s_route, method=ApiRequester.DELETE, route_params={self._entity_name: self.id})
+        ApiRequester().route_request(
+            s_route,
+            method=ApiRequester.DELETE,
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
+        )
 
     def api_update(self) -> None:
         """Met à jour l'instance Python représentant l'entité en récupérant les infos à jour sur l'API.
@@ -170,7 +192,7 @@ class StoreEntity(ABC):
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
         # Mise à jour du stockage local
         self._store_api_dict = o_response.json()
