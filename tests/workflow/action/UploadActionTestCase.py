@@ -63,10 +63,10 @@ class UploadActionTestCase(GpfTestCase):
         with patch.object(ActionAbstract, "get_filters", return_value=({"info":"val"}, {"tag":"val"})) as o_mock_get_filters:
             with patch.object(Upload, "api_list", return_value=[o_u1, o_u2]) as o_mock_api_list :
                 # Appel de la fonction find_upload
-                o_upload = o_ua.find_upload()
+                o_upload = o_ua.find_upload("datastore_id")
                 # Vérifications
                 o_mock_get_filters.assert_called_once_with("upload", o_mock_dataset.upload_infos, o_mock_dataset.tags)
-                o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"})
+                o_mock_api_list.assert_called_once_with(infos_filter={"info":"val"}, tags_filter={"tag":"val"}, datastore="datastore_id")
                 self.assertEqual(o_upload, o_u1)
 
     def run_args(
@@ -104,10 +104,12 @@ class UploadActionTestCase(GpfTestCase):
             nb_md5_files_on_api_ok (int): nombre fichiers de clé déjà livrés sur l'API et à ne pas re-livrer
         """
 
-        def create(d_dict: Dict[str, Any]) -> Upload:
+        def create(d_dict: Dict[str, Any], route_params: Optional[Dict[str, Any]] = None) -> Upload:
             print("new creation")
+            if route_params is None:
+                route_params = {}
             d_dict["status"] = "OPEN"
-            return Upload(d_dict)
+            return Upload(d_dict, route_params.get("datastore", None))
 
         def config_get(a: str, b: str) -> Optional[str]:  # pylint:disable=invalid-name,unused-argument
             if b == "uniqueness_constraint_infos":
@@ -147,17 +149,17 @@ class UploadActionTestCase(GpfTestCase):
             o_ua = UploadAction(o_mock_dataset, behavior)
             if run_fail:
                 with self.assertRaises(GpfApiError) as o_arc:
-                    o_ua.run()
+                    o_ua.run("datastore_id")
                 self.assertEqual(o_arc.exception.message, message_exception)
                 return
-            o_ua.run()
+            o_ua.run("datastore_id")
 
             # vérif de o_mock_find_upload
-            o_mock_find_upload.assert_called_once_with()
+            o_mock_find_upload.assert_called_once_with("datastore_id")
 
             # vérif de o_mock_api_create
             if api_create:
-                o_mock_api_create.assert_called_once_with(upload_infos)
+                o_mock_api_create.assert_called_once_with(upload_infos, route_params={'datastore': 'datastore_id'})
             else:
                 o_mock_api_create.assert_not_called()
             # vérif de o_mock_api_delete

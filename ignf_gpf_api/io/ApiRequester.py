@@ -73,6 +73,14 @@ class ApiRequester(metaclass=Singleton):
         if route_params is None:
             route_params = {}
 
+        # Si la clef 'datastore' n'est pas définie ou vide, on le récupère dans la config
+        if not route_params.get("datastore", None):
+            route_params["datastore"] = Config().get("store_api", "datastore", fallback=None)
+
+        # Si la clef est toujours None ou vide, on affiche un warning
+        if not route_params.get("datastore", None):
+            Config().om.warning("Le datastore (entrepôt) à utiliser n'est pas défini. Consultez l'aide pour corriger ce problème.")
+
         # On convertie les données Python en text puis en JSON
         data = self.__jsonConverter.convert(data)
 

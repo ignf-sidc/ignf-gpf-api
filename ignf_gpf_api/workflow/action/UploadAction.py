@@ -28,16 +28,22 @@ class UploadAction:
         # On suit le comportement donnée en paramètre ou à défaut celui de la config
         self.__behavior: str = behavior if behavior is not None else Config().get_str("upload", "behavior_if_exists")
 
-    def run(self) -> Upload:
+    def run(self, datastore: Optional[str]) -> Upload:
         """Crée la livraison décrite dans le dataset et livre les données avant de
         retourner la livraison créée.
+
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser. Si None, le datastore sera récupéré dans la configuration.
+
+        Raises:
+            GpfApiError: levée si création non effectuée
 
         Returns:
             livraison créée
         """
         Config().om.info("Création et complétion d'une livraison...")
         # Création de la livraison
-        self.__create_upload()
+        self.__create_upload(datastore)
         # Ajout des tags
         self.__add_tags()
         # Ajout des commentaires
@@ -58,11 +64,15 @@ class UploadAction:
         # On ne devrait pas arriver ici...
         raise GpfApiError("Erreur à la création de la livraison.")
 
-    def __create_upload(self) -> None:
-        """Crée l'upload après avoir vérifié s'il n'existe pas déjà..."""
+    def __create_upload(self, datastore: Optional[str]) -> None:
+        """Crée l'upload après avoir vérifié s'il n'existe pas déjà...
+
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
+        """
         Config().om.info("Création d'une livraison...")
         # On tente de récupérer l'upload
-        o_upload = self.find_upload()
+        o_upload = self.find_upload(datastore)
         # S'il n'est pas null
         if o_upload is not None:
             # On sort en erreur si demandé
@@ -73,7 +83,7 @@ class UploadAction:
                 Config().om.warning(f"Une livraison identique {o_upload} va être supprimée puis recréée...")
                 o_upload.api_delete()
                 # on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
-                self.__upload = Upload.api_create(self.__dataset.upload_infos)
+                self.__upload = Upload.api_create(self.__dataset.upload_infos, route_params={"datastore": datastore})
                 Config().om.warning(f"Livraison {self.__upload} recréée avec succès.")
             else:
                 # Sinon on continue avec cet upload pour le compléter (behavior == CONTINUE)
@@ -84,7 +94,7 @@ class UploadAction:
                 self.__upload = o_upload
         else:
             # Si la livraison est nulle, on en crée une nouvelle (on utilise les champs de "upload_infos" du dataset)
-            self.__upload = Upload.api_create(self.__dataset.upload_infos)
+            self.__upload = Upload.api_create(self.__dataset.upload_infos, route_params={"datastore": datastore})
             Config().om.info(f"Livraison {self.__upload['name']} créée avec succès.")
 
     def __add_tags(self) -> None:
@@ -168,8 +178,11 @@ class UploadAction:
             self.__upload.api_close()
             Config().om.info(f"Livraison {self.__upload['name']} : livraison fermée avec succès. La livraison va maintenant être vérifiée par la Géoplateforme.")
 
-    def find_upload(self) -> Optional[Upload]:
+    def find_upload(self, datastore: Optional[str]) -> Optional[Upload]:
         """Fonction permettant de lister un éventuel upload déjà existant à partir des critères d'unicité donnés.
+
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
 
         Returns:
             None si rien trouvé, sinon l'Upload trouvé
@@ -177,7 +190,7 @@ class UploadAction:
         # Récupération des critères de filtre
         d_infos, d_tags = ActionAbstract.get_filters("upload", self.__dataset.upload_infos, self.__dataset.tags)
         # On peut maintenant filter les upload selon ces critères
-        l_uploads = Upload.api_list(infos_filter=d_infos, tags_filter=d_tags)
+        l_uploads = Upload.api_list(infos_filter=d_infos, tags_filter=d_tags, datastore=datastore)
         # S'il y a un ou plusieurs upload, on retourne le 1er :
         if l_uploads:
             return l_uploads[0]

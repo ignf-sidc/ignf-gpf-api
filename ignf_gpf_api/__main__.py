@@ -75,6 +75,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     o_parser.add_argument("--ini", dest="config", default="config.ini", help="Chemin vers le fichier de config à utiliser (config.ini par défaut)")
     o_parser.add_argument("--version", action="version", version=f"%(prog)s v{ignf_gpf_api.__version__}")
     o_parser.add_argument("--debug", dest="debug", required=False, default=False, action="store_true", help="Passe l'appli en mode debug (plus de messages affichés)")
+    o_parser.add_argument("--datastore", "-d", dest="datastore", required=False, default=None, help="Identifiant du datastore à utiliser")
     o_sub_parsers = o_parser.add_subparsers(dest="task", metavar="TASK", required=True, help="Tâche à effectuer")
     # Parser pour auth
     o_parser_auth = o_sub_parsers.add_parser("auth", help="Authentification")
@@ -231,7 +232,7 @@ def upload(o_args: argparse.Namespace) -> None:
         for o_dataset in o_dfu.datasets:
             s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
             o_ua = UploadAction(o_dataset, behavior=s_behavior)
-            o_upload = o_ua.run()
+            o_upload = o_ua.run(o_args.datastore)
             if UploadAction.monitor_until_end(o_upload, print):
                 print(f"Livraison {o_upload} créée avec succès.")
             else:
@@ -321,6 +322,7 @@ def workflow(o_args: argparse.Namespace) -> None:
             s_behavior = str(o_args.behavior).upper() if o_args.behavior is not None else None
             # on reset l'afficheur de log
             PrintLogHelper.reset()
+
             # et on lance l'étape en précisant l'afficheur de log et le comportement
             def callback_run_step(processing_execution: ProcessingExecution) -> None:
                 """fonction callback pour l'affichage des logs lors du suivi d'un traitement
