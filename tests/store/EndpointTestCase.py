@@ -40,9 +40,9 @@ class EndpointTestCase(GpfTestCase):
         # 1 : pas de filtres
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
-            l_endpoints = Endpoint.api_list()
+            l_endpoints = Endpoint.api_list(datastore="datastore_id")
             # on vérifie que route_request est appelée correctement
-            o_mock_request.assert_called_once_with("datastore_get")
+            o_mock_request.assert_called_once_with("datastore_get", route_params={"datastore": "datastore_id"})
             # on vérifie qu'on a bien récupéré une liste de 2 Endpoints
             self.assertIsInstance(l_endpoints, list)
             self.assertEqual(len(l_endpoints), 2)
@@ -56,7 +56,7 @@ class EndpointTestCase(GpfTestCase):
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             l_endpoints = Endpoint.api_list(infos_filter={"name": "Service WMTS"})
             # on vérifie que route_request est appelée correctement
-            o_mock_request.assert_called_once_with("datastore_get")
+            o_mock_request.assert_called_once_with("datastore_get", route_params={"datastore": None})
             # on vérifie qu'on a bien récupéré une liste de 1 Endpoint
             self.assertIsInstance(l_endpoints, list)
             self.assertEqual(len(l_endpoints), 1)
@@ -68,7 +68,7 @@ class EndpointTestCase(GpfTestCase):
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             l_endpoints = Endpoint.api_list(infos_filter={"type": "DOWNLOAD"})
             # on vérifie que route_request est appelée correctement
-            o_mock_request.assert_called_once_with("datastore_get")
+            o_mock_request.assert_called_once_with("datastore_get", route_params={"datastore": None})
             # on vérifie qu'on a bien récupéré une liste de 1 Endpoint
             self.assertIsInstance(l_endpoints, list)
             self.assertEqual(len(l_endpoints), 1)

@@ -11,13 +11,14 @@ class Endpoint(StoreEntity):
     _entity_title = "point de montage"
 
     @classmethod
-    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None) -> List[T]:
+    def api_list(cls: Type[T], infos_filter: Optional[Dict[str, str]] = None, tags_filter: Optional[Dict[str, str]] = None, page: Optional[int] = None, datastore: Optional[str] = None) -> List[T]:
         """Liste les points de montage de l'API respectant les paramètres donnés.
 
         Args:
-            infos_filter (Optional[Dict[str, str]]): dictionnaire contenant les paramètres de filtre sous la forme {"nom_info": "valeur_info"}
-            tags_filter (Optional[Dict[str, str]]): dictionnaire contenant les tag de filtre sous la forme {"nom_tag": "valeur_tag"}
-            page (Optional[int]): page à récupérer, toutes si None.
+            infos_filter: Filtres sur les attributs sous la forme `{"nom_attribut": "valeur_attribut"}`
+            tags_filter: Filtres sur les tags sous la forme `{"nom_tag": "valeur_tag"}`
+            page: Numéro page à récupérer, toutes si None.
+            datastore: Identifiant du datastore
 
         Returns:
             List[T]: liste des entités retournées
@@ -27,7 +28,7 @@ class Endpoint(StoreEntity):
         tags_filter = tags_filter if tags_filter is not None else {}
 
         # Requête
-        o_response = ApiRequester().route_request("datastore_get")
+        o_response = ApiRequester().route_request("datastore_get", route_params={"datastore": datastore})
 
         # Liste pour stocker les endpoints correspondants
         l_endpoints: List[T] = []
