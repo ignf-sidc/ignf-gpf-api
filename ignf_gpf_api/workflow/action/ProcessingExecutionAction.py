@@ -79,7 +79,7 @@ class ProcessingExecutionAction(ActionAbstract):
         # A ce niveau là, si on a encore self.__processing_execution qui est None, c'est qu'on peut créer l'Exécution de Traitement sans problème
         if self.__processing_execution is None:
             # création de la ProcessingExecution
-            self.__processing_execution = ProcessingExecution.api_create(self.definition_dict["body_parameters"], datastore=datastore)
+            self.__processing_execution = ProcessingExecution.api_create({**self.definition_dict["body_parameters"], "datastore": datastore})
             d_info = self.__processing_execution.get_store_properties()["output"]
 
         if d_info is None:
