@@ -1,5 +1,6 @@
 from datetime import datetime
 from unittest.mock import patch
+from typing import Any, Dict, List
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
@@ -15,11 +16,11 @@ class ProcessingExecutionTestCase(GpfTestCase):
     def test_api_logs(self) -> None:
         """Vérifie le bon fonctionnement de api_logs."""
         s_data = "2022/05/18 14:29:25       INFO §USER§ Envoi du signal de début de l'exécution à l'API.\n2022/05/18 14:29:25       INFO §USER§ Signal transmis avec succès."
-        l_rep = [
-            {"data": s_data, "rep": s_data},
-            {"data": "", "rep": ""},
-            {"data": "[]", "rep": ""},
-            {"data": '["log1", "log2", " log \\"complexe\\""]', "rep": 'log1\nlog2\n log "complexe"'},
+        l_rep: List[Dict[str, Any]] = [
+            {"data": s_data, "rep": s_data, "datastore": None},
+            {"data": "", "rep": "", "datastore": "datastore"},
+            {"data": "[]", "rep": "", "datastore": None},
+            {"data": '["log1", "log2", " log \\"complexe\\""]', "rep": 'log1\nlog2\n log "complexe"', "datastore": "datastore"},
         ]
 
         for d_rep in l_rep:
@@ -28,46 +29,48 @@ class ProcessingExecutionTestCase(GpfTestCase):
             # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
             with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
                 # on appelle la fonction à tester : api_logs
-                o_processing_execution = ProcessingExecution({"_id": "id_entité"})
+                o_processing_execution = ProcessingExecution({"_id": "id_entité"}, d_rep["datastore"])
                 s_data_recupere = o_processing_execution.api_logs()
 
                 # on vérifie que route_request est appelé correctement
                 o_mock_request.assert_called_once_with(
                     "processing_execution_logs",
-                    route_params={"processing_execution": "id_entité"},
+                    route_params={"processing_execution": "id_entité", "datastore": d_rep["datastore"]},
                 )
                 # on vérifie la similitude des données retournées
                 self.assertEqual(d_rep["rep"], s_data_recupere)
 
     def test_api_launch(self) -> None:
         """Vérifie le bon fonctionnement de api_launch."""
-        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
-            # on appelle la fonction à tester : api_launch
-            o_processing_execution = ProcessingExecution({"_id": "id_entité"})
-            o_processing_execution.api_launch()
+        for s_datastore in [None, "api_launch"]:
+            # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+            with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
+                # on appelle la fonction à tester : api_launch
+                o_processing_execution = ProcessingExecution({"_id": "id_entité"}, s_datastore)
+                o_processing_execution.api_launch()
 
-            # on vérifie que route_request est appelé correctement
-            o_mock_request.assert_called_once_with(
-                "processing_execution_launch",
-                route_params={"processing_execution": "id_entité"},
-                method=ApiRequester.POST,
-            )
+                # on vérifie que route_request est appelé correctement
+                o_mock_request.assert_called_once_with(
+                    "processing_execution_launch",
+                    route_params={"processing_execution": "id_entité", "datastore": s_datastore},
+                    method=ApiRequester.POST,
+                )
 
     def test_api_abort(self) -> None:
         """Vérifie le bon fonctionnement de api_abort."""
-        # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
-            # on appelle la fonction à tester : api_abort
-            o_processing_execution = ProcessingExecution({"_id": "id_entité"})
-            o_processing_execution.api_abort()
+        for s_datastore in [None, "api_launch"]:
+            # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
+            with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
+                # on appelle la fonction à tester : api_abort
+                o_processing_execution = ProcessingExecution({"_id": "id_entité"}, s_datastore)
+                o_processing_execution.api_abort()
 
-            # on vérifie que route_request est appelé correctement
-            o_mock_request.assert_called_once_with(
-                "processing_execution_abort",
-                route_params={"processing_execution": "id_entité"},
-                method=ApiRequester.POST,
-            )
+                # on vérifie que route_request est appelé correctement
+                o_mock_request.assert_called_once_with(
+                    "processing_execution_abort",
+                    route_params={"processing_execution": "id_entité", "datastore": s_datastore},
+                    method=ApiRequester.POST,
+                )
 
     def test_launch(self) -> None:
         """Vérifie le bon fonctionnement de launch."""

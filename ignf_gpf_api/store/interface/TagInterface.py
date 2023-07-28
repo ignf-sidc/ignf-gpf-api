@@ -36,7 +36,7 @@ class TagInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
             data=tags_data,
         )
 
@@ -52,7 +52,7 @@ class TagInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.DELETE,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
             # dans les paramètres (params), on met en clé "tag[]" et en valeur la liste des tags :
             params={"tags[]": tag_keys},
         )

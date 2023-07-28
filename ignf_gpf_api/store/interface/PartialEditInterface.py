@@ -17,7 +17,7 @@ class PartialEditInterface(StoreEntity):
             f"{self._entity_name}_partial_edit",
             data=data_edit,
             method=ApiRequester.PATCH,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
 
         # Mise à jour du stockage local (_store_api_dict)
