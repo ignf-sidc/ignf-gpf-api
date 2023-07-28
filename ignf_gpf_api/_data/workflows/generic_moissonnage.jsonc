@@ -1,7 +1,7 @@
 {
     "workflow": {
         "steps": {
-            // Étape n°1 : Mise en base de vecteurs livrés
+            // Étape n°1 : Mise en base de vecteurs livrés et Publication de la donnee en WMS
             "flux_wms_vecteur": {
                 "actions": [
                     {
@@ -31,18 +31,19 @@
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "non"
+                            "tuto_name": "moissonnage"
                         }
                     },
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMS-VECTOR",
-                            "name": "{user.last_name}__Flux_vecteur_wms_bdd",
-                            "layer_name": "{user.last_name}__Flux_vecteur_wms_bdd",
+                            "name": "{user.last_name} moissonnage bdd",
+                            "layer_name": "{user.last_name}__moissonnage_bdd",
                             "type_infos": {
-                                "title": "Couche Canton du tutoriel - WMS - BDD",
+                                "title": "{user.last_name} -- moissonnage -- Couche Canton du tutoriel - WMS vecteur - BDD",
                                 "abstract": "Exemple de flux à visualiser",
+                                "keywords": ["Tutoriel", "Raster", "moissonnage"],
                                 "used_data": [
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
@@ -66,23 +67,25 @@
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "moissonnage"
                         }
                     },{
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wms_bdd)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} moissonnage bdd)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMS
-                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}",
+                            "visibility": "PRIVATE",
+                            "open": true
                         }
                     }
                 ],
                 "parents": []
             },
+            // Étape n°2 : Moissonnage du flux WMS vecteur pour en faire une pyramide raster
             "moissonnage": {
                 "actions": [
                     {
@@ -100,7 +103,7 @@
                             "parameters": {
                                 "tms": "PM",
                                 "compression": "jpg",
-                                "harvest_layers": "{user.last_name}__Flux_vecteur_wms_bdd",
+                                "harvest_layers": "{user.last_name}__moissonnage_bdd",
                                 "harvest_url": "https://geoplateforme-gpf-geoserver-wms-v.qua.gpf-tech.ign.fr/geoserver/ows",
                                 "samplesperpixel": 3,
                                 "sampleformat": "UINT8",
@@ -118,41 +121,41 @@
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "non"
+                            "tuto_name": "moissonnage"
                         }
                     }
                 ],
                 "parents": ["flux_wms"]
             },
-            "flux-wms-rasteur" :{
+            // Étape n°3 : Configuration et publication d'un flus WMS sur la pyramide du moissonnage
+            "flux-wms-raster" :{
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMS-RASTER",
-                            "name": "{user.last_name} Flux raster WMS",
-                            "layer_name": "{user.last_name}__Flux_raster_wms",
+                            "name": "{user.last_name} moissonnage pyramide raster",
+                            "layer_name": "{user.last_name}__moissonnage_pyramide",
                             "metadata": [
                                 {
                                     "format": "application/xml",
+                                    // TODO : trouvé une métadonnée plus proche de la donnee
                                     "url": "https://geoservices.ign.fr/sites/default/files/2022-10/IGNF_BDORTHOr_2-0.xml",
                                     "type": "ISO19115:2003"
                                 }
                             ],
                             "type_infos": {
-                                "title": "{user.last_name} -- raster du tutoriel",
+                                "title": "{user.last_name} -- moissonnage -- Couche Canton du tutoriel - WMS raster - pyramide",
                                 "abstract": "Exemple de flux à visualiser",
-                                "keywords": [
-                                    "Tutoriel", "Raster"
-                                ],
+                                "keywords": ["Tutoriel", "Raster", "moissonnage"],
                                 "interpolation": "NEAREST-NEIGHBOUR",
                                 "used_data": [
-                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
+                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 10 au niveau 14
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__moissonnage_cantons), TAGS(tuto=oui)]}",
-                                        "bottom_level": "14",
-                                        "top_level": "10"
+                                        "top_level": "10",
+                                        "bottom_level": "14"
                                     }
                                 ]
                             },
@@ -166,19 +169,20 @@
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "tuto": "oui"
+                            "tuto": "oui",
+                            "tuto_name": "moissonnage"
                         }
                     },
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} Flux raster WMS), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} moissonnage pyramide raster), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMS (id trouvé en récupérant les informations de l'entrepôt)
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-RASTER)]}",
+                            "visibility": "PRIVATE",
                             "open": true
                         }
                     }
