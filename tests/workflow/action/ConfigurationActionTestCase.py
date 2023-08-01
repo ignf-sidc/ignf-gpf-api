@@ -63,9 +63,6 @@ class ConfigurationActionTestCase(GpfTestCase):
         if comments is not None:
             d_action["comments"] = comments
 
-        # initialisation de Configuration
-        o_conf = ConfigurationAction("contexte", d_action)
-
         # mock de configuration
         o_mock_configuration = MagicMock()
         o_mock_configuration.api_launch.return_value = None
@@ -79,6 +76,8 @@ class ConfigurationActionTestCase(GpfTestCase):
         # suppression de la mise en page forcé pour le with
         with patch.object(Configuration, "api_create", return_value=o_mock_configuration) as o_mock_configuration_api_create:
             with patch.object(Configuration, "api_list", return_value=l_configs) as o_mock_configuration_api_list:
+                # initialisation de Configuration
+                o_conf = ConfigurationAction("contexte", d_action)
                 # on lance l'exécution de run
                 o_conf.run()
 
@@ -86,10 +85,10 @@ class ConfigurationActionTestCase(GpfTestCase):
                 o_mock_configuration_api_list.assert_called_once()
 
                 # test de l'appel à Configuration.api_create
-                if not config_already_exists:
-                    o_mock_configuration_api_create.assert_called_once_with(d_action["body_parameters"])
-                else:
+                if config_already_exists:
                     o_mock_configuration_api_create.assert_not_called()
+                else:
+                    o_mock_configuration_api_create.assert_called_once_with(d_action["body_parameters"], route_params={"datastore": None})
 
                 # test api_add_tags
                 if "tags" in d_action and d_action["tags"]:

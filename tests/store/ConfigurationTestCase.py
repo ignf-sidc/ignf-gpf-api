@@ -57,7 +57,7 @@ class ConfigurationTestCase(GpfTestCase):
             # on vérifie que api_create est appelé correctement
             o_mock_create.assert_called_once_with(
                 d_data_offering,
-                route_params={"datastore": None, "configuration": "2222222"},
+                route_params={"configuration": "2222222"},
             )
             # on vérifie que l'entité renvoyée est cohérente
             self.assertIsInstance(o_offering, Offering)
