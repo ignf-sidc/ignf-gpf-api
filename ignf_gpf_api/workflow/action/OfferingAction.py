@@ -25,7 +25,7 @@ class OfferingAction(ActionAbstract):
     def run(self, datastore: Optional[str] = None) -> None:
         Config().om.info("Création d'une offre...")
         # Ajout de l'Offering
-        self.__create_offering()
+        self.__create_offering(datastore)
         # Affichage
         o_offering = self.offering
         if o_offering is not None:
@@ -40,9 +40,13 @@ class OfferingAction(ActionAbstract):
             Config().om.info(f"Offre créée : {self.__offering}\n{s_urls}")
         Config().om.info("Création d'une offre : terminé")
 
-    def __create_offering(self) -> None:
-        """Création de l'Offering sur l'API à partir des paramètres de définition de l'action."""
-        o_offering = self.find_offering()
+    def __create_offering(self, datastore: Optional[str]) -> None:
+        """Création de l'Offering sur l'API à partir des paramètres de définition de l'action.
+
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
+        """
+        o_offering = self.find_offering(datastore)
         if o_offering is not None:
             self.__offering = o_offering
             Config().om.info(f"Offre {self.__offering['layer_name']} déjà existante, complétion uniquement.")
@@ -53,26 +57,30 @@ class OfferingAction(ActionAbstract):
             except ConflictError:
                 Config().om.warning("L'offre que vous tentez de créer existe déjà !")
 
-    def find_configuration(self) -> Optional[Configuration]:
+    def find_configuration(self, datastore: Optional[str] = None) -> Optional[Configuration]:
         """Fonction permettant de récupérer la Configuration associée à l'Offering qui doit être crée par cette Action.
 
         C'est à dire la Configuration indiquée dans `url_parameters` du `definition_dict` de cette Action.
 
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
         Returns:
             Configuration
         """
         # Récupération de l'id de la configuration et du endpoint
         s_configuration_id = self.definition_dict["url_parameters"]["configuration"]
         # Instanciation Configuration
-        o_configuration = Configuration.api_get(s_configuration_id)
+        o_configuration = Configuration.api_get(s_configuration_id, datastore=datastore)
         # Retour
         return o_configuration
 
-    def find_offering(self) -> Optional[Offering]:
+    def find_offering(self, datastore: Optional[str] = None) -> Optional[Offering]:
         """Fonction permettant de récupérer l'Offering qui devrait être créée (si elle existe déjà).
 
         C'est à dire une offering associée à la Configuration indiquée dans `url_parameters` et au endpoint indiqué dans `body_parameters`.
 
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
         Returns:
             Offre retrouvée
         """
@@ -80,7 +88,7 @@ class OfferingAction(ActionAbstract):
         s_configuration_id = self.definition_dict["url_parameters"]["configuration"]
         s_endpoint_id = self.definition_dict["body_parameters"]["endpoint"]
         # Instanciation Configuration
-        o_configuration = Configuration.api_get(s_configuration_id)
+        o_configuration = Configuration.api_get(s_configuration_id, datastore=datastore)
         # Listing des Offres associées à cette Configuration
         l_offerings = o_configuration.api_list_offerings()
         # Pour chaque offering

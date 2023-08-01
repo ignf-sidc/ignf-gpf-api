@@ -23,7 +23,7 @@ class ConfigurationAction(ActionAbstract):
     def run(self, datastore: Optional[str] = None) -> None:
         Config().om.info("Création et complétion d'une configuration...")
         # Création de la Configuration
-        self.__create_configuration()
+        self.__create_configuration(datastore)
         # Ajout des tags sur la Configuration
         self.__add_tags()
         # Ajout des commentaires sur la Configuration
@@ -32,10 +32,14 @@ class ConfigurationAction(ActionAbstract):
         Config().om.info(f"Configuration créée et complétée : {self.configuration}")
         Config().om.info("Création et complétion d'une configuration : terminé")
 
-    def __create_configuration(self) -> None:
-        """Création de la Configuration sur l'API à partir des paramètres de définition de l'action."""
+    def __create_configuration(self, datastore: Optional[str]) -> None:
+        """Création de la Configuration sur l'API à partir des paramètres de définition de l'action.
+
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
+        """
         # On regarde si on trouve quelque chose avec la fonction find
-        o_configuration = self.find_configuration()
+        o_configuration = self.find_configuration(datastore)
         if o_configuration is not None:
             self.__configuration = o_configuration
             Config().om.info(f"Configuration {self.__configuration['name']} déjà existante, complétion uniquement.")
@@ -43,7 +47,7 @@ class ConfigurationAction(ActionAbstract):
             # Création en gérant une erreur de type ConflictError (si la Configuration existe déjà selon les critères de l'API)
             try:
                 Config().om.info("Création de la configuration...")
-                self.__configuration = Configuration.api_create(self.definition_dict["body_parameters"])
+                self.__configuration = Configuration.api_create(self.definition_dict["body_parameters"], route_params={"datastore": datastore})
                 Config().om.info(f"Configuration {self.__configuration['name']} créée avec succès.")
             except ConflictError:
                 Config().om.warning("La configuration que vous tentez de créer existe déjà !")
@@ -65,17 +69,19 @@ class ConfigurationAction(ActionAbstract):
                 self.configuration.api_add_comment({"text": s_comment})
             Config().om.info(f"Configuration {self.configuration['name']} : les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
 
-    def find_configuration(self) -> Optional[Configuration]:
+    def find_configuration(self, datastore: Optional[str]) -> Optional[Configuration]:
         """Fonction permettant de récupérer une Configuration ressemblant à celle qui devrait être créée
         en fonction des filtres définis dans la Config.
 
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser.
         Returns:
             configuration retrouvée
         """
         # Récupération des critères de filtre
         d_infos, d_tags = ActionAbstract.get_filters("configuration", self.definition_dict["body_parameters"], self.definition_dict.get("tags", {}))
         # On peut maintenant filtrer les stored data selon ces critères
-        l_configuration = Configuration.api_list(infos_filter=d_infos, tags_filter=d_tags)
+        l_configuration = Configuration.api_list(infos_filter=d_infos, tags_filter=d_tags, datastore=datastore)
         # S'il y a une ou plusieurs, on retourne la 1ère :
         if l_configuration:
             return l_configuration[0]

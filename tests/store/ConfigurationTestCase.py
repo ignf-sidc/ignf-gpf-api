@@ -15,7 +15,9 @@ class ConfigurationTestCase(GpfTestCase):
     """
 
     def test_list_offerings(self) -> None:
-        """Vérifie le bon fonctionnement de api_list_offerings."""
+        """Vérifie le bon fonctionnement de api_list_offerings.
+        Dans ce test, on suppose que le datastore est défini (cf. route_params).
+        """
 
         # Instanciation d'une fausse réponse HTTP
         o_response = GpfTestCase.get_response(json=[{"_id": "offering_1"}, {"_id": "offering_2"}])
@@ -23,13 +25,13 @@ class ConfigurationTestCase(GpfTestCase):
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
             # Instanciation d'une Configuration
-            o_configuration = Configuration({"_id": "123456789"})
+            o_configuration = Configuration({"_id": "123456789"}, "id_datastore")
             # Listing de ses Offres
             l_offerings = o_configuration.api_list_offerings()
             # on vérifie que route_request est appelé correctement
             o_mock_request.assert_called_once_with(
                 "configuration_list_offerings",
-                route_params={"configuration": "123456789"},
+                route_params={"datastore": "id_datastore", "configuration": "123456789"},
                 method=ApiRequester.GET,
             )
             # on vérifie qu'on a bien récupéré une liste d'Offering
@@ -40,7 +42,9 @@ class ConfigurationTestCase(GpfTestCase):
             self.assertEqual(l_offerings[1].id, "offering_2")
 
     def test_add_offering(self) -> None:
-        """Vérifie le bon fonctionnement de api_add_offering."""
+        """Vérifie le bon fonctionnement de api_add_offering.
+        Dans ce test, le datastore n'est pas défini (cf. route_params).
+        """
 
         d_data_offering = {"_id": "11111111"}
 
