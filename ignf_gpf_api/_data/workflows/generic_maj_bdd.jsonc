@@ -1,7 +1,7 @@
 {
     "workflow": {
         "steps": {
-            // Étape n°1 : Mise en base de vecteurs livrés
+            // Étape n°1 : Mise en base de vecteurs livrés lot 1
             "mise-en-base-1": {
                 "actions": [
                     {
@@ -18,8 +18,8 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__tuto_base_maj"
-                                    "name": "{user.last_name}__tuto_base_maj",
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__maj_bdd"
+                                    "name": "{user.last_name}__maj_bdd",
                                     "storage_type": "POSTGRESQL"
                                 }
                             },
@@ -32,11 +32,10 @@
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "maj-BDD"
                         }
                     }
                 ],
-                // Pour Bag donc pas besoin pour tester la gpf
                 "parents": []
             },
             // Étape n°2 : configuration d'un flux WMS
@@ -46,14 +45,12 @@
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMS-VECTOR",
-                            "name": "{user.last_name}__tuto_base_maj_WMS",
-                            "layer_name": "{user.last_name}__tuto_base_maj_WMS",
+                            "name": "{user.last_name} maj BDD",
+                            "layer_name": "{user.last_name}__maj_bdd",
                             "type_infos": {
-                                "title": "{user.last_name} -- Donnée tutoriel mise à jour BDD",
+                                "title": "{user.last_name} -- maj BDD -- Installations",
                                 "abstract": "Exemple de flux à visualiser pour la MAJ des BDD",
-                                "keywords": [
-                                    "Tutoriel"
-                                ],
+                                "keywords": ["Tutoriel", "Vecteur", "mise a jour"],
                                 // base potentiellement vide ou au future plus étendu : on met la BBOX obligatoirement
                                 "bbox": {
                                   "west": -175,
@@ -62,17 +59,16 @@
                                   "north": 85
                                 },                            
                                 "used_data": [
-                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         "relations": [
                                             {
-                                                "name": "installation_autorisation",// TODO : à compléter selon donné en entrée
+                                                "name": "installation_autorisation", // Attention c'est la Vue ! donc toutes les données ne sont pas affichées
                                                 // ficher de style livré comme ficher statique avec comme "name" : "Style pour les installations"
                                                 "style": "{store_entity.static.infos._id [INFOS(name=Style pour les installations)]}"
                                             }
                                         ],
-                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
-                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__tuto_base_maj)]}"
+                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom
+                                        "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__maj_bdd)]}"
                                     }
                                 ]
                             }
@@ -84,7 +80,7 @@
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "maj-BDD"
                         }
                     }
                 ],
@@ -96,13 +92,14 @@
                     {
                         "type": "offering",
                         "url_parameters": {
-                            // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_WMS)]}"
+                            // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} maj BDD)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMS
-                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}",
+                            "visibility": "PRIVATE",
+                            "open": true
                         }
                     }
                 ],
@@ -125,8 +122,8 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On met a jour la livraison avec les données de la 2é livraison
-                                    "id": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__tuto_base_maj)]}"
+                                    // On met a jour la livraison 1 avec les données de la 2é livraison
+                                    "id": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__maj_bdd)]}"
                                 }
                             },
                             "parameters": {}
@@ -138,7 +135,7 @@
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "maj-BDD"
                         }
                     }
                 ],
@@ -162,7 +159,7 @@
                             "output": {
                                 "stored_data": {
                                     // On met a jour la livraison avec les données de la 2é livraison
-                                    "id": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__tuto_base_maj)]}"
+                                    "id": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__maj_bdd)]}"
                                 }
                             },
                             "parameters": {}
@@ -174,7 +171,7 @@
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "maj-BDD"
                         }
                     }
                 ],

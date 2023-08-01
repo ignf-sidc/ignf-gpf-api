@@ -205,12 +205,12 @@ class WorkflowTestCase(GpfTestCase):
     def test_open_workflow(self) -> None:
         """Test de la fonction open_workflow."""
         p_workflows = Config().data_dir_path / "workflows"
-        # On teste le workflow archive-generic.jsonc
-        o_workflow_1 = Workflow.open_workflow(p_workflows / "archive-generic.jsonc")
-        self.assertEqual(o_workflow_1.name, "archive-generic.jsonc")
+        # On teste le workflow generic_archive.jsonc
+        o_workflow_1 = Workflow.open_workflow(p_workflows / "generic_archive.jsonc")
+        self.assertEqual(o_workflow_1.name, "generic_archive.jsonc")
         self.assertEqual(len(o_workflow_1.steps), 3)
-        # On teste le workflow wfs-generic.jsonc
-        o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc", "wfs generic")
+        # On teste le workflow generic_vecteur.jsonc
+        o_workflow_2 = Workflow.open_workflow(p_workflows / "generic_vecteur.jsonc", "wfs generic")
         self.assertEqual(o_workflow_2.name, "wfs generic")
         self.assertEqual(len(o_workflow_2.steps), 8)
         # On teste un fichier inexistant
@@ -221,11 +221,11 @@ class WorkflowTestCase(GpfTestCase):
     def test_validate(self) -> None:
         """Test de la fonction validate."""
         p_workflows = Config.data_dir_path / "workflows"
-        # On valide le workflow archive-generic.jsonc
-        o_workflow_1 = Workflow.open_workflow(p_workflows / "archive-generic.jsonc")
+        # On valide le workflow generic_archive.jsonc
+        o_workflow_1 = Workflow.open_workflow(p_workflows / "generic_archive.jsonc")
         self.assertFalse(o_workflow_1.validate())
-        # On valide le workflow wfs-generic.jsonc
-        o_workflow_2 = Workflow.open_workflow(p_workflows / "wfs-generic.jsonc")
+        # On valide le workflow generic_vecteur.jsonc
+        o_workflow_2 = Workflow.open_workflow(p_workflows / "generic_vecteur.jsonc")
         self.assertFalse(o_workflow_2.validate())
         # On ne valide pas le workflow bad-workflow.jsonc
         p_workflow = GpfTestCase.data_dir_path / "workflows" / "bad-workflow.jsonc"

@@ -67,7 +67,7 @@ Ces étapes sont décrites grâce à un workflow.
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 
 ```sh
-python -m ignf_gpf_api workflow -n archive-generic.jsonc
+python -m ignf_gpf_api workflow -n generic_archive.jsonc
 ```
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 3 étapes. Il faudra lancer une commande pour chacune d'elles.
@@ -82,7 +82,7 @@ flowchart TD
 
 ## Traitement et publication
 
-Le workflow « archive-generic » permet de passer de la livraison à une lien permettant de télécharger la donnée. Il comporte 3 étapes :
+Le workflow « generic_archive » permet de passer de la livraison à une lien permettant de télécharger la donnée. Il comporte 3 étapes :
 
 * `intégration-archive-livrée` : transformation des données livrées temporaires en une Donnée Stockée pérenne ;
 * `configuration-archive-livrée` : configuration d'un service de téléchargement permettant de télécharger les données ;
@@ -91,9 +91,9 @@ Le workflow « archive-generic » permet de passer de la livraison à une lien p
 Lancez les 3 commandes suivantes pour exécuter les 3 étapes :
 
 ```sh
-python -m ignf_gpf_api workflow -f archive-generic.jsonc -s intégration-archive-livrée
-python -m ignf_gpf_api workflow -f archive-generic.jsonc -s configuration-archive-livrée
-python -m ignf_gpf_api workflow -f archive-generic.jsonc -s publication-archive-livrée
+python -m ignf_gpf_api workflow -f generic_archive.jsonc -s intégration-archive-livrée
+python -m ignf_gpf_api workflow -f generic_archive.jsonc -s configuration-archive-livrée
+python -m ignf_gpf_api workflow -f generic_archive.jsonc -s publication-archive-livrée
 ```
 
 La première commande ne doit pas être instantanée : un traitement est effectué et les logs doivent vous être remontés.
@@ -123,9 +123,9 @@ python -m ignf_gpf_api dataset -n 2_dataset_archive
 # livraison des données sur la Géoplateforme
 python -m ignf_gpf_api upload -f 2_dataset_archive/upload_descriptor.json
 # récupération du workflow de traitement et publication d'une archive
-python -m ignf_gpf_api workflow -n archive-generic.jsonc
+python -m ignf_gpf_api workflow -n generic_archive.jsonc
 # exécution des 3 étapes pour le traitement et la publication de l'archive
-python -m ignf_gpf_api workflow -f archive-generic.jsonc -s intégration-archive-livrée
-python -m ignf_gpf_api workflow -f archive-generic.jsonc -s configuration-archive-livrée
-python -m ignf_gpf_api workflow -f archive-generic.jsonc -s publication-archive-livrée
+python -m ignf_gpf_api workflow -f generic_archive.jsonc -s intégration-archive-livrée
+python -m ignf_gpf_api workflow -f generic_archive.jsonc -s configuration-archive-livrée
+python -m ignf_gpf_api workflow -f generic_archive.jsonc -s publication-archive-livrée
 ```
