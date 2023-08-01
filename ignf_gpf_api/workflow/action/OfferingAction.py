@@ -57,7 +57,7 @@ class OfferingAction(ActionAbstract):
             except ConflictError:
                 Config().om.warning("L'offre que vous tentez de créer existe déjà !")
 
-    def find_configuration(self, datastore: Optional[str]) -> Optional[Configuration]:
+    def find_configuration(self, datastore: Optional[str] = None) -> Optional[Configuration]:
         """Fonction permettant de récupérer la Configuration associée à l'Offering qui doit être crée par cette Action.
 
         C'est à dire la Configuration indiquée dans `url_parameters` du `definition_dict` de cette Action.
@@ -74,7 +74,7 @@ class OfferingAction(ActionAbstract):
         # Retour
         return o_configuration
 
-    def find_offering(self, datastore: Optional[str]) -> Optional[Offering]:
+    def find_offering(self, datastore: Optional[str] = None) -> Optional[Offering]:
         """Fonction permettant de récupérer l'Offering qui devrait être créée (si elle existe déjà).
 
         C'est à dire une offering associée à la Configuration indiquée dans `url_parameters` et au endpoint indiqué dans `body_parameters`.

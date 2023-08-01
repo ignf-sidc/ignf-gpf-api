@@ -99,8 +99,6 @@ class OfferingActionTestCase(GpfTestCase):
 
         Dans ce test, on suppose que le datastore est défini.
         """
-        # Instanciation de OfferingAction
-        o_offering_action = self.__get_offering_action()
 
         # mock de Offering
         o_mock_offering = MagicMock()
@@ -113,11 +111,13 @@ class OfferingActionTestCase(GpfTestCase):
 
         # Mock
         with patch.object(Configuration, "api_get", return_value=o_mock_configuration) as o_mock_api_get:
+            # Instanciation de OfferingAction
+            o_offering_action = self.__get_offering_action()
             # Appel à la fonction
             o_offering = o_offering_action.find_offering("datastore_id")
             # Vérifications
-            o_mock_api_get.assert_called_once_with("id_configuration")
-            o_mock_configuration.api_list_offerings.assert_called_once(datastore="datastore_id")
+            o_mock_api_get.assert_called_once_with("id_configuration", datastore="datastore_id")
+            o_mock_configuration.api_list_offerings.assert_called_once_with()
             o_mock_offering.api_update.assert_called_once()
             o_mock_offering.api_update.api_list_offerings()
             self.assertEqual(o_offering, o_mock_offering)
@@ -172,7 +172,7 @@ class OfferingActionTestCase(GpfTestCase):
             # Appel à la fonction
             o_offering = o_offering_action.find_offering()
             # Vérifications
-            o_mock_api_get.assert_called_once_with("id_configuration")
+            o_mock_api_get.assert_called_once_with("id_configuration", datastore=None)
             o_mock_configuration.api_list_offerings.assert_called_once()
             self.assertIsNone(o_offering)
 
@@ -189,7 +189,7 @@ class OfferingActionTestCase(GpfTestCase):
             # Appel à la fonction
             o_configuration = o_offering_action.find_configuration()
             # Vérifications
-            o_mock_api_get.assert_called_once_with("id_configuration")
+            o_mock_api_get.assert_called_once_with("id_configuration", datastore=None)
             self.assertEqual(o_configuration, o_mock_configuration)
 
         # Mock 2 : non trouvée
@@ -197,5 +197,5 @@ class OfferingActionTestCase(GpfTestCase):
             # Appel à la fonction
             o_configuration = o_offering_action.find_configuration()
             # Vérifications
-            o_mock_api_get.assert_called_once_with("id_configuration")
+            o_mock_api_get.assert_called_once_with("id_configuration", datastore=None)
             self.assertIsNone(o_configuration)
