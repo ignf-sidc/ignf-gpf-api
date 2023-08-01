@@ -18,7 +18,7 @@ class EventInterface(StoreEntity):
         # Requête "get" à l'API
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
         l_events: List[Dict[str, Any]] = o_response.json()
         return l_events

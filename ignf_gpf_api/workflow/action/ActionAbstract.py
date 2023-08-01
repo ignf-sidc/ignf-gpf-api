@@ -71,8 +71,12 @@ class ActionAbstract(ABC):
             raise StepActionError(f"Action '{self.workflow_context}-{self.index}' non valide après résolution : {e_json}") from e_json
 
     @abstractmethod
-    def run(self) -> None:
-        """Lancement de l'action."""
+    def run(self, datastore: Optional[str] = None) -> None:
+        """Lancement de l'action.
+
+        Args:
+            datastore (Optional[str]): id du datastore à utiliser. Si None, le datastore sera récupérer dans configuration. Defaults to None.
+        """
 
     @staticmethod
     def get_filters(config_key: str, infos: Dict[str, Any], tags: Dict[str, Any]) -> Tuple[Dict[str, str], Dict[str, str]]:

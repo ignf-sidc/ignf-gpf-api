@@ -20,7 +20,7 @@ class ConfigurationAction(ActionAbstract):
         # Autres attributs
         self.__configuration: Optional[Configuration] = None
 
-    def run(self, datastore: Optional[str]) -> None:
+    def run(self, datastore: Optional[str] = None) -> None:
         Config().om.info("Création et complétion d'une configuration...")
         # Création de la Configuration
         self.__create_configuration(datastore)

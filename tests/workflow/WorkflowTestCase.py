@@ -1,6 +1,6 @@
 from pathlib import Path
-from typing import Any, Dict, Optional, Type
-from unittest.mock import patch, MagicMock
+from typing import Any, Dict, Optional, Type, List, Callable
+from unittest.mock import PropertyMock, patch, MagicMock
 
 from ignf_gpf_api.Errors import GpfApiError
 from ignf_gpf_api.helper.JsonHelper import JsonHelper
@@ -25,73 +25,103 @@ class WorkflowTestCase(GpfTestCase):
     cmd : python3 -m unittest -b tests.workflow.WorkflowTestCase
     """
 
+    o_mock_action = None
+
     def test_get_raw_dict(self) -> None:
         """test de get_raw_dict"""
         d_workflow = {"test": "val"}
         o_workflow = Workflow("nom", d_workflow)
         self.assertDictEqual(d_workflow, o_workflow.get_raw_dict())
 
-    def test_run_step(self) -> None:
-        """test de run_step"""
-        d_workflow = {
-            "workflow": {
-                "steps": {
-                    "1er etape": {},
-                    "autre": {},
-                    "mise-en-base": {
-                        "actions": [
-                            {
-                                "type": "action1",
-                            }
-                        ],
-                    },
-                    "mise-en-base2": {
-                        "actions": [
-                            {
-                                "type": "action2-1",
-                            },
-                            {
-                                "type": "action2-2",
-                            },
-                        ],
-                    },
-                }
-            }
-        }
-        o_workflow = Workflow("nom", d_workflow)
-        # l'étape n'existe pas : ça plante.
-        with self.assertRaises(WorkflowError) as o_arc:
-            o_workflow.run_step("existe_pas")
-        self.assertEqual(o_arc.exception.message, "L'étape existe_pas n'est pas définie dans le workflow nom")
+    def run_run_step(
+        self,
+        s_etape: str,
+        s_datastore: Optional[str],
+        d_workflow: Dict[str, Any],
+        l_run_args: List[Any],
+        callback: Optional[Callable[[ProcessingExecution], None]] = None,
+        behavior: Optional[str] = None,
+        monitoring_until_end: Optional[List[str]] = None,
+        error_message: Optional[str] = None,
+    ) -> None:
+        """Fonction de lancement des tests pour run_step()
 
-        o_mock_action = MagicMock(spec=ConfigurationAction)
+        Args:
+            s_etape (str): nom de l'étape du workflow à lancé
+            s_datastore (Optional[str]): nom du datastore à utiliser, si None datastore trouvé dans l'étape, le workflow ou None.
+            d_workflow (Dict[str, Any]): dictionnaire du workflow
+            l_run_args (List[Any]): liste des argument passé en appel de action.run(). Un élément = un appel
+            callback (Optional[Callable[[ProcessingExecution], None]], optional): possible callback utilisé. Defaults to None.
+            behavior (Optional[str], optional): Action en cas de doublon, None action par défaut. Defaults to None.
+            monitoring_until_end (Optional[List[str]], optional): si None, action sans monitoring, si défini : définition du side effect du mock de action.monitoring_until_end(). Defaults to None.
+            error_message (Optional[str], optional): Message d'erreur compléter avec "action", si None : pas d'erreur attendu. Defaults to None.
+        """
+        # récupération de la liste d'action
+        l_actions = []
+        if s_etape in d_workflow["workflow"]["steps"]:
+            l_actions = d_workflow["workflow"]["steps"][s_etape]["actions"]
+
+        # création du o_mock_action
+        if monitoring_until_end:
+            # cas avec monitoring
+            o_mock_action = MagicMock(spec=ProcessingExecutionAction)
+            o_mock_action.monitoring_until_end.side_effect = monitoring_until_end
+            o_mock_action.stored_data = "entite"
+            o_mock_action.upload = None
+
+        else:
+            # cas sans monitoring
+            o_mock_action = MagicMock(spec=ConfigurationAction)
+            o_mock_action.configuration = "entite"
+        ## config mock générale
         o_mock_action.resolve.return_value = None
         o_mock_action.run.return_value = None
-        o_mock_action.configuration = "configuration"
+        ## mock de la property definition_dict
+        if len(l_actions) == 1:
+            type(o_mock_action).definition_dict = PropertyMock(return_value=l_actions[0])
+        else:
+            d_effect = []
+            for d_el in l_actions:
+                d_effect += [d_el] * 2
+            type(o_mock_action).definition_dict = PropertyMock(side_effect=d_effect)
+
+        # initialisation de Workflow
+        o_workflow = Workflow("nom", d_workflow)
+
         # on mock Workflow.generate
         with patch.object(Workflow, "generate", return_value=o_mock_action) as o_mock_action_generate:
-            # test pour une action
-            l_entities = o_workflow.run_step("mise-en-base")
-            o_mock_action.run.assert_called_once_with()
-            o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
-            o_mock_action.resolve.assert_called_once_with()
-            o_mock_action.run.assert_called_once_with()
-            self.assertListEqual(l_entities, ["configuration"])
+            if error_message is not None:
+                # si on attend une erreur
+                with self.assertRaises(WorkflowError) as o_arc:
+                    o_workflow.run_step(s_etape, callback, behavior, s_datastore)
+                self.assertEqual(o_arc.exception.message, error_message.format(action=o_mock_action))
+            else:
+                # pas d'erreur attendu
+                l_entities = o_workflow.run_step(s_etape, callback, behavior, s_datastore)
+                self.assertListEqual(l_entities, ["entite"] * len(l_run_args))
 
-            # reset des mock
-            o_mock_action_generate.reset_mock()
-            o_mock_action.reset_mock()
+            # vérification des appels à generate
+            self.assertEqual(o_mock_action_generate.call_count, len(l_run_args))
+            o_parent = None
+            for i in range(len(l_run_args)):
+                o_mock_action_generate.assert_any_call(s_etape, l_actions[i], o_parent, behavior)
+                o_parent = o_mock_action
 
-            # test pour 2 actions
-            l_entities = o_workflow.run_step("mise-en-base2")
-            self.assertEqual(o_mock_action_generate.call_count, 2)
-            o_mock_action_generate.assert_any_call("mise-en-base2", {"type": "action2-1"}, None, None)
-            o_mock_action_generate.assert_any_call("mise-en-base2", {"type": "action2-2"}, o_mock_action, None)
-            self.assertEqual(o_mock_action.resolve.call_count, 2)
-            self.assertEqual(o_mock_action.run.call_count, 2)
-            self.assertListEqual(l_entities, ["configuration", "configuration"])
+            # vérification des appels à résolve
+            self.assertEqual(o_mock_action.resolve.call_count, len(l_run_args))
 
-        # test pour ProcessingExecutionAction
+            # vérification des appels à run
+            self.assertEqual(o_mock_action.run.call_count, len(l_run_args))
+            for o_el in l_run_args:
+                o_mock_action.run.assert_any_call(o_el)
+
+            # si monitoring : vérification des appels à monitoring
+            if monitoring_until_end:
+                self.assertEqual(o_mock_action.resolve.call_count, len(l_run_args))
+                o_mock_action.monitoring_until_end.assert_any_call(callback=callback)
+
+    def test_run_step(self) -> None:
+        """test de run_step"""
 
         # fonction callback
         def callback(o_pe: ProcessingExecution) -> None:
@@ -102,55 +132,68 @@ class WorkflowTestCase(GpfTestCase):
             """
             print(o_pe)
 
-        # reset / config des mock
-        o_mock_action_generate.reset_mock()
+        d_workflow: Dict[str, Any] = {
+            "workflow": {
+                "steps": {
+                    "1er etape": {},
+                    "autre": {},
+                    "mise-en-base": {
+                        "actions": [{"type": "action1"}],
+                    },
+                    "mise-en-base2": {
+                        "actions": [{"type": "action2-1"}, {"type": "action2-2"}],
+                    },
+                    "mise-en-base3": {
+                        "actions": [{"type": "action3", "datastore": "datastore_3"}],
+                    },
+                    "mise-en-base4": {
+                        "actions": [{"type": "action4-1", "datastore": "datastore_4-1"}, {"type": "action4-2"}],
+                    },
+                }
+            }
+        }
+        d_workflow_2: Dict[str, Any] = {"datastore": "datastore_workflow", **d_workflow}
+        s_datastore = "datastore_force"
 
-        o_mock_processing_execution_action = MagicMock(spec=ProcessingExecutionAction)
-        o_mock_processing_execution_action.resolve.return_value = None
-        o_mock_processing_execution_action.run.return_value = None
+        # test simple sans s_datastore
+        self.run_run_step("mise-en-base", None, d_workflow, [None])
+        self.run_run_step("mise-en-base2", None, d_workflow, [None, None])
 
-        with patch.object(Workflow, "generate", return_value=o_mock_processing_execution_action) as o_mock_action_generate:
-            # sortie en success
-            o_mock_processing_execution_action.monitoring_until_end.return_value = "SUCCESS"
-            o_workflow.run_step("mise-en-base")
-            o_mock_processing_execution_action.run.assert_called_once_with()
-            o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
-            o_mock_processing_execution_action.resolve.assert_called_once_with()
-            o_mock_processing_execution_action.run.assert_called_once_with()
-            o_mock_processing_execution_action.monitoring_until_end.assert_called_once_with(callback=None)
+        # datastore au niveau des étapes
+        self.run_run_step("mise-en-base3", None, d_workflow, ["datastore_3"])
+        self.run_run_step("mise-en-base4", None, d_workflow, ["datastore_4-1", None])
 
-            # reset des mock
-            o_mock_action_generate.reset_mock()
-            o_mock_processing_execution_action.reset_mock()
+        # datastore au niveau du workflow + étapes
+        self.run_run_step("mise-en-base", None, d_workflow_2, ["datastore_workflow"])
+        self.run_run_step("mise-en-base3", None, d_workflow_2, ["datastore_3"])
+        self.run_run_step("mise-en-base4", None, d_workflow_2, ["datastore_4-1", "datastore_workflow"])
 
-            # sortie en success avec callback
-            o_mock_processing_execution_action.monitoring_until_end.return_value = "SUCCESS"
-            o_workflow.run_step("mise-en-base", callback)
-            o_mock_processing_execution_action.run.assert_called_once_with()
-            o_mock_action_generate.assert_called_once_with("mise-en-base", {"type": "action1"}, None, None)
-            o_mock_processing_execution_action.resolve.assert_called_once_with()
-            o_mock_processing_execution_action.run.assert_called_once_with()
-            o_mock_processing_execution_action.monitoring_until_end.assert_called_once_with(callback=callback)
+        # datastore au niveau du workflow + étape + forcé dans l'appel
+        self.run_run_step("mise-en-base", s_datastore, d_workflow, [s_datastore])
+        self.run_run_step("mise-en-base", s_datastore, d_workflow_2, [s_datastore])
+        self.run_run_step("mise-en-base3", s_datastore, d_workflow_2, [s_datastore])
+        self.run_run_step("mise-en-base4", s_datastore, d_workflow_2, [s_datastore, s_datastore])
 
-            # reset des mock
-            o_mock_action_generate.reset_mock()
-            o_mock_processing_execution_action.reset_mock()
-
-            # sortie en FAILURE
-            o_mock_processing_execution_action.monitoring_until_end.return_value = "FAILURE"
-            with self.assertRaises(WorkflowError) as o_arc:
-                o_workflow.run_step("mise-en-base")
-            self.assertEqual(o_arc.exception.message, f"L'exécution de traitement {o_mock_processing_execution_action} ne s'est pas bien passée. Sortie FAILURE.")
-
-            # reset des mock
-            o_mock_action_generate.reset_mock()
-            o_mock_processing_execution_action.reset_mock()
-
-            # sortie en ABORTED
-            o_mock_processing_execution_action.monitoring_until_end.return_value = "ABORTED"
-            with self.assertRaises(WorkflowError) as o_arc:
-                o_workflow.run_step("mise-en-base")
-            self.assertEqual(o_arc.exception.message, f"L'exécution de traitement {o_mock_processing_execution_action} ne s'est pas bien passée. Sortie ABORTED.")
+        # étape qui n'existe pas
+        self.run_run_step("existe_pas", None, d_workflow, [], error_message="L'étape existe_pas n'est pas définie dans le workflow nom")
+        # test avec monitoring
+        self.run_run_step("mise-en-base", None, d_workflow, [None], monitoring_until_end=["SUCCESS"])
+        self.run_run_step("mise-en-base", None, d_workflow, [None], monitoring_until_end=["FAILURE"], error_message="L'exécution de traitement {action} ne s'est pas bien passée. Sortie FAILURE.")
+        self.run_run_step("mise-en-base", None, d_workflow, [None], monitoring_until_end=["ABORTED"], error_message="L'exécution de traitement {action} ne s'est pas bien passée. Sortie ABORTED.")
+        self.run_run_step(
+            "mise-en-base4",
+            None,
+            d_workflow_2,
+            ["datastore_4-1", "datastore_workflow"],
+            monitoring_until_end=["SUCCESS", "ABORTED"],
+            error_message="L'exécution de traitement {action} ne s'est pas bien passée. Sortie ABORTED.",
+        )
+        self.run_run_step("mise-en-base4", None, d_workflow_2, ["datastore_4-1", "datastore_workflow"], monitoring_until_end=["SUCCESS", "SUCCESS"])
+        # callbable
+        self.run_run_step("mise-en-base", None, d_workflow, [None], callback, None, ["SUCCESS"])
+        # behavior
+        self.run_run_step("mise-en-base", None, d_workflow, [None], None, "DELETE")
+        self.run_run_step("mise-en-base", None, d_workflow, [None], callback, "DELETE", ["SUCCESS"])
 
     def run_generation(self, expected_type: Type[ActionAbstract], name: str, dico_def: Dict[str, Any], parent: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> None:
         """lancement de la commande de génération
