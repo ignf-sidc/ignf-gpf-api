@@ -108,8 +108,10 @@ class UploadAction:
         """Ajoute les commentaires."""
         if self.__upload is not None:
             Config().om.info(f"Livraison {self.__upload['name']} : ajout des {len(self.__dataset.comments)} commentaires...")
+            l_actual_comments = [d_comment["text"] for d_comment in self.__upload.api_list_comments() if d_comment]
             for s_comment in self.__dataset.comments:
-                self.__upload.api_add_comment({"text": s_comment})
+                if s_comment not in l_actual_comments:
+                    self.__upload.api_add_comment({"text": s_comment})
             Config().om.info(f"Livraison {self.__upload['name']} : les {len(self.__dataset.comments)} commentaires ont été ajoutés avec succès.")
 
     def __push_data_files(self) -> None:

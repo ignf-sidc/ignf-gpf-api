@@ -1,14 +1,14 @@
 {
     "workflow": {
         "steps": {
-            // Étape n°1 : Mise en base de vecteurs livrés
+            // Étape n°1 : création pyramide
             "pyramide": {
                 "actions": [
                     {
                         // On crée une exécution de traitement
                         "type": "processing-execution",
                         "body_parameters": {
-                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            // On récupère l'id du traitement nommé "Calcul de pyramide raster"
                             "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster)]}",
                             "inputs": {
                                 "upload": [
@@ -18,7 +18,6 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName_Base_intermédiaire"
                                     "name": "{user.last_name}__pyramide"
                                 }
                             },
@@ -30,25 +29,26 @@
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide raster."
+                            "Tutoriel raster : mise en place d'une pyramide raster."
                         ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "raster"
                         }
                     }
                 ],
                 "parents": []
             },
+            // Étape n°A.2 : configuration WMST de la pyramide
             "configuration-WMST":{
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMTS-TMS",
-                            "name": "{user.last_name} Flux raster WMST",
-                            "layer_name": "{user.last_name}__Flux_raster_wmst",
+                            "name": "{user.last_name} raster WMST",
+                            "layer_name": "{user.last_name}__raster_wmst",
                             "metadata": [
                                 {
                                     "format": "application/xml",
@@ -57,13 +57,10 @@
                                 }
                             ],
                             "type_infos": {
-                                "title": "{user.last_name} -- raster du tutoriel",
+                                "title": "{user.last_name} -- raster -- ortho - WMTS",
                                 "abstract": "Exemple de flux à visualiser",
-                                "keywords": [
-                                    "Tutoriel", "Raster"
-                                ],
+                                "keywords": ["Tutoriel", "Raster", "pyramide"],
                                 "used_data": [
-                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__pyramide), TAGS(tuto=oui)]}",
@@ -78,11 +75,12 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide raster : configuration de la pyramide"
+                            "Tutoriel raster : configuration de WMTS la pyramide"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "tuto": "oui"
+                            "tuto": "oui",
+                            "tuto_name": "raster"
                         }
                     }
                 ],
@@ -91,18 +89,19 @@
                 ]
                 
             },
+            // Étape n°A.3 : Publication WMST de la pyramide
             "publication-WMST": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} Flux raster WMST), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} raster WMST), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}",
+                            "visibility": "PRIVATE",
                             "open": true
                         }
                     }
@@ -111,14 +110,15 @@
                     "configuration-WMST"
                 ]
             },
+            // Étape n°B.2 : configuration WMST de la pyramide
             "configuration-WMS" :{
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMS-RASTER",
-                            "name": "{user.last_name} Flux raster WMS",
-                            "layer_name": "{user.last_name}__Flux_raster_wms",
+                            "name": "{user.last_name} raster WMS",
+                            "layer_name": "{user.last_name}__raster_wms",
                             "metadata": [
                                 {
                                     "format": "application/xml",
@@ -127,14 +127,11 @@
                                 }
                             ],
                             "type_infos": {
-                                "title": "{user.last_name} -- raster du tutoriel",
+                                "title": "{user.last_name} -- raster -- ortho - WMS",
                                 "abstract": "Exemple de flux à visualiser",
-                                "keywords": [
-                                    "Tutoriel", "Raster"
-                                ],
+                                "keywords": ["Tutoriel", "Raster", "pyramide"],
                                 "interpolation": "NEAREST-NEIGHBOUR",
                                 "used_data": [
-                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__pyramide), TAGS(tuto=oui)]}",
@@ -149,11 +146,12 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide vecteur : configuration de la pyramide"
+                            "Tutoriel raster : configuration WMS de la pyramide"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "tuto": "oui"
+                            "tuto": "oui",
+                            "tuto_name": "raster"
                         }
                     }
                 ],
@@ -161,18 +159,19 @@
                     "pyramide"
                 ]
             },
+            // Étape n°B.3 : Publication WMST de la pyramide
             "publication-WMS": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} Flux raster WMS), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} raster WMS), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMS (id trouvé en récupérant les informations de l'entrepôt)
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-RASTER)]}",
+                            "visibility": "PRIVATE",
                             "open": true
                         }
                     }

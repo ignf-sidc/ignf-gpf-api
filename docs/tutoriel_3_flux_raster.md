@@ -74,7 +74,7 @@ Ces étapes sont décrites grâces à un workflow.
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 
 ```sh
-python -m ignf_gpf_api workflow -n generic-raster_gpf.jsonc
+python -m ignf_gpf_api workflow -n generic_raster.jsonc
 ```
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 4 étapes. Il faudra lancer une commande pour chacune d'elles.
@@ -94,7 +94,7 @@ flowchart TD
 
 ## Traitement et publication
 
-Le workflow « wms-generic » permet de passer de la livraison à un flux WMS servant la donnée. Il comporte les étapes suivantes:
+Le workflow « generic_raster » permet de passer de la livraison à un flux WMS servant la donnée. Il comporte les étapes suivantes:
 
 * `pyramide` : création d'une pyramide avec les données en uploader
 * `configuration-WMST` : configuration d'un service de flux WMST à partir de la pyramide ;
@@ -107,13 +107,13 @@ La partie WMST et WMS sont indépendante : Il n'y a pas besoin
 Les commandes à lancé sont les suivantes :
 
 ```sh
-python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s pyramide
+python -m ignf_gpf_api workflow -f generic_raster.jsonc -s pyramide
 # partie publication WMST
-python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s configuration-WMST
-python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s publication-WMST
+python -m ignf_gpf_api workflow -f generic_raster.jsonc -s configuration-WMST
+python -m ignf_gpf_api workflow -f generic_raster.jsonc -s publication-WMST
 # partie publication WMS
-python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s configuration-WMS
-python -m ignf_gpf_api workflow -f generic-raster_gpf.jsonc -s publication-WMS
+python -m ignf_gpf_api workflow -f generic_raster.jsonc -s configuration-WMS
+python -m ignf_gpf_api workflow -f generic_raster.jsonc -s publication-WMS
 ```
 
 La première commandes ne doit pas être instantanée : un traitement est effectué et les logs doivent vous être remontés.

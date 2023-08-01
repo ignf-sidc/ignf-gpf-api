@@ -1,14 +1,14 @@
 {
     "workflow": {
         "steps": {
-            // Étape n°1 :Création de pyramide raster
+            // Étape n°1 : Création de pyramide raster 1
             "pyramide1": {
                 "actions": [
                     {
                         // On crée une exécution de traitement
                         "type": "processing-execution",
                         "body_parameters": {
-                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            // On récupère l'id du traitement nommé "Calcul de pyramide raster"
                             "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster)]}",
                             "inputs": {
                                 "upload": [
@@ -18,7 +18,7 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName_Base_intermédiaire"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__pyramide1"
                                     "name": "{user.last_name}__pyramide1"
                                 }
                             },
@@ -31,31 +31,37 @@
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide raster."
+                            "Tutoriel joincache : pyramide 1, sera mise à jour avec données du lot 3."
                         ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "joincache"
                         }
                     }
                 ],
                 "parents": []
             },
+            // Étape n°2 : Création configuration WMST de la pyramide raster 1
             "configuration-WMST-pyramide1":{
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMTS-TMS",
-                            "name": "{user.last_name} Flux raster WMST pyramide 1",
-                            "layer_name": "{user.last_name}__Flux_raster_wmst_pyramide1",
+                            "name": "{user.last_name} joincache pyramide 1",
+                            "layer_name": "{user.last_name}__joincache_pyramide_1",
+                            "metadata": [
+                                {
+                                    "format": "application/xml",
+                                    "url": "https://geoservices.ign.fr/sites/default/files/2022-10/IGNF_BDORTHOr_2-0.xml",
+                                    "type": "ISO19115:2003"
+                                }
+                            ],
                             "type_infos": {
-                                "title": "raster du tutoriel",
+                                "title": "{user.last_name} -- Joincache -- pyramide1",
                                 "abstract": "Exemple de flux à visualiser",
-                                "keywords": [
-                                    "Tutoriel", "Raster"
-                                ],
+                                "keywords": ["Tutoriel", "Raster", "joincache"],
                                 "used_data": [
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
@@ -72,46 +78,50 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide raster : configuration de la pyramide"
+                            "Tutoriel joincache : configuration WMTS de la pyramide 1, mise à jour avec donnée Lot 3"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "tuto": "oui"
+                            "tuto": "oui",
+                            "tuto_name": "joincache"
                         }
                     }
                 ],
                 "parents": [
-                    "pyramide"
+                    "pyramide1"
                 ]
 
             },
+            // Étape n°3 : Publication du flux WMST de la pyramide raster 1
             "publication-WMST-pyramide1": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} Flux raster WMST pyramide 1), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} joincache pyramide 1), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}",
+                            "visibility": "PRIVATE",
                             "open": true
                         }
                     }
                 ],
                 "parents": [
-                    "configuration-WMST"
+                    "configuration-WMST-pyramide1"
                 ]
             },
+            
+            // Étape n°4 : Création de pyramide raster 2
             "pyramide2": {
                 "actions": [
                     {
                         // On crée une exécution de traitement
                         "type": "processing-execution",
                         "body_parameters": {
-                            // On récupère l'id du traitement nommé "Intégration de données vecteur livrées en base"
+                            // On récupère l'id du traitement nommé "Calcul de pyramide raster"
                             "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster)]}",
                             "inputs": {
                                 "upload": [
@@ -121,7 +131,7 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName_Base_intermédiaire"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__pyramide2"
                                     "name": "{user.last_name}__pyramide2"
                                 }
                             },
@@ -134,18 +144,19 @@
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide raster."
+                            "Tutoriel joincache : pyramide 2"
                         ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "temp": "oui",
+                            "tuto_name": "joincache"
                         }
                     }
                 ],
                 "parents": []
             },
-
+            // Étape n°5 : Fusion des pyramide raster 1 et 2
             "fusion-pyramide":{
                 "actions":[
                     {
@@ -165,23 +176,32 @@
                                 }
                             },
                             "parameters": {}
-
-
+                        },
+                        // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "comments": [
+                            "Tutoriel joincache : fusion des pyramides 1 et 2 : pyramide_fusion."
+                        ],
+                        // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
+                        "tags": {
+                            "tuto": "oui",
+                            "temp": "non",
+                            "tuto_name": "joincache"
                         }
-
-
                     }
+                ],
+                "parents": [
+                    "pyramide1", "pyramide2"
                 ]
             },
-
+            // Étape n°6 : Création configuration WMS de la pyramide fusionnée
             "configuration-WMS-pyramide-fusion" :{
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMS-RASTER",
-                            "name": "{user.last_name} Flux raster WMS pyramide fusion",
-                            "layer_name": "{user.last_name}__Flux_raster_wms_pyramide_fusion",
+                            "name": "{user.last_name} joincache pyramide fusion",
+                            "layer_name": "{user.last_name}__joincache_pyramide_fusion",
                             "metadata": [
                                 {
                                     "format": "application/xml",
@@ -190,11 +210,9 @@
                                 }
                             ],
                             "type_infos": {
-                                "title": "raster du tutoriel",
+                                "title": "{user.last_name} -- Joincache -- pyramide fusion",
                                 "abstract": "Exemple de flux à visualiser",
-                                "keywords": [
-                                    "Tutoriel", "Raster"
-                                ],
+                                "keywords": ["Tutoriel", "Raster", "joincache"],
                                 "used_data": [
                                     // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
@@ -211,44 +229,47 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide vecteur : configuration de la pyramide"
+                            "Tutoriel joincache : configuration WMTS de la pyramide_fusion"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "tuto": "oui"
+                            "tuto": "oui",
+                            "tuto_name": "joincache"
                         }
                     }
                 ],
                 "parents": [
-                    "pyramide"
+                    "fusion-pyramide"
                 ]
             },
+            // Étape n°7 : Publication du flux WMS de la pyramide fusionnée
             "publication-WMS-pyramide-fusion": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} Flux raster WMS pyramide fusion), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name} joincache pyramide fusion), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMS (id trouvé en récupérant les informations de l'entrepôt)
                             "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-RASTER)]}",
+                            "visibility": "PRIVATE",
                             "open": true
                         }
                     }
                 ],
                 "parents": [
-                    "configuration-WMS"
+                    "configuration-WMS-pyramide-fusion"
                 ]
             },
+            // Étape n°7 : Injection de la donnee du lot 3 dans la pyramide 1
             "injection-pyramide":{
                 "actions":[
                     {
                         "type": "processing-execution",
                         "body_parameters":{
-                            "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster))]}",
+                            "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide raster)]}",
                             "inputs": {
                               "upload": [
                                 "store_entity.upload.infos._id [INFOS(name=EXAMPLE_DATASET_RASTER3)]}"
@@ -259,13 +280,12 @@
                                       "id": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__pyramide1), TAGS(tuto=oui)]}"
                                   }
                             },
-                              "parameters": {
-                                  "tms": "PM",
-                                  "compression": "jpg",
-                                  "interpolation": "bicubic"
-                            }
+                              "parameters": {}
                         }
                     }
+                ],
+                "parents": [
+                    "pyramide1"
                 ]
             }
         }
