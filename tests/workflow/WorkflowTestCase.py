@@ -205,6 +205,7 @@ class WorkflowTestCase(GpfTestCase):
             parent (Optional[ActionAbstract], optional): parent de l'action.
             behavior (Optional[str], optional): comportement à adopter.
         """
+
         # mock des fonction __init__ des classes action généré
         def new_init(workflow_context: str, definition_dict: Dict[str, Any], parent_action: Optional[ActionAbstract] = None, behavior: Optional[str] = None) -> None:
             print("new - ", workflow_context, definition_dict, parent_action, behavior)

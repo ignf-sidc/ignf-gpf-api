@@ -202,7 +202,6 @@ class ProcessingExecutionAction(ActionAbstract):
             self.processing_execution.api_update()
             s_status = self.processing_execution.get_store_properties()["status"]
             if s_status in [ProcessingExecution.STATUS_ABORTED, ProcessingExecution.STATUS_SUCCESS, ProcessingExecution.STATUS_FAILURE]:
-
                 Config().om.warning("traitement déjà fini")
                 raise
             # arrêt du traitement
