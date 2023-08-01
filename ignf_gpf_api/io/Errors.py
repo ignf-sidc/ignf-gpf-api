@@ -88,38 +88,6 @@ class InternalServerError(AbstractRequestError):
     """Erreur API : erreur interne à l'API (contactez le support)."""
 
 
-class NotFoundError(AbstractRequestError):
-    """Erreur API : entité non trouvée sur la Géoplateforme."""
-
-
-class NotAuthorizedError(AbstractRequestError):
-    """Erreur API : action non autorisée."""
-
-    def __init__(self, url: str, method: str, params: Optional[Dict[str, Any]], data: Optional[Union[Dict[str, Any], List[Any]]], response: str):
-        """Instanciée à partir de l'URL, la méthode, les paramètres et les données posant problème ainsi que la réponse de l'API.
-
-        Args:
-            url (str): url de la requête
-            method (str): méthode de la requête
-            params (Optional[Dict[str, Any]]): paramètres de la requête
-            data (Optional[Union[Dict[str, Any], List[Any]]]): données envoyées
-            response (str): données reçues
-        """
-        super().__init__(url, method, params, data)
-        self.response = response
-
-    def __str__(self) -> str:
-        return self.__repr__()
-
-    def __repr__(self) -> str:
-        return "\n".join(
-            [
-                f"{super().__repr__()}",
-                f"   * response: {self.response}",
-            ]
-        )
-
-
 class _WithResponseError(AbstractRequestError):
     """Erreur API : erreur générique avec réponse lors d'une requête à l'API."""
 
@@ -161,6 +129,25 @@ class _WithResponseError(AbstractRequestError):
             if "error_description" in self.response_data:
                 l_str.append(f"   * error_description: {Color.BOLD}{self.response_data['error_description']}{Color.END}")
         return "\n".join(l_str)
+
+    @property
+    def message(self) -> str:
+        """Récupère un message permettant d'en savoir plus sur l'erreur si indiqué par l'API.
+
+        Returns:
+            str: message de l'API ou message par défaut
+        """
+        if self.response_data is not None and "error_description" in self.response_data:
+            return "\n".join(self.response_data["error_description"])
+        return "Pas d'indication spécifique indiquée par l'API."
+
+
+class NotFoundError(_WithResponseError):
+    """Erreur API : entité non trouvée sur la Géoplateforme."""
+
+
+class NotAuthorizedError(_WithResponseError):
+    """Erreur API : action non autorisée."""
 
 
 class BadRequestError(_WithResponseError):
