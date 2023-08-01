@@ -60,9 +60,13 @@ class ConfigurationAction(ActionAbstract):
         """Ajout des commentaires sur la Configuration."""
         # on vérifie que la configuration et definition_dict ne sont pas null et on vérifie qu'il y'a bien une clé comments
         if self.configuration and self.definition_dict and "comments" in self.definition_dict and self.definition_dict["comments"] != {}:
+            # récupération des commentaires déjà ajoutés
+            l_actual_comments = [d_comment["text"] for d_comment in self.configuration.api_list_comments() if d_comment]
             Config().om.info(f"Configuration {self.configuration['name']} : ajout des {len(self.definition_dict['comments'])} commentaires...")
             for s_comment in self.definition_dict["comments"]:
-                self.configuration.api_add_comment({"text": s_comment})
+                # si le commentaire n'existe pas déjà on l'ajoute
+                if s_comment not in l_actual_comments:
+                    self.configuration.api_add_comment({"text": s_comment})
             Config().om.info(f"Configuration {self.configuration['name']} : les {len(self.definition_dict['comments'])} commentaires ont été ajoutés avec succès.")
 
     def find_configuration(self) -> Optional[Configuration]:
