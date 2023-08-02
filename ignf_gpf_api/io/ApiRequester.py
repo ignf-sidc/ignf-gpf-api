@@ -124,7 +124,7 @@ class ApiRequester(metaclass=Singleton):
                 return self.__url_request(url, method, params=params, data=data, files=files)
             except NotFoundError as e_error:
                 # Si l'entité n'est pas trouvée, on ne retente pas, on sort directement en erreur
-                s_message = f"L'élément demandé n'existe pas. Contactez le support si vous n'êtes pas à l'origine de la demande. URL : {e_error.url}."
+                s_message = f"L'élément demandé n'existe pas ({e_error.message}). Contactez le support si vous n'êtes pas à l'origine de la demande. URL : {method} {e_error.url}."
                 Config().om.error(s_message)
                 raise GpfApiError(s_message) from e_error
 
@@ -132,7 +132,7 @@ class ApiRequester(metaclass=Singleton):
                 # Affiche la pile d'exécution
                 Config().om.debug(traceback.format_exc())
                 # S'il y a une erreur d'URL, on ne retente pas, on indique de contacter le support
-                s_message = "L'url indiquée en configuration est invalide ou inexistante. Contactez le support."
+                s_message = "L'URL indiquée en configuration est invalide ou inexistante. Contactez le support."
                 Config().om.error(s_message)
                 raise GpfApiError(s_message) from e_error
 
@@ -140,7 +140,7 @@ class ApiRequester(metaclass=Singleton):
                 # Affiche la pile d'exécution
                 Config().om.debug(traceback.format_exc())
                 # S'il y a une erreur de requête incorrecte, on ne retente pas, on indique de contacter le support
-                s_message = "La requête formulée par le programme est incorrecte. Contactez le support."
+                s_message = f"La requête formulée par le programme est incorrecte ({e_error.message}). Contactez le support."
                 Config().om.error(s_message)
                 raise GpfApiError(s_message) from e_error
 
@@ -162,7 +162,7 @@ class ApiRequester(metaclass=Singleton):
                     time.sleep(self.__sec_between_attempt)
                 # Le nombre de tentatives est atteint : comme dirait Jim, this is the end...
                 else:
-                    s_message = f"L'exécution d'une requête a échoué après {i_nb_attempts} tentatives"
+                    s_message = f"L'exécution d'une requête a échoué après {i_nb_attempts} tentatives."
                     Config().om.error(s_message)
                     raise GpfApiError(s_message) from e_error
 
@@ -197,14 +197,14 @@ class ApiRequester(metaclass=Singleton):
         if r.status_code >= 200 and r.status_code < 300:
             # Si c'est ok, on renvoie la réponse
             return r
+        # Erreur sans retour attendu/possible
         if r.status_code == 500:
             # Erreur interne (pas de retour)
             raise InternalServerError(url, method, params, data)
+        # Erreurs avec retour attendu/possible
         if r.status_code == 404:
             # Element non trouvé (pas de retour)
-            raise NotFoundError(url, method, params, data)
-        # Autre erreur (retour attendu)
-        # on peut lever l'exception
+            raise NotFoundError(url, method, params, data, r.text)
         if r.status_code in (403, 401):
             # Action non autorisée
             Authentifier().revoke_token()  # On révoque le token

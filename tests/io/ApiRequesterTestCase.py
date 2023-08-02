@@ -172,7 +172,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "L'exécution d'une requête a échoué après 3 tentatives")
+            self.assertEqual(o_arc.exception.message, "L'exécution d'une requête a échoué après 3 tentatives.")
             # On a dû faire 3 requêtes
             self.assertEqual(o_mock.call_count, 3, "o_mock.call_count == 3")
 
@@ -187,7 +187,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "La requête formulée par le programme est incorrecte. Contactez le support.")
+            self.assertEqual(o_arc.exception.message, "La requête formulée par le programme est incorrecte (Pas d'indication spécifique indiquée par l'API.). Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
@@ -225,7 +225,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur explicite
-            s_message = f"L'élément demandé n'existe pas. Contactez le support si vous n'êtes pas à l'origine de la demande. URL : {self.url}."
+            s_message = f"L'élément demandé n'existe pas (Pas d'indication spécifique indiquée par l'API.). Contactez le support si vous n'êtes pas à l'origine de la demande. URL : POST {self.url}."
             self.assertEqual(o_arc.exception.message, s_message)
             # On a dû faire 1 seule requête (sortie immédiate dans ce cas)
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
@@ -261,7 +261,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # Lancement de la requête
                 ApiRequester().url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
+            self.assertEqual(o_arc.exception.message, "L'URL indiquée en configuration est invalide ou inexistante. Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
@@ -275,7 +275,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # Lancement de la requête
                 ApiRequester().url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
+            self.assertEqual(o_arc.exception.message, "L'URL indiquée en configuration est invalide ou inexistante. Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
