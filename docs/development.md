@@ -119,18 +119,18 @@ Idem avec la branche prod si besoin.
 Pour publier une nouvelle version, qui va être ensuite publiée comme librairie sur PyPi, il faut [créer une (pre)-release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new) :
 
 - créez une release de test sur la branche **dev** versionnée selon le modèle `tx.y.z` (ex : t1.2.3) pour déployer une nouvelle version du module en test : 
- - choose a tag : taper "t0.1.10" et cliquer sur "Create new tag".
- - target : choisir "dev"
- - ajouter un titre ("Test 1.2.3"), et une description des principales modifications apportées. 
- - Cocher la case pre-release. Cliquer sur "Publish release" (les tests vont se lancer...)
- - Vérifier la publication sur [test.pypi](https://test.pypi.org/project/ignf_gpf_api/)
+  - choose a tag : taper "t0.1.10" et cliquer sur "Create new tag".
+  - target : choisir "dev"
+  - ajouter un titre ("Test 1.2.3"), et une description des principales modifications apportées. 
+  - Cocher la case pre-release. Cliquer sur "Publish release" (les tests vont se lancer...)
+  - Vérifier la publication sur [test.pypi](https://test.pypi.org/project/ignf_gpf_api/)
 
 - créez une release sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production : 
- - choose a tag : taper "v0.1.10" et cliquer sur "Create new tag".
- - target : choisir "prod"
- - ajouter un titre ("Version 1.2.3"), et une description des principales modifications apportées. 
- - Cliquer sur "Publish release" (les tests vont se lancer...)
- - Vérifier la publication sur [pypi](https://pypi.org/project/ignf_gpf_api/)
+  - choose a tag : taper "v0.1.10" et cliquer sur "Create new tag".
+  - target : choisir "prod"
+  - ajouter un titre ("Version 1.2.3"), et une description des principales modifications apportées. 
+  - Cliquer sur "Publish release" (les tests vont se lancer...)
+  - Vérifier la publication sur [pypi](https://pypi.org/project/ignf_gpf_api/)
 
 ### Publication sur PyPI
 
