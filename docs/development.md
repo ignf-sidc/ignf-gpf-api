@@ -99,30 +99,43 @@ Pour automatiser dans VSCode : [doc ici](https://code.visualstudio.com/docs/pyth
   - Config().om.critical("message")
 - Configuration centralisée via la classe Config()​ (cf. [Utilisation comme module Python](comme-module.md))
 
-## Déploiement des version dev et prod sur PyPI
+## Déploiement des versions dev et prod sur PyPI
 
 ### Mise à jour des branches prod et dev
 
-Pour effectuer un déploiment de la librairie ignf-gpf-api, il faut d'abord modifier le numéro de version dans le fichier __init__.py dans le dossier ignf_gpf_api/ignf_gpf_api/ .
-
-Puis il faut résoudre ou faire les pull request entre dev et prod en fonction de l'avancement du projet pour avoir des branches dev et prod à jour.
+Pour effectuer un déploiment de la librairie ignf-gpf-api, il faut d'abord modifier le numéro de version dans le fichier `__init__.py` dans le dossier ignf_gpf_api/ignf_gpf_api/ .
 
 ```py
 __version__ = <x.y.z>
 ```
+Commiter en précisant le numéro de version dans le message de commit.
+
+Puis il faut résoudre ou faire les pull request avec la branche dev en fonction de l'avancement du projet pour avoir une branche dev à jour. Idem avec la branche prod si besoin.
 
 ### Création de la (pre)-release
 
 Pour publier une nouvelle version, qui va être ensuite publiée comme librairie sur PyPi, il faut [créer une (pre)-release](https://github.com/ignf-sidc/ignf-gpf-api/releases/new) :
-* créez une release de test sur la branche **dev** versionnée selon le modèle `tx.y.z` (ex : t1.2.3) pour déployer une nouvelle version du module en test ;
-* créez une release sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production ;
+
+* créez une release de test sur la branche **dev** versionnée selon le modèle `tx.y.z` (ex : t1.2.3) pour déployer une nouvelle version du module en test : 
+- choose a tag : taper "t0.1.10" et cliquer sur "Create new tag".
+- target : choisir "dev"
+- ajouter un titre ("Test 1.2.3"), une description des principales modifications apportées. 
+- Cocher la case pre-release. Cliquer sur "Publish release"
+- Vérifier la publication sur [test.pypi](https://test.pypi.org/project/ignf_gpf_api/)
+
+* créez une release sur la branche **prod** versionnée selon le modèle `vx.y.z` (ex : v1.2.3) pour déployer une nouvelle version du module en production : 
+- choose a tag : taper "v0.1.10" et cliquer sur "Create new tag".
+- target : choisir "prod"
+- ajouter un titre ("1.2.3"), une description des principales modifications apportées. 
+- Cliquer sur "Publish release"
+- Vérifier la publication sur [pypi](https://pypi.org/project/ignf_gpf_api/)
 
 ### Publication sur PyPI
 
 La publication du package sur PyPI est automatique sur Github grâce aux actions [CI Dev](https://github.com/ignf-sidc/ignf-gpf-api/actions/workflows/ci-dev.yml) et [CI Prod](https://github.com/ignf-sidc/ignf-gpf-api/actions/workflows/ci-prod.yml) :
 
 
-Si besoin, voici les commandes pour l'effectuer à la main :
+Si besoin, voici les commandes pour effectuer à la main la publication :
  
 ```sh
 export FLIT_PASSWORD=<token>
