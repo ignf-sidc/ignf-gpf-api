@@ -51,7 +51,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
             ApiRequester().route_request(
                 s_route,
                 method=ApiRequester.POST,
-                route_params={self._entity_name: self.id},
+                route_params={"datastore": self.datastore, self._entity_name: self.id},
                 params={"path": api_path},
                 files=o_dict_files,
             )
@@ -75,7 +75,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.DELETE,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
             params={"path": api_path},
         )
 
@@ -98,7 +98,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
             ApiRequester().route_request(
                 s_route,
                 method=ApiRequester.POST,
-                route_params={self._entity_name: self.id},
+                route_params={"datastore": self.datastore, self._entity_name: self.id},
                 files=o_dict_files,
             )
 
@@ -115,7 +115,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.DELETE,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
             params={"path": api_path},
         )
 
@@ -128,7 +128,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
 
         # Mise à jour du stockage local (_store_api_dict)
@@ -143,7 +143,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
 
         # Mise à jour du stockage local (_store_api_dict)
@@ -172,7 +172,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
 
         # Retour de l'arborescence
@@ -191,7 +191,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Requête
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
 
         d_list_checks: Dict[str, List[Dict[str, Any]]] = o_response.json()
@@ -209,7 +209,7 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Requête
         ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
             method=ApiRequester.POST,
             data=check_ids,
         )

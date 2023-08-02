@@ -31,7 +31,7 @@ class Configuration(TagInterface, CommentInterface, EventInterface, FullEditInte
         o_response = ApiRequester().route_request(
             s_route,
             method=ApiRequester.GET,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
         # Instanciation de chaque élément renvoyé dans la liste
         l_offerings: List[Offering] = [Offering(i) for i in o_response.json()]
