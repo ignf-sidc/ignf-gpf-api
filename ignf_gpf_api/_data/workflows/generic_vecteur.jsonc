@@ -18,7 +18,7 @@
                             },
                             "output": {
                                 "stored_data": {
-                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName_Base_intermédiaire"
+                                    // On crée une nouvelle Donnée Stockée nommée "UserLastName__Base_intermédiaire"
                                     "name": "{user.last_name}__Base_intermédiaire"
                                 }
                             },
@@ -26,26 +26,26 @@
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide vecteur : création base intermédiaire"
+                            "Tutoriel vecteur : création base intermédiaire"
                         ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "non"
+                            "tuto_name": "vecteur"
                         }
                     }
                 ],
                 "parents": []
             },
-            // Étape n°2 : configuration d'un flux WFS
+            // Étape n°2 : configuration d'un flux WFS sur la BDD
             "configuration-wfs-bdd": {
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WFS",
-                            "name": "{user.last_name}__Flux_vecteur_wfs_bdd",
-                            "layer_name": "{user.last_name}__Flux_vecteur_wfs_bdd",
+                            "name": "{user.last_name}__vecteur_wfs_bdd",
+                            "layer_name": "{user.last_name}__vecteur_wfs_bdd",
                             "type_infos": {
                                 "used_data": [
                                     {
@@ -53,15 +53,13 @@
                                             {
                                                 "native_name": "canton",
                                                 "public_name": "canton",
-                                                "title": "Couche Canton du tutoriel - WFS - BDD",
-                                                "keywords": [
-                                                    "Tutoriel", "canton"
-                                                ],
+                                                "title": "{user.last_name} -- vecteur -- Couche Canton du tutoriel - WFS - BDD",
+                                                "keywords": ["Tutoriel", "Vecteur", "bdd"],
                                                 "abstract": "Cantons autour de Paris"
                         
                                             }
                                         ],
-                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
+                                        // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Base_intermédiaire)]}"
                                     }
                                 ]
@@ -69,12 +67,12 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'un flux vecteur : configuration du flux wfs"
+                            "Tutoriel vecteur : configuration du flux wfs sur la BDD"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "vecteur"
                         }
                     }
                 ],
@@ -82,19 +80,20 @@
                     "mise-en-base"
                 ]
             },
-            // Étape n°3 : publication du flux WFS millésimé
+            // Étape n°3 : publication du flux WFS sur la BDD
             "publication-wfs-bdd": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wfs_bdd)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__vecteur_wfs_bdd)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WFS
-                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WFS)]}",
+                            "visibility": "PRIVATE",
+                            "open": true
                         }
                     }
                 ],
@@ -102,20 +101,20 @@
                     "configuration-wfs-bdd"
                 ]
             },
-            // Étape n°2 : configuration d'un flux WMS
+            // Étape n°2 : configuration d'un flux WMS sur la BDD
             "configuration-wms-bdd": {
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMS-VECTOR",
-                            "name": "{user.last_name}__Flux_vecteur_wms_bdd",
-                            "layer_name": "{user.last_name}__Flux_vecteur_wms_bdd",
+                            "name": "{user.last_name}__vecteur_wms_bdd",
+                            "layer_name": "{user.last_name}__vecteur_wms_bdd",
                             "type_infos": {
-                                "title": "Couche Canton du tutoriel - WMS - BDD",
+                                "title": "{user.last_name} -- vecteur -- Couche Canton du tutoriel - WMS - BDD",
                                 "abstract": "Exemple de flux à visualiser",
+                                "keywords": ["Tutoriel", "Vecteur", "bdd"],
                                 "used_data": [
-                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
                                     {
                                         "relations": [
                                             {
@@ -132,12 +131,12 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'un flux vecteur : configuration du flux wms"
+                            "Tutoriel vecteur : configuration du flux wms sur la BDD"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
                             "tuto": "oui",
-                            "temp": "oui"
+                            "tuto_name": "vecteur"
                         }
                     }
                 ],
@@ -152,12 +151,13 @@
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_wms_bdd)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__vecteur_wms_bdd)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMS
-                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMS-VECTOR)]}",
+                            "visibility": "PRIVATE",
+                            "open": true
                         }
                     }
                 ],
@@ -172,7 +172,7 @@
                         // On crée une exécution de traitement
                         "type": "processing-execution",
                         "body_parameters": {
-                            // On récupère l'id du traitement nommé "Création d'une pyramide vecteur"
+                            // On récupère l'id du traitement nommé "Calcul de pyramide vecteur"
                             "processing": "{store_entity.processing.infos._id [INFOS(name=Calcul de pyramide vecteur)]}",
                             "inputs": {
                                 "stored_data": [
@@ -188,6 +188,8 @@
                             },
                             "parameters": {
                                 // Tables à utiliser, sur quels niveaux et avec quels attributs
+                                "bottom_level": "9",
+                                "top_level": "0",
                                 "composition": [
                                     {
                                         "table": "canton",
@@ -200,12 +202,12 @@
                         },
                         // Liste des commentaires ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide vecteur : création pyramide vecteur à publier"
+                            "Tutoriel vecteur : création pyramide vecteur à publier"
                         ],
                         // Liste des tags ajoutés à la Donnée Stockée en sortie de l'exécution du traitement
                         "tags": {
                             "tuto": "oui",
-                            "temp": "non"
+                            "tuto_name": "vecteur"
                         }
                     }
                 ],
@@ -213,15 +215,15 @@
                     "mise-en-base"
                 ]
             },
-            // Étape n°3 : configuration d'un flux WFS
+            // Étape n°3 : configuration d'un flux TMS sur la pyramide
             "configuration-tms-py": {
                 "actions": [
                     {
                         "type": "configuration",
                         "body_parameters": {
                             "type": "WMTS-TMS",
-                            "name": "{user.last_name}__Flux_vecteur_tms_py",
-                            "layer_name": "{user.last_name}__Flux_vecteur_tms_py",
+                            "name": "{user.last_name}__vecteur_tms_py",
+                            "layer_name": "{user.last_name}__vecteur_tms_py",
                             "metadata": [
                                 {
                                     "format": "application/xml",
@@ -230,13 +232,11 @@
                                 }
                             ],
                             "type_infos": {
-                                "title": "Couche Canton du tutoriel - TMS - pyramide",
+                                "title": "{user.last_name} -- vecteur -- Couche Canton du tutoriel - TMS - pyramide",
                                 "abstract": "Exemple de flux à visualiser",
-                                "keywords": [
-                                    "Tutoriel", "Pyramide", "Vecteur"
-                                ],
+                                "keywords": ["Tutoriel", "Vecteur", "Pyramide"],
                                 "used_data": [
-                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 5 au niveau 18
+                                    // C'est un flux simple : on n'utilise qu'une seule donnée du niveau 0 au niveau 9
                                     {
                                         // On récupère l'id de la Donnée Stockée créée à l'étape précédente grâce à son nom, son type et l'un de ses tags
                                         "stored_data": "{store_entity.stored_data.infos._id [INFOS(name={user.last_name}__Pyramide_vecteur, type=ROK4-PYRAMID-VECTOR), TAGS(tuto=oui)]}",
@@ -248,11 +248,12 @@
                         },
                         // Liste des commentaires ajoutés à la Configuration
                         "comments": [
-                            "Tutoriel de mise en place d'une pyramide vecteur : configuration de la pyramide"
+                            "Tutoriel vecteur : configuration de la pyramide"
                         ],
                         // Liste des tags ajoutés à la Configuration
                         "tags": {
-                            "tuto": "oui"
+                            "tuto": "oui",
+                            "tuto_name": "vecteur"
                         }
                     }
                 ],
@@ -260,19 +261,20 @@
                     "création-pyramide"
                 ]
             },
-            // Étape n°4 : publication du flux TMS millésimé
+            // Étape n°4 : publication du flux TMS sur la pyramide
             "publication-tms-py": {
                 "actions": [
                     {
                         "type": "offering",
                         "url_parameters": {
                             // On récupère l'id de la Configuration créée à l'étape précédente grâce à son nom et l'un de ses tags
-                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__Flux_vecteur_tms_py), TAGS(tuto=oui)]}"
+                            "configuration": "{store_entity.configuration.infos._id [INFOS(name={user.last_name}__vecteur_tms_py), TAGS(tuto=oui)]}"
                         },
                         "body_parameters": {
-                            "visibility": "PRIVATE",
                             // Endpoint de type WMTS-TMS (id trouvé en récupérant les informations de l'entrepôt)
-                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}"
+                            "endpoint": "{store_entity.endpoint.infos._id [INFOS(type=WMTS-TMS)]}",
+                            "visibility": "PRIVATE",
+                            "open": true
                         }
                     }
                 ],

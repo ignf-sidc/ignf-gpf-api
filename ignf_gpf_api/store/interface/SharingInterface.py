@@ -19,7 +19,7 @@ class SharingInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
             data=datastore_ids,
         )
 
@@ -34,7 +34,7 @@ class SharingInterface(StoreEntity):
         # Requête "get"
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
         l_sharings: List[Dict[str, str]] = o_response.json()
 
@@ -52,6 +52,6 @@ class SharingInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.DELETE,
-            route_params={self._entity_name: self.id},
-            params={"datastores[]": datastore_ids},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
+            params={"datastores": datastore_ids},
         )

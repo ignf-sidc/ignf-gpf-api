@@ -35,7 +35,7 @@ class ProcessingExecution(CsfInterface, StoreEntity):
         # Requête "get"
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
         s_log = o_response.text
         try:
@@ -58,7 +58,7 @@ class ProcessingExecution(CsfInterface, StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
 
     def api_abort(self) -> None:
@@ -70,7 +70,7 @@ class ProcessingExecution(CsfInterface, StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
 
     @property

@@ -31,16 +31,17 @@ class FullEditInterfaceTestCase(GpfTestCase):
             "tags": "new_tag_value",
         }
 
-        o_full_edit_interface = FullEditInterface(d_old_api_data)
+        for s_datastore in [None, "api_full_edit"]:
+            o_full_edit_interface = FullEditInterface(d_old_api_data, s_datastore)
 
-        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request, patch.object(o_full_edit_interface, "api_update", return_value=None) as o_mock_update:
-            # On appelle la fonction api_full_edit
-            o_full_edit_interface.api_full_edit(d_full_modified_api_data)
-            # Vérification sur o_mock_request
-            o_mock_request.assert_called_once_with(
-                "store_entity_full_edit",
-                route_params={"store_entity": "123456789"},
-                method=ApiRequester.PUT,
-                data=d_full_modified_api_data,
-            )
-            o_mock_update.assert_called_once_with()
+            with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request, patch.object(o_full_edit_interface, "api_update", return_value=None) as o_mock_update:
+                # On appelle la fonction api_full_edit
+                o_full_edit_interface.api_full_edit(d_full_modified_api_data)
+                # Vérification sur o_mock_request
+                o_mock_request.assert_called_once_with(
+                    "store_entity_full_edit",
+                    route_params={"store_entity": "123456789", "datastore": s_datastore},
+                    method=ApiRequester.PUT,
+                    data=d_full_modified_api_data,
+                )
+                o_mock_update.assert_called_once_with()

@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 from unittest.mock import patch, MagicMock
 from ignf_gpf_api.io.Config import Config
 
@@ -9,7 +10,7 @@ from tests.GpfTestCase import GpfTestCase
 
 # classe temporaire pour les test : ActionAbstract est abstraite
 class ConcreteAction(ActionAbstract):
-    def run(self) -> None:
+    def run(self, datastore: Optional[str] = None) -> None:
         pass
 
 

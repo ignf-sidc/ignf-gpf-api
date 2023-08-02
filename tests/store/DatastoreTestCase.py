@@ -8,7 +8,7 @@ from tests.GpfTestCase import GpfTestCase
 class DatastoreTestCase(GpfTestCase):
     """Tests Upload class.
 
-    cmd : python3 -m unittest -b tests.store.DataDatastoreTestCase
+    cmd : python3 -m unittest -b tests.store.DatastoreTestCase
     """
 
     json_request = {
@@ -44,7 +44,7 @@ class DatastoreTestCase(GpfTestCase):
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             # On effectue le listing d'une entité
-            l_entities = Datastore.api_list({"name": "Datastore 2"})
+            l_entities = Datastore.api_list(infos_filter={"name": "Datastore 2"})
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with("user_get")
             # Vérifications sur l_entities
@@ -62,7 +62,7 @@ class DatastoreTestCase(GpfTestCase):
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "route_request", return_value=o_response) as o_mock_request:
             # On effectue le listing d'une entité
-            l_entities = Datastore.api_list({"name": "ds1"})
+            l_entities = Datastore.api_list(infos_filter={"name": "ds1"})
             # Vérification sur o_mock_request
             o_mock_request.assert_called_once_with("user_get")
             # Vérifications sur l_entities

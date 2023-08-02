@@ -18,7 +18,7 @@ class CommentInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.POST,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
             data=comment_data,
         )
 
@@ -33,7 +33,7 @@ class CommentInterface(StoreEntity):
         # Requête "get"
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={self._entity_name: self.id, "datastore": self.datastore},
         )
         l_comments: List[Dict[str, Any]] = o_response.json()
         return l_comments
@@ -51,7 +51,7 @@ class CommentInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.PUT,
-            route_params={self._entity_name: self.id, "comment": id_},
+            route_params={self._entity_name: self.id, "comment": id_, "datastore": self.datastore},
             data=comment_data,
         )
 
@@ -67,5 +67,5 @@ class CommentInterface(StoreEntity):
         ApiRequester().route_request(
             s_route,
             method=ApiRequester.DELETE,
-            route_params={self._entity_name: self.id, "comment": id_},
+            route_params={self._entity_name: self.id, "comment": id_, "datastore": self.datastore},
         )
