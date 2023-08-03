@@ -26,7 +26,7 @@ class CheckExecution(CsfInterface, StoreEntity):
         # Requête "get"
         o_response = ApiRequester().route_request(
             s_route,
-            route_params={self._entity_name: self.id},
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
         )
         s_log = o_response.text
         try:

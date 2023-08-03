@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.interface.TagInterface import TagInterface
@@ -21,10 +22,11 @@ class Static(TagInterface, PartialEditInterface, FullEditInterface, StoreEntity)
     TYPE_ROK4_STYLE = "ROK4-STYLE"
     TYPE_DERIVATION_SQL = "DERIVATION-SQL"
 
-    def api_download(self, file_path: Path) -> None:
+    def api_download(self, file_path: Path, datastore: Optional[str] = None) -> None:
         """Télécharge le Fichier Statique et l'enregistre localement.
 
         Args:
             file_path: chemin local où enregistrer le fichier
+            datastore (Optional[str]): id du datastore à utiliser. Si None, le datastore sera récupéré dans configuration. Defaults to None.
         """
         raise NotImplementedError("Fonction « Téléchargement fichier statique » non implémentée.")

@@ -59,16 +59,44 @@ class ApiRequesterTestCase(GpfTestCase):
         # On ne mock plus la classe d'authentification
         cls.o_mock_authentifier.stop()
 
-    def test_route_request_ok(self) -> None:
-        """Test de route_request quand la route existe."""
+    def test_route_request_ok_datastore_config(self) -> None:
+        """Test de route_request quand la route existe en utilisant le datastore de base."""
         # Instanciation d'une fausse réponse HTTP
         o_api_response = GpfTestCase.get_response()
         # On mock la fonction url_request, on veut vérifier qu'elle est appelée avec les bons param
         with patch.object(ApiRequester(), "url_request", return_value=o_api_response) as o_mock_request:
             # On effectue une requête
-            o_fct_response = ApiRequester().route_request("test_create", {"id": 42}, ApiRequester.POST, params=self.param, data=self.data, files=self.files)
+            o_fct_response = ApiRequester().route_request(
+                "test_create",
+                {"id": 42},
+                ApiRequester.POST,
+                params=self.param,
+                data=self.data,
+                files=self.files,
+            )
             # Vérification sur o_mock_request
             s_url = "https://api.test.io/api/v1/datastores/TEST_DATASTORE/create/42"
+            o_mock_request.assert_called_once_with(s_url, ApiRequester.POST, self.param, self.data, self.files)
+            # Vérification sur la réponse renvoyée par la fonction : ça doit être celle renvoyée par url_request
+            self.assertEqual(o_fct_response, o_api_response)
+
+    def test_route_request_ok_datastore_params(self) -> None:
+        """Test de route_request quand la route existe en surchargeant le datastore."""
+        # Instanciation d'une fausse réponse HTTP
+        o_api_response = GpfTestCase.get_response()
+        # On mock la fonction url_request, on veut vérifier qu'elle est appelée avec les bons param
+        with patch.object(ApiRequester(), "url_request", return_value=o_api_response) as o_mock_request:
+            # On effectue une requête
+            o_fct_response = ApiRequester().route_request(
+                "test_create",
+                {"id": 42, "datastore": "OTHER_DATASTORE"},
+                ApiRequester.POST,
+                params=self.param,
+                data=self.data,
+                files=self.files,
+            )
+            # Vérification sur o_mock_request
+            s_url = "https://api.test.io/api/v1/datastores/OTHER_DATASTORE/create/42"
             o_mock_request.assert_called_once_with(s_url, ApiRequester.POST, self.param, self.data, self.files)
             # Vérification sur la réponse renvoyée par la fonction : ça doit être celle renvoyée par url_request
             self.assertEqual(o_fct_response, o_api_response)
@@ -144,7 +172,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "L'exécution d'une requête a échoué après 3 tentatives")
+            self.assertEqual(o_arc.exception.message, "L'exécution d'une requête a échoué après 3 tentatives.")
             # On a dû faire 3 requêtes
             self.assertEqual(o_mock.call_count, 3, "o_mock.call_count == 3")
 
@@ -159,7 +187,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "La requête formulée par le programme est incorrecte. Contactez le support.")
+            self.assertEqual(o_arc.exception.message, "La requête formulée par le programme est incorrecte (Pas d'indication spécifique indiquée par l'API.). Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
@@ -197,7 +225,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # On effectue une requête
                 ApiRequester().url_request(self.url, ApiRequester.POST, params=self.param, data=self.data)
             # On doit avoir un message d'erreur explicite
-            s_message = f"L'élément demandé n'existe pas. Contactez le support si vous n'êtes pas à l'origine de la demande. URL : {self.url}."
+            s_message = f"L'élément demandé n'existe pas (Pas d'indication spécifique indiquée par l'API.). Contactez le support si vous n'êtes pas à l'origine de la demande. URL : POST {self.url}."
             self.assertEqual(o_arc.exception.message, s_message)
             # On a dû faire 1 seule requête (sortie immédiate dans ce cas)
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
@@ -233,7 +261,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # Lancement de la requête
                 ApiRequester().url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
+            self.assertEqual(o_arc.exception.message, "L'URL indiquée en configuration est invalide ou inexistante. Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 
@@ -247,7 +275,7 @@ class ApiRequesterTestCase(GpfTestCase):
                 # Lancement de la requête
                 ApiRequester().url_request(self.url, ApiRequester.GET, params=self.param, data=self.data)
             # On doit avoir un message d'erreur
-            self.assertEqual(o_arc.exception.message, "L'url indiquée en configuration est invalide ou inexistante. Contactez le support.")
+            self.assertEqual(o_arc.exception.message, "L'URL indiquée en configuration est invalide ou inexistante. Contactez le support.")
             # On a dû faire 1 seule requête
             self.assertEqual(o_mock.call_count, 1, "o_mock.call_count == 1")
 

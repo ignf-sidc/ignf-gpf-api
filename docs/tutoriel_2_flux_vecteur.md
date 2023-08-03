@@ -72,7 +72,7 @@ Ces étapes sont décrites grâce à un workflow.
 Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 
 ```sh
-python -m ignf_gpf_api workflow -n wfs-generic.jsonc
+python -m ignf_gpf_api workflow -n generic_vecteur.jsonc
 ```
 
 Memo: Les commentaires ne fonctionne pas et les Tags n'ont pas été testé.
@@ -104,7 +104,7 @@ Si vous modifier le nom du fichier de style il faut modifier dans le workflow la
 
 ## Traitement et publication
 
-Le workflow « wfs-generic » permet de passer de la livraison à 3 flux servant la donnée. Il comporte 8 étapes :
+Le workflow « generic_vecteur » permet de passer de la livraison à 3 flux servant la donnée. Il comporte 8 étapes :
 
 * `mise-en-base` : mise en base des données vecteur livrées ;
 * Publication WFS depuis la base :
@@ -123,17 +123,17 @@ Les étapes "configuration + publication" des flux WMS et WFS sont indépendante
 Lancez les 8 commandes suivantes pour exécuter les 8 étapes :
 
 ```sh
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s mise-en-base
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s mise-en-base
 # WFS depuis BDD
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s configuration-wfs-bdd
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s publication-wfs-bdd
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s configuration-wfs-bdd
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s publication-wfs-bdd
 # WMS depuis BDD
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s configuration-wms-bdd
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s publication-wms-bdd
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s configuration-wms-bdd
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s publication-wms-bdd
 # création pyramide et WFS
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s création-pyramide
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s configuration-wfs-py
-python -m ignf_gpf_api workflow -f wfs-generic.jsonc -s publication-wfs-py
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s création-pyramide
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s configuration-wfs-py
+python -m ignf_gpf_api workflow -f generic_vecteur.jsonc -s publication-wfs-py
 ```
 
 Les commandes de mise en base et de création de pyramides ne sont pas instantanées : un traitement est effectué et les logs doivent vous être remontés.
