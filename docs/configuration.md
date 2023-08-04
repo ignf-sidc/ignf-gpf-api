@@ -26,14 +26,12 @@ Nous pouvons faire référence à la `valeur_1_1` par l'intitulé `section_1.opt
 
 Créez un fichier `config.ini` à la racine du projet.
 
-Il faudra à minima renseigner vos identifiants API (section `store_authentification`) et l'entrepôt (*datastore*) sur lequel vous allez travailler (section `store_api`).
+Il faudra à minima renseigner vos identifiants API (section `store_authentification`) et éventuellement l'entrepôt principal (*datastore*) sur lequel vous allez travailler (section `store_api`).
 
 Voici un exemple de ce que cela peut donner :
 
 ```ini
 [store_authentification]
-# L'url de récupération du token d'authentification (cf. doc)
-token_url=https://qlf-iam-gpf.ign.fr/auth/realms/master/protocol/openid-connect/token
 # Groupe d’appartenance
 client_id=geotuileur
 # Votre login
@@ -42,8 +40,6 @@ login=LOGIN
 password=PASSWORD
 
 [store_api]
-# L'url d'entrée de l'API (cf. doc)
-root_url=https://plage-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/api/v1
 # L'identifiant de votre entrepôt
 datastore=DATASTORE_ID_TO_MODIFY
 ```
@@ -51,15 +47,15 @@ datastore=DATASTORE_ID_TO_MODIFY
 Explication sur les paramètres :
 
 * `store_authentification` : paramètres concernant l'authentification sur la Géoplateforme :
-    * `token_url` : URL pour récupérer le jeton d'authentification (consulter la doc de l'API si nécessaire) ;
     * `client_id` : votre groupe d’appartenance ;
     * `login` : votre nom d'utilisateur ;
     * `password` : votre mot de passe ;
 * `store_api` : paramètres concernant votre Entrepôt sur la Géoplateforme :
-    * `root_url` : URL racine de l'API (consulter la doc de l'API si nécessaire) ;
-    * `datastore` : l'identifiant du datastore à gérer (voir ci-dessous).
+    * `datastore` : l'identifiant du datastore principal de travail (optionnel, voir ci-dessous).
 
 Dans la configuration, vous devez indiquer l'identifiant du datastore à utiliser. Celui est lié à la communauté à laquelle vous appartenez.
+
+Si vous ne le faites pas, vous devrez le préciser à l'appel des fonctions ou des commandes qui interagissent avec un datastore.
 
 Si vous ne savez pas quoi mettre, il est possible de lister les communautés auxquelles vous participez et, pour chacune d'elle, le datastore qui lui est associé. Cela vous permet de récupérer cet identifiant.
 
@@ -92,7 +88,9 @@ Dans cet exemple, l'identifiant du datastore à utiliser est `300000000000000000
 
     Cela ne fonctionnera que si les autres paramètres (nom d'utilisateur, mot de passe et urls) sont corrects.
 
-## Utilisation via l'exécutable
+## Utilisations
+
+### Utilisation via l'exécutable
 
 Ce module Python est utilisable comme exécutable. Dans ce cas vous avez deux manières d'indiquer au programme votre fichier de configuration :
 
@@ -102,7 +100,7 @@ Ce module Python est utilisable comme exécutable. Dans ce cas vous avez deux ma
 python -m ignf_gpf_api --ini chemin/vers/config.ini
 ```
 
-## Utilisation via un script
+### Utilisation via un script
 
 Si vous utilisez ce module Python dans un script, il faudra ouvrir le fichier de configuration via la classe [Config][ignf_gpf_api.io.Config.Config] au début de celui-ci :
 
@@ -114,4 +112,70 @@ from ignf_gpf_api.io.Config import Config
 Config().read("config.ini")
 
 # Suite de votre script...
+```
+
+## Cas d'utilisation particuliers
+
+### Utiliser un environnement particulier (qualification)
+
+La configuration par défaut utiliser l'environnement de production. Pour utiliser un autre environnement, il faudra configurer des valeurs spécifiques pour l'URL de récupération du token et l'URL d'entrée de l'API.
+
+Pour cela, il faut ajouter deux lignes dans le fichier de configuration. Voici un exemple avec l'environnement de qualification actuel :
+
+```ini
+[store_authentification]
+# L'url de récupération du token d'authentification (cf. doc)
+token_url=https://geoplateforme-gpf-iam.qua.gpf-tech.ign.fr/realms/geoplateforme/protocol/openid-connect/token
+# Autres paramètres à conserver (client_id, ...)
+
+[store_api]
+# L'url d'entrée de l'API (cf. doc)
+root_url=https://geoplateforme-gpf-warehouse.qua.gpf-tech.ign.fr
+# Autres paramètres à conserver (datastore, ...)
+```
+
+Explication sur les paramètres :
+
+* `store_authentification` : paramètres concernant l'authentification sur la Géoplateforme :
+    * `token_url` : URL pour récupérer le jeton d'authentification (consulter la doc de l'API si nécessaire) ;
+* `store_api` : paramètres concernant votre Entrepôt sur la Géoplateforme :
+    * `root_url` : URL racine de l'API (consulter la doc de l'API si nécessaire).
+
+
+### Utiliser un compte de service
+
+Vous pouvez utiliser un compte de service en modifiant les paramètres de la section `store_authentification`. Voici un exemple :
+
+```ini
+[store_authentification]
+# On modifie le type d'authentification
+grant_type=client_credentials
+# On indique le nom du compte de service
+client_id=ID_TO_MODIFY
+# On indique le secret du compte de service
+client_secret=SECRET_TO_MODIFY
+```
+
+Explication sur les paramètres :
+
+* `store_authentification` : paramètres concernant l'authentification sur la Géoplateforme :
+    * `grant_type` : type de l'authentification (`password` si on a un couple login/password ou `client_credentials` si on a un couple `client_id`/`client_secret`) ;
+    * `client_id` : votre groupe d’appartenance ;
+    * `client_secret` : le secret associé au compte.
+
+
+### Utilisation derrière un proxy
+
+Vous pouvez indiquer les paramètres proxy dans les sections `store_authentification` et `store_api`. Voici un exemple :
+
+```ini
+[store_authentification]
+http_proxy=http://proxy.ign.fr:3128
+https_proxy=http://proxy.ign.fr:3128
+# Autres paramètres à conserver (client_id, ...)
+
+[store_api]
+http_proxy=http://proxy.ign.fr:3128
+https_proxy=http://proxy.ign.fr:3128
+# Autres paramètres à conserver (datastore, ...)
 ```
