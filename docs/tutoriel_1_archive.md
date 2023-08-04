@@ -115,7 +115,7 @@ Vous pouvez alors télécharger le fichier de votre choix en ajoutant son nom à
 https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive/CANTON.zip
 ```
 
-## Résumer des commandes
+## Résumé des commandes
 
 ```sh
 # récupération des données d'exemple
