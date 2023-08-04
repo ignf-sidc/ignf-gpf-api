@@ -50,7 +50,7 @@ Chaque dataset contient :
 
 * la liste des dossiers à téléverser ;
 * les informations de la livraison à créer (nom, description, srs et type) ;
-* les commentaires et les tags à ajouter à la livraison. (Memo : les commentaires ne sont pas encore supportées par la version actuelle de la GPF)
+* les commentaires et les tags à ajouter à la livraison.
 
 ## Livraison des données
 
@@ -73,7 +73,6 @@ Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 ```sh
 python -m ignf_gpf_api workflow -n generic_vecteur.jsonc
 ```
-
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 4 étapes. Il faudra lancer une commande pour chacune d'elles.
 

@@ -52,7 +52,7 @@ Chaque dataset contient :
 
 * la liste des dossiers à téléverser ;
 * les informations de la livraison à créer (nom, description, srs et type) ;
-* les commentaires et les tags à ajouter à la livraison. (Memo : les commentaires ne sont pas encore supporter par la version actuel de la gpf)
+* les commentaires et les tags à ajouter à la livraison.
 
 ## Livraison des données
 
