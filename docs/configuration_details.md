@@ -23,10 +23,15 @@ Cette partie de la configuration permet au module de vous authentifier et de ré
 
 | Paramètre              | Type | Défaut         | Description                                                     |
 | ---------------------- | ---- | -------------- | --------------------------------------------------------------- |
-| `token_url`            | str  | URL officielle | URL du service d'authentification de la Géoplateforme. Elle n'est à priori pas à changer, sauf si vous utilisez un environnement particulier (test, qualification, ...). |
-| `login`                | str  | `null`         | Indiquez ici le nom d’utilisateur du compte à utiliser.         |
-| `password`             | str  | `null`         | Indiquez ici le mot de passe du compte à utiliser.              |
-| `client_id`            | str  | `null`         | Indiquez ici le groupe d’appartenance du compte à utiliser.     |
+| `token_url`            | str  | https://sso.geopf.fr/realms/geoplateforme/protocol/openid-connect/token | URL du service d'authentification de la Géoplateforme. Elle n'est à priori pas à changer, sauf si vous [utilisez un environnement particulier](/configuration/#utiliser-un-environnement-particulier-qualification) (test, qualification, ...). |
+| `http_proxy`           | str  | `null`         | Indiquez ici le proxy HTTP à utiliser si besoin.                |
+| `https_proxy`          | str  | `null`         | Indiquez ici le proxy HTTPS à utiliser si besoin.               |
+| `grant_type`           | str  | `password`     | Indiquez ici le type d'authentification à utiliser (`password` ou `client_credentials`). |
+| `client_id`            | str  | `null`         | Indiquez ici le groupe d’appartenance du compte à utiliser (type `password` ET type `client_credentials`). |
+| `login`                | str  | `null`         | Indiquez ici le nom d’utilisateur du compte à utiliser (type `password` seulement). |
+| `password`             | str  | `null`         | Indiquez ici le mot de passe du compte à utiliser (type `password` seulement). |
+| `password`             | str  | `null`         | Indiquez ici le mot de passe du compte à utiliser (type `password` seulement). |
+| `totp_key     `        | str  | `null`         | Indiquez ici la clef TOTP à utiliser pour générer le code temporaire (type `password` avec double authentification seulement). |
 | `nb_attempts`          | int  | 5              | Nombre de tentatives de récupération du jeton à effectuer en cas d'erreur avant de lever une erreur. |
 | `sec_between_attempt`  | int  | 1              | Délai à attendre entre deux tentatives de récupération du jeton. |
 
@@ -37,14 +42,17 @@ La troisième section concerne la connexion à l'entrepôt.
 
 | Paramètre              | Type | Défaut         | Description                                                     |
 | ---------------------- | ---- | -------------- | --------------------------------------------------------------- |
-| `root_url `            | str  | URL officielle | URL racine de l'API Géoplateforme. Elle n'est à priori pas à changer, sauf si vous utilisez un environnement particulier (test, qualification, ...). |
+| `root_url `            | str  | https://data.geopf.fr/api | URL racine de l'API Géoplateforme. Elle n'est à priori pas à changer, sauf si vous utilisez un environnement particulier (test, qualification, ...). |
+| `http_proxy`           | str  | `null`         | Indiquez ici le proxy HTTP à utiliser si besoin.                |
+| `https_proxy`          | str  | `null`         | Indiquez ici le proxy HTTPS à utiliser si besoin.               |
 | `datastore`            | str  | `null`         | Indiquez ici l'identifiant de l'entrepôt (`datastore`) à utiliser. |
 | `root_datastore`       | str  | `${store_api:root_url}/datastores/${store_api:datastore}` | Chemin racine des routes permettant de faire des action sur cet entrepôt (`datastore`). |
 | `client_id`            | str  | `null`         | Indiquez ici le groupe d’appartenance du compte à utiliser.     |
 | `nb_attempts`          | int  | 5              | Nombre de requêtes à tenter en cas d'erreur avant de lever une erreur. |
 | `sec_between_attempt`  | int  | 1              | Délai à attendre entre deux requêtes.                           |
 | `nb_limit`             | int  | 10             | Nombre d'éléments à récupérer lors des requêtes de listing d'entités. |
-| `regex_content_range`  | int  | `(?P<i_min>[0-9]+)-(?P<i_max>[0-9]+)/(?P<len>[0-9]+)` | Délai à attendre entre deux tentatives de récupération du jeton. |
+| `regex_content_range`  | int  | `(?P<i_min>[0-9]+)-(?P<i_max>[0-9]+)/(?P<len>[0-9]+)` | Regex pour parser la méta-donnée content-range des réponses API. |
+| `regex_entity_id`  | int  | `(?P<id>[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12})` | Regex des ids des entités API. |
 
 
 ## Section `routing`
@@ -100,7 +108,7 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | **Routes concernant l'entité Processing** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn }     |
 | `processing_list`                    | str  | `${store_api:root_datastore}/processings`               | todo |
 | `processing_get`                     | str  | `${processing_list}/{processing}`                       | todo |
-| **Routes concernant l'entité Processing** Execution {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
+| **Routes concernant l'entité ProcessingExecution** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
 | `processing_execution_list`          | str  | `${processing_list}/executions`                         | todo |
 | `processing_execution_create`        | str  | `${processing_execution_list}`                          | todo |
 | `processing_execution_get`           | str  | `${processing_execution_list}/{processing_execution}`   | todo |
@@ -135,6 +143,8 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `check_execution_get`                | str  | `${routing:check_execution_list}/{check_execution}`     | todo |
 | `check_execution_delete`             | str  | `${routing:check_execution_list}/{check_execution}`     | todo |
 | `check_execution_logs`               | str  | `${routing:check_execution_get}/logs`                   | todo |
+| **Routes concernant l'entité Static** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
+| `static_list`                        | str  | `${routing:check_list}/statics`                         | todo |
 
 
 ## Section `upload`
