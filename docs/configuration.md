@@ -118,7 +118,7 @@ Config().read("config.ini")
 
 ### Utiliser un environnement particulier (qualification)
 
-La configuration par défaut utiliser l'environnement de production. Pour utiliser un autre environnement, il faudra configurer des valeurs spécifiques pour l'URL de récupération du token et l'URL d'entrée de l'API.
+La configuration par défaut utilise l'environnement de production. Pour utiliser un autre environnement, il faudra configurer des valeurs spécifiques pour l'URL de récupération du token et l'URL d'entrée de l'API.
 
 Pour cela, il faut ajouter deux lignes dans le fichier de configuration. Voici un exemple avec l'environnement de qualification actuel :
 
