@@ -74,7 +74,6 @@ Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 python -m ignf_gpf_api workflow -n generic_vecteur.jsonc
 ```
 
-Memo: Dans la version actuelle de la GPF, les commentaires ne fonctionnent pas et les étiquettes (tags) n'ont pas été testées.
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 4 étapes. Il faudra lancer une commande pour chacune d'elles.
 
