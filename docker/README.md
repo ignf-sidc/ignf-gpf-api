@@ -10,6 +10,7 @@ git clone https://github.com/ignf-sidc/ignf-gpf-api.git
 
 Créez dans ce dossier un fichier `.env` contenant :
 * le tag/commit/branche dont vous souhaitez voir la doc ;
+* le nom de projet docker compose (prefix du nom de l'image) ;
 * le port d'exposition du conteneur ;
 * le prefix pour nommer le conteneur.
 
@@ -18,9 +19,12 @@ cd ignf-gpf-api/docker
 vim .env
 ```
 
+Voici un exemple de fichier `.env` :
+
 ```sh
 # Construction
-TAG=sp12_doc
+TAG=dev
+COMPOSE_PROJECT_NAME=doc__ignf_gpf_api
 
 # Lancement de l'image
 PORT=80
