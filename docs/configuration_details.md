@@ -159,6 +159,11 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `annexe_publish_by_label`               | str  | `{routing:annexe_list}/publication`                   | Publication des annexes par labels |
 | `annexe_unpublish_by_label`             | str  | `{routing:annexe_list}/unpublication`                 | Dépublication des annexes par labels |
 
+| **Routes concernant l'entité Tms** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
+| `tms_list`                              | str  | `{store_api:root_url}/statics/tms`                    | Liste des tms disponible pour tout la GPF |
+| `tms_get`                               | str  | `{routing:tms_list}/{tms}`                            | Détaille d'un tms |
+| `tms_download`                          | str  | `{routing:tms_get}/file`                              | Téléchargement d'un tms |
+
 ## Section `upload`
 
 Cette section concerne les paramètres de gestion des livraisons (`upload`).
@@ -195,6 +200,22 @@ Cette section concerne les paramètres de gestion des configurations (`configura
 | -------------------------------- | ---- | ----------- | ------------------------------------------------------------------ |
 | `uniqueness_constraint_infos`    | str  | `name`      | Attributs à considérer pour tester l'unicité de la configuration.  |
 | `uniqueness_constraint_tags`     | str  | `empty str` | Étiquettes à considérer pour tester l'unicité de la configuration. |
+
+## Section `static`
+
+Cette section concerne les paramètres de gestion des fichiers statiques (`static`) 
+
+| Paramètre            | Type | Défaut | Description                                |
+| -------------------- | ---- | ------ | ------------------------------------------ |
+| `create_file_key`    | str  | `file` | Clef pour la livraison d'un fichier static |
+
+## Section `annexe`
+
+Cette section concerne les paramètres de gestion des annexes (`annexe`) 
+
+| Paramètre            | Type | Défaut | Description                                |
+| -------------------- | ---- | ------ | ------------------------------------------ |
+| `create_file_key`    | str  | `file` | Clef pour la livraison d'un fichier annexe |
 
 ## Section `miscellaneous`
 
