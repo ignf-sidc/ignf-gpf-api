@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, Optional, Type, TypeVar
+
 from ignf_gpf_api.io.ApiRequester import ApiRequester
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.store.Errors import StoreEntityError
@@ -30,7 +31,7 @@ class CreatedByUploadFileInterface(StoreEntity):
         # Génération du nom de la route
         s_route = f"{cls._entity_name}_upload"
 
-        # récupération du ficher et du nom du ficher après livraison
+        # récupération du fichier et du nom du fichier après livraison
         if not data or "file" not in data or "api_path" not in data:
             raise StoreEntityError('Entité créée par l\'upload d\'un fichier, les clefs "file": Path("chemin fichier") et "api_path": "nom fichier" sont obligatoires dans data')
         p_file = Path(data.pop("file"))

@@ -57,13 +57,13 @@
                                   "south": -75,
                                   "east": 175,
                                   "north": 85
-                                },                            
+                                },
                                 "used_data": [
                                     {
                                         "relations": [
                                             {
                                                 "name": "installation_autorisation", // Attention c'est la Vue ! donc toutes les données ne sont pas affichées
-                                                // ficher de style livré comme ficher statique avec comme "name" : "Style pour les installations"
+                                                // fichier de style livré comme fichier statique avec comme "name" : "Style pour les installations"
                                                 "style": "{store_entity.static.infos._id [INFOS(name=Style pour les installations)]}"
                                             }
                                         ],

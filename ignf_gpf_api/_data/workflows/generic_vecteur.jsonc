@@ -119,7 +119,7 @@
                                         "relations": [
                                             {
                                                 "name": "canton",
-                                                // récupération du ficher de style correspondant à la donnée
+                                                // récupération du fichier de style correspondant à la donnée
                                                 "style": "{store_entity.static.infos._id [INFOS(name=style_canton)]}"
                                             }
                                         ],
