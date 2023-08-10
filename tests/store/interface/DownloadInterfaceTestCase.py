@@ -21,8 +21,7 @@ class DownloadInterfaceTestCase(GpfTestCase):
             with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
                 o_opener = mock_open()
                 with patch.object(Path, "open", return_value=o_opener.return_value) as o_mock_open:
-                    # On effectue l ajout d'un commentaire
-                    # On instancie une entité à qui on va ajouter un commentaire
+                    # On instancie une entité qu'on va télécharger
                     o_download_interface = DownloadInterface({"_id": "id_entité"}, s_datastore)
                     # On appelle la fonction api_download
                     o_download_interface.api_download(p_file)
