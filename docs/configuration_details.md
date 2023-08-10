@@ -14,7 +14,6 @@ La première section concerne le logging de l'application.
 | ----------- | ---- | -------------- | ------------------------------------------------------------- |
 | `log_level` | str  | INFO           | Niveau de log minimal pour afficher/sauvegarder les messages. |
 
-
 ## Section `store_authentification`
 
 La deuxième section concerne l'authentification.
@@ -23,7 +22,7 @@ Cette partie de la configuration permet au module de vous authentifier et de ré
 
 | Paramètre              | Type | Défaut         | Description                                                     |
 | ---------------------- | ---- | -------------- | --------------------------------------------------------------- |
-| `token_url`            | str  | https://sso.geopf.fr/realms/geoplateforme/protocol/openid-connect/token | URL du service d'authentification de la Géoplateforme. Elle n'est à priori pas à changer, sauf si vous [utilisez un environnement particulier](/configuration/#utiliser-un-environnement-particulier-qualification) (test, qualification, ...). |
+| `token_url`            | str  | <https://sso.geopf.fr/realms/geoplateforme/protocol/openid-connect/token> | URL du service d'authentification de la Géoplateforme. Elle n'est à priori pas à changer, sauf si vous [utilisez un environnement particulier](/configuration/#utiliser-un-environnement-particulier-qualification) (test, qualification, ...). |
 | `http_proxy`           | str  | `null`         | Indiquez ici le proxy HTTP à utiliser si besoin.                |
 | `https_proxy`          | str  | `null`         | Indiquez ici le proxy HTTPS à utiliser si besoin.               |
 | `grant_type`           | str  | `password`     | Indiquez ici le type d'authentification à utiliser (`password` ou `client_credentials`). |
@@ -31,10 +30,9 @@ Cette partie de la configuration permet au module de vous authentifier et de ré
 | `login`                | str  | `null`         | Indiquez ici le nom d’utilisateur du compte à utiliser (type `password` seulement). |
 | `password`             | str  | `null`         | Indiquez ici le mot de passe du compte à utiliser (type `password` seulement). |
 | `password`             | str  | `null`         | Indiquez ici le mot de passe du compte à utiliser (type `password` seulement). |
-| `totp_key     `        | str  | `null`         | Indiquez ici la clef TOTP à utiliser pour générer le code temporaire (type `password` avec double authentification seulement). |
+| `totp_key`             | str  | `null`         | Indiquez ici la clef TOTP à utiliser pour générer le code temporaire (type `password` avec double authentification seulement). |
 | `nb_attempts`          | int  | 5              | Nombre de tentatives de récupération du jeton à effectuer en cas d'erreur avant de lever une erreur. |
 | `sec_between_attempt`  | int  | 1              | Délai à attendre entre deux tentatives de récupération du jeton. |
-
 
 ## Section `store_api`
 
@@ -42,7 +40,7 @@ La troisième section concerne la connexion à l'entrepôt.
 
 | Paramètre              | Type | Défaut         | Description                                                     |
 | ---------------------- | ---- | -------------- | --------------------------------------------------------------- |
-| `root_url `            | str  | https://data.geopf.fr/api | URL racine de l'API Géoplateforme. Elle n'est à priori pas à changer, sauf si vous utilisez un environnement particulier (test, qualification, ...). |
+| `root_url`             | str  | <https://data.geopf.fr/api> | URL racine de l'API Géoplateforme. Elle n'est à priori pas à changer, sauf si vous utilisez un environnement particulier (test, qualification, ...). |
 | `http_proxy`           | str  | `null`         | Indiquez ici le proxy HTTP à utiliser si besoin.                |
 | `https_proxy`          | str  | `null`         | Indiquez ici le proxy HTTPS à utiliser si besoin.               |
 | `datastore`            | str  | `null`         | Indiquez ici l'identifiant de l'entrepôt (`datastore`) à utiliser. |
@@ -53,7 +51,6 @@ La troisième section concerne la connexion à l'entrepôt.
 | `nb_limit`             | int  | 10             | Nombre d'éléments à récupérer lors des requêtes de listing d'entités. |
 | `regex_content_range`  | int  | `(?P<i_min>[0-9]+)-(?P<i_max>[0-9]+)/(?P<len>[0-9]+)` | Regex pour parser la méta-donnée content-range des réponses API. |
 | `regex_entity_id`  | int  | `(?P<id>[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12})` | Regex des ids des entités API. |
-
 
 ## Section `routing`
 
@@ -168,7 +165,7 @@ Cette section concerne les paramètres de gestion des livraisons (`upload`).
 
 | Paramètre                        | Type | Défaut      | Description                                                     |
 | -------------------------------- | ---- | ----------- | --------------------------------------------------------------- |
-| `uniqueness_constraint_infos `   | str  | `name`      | Attributs à considérer pour tester l'unicité d'une livraison.   |
+| `uniqueness_constraint_infos`    | str  | `name`      | Attributs à considérer pour tester l'unicité d'une livraison.   |
 | `uniqueness_constraint_tags`     | str  | `empty str` | Étiquettes à considérer pour tester l'unicité d'une livraison.  |
 | `behavior_if_exists`             | str  | `STOP`      | Comportement à adopter si la livraison à créer existe déjà (`DELETE` : on la supprime et on la recrée, `CONTINUE` : on reprendre le téléversement, `STOP` : on lève une exception). |
 | `md5_pattern`                    | str  | `{md5_key}  data/{file_path}` | Modèle des fichiers de clés md5 à livrer.     |
@@ -179,7 +176,6 @@ Cette section concerne les paramètres de gestion des livraisons (`upload`).
 | `open_status`                    | int  | `OPEN`      | Constante représentant le statut ouvert d'une livraison.        |
 | `close_status`                   | int  | `CLOSE`     | Constante représentant le statut fermer d'une livraison.        |
 
-
 ## Section `processing_execution`
 
 Cette section concerne les paramètres de gestion des exécutions de traitement (`processing_execution`).
@@ -187,10 +183,9 @@ Cette section concerne les paramètres de gestion des exécutions de traitement 
 | Paramètre                        | Type | Défaut      | Description                                                     |
 | -------------------------------- | ---- | ----------- | --------------------------------------------------------------- |
 | `nb_sec_between_check_updates`   | int  | 10          | Nombre de secondes entre deux mises à jour du statut de l'exécution des vérifications. |
-| `uniqueness_constraint_infos `   | str  | `name`      | Attributs à considérer pour tester l'unicité d'une entité en sortie de l'exécution de traitement (livraison ou donnée stockée).   |
+| `uniqueness_constraint_infos`    | str  | `name`      | Attributs à considérer pour tester l'unicité d'une entité en sortie de l'exécution de traitement (livraison ou donnée stockée).   |
 | `uniqueness_constraint_tags`     | str  | `empty str` | Étiquettes à considérer pour tester l'unicité d'une entité en sortie de l'exécution de traitement (livraison ou donnée stockée).  |
 | `behavior_if_exists`             | str  | `STOP`      | Comportement à adopter si l'entité en sortie de l'exécution de traitement (livraison ou donnée stockée) existe déjà (`DELETE` : on la supprime et on la recrée, `STOP` : on lève une exception). |
-
 
 ## Section `configuration`
 
@@ -198,9 +193,8 @@ Cette section concerne les paramètres de gestion des configurations (`configura
 
 | Paramètre                        | Type | Défaut      | Description                                                        |
 | -------------------------------- | ---- | ----------- | ------------------------------------------------------------------ |
-| `uniqueness_constraint_infos `   | str  | `name`      | Attributs à considérer pour tester l'unicité de la configuration.  |
+| `uniqueness_constraint_infos`    | str  | `name`      | Attributs à considérer pour tester l'unicité de la configuration.  |
 | `uniqueness_constraint_tags`     | str  | `empty str` | Étiquettes à considérer pour tester l'unicité de la configuration. |
-
 
 ## Section `miscellaneous`
 
@@ -208,9 +202,8 @@ Cette section concerne les paramètres divers.
 
 | Paramètre                  | Type | Défaut            | Description                                                               |
 | -------------------------- | ---- | ----------------- | ------------------------------------------------------------------------- |
-| `data_directory_on_store ` | str  | `name;layer_name` | Préfixe des fichiers de données téléversés sur une livraison.             |
+| `data_directory_on_store`  | str  | `name;layer_name` | Préfixe des fichiers de données téléversés sur une livraison.             |
 | `tmp_workdir`              | str  | `empty str`       | Répertoire local et existant permettant d'écrire des données temporaires. |
-
 
 ## Section `workflow_resolution_regex`
 
@@ -284,17 +277,15 @@ Les chaînes capturées doivent être nommées :
 * `resolver_type` : pour la chaîne donnant le type de fichier à résoudre (`str`, `list` ou `dict`) ;
 * `resolver_file` : pour la chaîne donnant le chemin du fichier à résoudre.
 
-
 ## Section `json_converter`
 
 Cette section concerne les paramètres de conversion en JSON des types non gérés de base par Python.
 
 | Paramètre            | Type | Défaut               | Description                                    |
 | -------------------- | ---- | -------------------- | ---------------------------------------------- |
-| `datetime_pattern `  | str  | `%Y-%m-%dT%H:%M:%S`  | Modèle de formatage des `datetime` en string.  |
+| `datetime_pattern`   | str  | `%Y-%m-%dT%H:%M:%S`  | Modèle de formatage des `datetime` en string.  |
 | `date_pattern`       | str  | `%Y-%m-%d`           | Modèle de formatage des `date` en string.      |
 | `time_pattern`       | str  | `%H:%M:%S`           | Modèle de formatage des `time` en string.      |
-
 
 ## Section `json_schemas`
 
@@ -302,5 +293,5 @@ Cette section concerne le paramétrage des schémas JSON utilisés. Par défaut,
 
 | Paramètre          | Type | Défaut                                     | Description                                                                    |
 | ------------------ | ---- | ------------------------------------------ | ------------------------------------------------------------------------------ |
-| `descriptor_file ` | str  | `json_schemas/upload_descriptor_file.json` | Chemin vers le schéma JSON définissant les fichiers descripteurs de livraison. |
+| `descriptor_file`  | str  | `json_schemas/upload_descriptor_file.json` | Chemin vers le schéma JSON définissant les fichiers descripteurs de livraison. |
 | `workflow_config`  | str  | `json_schemas/workflow_config.json`        | Chemin vers le schéma JSON définissant les fichiers workflow.                  |
