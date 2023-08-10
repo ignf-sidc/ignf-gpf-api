@@ -10,7 +10,7 @@ T = TypeVar("T", bound="StoreEntity")
 
 
 class CreatedByUploadFileInterface(StoreEntity):
-    """Interface de StoreEntity pour gérer les entités créer par l'upload d'un fichier."""
+    """Interface de StoreEntity pour gérer les entités créés par le téléversement d'un fichier."""
 
     @classmethod
     def api_create(cls: Type[T], data: Optional[Dict[str, Any]], route_params: Optional[Dict[str, Any]] = None) -> T:
