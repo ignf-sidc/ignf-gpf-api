@@ -6,7 +6,7 @@ from ignf_gpf_api.store.StoreEntity import StoreEntity
 
 
 class ReUploadFileInterface(StoreEntity):
-    """Interface de StoreEntity pour gérer les entités mis à jour par l'upload d'un fichier."""
+    """Interface de StoreEntity pour gérer les entités mises à jour par le téléversement d'un fichier."""
 
     def api_re_upload(self, file: Path) -> None:
         """Reupload le fichier l'entité sur l'API (PUT).
