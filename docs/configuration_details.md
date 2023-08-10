@@ -150,18 +150,18 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `static_download`                      | str  | `${routing:static_get}/file`                           | Téléchargement d'un fichier static |
 | **Routes concernant l'entité Annexe** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
 | `annexe_list`                           | str  | `{store_api:root_datastore}/annexes`                  | Liste des annexes |
-| `annexe_get`                            | str  | `{routing:annexe_list}/{annexe}`                      | Détaille d'un annexe |
-| `annexe_upload`                         | str  | `{routing:annexe_get}`                                | Téléversement d'un annexe |
+| `annexe_get`                            | str  | `{routing:annexe_list}/{annexe}`                      | Détails d'une annexe |
+| `annexe_upload`                         | str  | `{routing:annexe_get}`                                | Téléversement d'une annexe |
 | `annexe_delete`                         | str  | `{routing:annexe_get}`                                | Suppression d'une annexe |
-| `annexe_re_upload`                      | str  | `{routing:annexe_get}`                                | Remplacement du fichier l'annexe |
-| `annexe_partial_edit`                   | str  | `{routing:annexe_get}`                                | Édition partiel d'une annexe (hors fichier) |
+| `annexe_re_upload`                      | str  | `{routing:annexe_get}`                                | Remplacement du fichier de l'annexe |
+| `annexe_partial_edit`                   | str  | `{routing:annexe_get}`                                | Édition partielle d'une annexe (hors fichier) |
 | `annexe_download`                       | str  | `{routing:annexe_get}/file`                           | Téléchargement d'un fichier d'annexe |
 | `annexe_publish_by_label`               | str  | `{routing:annexe_list}/publication`                   | Publication des annexes par labels |
 | `annexe_unpublish_by_label`             | str  | `{routing:annexe_list}/unpublication`                 | Dépublication des annexes par labels |
 
 | **Routes concernant l'entité Tms** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
 | `tms_list`                              | str  | `{store_api:root_url}/statics/tms`                    | Liste des tms disponible pour tout la GPF |
-| `tms_get`                               | str  | `{routing:tms_list}/{tms}`                            | Détaille d'un tms |
+| `tms_get`                               | str  | `{routing:tms_list}/{tms}`                            | Détails d'un tms |
 | `tms_download`                          | str  | `{routing:tms_get}/file`                              | Téléchargement d'un tms |
 
 ## Section `upload`
