@@ -5,10 +5,10 @@ from ignf_gpf_api.store.Annexes import Annexes
 from tests.GpfTestCase import GpfTestCase
 
 
-class AnnexesTestCase(GpfTestCase):
-    """Tests Annexes class.
+class AnnexeTestCase(GpfTestCase):
+    """Tests Annexe class.
 
-    cmd : python3 -m unittest -b tests.store.AnnexesTestCase
+    cmd : python3 -m unittest -b tests.store.AnnexeTestCase
     """
 
     def test_publish_by_label(self) -> None:
