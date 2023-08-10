@@ -46,14 +46,14 @@ class Annexes(CreatedByUploadFileInterface, DownloadInterface, PartialEditInterf
 
     @staticmethod
     def unpublish_by_label(labels: List[str], datastore: Optional[str] = None) -> int:
-        """dépublication de toutes les annexes portent l'ensemble de label
+        """Dépublication de toutes les annexes ayant les labels indiqués.
 
         Args:
             labels (List[str]): liste des labels
             datastore (Optional[str], optional): Identifiant du datastore
 
         Returns:
-            int: nombre d'annexes de dépublier
+            int: nombre d'annexes de dépubliées
         """
 
         # Génération du nom de la route
