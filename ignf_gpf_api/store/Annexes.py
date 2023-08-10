@@ -9,15 +9,15 @@ from ignf_gpf_api.store.interface.DownloadInterface import DownloadInterface
 from ignf_gpf_api.store.interface.CreatedByUploadFileInterface import CreatedByUploadFileInterface
 
 
-class Annexes(CreatedByUploadFileInterface, DownloadInterface, PartialEditInterface, ReUploadFileInterface, StoreEntity):
-    """Classe Python représentant l'entité Fichier statique (annexes).
+class Annexe(CreatedByUploadFileInterface, DownloadInterface, PartialEditInterface, ReUploadFileInterface, StoreEntity):
+    """Classe Python représentant l'entité Annexe (annexe).
 
-    Cette classe permet d'effectuer les actions spécifiques liées aux fichiers statiques : création,
+    Cette classe permet d'effectuer les actions spécifiques liées aux annexe : création,
     remplacement, mise à jour, suppression.
     """
 
-    _entity_name = "annexes"
-    _entity_title = "annexes"
+    _entity_name = "annexe"
+    _entity_title = "annexe"
 
     @staticmethod
     def publish_by_label(labels: List[str], datastore: Optional[str] = None) -> int:
