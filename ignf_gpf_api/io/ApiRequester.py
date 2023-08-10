@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from io import BufferedReader
+from pathlib import Path
 import re
 import time
 import traceback
@@ -217,6 +218,38 @@ class ApiRequester(metaclass=Singleton):
             raise ConflictError(url, method, params, data, r.text)
         # Autre erreur
         raise StatusCodeError(url, method, params, data, r.status_code, r.text)
+
+    def route_upload_file(
+        self,
+        route_name: str,
+        file_path: Path,
+        file_key: str,
+        route_params: Optional[Dict[str, Any]] = None,
+        method: str = "GET",
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Union[Dict[str, Any], List[Any]]] = None,
+    ) -> requests.Response:
+        """Exécute une requête à l'API à partir du nom d'une route. La requête est retentée plusieurs fois s'il y a un problème.
+
+        Args:
+            route_name (str): Route à utiliser
+            file_path (Path): Chemin du fichier à uploader
+            file_key (str): nom de la clef dans le dictionnaire
+            route_params (Optional[Dict[str, Any]], optional): Paramètres obligatoires pour compléter la route.
+            params (Optional[Dict[str, Any]], optional): Paramètres optionnels de l'URL.
+            method (str, optional): méthode de la requête.
+            data (Optional[Dict[str, Any]], optional): Données de la requête.
+
+        Returns:
+            réponse vérifiée
+        """
+        # Ouverture du fichier et remplissage du tuple de fichier
+        with file_path.open("rb") as o_file_binary:
+            o_tuple_file = (file_path.name, o_file_binary)
+            o_dict_files = {file_key: o_tuple_file}
+
+            # Requête
+            return self.route_request(route_name, route_params=route_params, method=method, params=params, data=data, files=o_dict_files)
 
     @staticmethod
     def range_next_page(content_range: Optional[str], length: int) -> bool:
