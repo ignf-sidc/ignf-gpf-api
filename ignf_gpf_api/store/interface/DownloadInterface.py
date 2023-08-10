@@ -6,7 +6,7 @@ from ignf_gpf_api.io.ApiRequester import ApiRequester
 
 
 class DownloadInterface(StoreEntity):
-    """Interface de StoreEntity pour gérer les étiquettes (tags)."""
+    """Interface de StoreEntity pour gérer les téléchargements"""
 
     def api_download(self, file_path: Path, datastore: Optional[str] = None) -> None:
         """Télécharge le Fichier Statique et l'enregistre localement.
