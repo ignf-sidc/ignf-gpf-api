@@ -121,7 +121,7 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `configuration_get`                  | str  | `${configuration_list}/{configuration}`                 | todo |
 | `configuration_create`               | str  | `${configuration_list}`                                 | todo |
 | `configuration_delete`               | str  | `${configuration_get}`                                  | todo |
-| `configuration_put`                  | str  | `${configuration_get}`                                  | todo |
+| `configuration__full_edit`                  | str  | `${configuration_get}`                                  | todo |
 | `configuration_add_tags`             | str  | `${configuration_get}/tags`                             | todo |
 | `configuration_delete_tags`          | str  | `${configuration_get}/tags`                             | todo |
 | `configuration_list_comment`         | str  | `${configuration_get}/comments`                         | todo |
@@ -134,7 +134,7 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `offering_get`                       | str  | `${offering_list}/{offering}`                           | todo |
 | `offering_create`                    | str  | `${configuration_list_offerings}`                       | todo |
 | `offering_delete`                    | str  | `${offering_get}`                                       | todo |
-| `offering_patch`                     | str  | `${offering_get}`                                       | todo |
+| `offering_partial_edit`                     | str  | `${offering_get}`                                       | todo |
 | **Routes concernant l'entité Check** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn }          |
 | `check_list`                         | str  | `${store_api:root_datastore}/checks`                    | todo |
 | `check_get`                          | str  | `${routing:check_list}/{check}`                         | todo |
