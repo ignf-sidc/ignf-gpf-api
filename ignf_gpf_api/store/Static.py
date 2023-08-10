@@ -3,9 +3,10 @@ from ignf_gpf_api.store.interface.TagInterface import TagInterface
 from ignf_gpf_api.store.interface.PartialEditInterface import PartialEditInterface
 from ignf_gpf_api.store.interface.FullEditInterface import FullEditInterface
 from ignf_gpf_api.store.interface.DownloadInterface import DownloadInterface
+from ignf_gpf_api.store.interface.CreatedByUploadFileInterface import CreatedByUploadFileInterface
 
 
-class Static(DownloadInterface, TagInterface, PartialEditInterface, FullEditInterface, StoreEntity):
+class Static(CreatedByUploadFileInterface, DownloadInterface, TagInterface, PartialEditInterface, FullEditInterface, StoreEntity):
     """Classe Python représentant l'entité Fichier statique (static).
 
     Cette classe permet d'effectuer les actions spécifiques liées aux fichiers statiques : création,
