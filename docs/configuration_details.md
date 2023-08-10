@@ -134,7 +134,7 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `offering_get`                       | str  | `${offering_list}/{offering}`                           | todo |
 | `offering_create`                    | str  | `${configuration_list_offerings}`                       | todo |
 | `offering_delete`                    | str  | `${offering_get}`                                       | todo |
-| `offering_partial_edit`                     | str  | `${offering_get}`                                       | todo |
+| `offering_partial_edit`              | str  | `${offering_get}`                                       | todo |
 | **Routes concernant l'entité Check** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn }          |
 | `check_list`                         | str  | `${store_api:root_datastore}/checks`                    | todo |
 | `check_get`                          | str  | `${routing:check_list}/{check}`                         | todo |
