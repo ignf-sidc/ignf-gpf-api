@@ -225,7 +225,7 @@ class ApiRequester(metaclass=Singleton):
         file_path: Path,
         file_key: str,
         route_params: Optional[Dict[str, Any]] = None,
-        method: str = "GET",
+        method: str = "POST",
         params: Optional[Dict[str, Any]] = None,
         data: Optional[Union[Dict[str, Any], List[Any]]] = None,
     ) -> requests.Response:
