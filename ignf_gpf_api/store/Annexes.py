@@ -21,14 +21,14 @@ class Annexes(CreatedByUploadFileInterface, DownloadInterface, PartialEditInterf
 
     @staticmethod
     def publish_by_label(labels: List[str], datastore: Optional[str] = None) -> int:
-        """publication de toutes les annexes portent l'ensemble de label
+        """Publication de toutes les annexes ayant les labels indiqués.
 
         Args:
             labels (List[str]): liste des labels
             datastore (Optional[str], optional): Identifiant du datastore
 
         Returns:
-            int: nombre d'annexes publier
+            int: nombre d'annexes publiées
         """
 
         # Génération du nom de la route
