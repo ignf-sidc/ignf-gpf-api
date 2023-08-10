@@ -15,7 +15,7 @@ class CreatedByUploadFileInterface(StoreEntity):
         """Crée une nouvelle entité dans l'API.
 
         Args:
-            data: Données nécessaires pour la création. Donc "file": Path("chemin fichier") et "api_path": "nom fichier"
+            data: Données nécessaires pour la création. Dont "file": Path("chemin fichier") et "api_path": "nom fichier"
             route_params: Paramètres de résolution de la route.
 
         Returns:
@@ -31,12 +31,12 @@ class CreatedByUploadFileInterface(StoreEntity):
 
         # récupération du ficher et du nom du ficher après livraison
         if not data or "file" not in data or not Path(data["file"]).exists() or "api_path" not in data:
-            raise Exception('Entité créer par l\'upload d\'un fichier, les clefs "file": Path("chemin fichier") et "api_path": "nom fichier" sont obligatoires dans data')
+            raise Exception('Entité créée par l\'upload d\'un fichier, les clefs "file": Path("chemin fichier") et "api_path": "nom fichier" sont obligatoires dans data')
         p_file = Path(data.pop("file"))
         s_api_path = data.pop("api_path")
 
         # nom de la clef dans le fichier
-        s_file_key = Config().get_str("upload", "push_data_file_key")
+        s_file_key = Config().get_str(cls.entity_name(), "create_file_key")
 
         # Requête
         o_response = ApiRequester().route_upload_file(
