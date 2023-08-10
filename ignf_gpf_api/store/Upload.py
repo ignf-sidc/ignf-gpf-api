@@ -43,18 +43,15 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Récupération du nom de la clé pour le fichier
         s_file_key = Config().get_str("upload", "push_data_file_key")
 
-        # Ouverture du fichier et remplissage du tuple de fichier
-        with file_path.open("rb") as o_file_binary:
-            o_tuple_file = (file_path.name, o_file_binary)
-            o_dict_files = {s_file_key: o_tuple_file}
-            # Requête
-            ApiRequester().route_request(
-                s_route,
-                method=ApiRequester.POST,
-                route_params={"datastore": self.datastore, self._entity_name: self.id},
-                params={"path": api_path},
-                files=o_dict_files,
-            )
+        # Requête
+        ApiRequester().route_upload_file(
+            s_route,
+            file_path,
+            s_file_key,
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
+            params={"path": api_path},
+            method=ApiRequester.POST,
+        )
 
     def api_delete_data_file(self, api_path: str) -> None:
         """Supprime un fichier de donnée de la Livraison.
@@ -90,17 +87,14 @@ class Upload(TagInterface, CommentInterface, SharingInterface, EventInterface, P
         # Récupération du nom de la clé pour le fichier
         s_file_key = Config().get_str("upload", "push_md5_file_key")
 
-        # Ouverture du fichier et remplissage du tuple de fichier
-        with file_path.open("rb") as o_file_binary:
-            o_tuple_file = (file_path.name, o_file_binary)
-            o_dict_files = {s_file_key: o_tuple_file}
-            # Requête
-            ApiRequester().route_request(
-                s_route,
-                method=ApiRequester.POST,
-                route_params={"datastore": self.datastore, self._entity_name: self.id},
-                files=o_dict_files,
-            )
+        # Requête
+        ApiRequester().route_upload_file(
+            s_route,
+            file_path,
+            s_file_key,
+            route_params={"datastore": self.datastore, self._entity_name: self.id},
+            method=ApiRequester.POST,
+        )
 
     def api_delete_md5_file(self, api_path: str) -> None:
         """Supprime un fichier de clefs de la Livraison.

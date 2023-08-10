@@ -94,7 +94,7 @@ flowchart TD
 
 ## fichier statique
 
-Pour publier les données en WMS il faut appliquer un style aux données. La partie versement d'un style ne peut pas encore se faire avec `ignf_gpf_api`. Il faut donc ajouté le ficher de style à la mains avec swagger, Insomnia ou en ligne de commande. Tutoriel [ICI](https://gpf-beta.ign.fr/geoplateforme/tutoriels/vecteur/gestion_statique/)
+Pour publier les données en WMS il faut appliquer un style aux données. La partie versement d'un style ne peut pas encore se faire avec `ignf_gpf_api`. Il faut donc ajouté le fichier de style à la mains avec swagger, Insomnia ou en ligne de commande. Tutoriel [ICI](https://gpf-beta.ign.fr/geoplateforme/tutoriels/vecteur/gestion_statique/)
 
 Un fichier statique ([CANTON_style.sld](https://raw.githubusercontent.com/ignf-sidc/ignf-gpf-api/prod/ignf_gpf_api/_data/datasets/1_dataset_vector/CANTON_style.sld)) pour le tuto est disponible dans le jeu de données test. Pour l'utiliser avec le workflow sans modification il faut le livrer avec `"name": "style_canton"`.
 Si vous modifiez le nom du fichier de style il faut modifier dans le workflow la partie "configuration-wms".

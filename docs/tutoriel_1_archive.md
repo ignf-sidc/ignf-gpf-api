@@ -46,7 +46,7 @@ Chaque dataset contient :
 * les informations de la livraison à créer (nom, description, srs et type) ;
 * les commentaires et les tags à ajouter à la livraison.
 
-La documentation du ficher descripteur est disponible [ici](upload_descriptor.md).
+La documentation du fichier descripteur est disponible [ici](upload_descriptor.md).
 
 ## Livraison des données
 

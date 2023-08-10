@@ -1,4 +1,4 @@
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -23,27 +23,23 @@ class UploadTestCase(GpfTestCase):
         # On récupère le nom de la clé associée au fichier
         s_key_file = Config().get("upload", "push_data_file_key")
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
-            o_opener = mock_open()
-            # on va mocker le { file_path.open("rb") } présent dans la fct api_push_data_file :
-            with patch.object(Path, "open", return_value=o_opener.return_value) as o_mock_open:
-                # Initialisation des paramètres utilisés par la fonction à tester
-                p_file_path = Path("path/dun/fichier/a/tester.txt")
-                # on prend un chemin coté api
-                s_api_path = "path/cote/api"
-                # On appelle la fonction que l'on veut tester
-                o_upload.api_push_data_file(p_file_path, s_api_path)
+        with patch.object(ApiRequester, "route_upload_file", return_value=None) as o_mock_request:
+            # Initialisation des paramètres utilisés par la fonction à tester
+            p_file_path = Path("path/dun/fichier/a/tester.txt")
+            # on prend un chemin coté api
+            s_api_path = "path/cote/api"
+            # On appelle la fonction que l'on veut tester
+            o_upload.api_push_data_file(p_file_path, s_api_path)
 
-                # Vérification sur o_mock_request
-                o_mock_request.assert_called_once_with(
-                    "upload_push_data",
-                    method=ApiRequester.POST,
-                    route_params={"datastore": "id_datastore", "upload": "id_de_test"},
-                    params={"path": s_api_path},
-                    files={s_key_file: (p_file_path.name, o_opener.return_value)},
-                )
-                # Vérification sur o_mock_open (lecture binary)
-                o_mock_open.assert_called_once_with("rb")
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "upload_push_data",
+                p_file_path,
+                s_key_file,
+                route_params={"datastore": "id_datastore", "upload": "id_de_test"},
+                params={"path": s_api_path},
+                method=ApiRequester.POST,
+            )
 
     def test_api_push_md5_file(self) -> None:
         """Vérifie le bon fonctionnement de api_push_md5_file.
@@ -54,23 +50,20 @@ class UploadTestCase(GpfTestCase):
         # On récupère le nom de la clé associée au fichier
         s_key_file = Config().get("upload", "push_md5_file_key")
         # On mock la fonction route_request, on veut vérifier qu'elle est appelée avec les bons params
-        with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
-            o_opener = mock_open()
-            with patch.object(Path, "open", return_value=o_opener.return_value) as o_mock_open:
-                # Initialisation des paramètres utilisés par la fonction à tester
-                p_file_path = Path("path/dun/fichier/a/tester.txt")
-                # On appelle la fonction que l'on veut tester
-                o_upload.api_push_md5_file(p_file_path)
+        with patch.object(ApiRequester, "route_upload_file", return_value=None) as o_mock_request:
+            # Initialisation des paramètres utilisés par la fonction à tester
+            p_file_path = Path("path/dun/fichier/a/tester.txt")
+            # On appelle la fonction que l'on veut tester
+            o_upload.api_push_md5_file(p_file_path)
 
-                # Vérification sur o_mock_request
-                o_mock_request.assert_called_once_with(
-                    "upload_push_md5",
-                    method=ApiRequester.POST,
-                    route_params={"datastore": None, "upload": "id_de_test"},
-                    files={s_key_file: (p_file_path.name, o_opener.return_value)},
-                )
-                # Vérification sur o_mock_open (lecture binary)
-                o_mock_open.assert_called_once_with("rb")
+            # Vérification sur o_mock_request
+            o_mock_request.assert_called_once_with(
+                "upload_push_md5",
+                p_file_path,
+                s_key_file,
+                route_params={"datastore": None, "upload": "id_de_test"},
+                method=ApiRequester.POST,
+            )
 
     def test_api_delete_data_file_1(self) -> None:
         """Vérifie le bon fonctionnement de api_delete_data_file si le chemin ne contient pas data/.
