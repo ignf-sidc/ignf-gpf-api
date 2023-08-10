@@ -144,8 +144,23 @@ Chaque route permet de faire une action via l'API. Tous ces paramètres n'ont à
 | `check_execution_delete`             | str  | `${routing:check_execution_list}/{check_execution}`     | todo |
 | `check_execution_logs`               | str  | `${routing:check_execution_get}/logs`                   | todo |
 | **Routes concernant l'entité Static** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
-| `static_list`                        | str  | `${routing:check_list}/statics`                         | todo |
-
+| `static_list`                          | str  | `${store_api:root_datastore}/statics`                  | Liste des fichiers statiques |
+| `static_get`                           | str  | `${routing:static_list}/{static}`                      | Détaille d'un fichier static |
+| `static_upload`                        | str  | `${routing:static_list}/{static}`                      | Téléversement d'un fichier static |
+| `static_delete`                        | str  | `${routing:static_list}/{static}`                      | Suppression d'une fichier static |
+| `static_re_upload`                     | str  | `${routing:static_list}/{static}`                      | Remplacement du fichier l'fichier static |
+| `static_partial_edit`                  | str  | `${routing:static_list}/{static}`                      | Édition d'es informations d'un fichier static (hors fichier) |
+| `static_download`                      | str  | `${routing:static_get}/file`                           | Téléchargement d'un fichier static |
+| **Routes concernant l'entité Annexe** {: colspan=4 } | &#8288 {: .dn }| &#8288 {: .dn }| &#8288 {: .dn } |
+| `annexe_list`                           | str  | `{store_api:root_datastore}/annexes`                  | Liste des annexes |
+| `annexe_get`                            | str  | `{routing:annexe_list}/{annexe}`                      | Détaille d'un annexe |
+| `annexe_upload`                         | str  | `{routing:annexe_get}`                                | Téléversement d'un annexe |
+| `annexe_delete`                         | str  | `{routing:annexe_get}`                                | Suppression d'une annexe |
+| `annexe_re_upload`                      | str  | `{routing:annexe_get}`                                | Remplacement du fichier l'annexe |
+| `annexe_partial_edit`                   | str  | `{routing:annexe_get}`                                | Édition partiel d'une annexe (hors fichier) |
+| `annexe_download`                       | str  | `{routing:annexe_get}/file`                           | Téléchargement d'un fichier d'annexe |
+| `annexe_publish_by_label`               | str  | `{routing:annexe_list}/publication`                   | Publication des annexes par labels |
+| `annexe_unpublish_by_label`             | str  | `{routing:annexe_list}/unpublication`                 | Dépublication des annexes par labels |
 
 ## Section `upload`
 
