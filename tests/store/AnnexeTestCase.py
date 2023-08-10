@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from ignf_gpf_api.io.ApiRequester import ApiRequester
-from ignf_gpf_api.store.Annexes import Annexes
+from ignf_gpf_api.store.Annexe import Annexe
 from tests.GpfTestCase import GpfTestCase
 
 
@@ -22,11 +22,11 @@ class AnnexeTestCase(GpfTestCase):
             with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
 
                 # on appelle la fonction à tester : publish_by_label
-                s_data_recupere = Annexes.publish_by_label(l_labels, s_datastore)
+                s_data_recupere = Annexe.publish_by_label(l_labels, s_datastore)
 
                 # on vérifie que route_request est appelé correctement
                 o_mock_request.assert_called_once_with(
-                    "annexes_publish_by_label",
+                    "annexe_publish_by_label",
                     route_params={"datastore": s_datastore},
                     params={"labels": l_labels},
                     method=ApiRequester.POST,
@@ -45,11 +45,11 @@ class AnnexeTestCase(GpfTestCase):
             with patch.object(ApiRequester, "route_request", return_value=o_response) as o_mock_request:
 
                 # on appelle la fonction à tester : unpublish_by_label
-                s_data_recupere = Annexes.unpublish_by_label(l_labels, s_datastore)
+                s_data_recupere = Annexe.unpublish_by_label(l_labels, s_datastore)
 
                 # on vérifie que route_request est appelé correctement
                 o_mock_request.assert_called_once_with(
-                    "annexes_unpublish_by_label",
+                    "annexe_unpublish_by_label",
                     route_params={"datastore": s_datastore},
                     params={"labels": l_labels},
                     method=ApiRequester.POST,

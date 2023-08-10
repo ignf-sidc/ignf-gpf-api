@@ -32,7 +32,7 @@ class Annexe(CreatedByUploadFileInterface, DownloadInterface, PartialEditInterfa
         """
 
         # Génération du nom de la route
-        s_route = f"{Annexes._entity_name}_publish_by_label"
+        s_route = f"{Annexe._entity_name}_publish_by_label"
 
         # Requête
         o_response: requests.Response = ApiRequester().route_request(
@@ -57,7 +57,7 @@ class Annexe(CreatedByUploadFileInterface, DownloadInterface, PartialEditInterfa
         """
 
         # Génération du nom de la route
-        s_route = f"{Annexes._entity_name}_unpublish_by_label"
+        s_route = f"{Annexe._entity_name}_unpublish_by_label"
 
         # Requête
         o_response: requests.Response = ApiRequester().route_request(
