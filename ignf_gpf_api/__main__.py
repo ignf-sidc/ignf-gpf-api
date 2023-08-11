@@ -87,34 +87,34 @@ class Main:
         o_parser.add_argument("--datastore", "-d", dest="datastore", required=False, default=None, help="Identifiant du datastore à utiliser")
         o_sub_parsers = o_parser.add_subparsers(dest="task", metavar="TASK", required=True, help="Tâche à effectuer")
         # Parser pour auth
-        o_parser_auth = o_sub_parsers.add_parser("auth", help="Authentification")
-        o_parser_auth.add_argument("--show", type=str, choices=["token", "header"], default=None, help="Donnée à renvoyer")
+        o_sub_parser = o_sub_parsers.add_parser("auth", help="Authentification")
+        o_sub_parser.add_argument("--show", type=str, choices=["token", "header"], default=None, help="Donnée à renvoyer")
         # Parser pour me
-        o_parser_auth = o_sub_parsers.add_parser("me", help="Mes informations")
+        o_sub_parser = o_sub_parsers.add_parser("me", help="Mes informations")
         # Parser pour config
-        o_parser_auth = o_sub_parsers.add_parser("config", help="Configuration")
-        o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier où sauvegarder la configuration (si null, la configuration est affichée)")
-        o_parser_auth.add_argument("--section", "-s", type=str, default=None, help="Se limiter à une section")
-        o_parser_auth.add_argument("--option", "-o", type=str, default=None, help="Se limiter à une option (section doit être renseignée)")
+        o_sub_parser = o_sub_parsers.add_parser("config", help="Configuration")
+        o_sub_parser.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier où sauvegarder la configuration (si null, la configuration est affichée)")
+        o_sub_parser.add_argument("--section", "-s", type=str, default=None, help="Se limiter à une section")
+        o_sub_parser.add_argument("--option", "-o", type=str, default=None, help="Se limiter à une option (section doit être renseignée)")
         # Parser pour upload
-        o_parser_auth = o_sub_parsers.add_parser("upload", help="Livraisons")
-        o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin vers le fichier descriptor dont on veut effectuer la livraison)")
-        o_parser_auth.add_argument("--infos", "-i", type=str, default=None, help="Filter les livraisons selon les infos")
-        o_parser_auth.add_argument("--tags", "-t", type=str, default=None, help="Filter les livraisons selon les tags")
-        o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si la livraison existe déjà")
-        o_parser_auth.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
+        o_sub_parser = o_sub_parsers.add_parser("upload", help="Livraisons")
+        o_sub_parser.add_argument("--file", "-f", type=str, default=None, help="Chemin vers le fichier descriptor dont on veut effectuer la livraison)")
+        o_sub_parser.add_argument("--infos", "-i", type=str, default=None, help="Filter les livraisons selon les infos")
+        o_sub_parser.add_argument("--tags", "-t", type=str, default=None, help="Filter les livraisons selon les tags")
+        o_sub_parser.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si la livraison existe déjà")
+        o_sub_parser.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
         # Parser pour dataset
-        o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
-        o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à extraire")
-        o_parser_auth.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
+        o_sub_parser = o_sub_parsers.add_parser("dataset", help="Jeux de données")
+        o_sub_parser.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à extraire")
+        o_sub_parser.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
         # Parser pour workflow
-        o_parser_auth = o_sub_parsers.add_parser("workflow", help="Workflow")
-        o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser OU chemin où extraire le dataset")
-        o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
-        o_parser_auth.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
-        o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+        o_sub_parser = o_sub_parsers.add_parser("workflow", help="Workflow")
+        o_sub_parser.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser OU chemin où extraire le dataset")
+        o_sub_parser.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
+        o_sub_parser.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
+        o_sub_parser.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
         # Parser pour me
-        o_parser_auth = o_sub_parsers.add_parser("me", help="me")
+        o_sub_parser = o_sub_parsers.add_parser("me", help="me")
         return o_parser.parse_args(args)
 
     def __datastore(self) -> Optional[str]:
@@ -173,7 +173,6 @@ class Main:
             l_texts.append(f"Vous êtes membre de {len(l_cm)} communauté(s) :")
             for d_cm in l_cm:
                 d_community = d_cm["community"]
-                print(d_cm["rights"])
                 if isinstance(d_cm["rights"], dict):
                     l_rights = [k.replace("_rights", "") for k, v in d_cm["rights"].items() if v is True]
                 else:
