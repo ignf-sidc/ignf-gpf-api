@@ -5,6 +5,7 @@ import io
 import re
 import sys
 import argparse
+import time
 import traceback
 from pathlib import Path
 from typing import List, Optional, Sequence
@@ -23,6 +24,9 @@ from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolv
 from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
+from ignf_gpf_api.store.Offering import Offering
+from ignf_gpf_api.store.Configuration import Configuration
+from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
@@ -65,6 +69,8 @@ class Main:
             self.dataset()
         elif self.o_args.task == "workflow":
             self.workflow()
+        elif self.o_args.task == "delete":
+            self.delete()
         elif self.o_args.task == "me":
             o_user = User.api_get("me")
             print(o_user.to_json(indent=4))
@@ -113,6 +119,13 @@ class Main:
         o_sub_parser.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
         o_sub_parser.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
         o_sub_parser.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+        # Parser pour delete
+        o_sub_parser = o_sub_parsers.add_parser("delete", help="Delete")
+        o_sub_parser.add_argument("--type", choices=["livraison", "stored_data", "configuration", "offre"], required=True, help="Type de l'entité à supprimé")
+        o_sub_parser.add_argument("--id", type=str, required=True, help="identifiant de l'entité à supprimé")
+        o_sub_parser.add_argument("--cascade", action="store_true", help="Action à effectuer si l'exécution de traitement existe déjà")
+        o_sub_parser.add_argument("--force", action="store_true", help="Mode forcée, les suppression sont faites sans aucune interaction")
+
         # Parser pour me
         o_sub_parser = o_sub_parsers.add_parser("me", help="me")
         return o_parser.parse_args(args)
@@ -350,6 +363,50 @@ class Main:
                 if p_child.is_file():
                     l_children.append(p_child.name)
             print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
+
+    def delete(self) -> None:
+        """suppression d'une entité par son type et son id"""
+        l_entities: List[StoreEntity] = []
+        if self.o_args.type == "livraison":
+            l_entities.append(Upload.api_get(self.o_args.id))
+        elif self.o_args.type == "stored_data":
+            o_stored_data = StoredData.api_get(self.o_args.id)
+            if self.o_args.cascade:
+                # liste des configurations
+                l_configuration = Configuration.api_list({"stored_data": self.o_args.id})
+                for o_configuration in l_configuration:
+                    # pour chaque configuration on récupère les offerings
+                    l_offering = o_configuration.api_list_offerings()
+                    l_entities += l_offering
+                    l_entities.append(o_configuration)
+            l_entities.append(o_stored_data)
+        elif self.o_args.type == "configuration":
+            o_configuration = Configuration.api_get(self.o_args.id)
+            if self.o_args.cascade:
+                l_offering = o_configuration.api_list_offerings()
+                l_entities += l_offering
+            l_entities.append(o_configuration)
+        elif self.o_args.type == "offre":
+            l_entities.append(Offering.api_get(self.o_args.id))
+
+        # affichage élément supprimés
+        Config().om.info("Suppression de :")
+        for o_entity in l_entities:
+            Config().om.info(str(o_entity), green_colored=True)
+
+        # demande validation si non forcée
+        if not self.o_args.force:
+            Config().om.info("Voulez-vous effectué la suppression ? (oui/NON)")
+            s_rep = input()
+            # si la réponse ne correspond pas à oui on sort
+            if s_rep.lower() not in ["oui", "o", "yes", "y"]:
+                Config().om.info("La suppression est annulée.")
+                return
+        # suppression
+        for o_entity in l_entities:
+            o_entity.api_delete()
+            time.sleep(1)
+        Config().om.info("Suppression effectué.", green_colored=True)
 
 
 if __name__ == "__main__":
