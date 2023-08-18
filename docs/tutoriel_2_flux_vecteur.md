@@ -1,6 +1,6 @@
 # Tutoriel 2 : publier un flux vecteur
 
-La Géoplateforme permet d'héberger des flux vecteur pour permettre à vos utilisateur de les télécharger/utiliser.
+La Géoplateforme permet d'héberger des flux vecteur pour permettre à vos utilisateurd de les télécharger/utiliser.
 
 Pour cela, vous devez téléverser des données « vecteur » sur lesquelles la Géoplateforme va effectuer des traitements.
 
@@ -50,7 +50,7 @@ Chaque dataset contient :
 
 * la liste des dossiers à téléverser ;
 * les informations de la livraison à créer (nom, description, srs et type) ;
-* les commentaires et les tags à ajouter à la livraison. (Memo : les commentaires ne sont pas encore supporter par la version actuel de la gpf)
+* les commentaires et les tags à ajouter à la livraison.
 
 ## Livraison des données
 
@@ -64,8 +64,7 @@ Le programme doit vous indiquer que le transfert est en cours, puis qu'il attend
 
 ## Workflow
 
-Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géo-traitement(s),
-puis configurer un géo-service et le rendre accessible).
+Une fois les données livrées, il faut traiter les données avant de les publier (c'est à dire effectuer un (ou plusieurs) géo-traitement(s), puis configurer un géo-service et le rendre accessible).
 
 Ces étapes sont décrites grâce à un workflow.
 
@@ -74,8 +73,6 @@ Vous pouvez récupérer un workflow d'exemple grâce à la commande suivante :
 ```sh
 python -m ignf_gpf_api workflow -n generic_vecteur.jsonc
 ```
-
-Memo: Les commentaires ne fonctionne pas et les Tags n'ont pas été testé.
 
 Ouvrez le fichier. Vous trouverez plus de détails dans la [documentation sur les workflows](workflow.md), mais vous pouvez dès à présent voir que le workflow est composé de 4 étapes. Il faudra lancer une commande pour chacune d'elles.
 
@@ -97,10 +94,10 @@ flowchart TD
 
 ## fichier statique
 
-Pour publier les données en WMS il faut appliquer un style aux données. La partie versement d'un style ne peut pas se faire avec ignf_gpf_api. Il faut donc ajouté le ficher de style à la mains avec swagger, Insomnia ou en ligne de commande. Tutoriel [ICI](https://gpf-beta.ign.fr/geoplateforme/tutoriels/vecteur/gestion_statique/)
+Pour publier les données en WMS il faut appliquer un style aux données. La partie versement d'un style ne peut pas encore se faire avec `ignf_gpf_api`. Il faut donc ajouté le fichier de style à la mains avec swagger, Insomnia ou en ligne de commande. Tutoriel [ICI](https://gpf-beta.ign.fr/geoplateforme/tutoriels/vecteur/gestion_statique/)
 
-Un fichier statique ([CANTON_style.sld](../ignf_gpf_api/_data/datasets/1_dataset_vector/CANTON_style.sld))pour le tuto est disponible dans le jeu de données test. Pour l'utiliser avec le workflow sans modification il faut le livrer avec `"name": "style_canton"`.  
-Si vous modifier le nom du fichier de style il faut modifier dans le workflow la partie "configuration-wms"
+Un fichier statique ([CANTON_style.sld](https://raw.githubusercontent.com/ignf-sidc/ignf-gpf-api/prod/ignf_gpf_api/_data/datasets/1_dataset_vector/CANTON_style.sld)) pour le tuto est disponible dans le jeu de données test. Pour l'utiliser avec le workflow sans modification il faut le livrer avec `"name": "style_canton"`.
+Si vous modifiez le nom du fichier de style il faut modifier dans le workflow la partie "configuration-wms".
 
 ## Traitement et publication
 

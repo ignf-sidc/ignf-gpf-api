@@ -1,17 +1,20 @@
-from typing import Any, Dict, Optional, Type, TypeVar
+from abc import ABC
+from typing import Type, Optional, Any, Dict, TypeVar
 from ignf_gpf_api.store.Errors import StoreEntityError
 
 from ignf_gpf_api.store.StoreEntity import StoreEntity
-
+from ignf_gpf_api.store.interface.DownloadInterface import DownloadInterface
 
 T = TypeVar("T", bound="StoreEntity")
 
 
-class User(StoreEntity):
-    """Classe Python représentant l'entité User (utilisateur)."""
+class AbstractCommonFile(DownloadInterface, StoreEntity, ABC):
+    """Classe abstraite Python pour les Fichiers communs."""
 
-    _entity_name = "user"
-    _entity_title = "utilisateur"
+    _entity_name = "common_file"
+    _entity_title = "Fichiers communs"
+
+    # neutralisation de l'ajout et de la suppression
 
     @classmethod
     def api_create(cls: Type[T], data: Optional[Dict[str, Any]], route_params: Optional[Dict[str, Any]] = None) -> T:
@@ -24,8 +27,8 @@ class User(StoreEntity):
         Returns:
             (StoreEntity): Entité créée
         """
-        raise StoreEntityError(f"Impossible de créer un {cls.entity_title()}")
+        raise StoreEntityError(f"Impossible de créer un {cls.entity_title()}.")
 
     def api_delete(self) -> None:
         """Supprime l'entité de l'API."""
-        raise StoreEntityError(f"Impossible de supprimer un {self.entity_title()}")
+        raise StoreEntityError(f"Impossible de supprimer un {self.entity_title()}.")

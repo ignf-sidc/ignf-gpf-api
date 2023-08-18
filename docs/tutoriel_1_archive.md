@@ -46,7 +46,7 @@ Chaque dataset contient :
 * les informations de la livraison à créer (nom, description, srs et type) ;
 * les commentaires et les tags à ajouter à la livraison.
 
-La documentation du ficher descripteur est disponible [ici](upload_descriptor.md).
+La documentation du fichier descripteur est disponible [ici](upload_descriptor.md).
 
 ## Livraison des données
 
@@ -115,7 +115,7 @@ Vous pouvez alors télécharger le fichier de votre choix en ajoutant son nom à
 https://geoservices-geotuileur.ccs-ign-plage.ccs.cegedim.cloud/download/plage/archive/CANTON.zip
 ```
 
-## Résumer des commandes
+## Résumé des commandes
 
 ```sh
 # récupération des données d'exemple
