@@ -5,6 +5,7 @@ import io
 import re
 import sys
 import argparse
+import time
 import traceback
 from pathlib import Path
 from typing import List, Optional, Sequence
@@ -23,6 +24,9 @@ from ignf_gpf_api.workflow.resolver.StoreEntityResolver import StoreEntityResolv
 from ignf_gpf_api.workflow.action.UploadAction import UploadAction
 from ignf_gpf_api.io.Config import Config
 from ignf_gpf_api.io.DescriptorFileReader import DescriptorFileReader
+from ignf_gpf_api.store.Offering import Offering
+from ignf_gpf_api.store.Configuration import Configuration
+from ignf_gpf_api.store.StoredData import StoredData
 from ignf_gpf_api.store.Upload import Upload
 from ignf_gpf_api.store.StoreEntity import StoreEntity
 from ignf_gpf_api.store.ProcessingExecution import ProcessingExecution
@@ -65,6 +69,8 @@ class Main:
             self.dataset()
         elif self.o_args.task == "workflow":
             self.workflow()
+        elif self.o_args.task == "delete":
+            self.delete()
         elif self.o_args.task == "me":
             o_user = User.api_get("me")
             print(o_user.to_json(indent=4))
@@ -87,34 +93,41 @@ class Main:
         o_parser.add_argument("--datastore", "-d", dest="datastore", required=False, default=None, help="Identifiant du datastore à utiliser")
         o_sub_parsers = o_parser.add_subparsers(dest="task", metavar="TASK", required=True, help="Tâche à effectuer")
         # Parser pour auth
-        o_parser_auth = o_sub_parsers.add_parser("auth", help="Authentification")
-        o_parser_auth.add_argument("--show", type=str, choices=["token", "header"], default=None, help="Donnée à renvoyer")
+        o_sub_parser = o_sub_parsers.add_parser("auth", help="Authentification")
+        o_sub_parser.add_argument("--show", type=str, choices=["token", "header"], default=None, help="Donnée à renvoyer")
         # Parser pour me
-        o_parser_auth = o_sub_parsers.add_parser("me", help="Mes informations")
+        o_sub_parser = o_sub_parsers.add_parser("me", help="Mes informations")
         # Parser pour config
-        o_parser_auth = o_sub_parsers.add_parser("config", help="Configuration")
-        o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier où sauvegarder la configuration (si null, la configuration est affichée)")
-        o_parser_auth.add_argument("--section", "-s", type=str, default=None, help="Se limiter à une section")
-        o_parser_auth.add_argument("--option", "-o", type=str, default=None, help="Se limiter à une option (section doit être renseignée)")
+        o_sub_parser = o_sub_parsers.add_parser("config", help="Configuration")
+        o_sub_parser.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier où sauvegarder la configuration (si null, la configuration est affichée)")
+        o_sub_parser.add_argument("--section", "-s", type=str, default=None, help="Se limiter à une section")
+        o_sub_parser.add_argument("--option", "-o", type=str, default=None, help="Se limiter à une option (section doit être renseignée)")
         # Parser pour upload
-        o_parser_auth = o_sub_parsers.add_parser("upload", help="Livraisons")
-        o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin vers le fichier descriptor dont on veut effectuer la livraison)")
-        o_parser_auth.add_argument("--infos", "-i", type=str, default=None, help="Filter les livraisons selon les infos")
-        o_parser_auth.add_argument("--tags", "-t", type=str, default=None, help="Filter les livraisons selon les tags")
-        o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si la livraison existe déjà")
-        o_parser_auth.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
+        o_sub_parser = o_sub_parsers.add_parser("upload", help="Livraisons")
+        o_sub_parser.add_argument("--file", "-f", type=str, default=None, help="Chemin vers le fichier descriptor dont on veut effectuer la livraison)")
+        o_sub_parser.add_argument("--infos", "-i", type=str, default=None, help="Filter les livraisons selon les infos")
+        o_sub_parser.add_argument("--tags", "-t", type=str, default=None, help="Filter les livraisons selon les tags")
+        o_sub_parser.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si la livraison existe déjà")
+        o_sub_parser.add_argument("--id", type=str, default=None, help="Affiche la livraison demandée")
         # Parser pour dataset
-        o_parser_auth = o_sub_parsers.add_parser("dataset", help="Jeux de données")
-        o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à extraire")
-        o_parser_auth.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
+        o_sub_parser = o_sub_parsers.add_parser("dataset", help="Jeux de données")
+        o_sub_parser.add_argument("--name", "-n", type=str, default=None, help="Nom du dataset à extraire")
+        o_sub_parser.add_argument("--folder", "-f", type=str, default=None, help="Dossier où enregistrer le dataset")
         # Parser pour workflow
-        o_parser_auth = o_sub_parsers.add_parser("workflow", help="Workflow")
-        o_parser_auth.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser OU chemin où extraire le dataset")
-        o_parser_auth.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
-        o_parser_auth.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
-        o_parser_auth.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+        o_sub_parser = o_sub_parsers.add_parser("workflow", help="Workflow")
+        o_sub_parser.add_argument("--file", "-f", type=str, default=None, help="Chemin du fichier à utiliser OU chemin où extraire le dataset")
+        o_sub_parser.add_argument("--name", "-n", type=str, default=None, help="Nom du workflow à extraire")
+        o_sub_parser.add_argument("--step", "-s", type=str, default=None, help="Étape du workflow à lancer")
+        o_sub_parser.add_argument("--behavior", "-b", type=str, default=None, help="Action à effectuer si l'exécution de traitement existe déjà")
+        # Parser pour delete
+        o_sub_parser = o_sub_parsers.add_parser("delete", help="Delete")
+        o_sub_parser.add_argument("--type", choices=["livraison", "stored_data", "configuration", "offre"], required=True, help="Type de l'entité à supprimé")
+        o_sub_parser.add_argument("--id", type=str, required=True, help="identifiant de l'entité à supprimé")
+        o_sub_parser.add_argument("--cascade", action="store_true", help="Action à effectuer si l'exécution de traitement existe déjà")
+        o_sub_parser.add_argument("--force", action="store_true", help="Mode forcée, les suppression sont faites sans aucune interaction")
+
         # Parser pour me
-        o_parser_auth = o_sub_parsers.add_parser("me", help="me")
+        o_sub_parser = o_sub_parsers.add_parser("me", help="me")
         return o_parser.parse_args(args)
 
     def __datastore(self) -> Optional[str]:
@@ -173,7 +186,6 @@ class Main:
             l_texts.append(f"Vous êtes membre de {len(l_cm)} communauté(s) :")
             for d_cm in l_cm:
                 d_community = d_cm["community"]
-                print(d_cm["rights"])
                 if isinstance(d_cm["rights"], dict):
                     l_rights = [k.replace("_rights", "") for k, v in d_cm["rights"].items() if v is True]
                 else:
@@ -351,6 +363,50 @@ class Main:
                 if p_child.is_file():
                     l_children.append(p_child.name)
             print("Jeux de données disponibles :\n   * {}".format("\n   * ".join(l_children)))
+
+    def delete(self) -> None:
+        """suppression d'une entité par son type et son id"""
+        l_entities: List[StoreEntity] = []
+        if self.o_args.type == "livraison":
+            l_entities.append(Upload.api_get(self.o_args.id))
+        elif self.o_args.type == "stored_data":
+            o_stored_data = StoredData.api_get(self.o_args.id)
+            if self.o_args.cascade:
+                # liste des configurations
+                l_configuration = Configuration.api_list({"stored_data": self.o_args.id})
+                for o_configuration in l_configuration:
+                    # pour chaque configuration on récupère les offerings
+                    l_offering = o_configuration.api_list_offerings()
+                    l_entities += l_offering
+                    l_entities.append(o_configuration)
+            l_entities.append(o_stored_data)
+        elif self.o_args.type == "configuration":
+            o_configuration = Configuration.api_get(self.o_args.id)
+            if self.o_args.cascade:
+                l_offering = o_configuration.api_list_offerings()
+                l_entities += l_offering
+            l_entities.append(o_configuration)
+        elif self.o_args.type == "offre":
+            l_entities.append(Offering.api_get(self.o_args.id))
+
+        # affichage élément supprimés
+        Config().om.info("Suppression de :")
+        for o_entity in l_entities:
+            Config().om.info(str(o_entity), green_colored=True)
+
+        # demande validation si non forcée
+        if not self.o_args.force:
+            Config().om.info("Voulez-vous effectué la suppression ? (oui/NON)")
+            s_rep = input()
+            # si la réponse ne correspond pas à oui on sort
+            if s_rep.lower() not in ["oui", "o", "yes", "y"]:
+                Config().om.info("La suppression est annulée.")
+                return
+        # suppression
+        for o_entity in l_entities:
+            o_entity.api_delete()
+            time.sleep(1)
+        Config().om.info("Suppression effectué.", green_colored=True)
 
 
 if __name__ == "__main__":

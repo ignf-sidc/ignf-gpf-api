@@ -1,8 +1,9 @@
 from http import HTTPStatus
 from io import BufferedReader
 import json
+from pathlib import Path
 from typing import Dict, Tuple
-from unittest.mock import patch
+from unittest.mock import patch, mock_open
 import requests
 import requests_mock
 
@@ -289,3 +290,29 @@ class ApiRequesterTestCase(GpfTestCase):
         self.assertFalse(ApiRequester.range_next_page(None, 5))
         # Content-Range non parsable : on doit s'arrêter
         self.assertFalse(ApiRequester.range_next_page("non_parsable", 0))
+
+    def test_route_upload_file(self) -> None:
+        """test de route_upload_file"""
+        p_file = Path("rep/file")
+        s_path_api = "key"
+        s_route_name = "route_mane"
+        d_route_params = None
+        s_method = "POST"
+        d_params = None
+        d_data = None
+
+        o_open = mock_open()
+        o_tuple_file = (p_file.name, o_open.return_value)
+        o_dict_files = {s_path_api: o_tuple_file}
+        with patch.object(Path, "open", return_value=o_open.return_value) as o_mock_open:
+            with patch.object(ApiRequester, "route_request", return_value=None) as o_mock_request:
+                ApiRequester().route_upload_file(s_route_name, p_file, s_path_api, d_route_params, s_method, d_params, d_data)
+                o_mock_open.assert_called_once_with("rb")
+                o_mock_request.assert_called_once_with(
+                    s_route_name,
+                    route_params=d_route_params,
+                    method=s_method,
+                    params=d_params,
+                    data=d_data,
+                    files=o_dict_files,
+                )

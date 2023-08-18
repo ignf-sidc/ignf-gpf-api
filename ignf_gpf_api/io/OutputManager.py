@@ -29,7 +29,7 @@ class OutputManager(metaclass=Singleton):
         o_ch.setFormatter(o_formatter)
         self.__logger.addHandler(o_ch)
 
-        # ajout handler ficher : écriture des logs dans un ficher
+        # ajout handler fichier : écriture des logs dans un fichier
         if file_logger:
             o_fh = logging.FileHandler(file_logger)
             o_fh.setLevel(level=logging.DEBUG)
