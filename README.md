@@ -1,3 +1,5 @@
+**Dépôt déplacé ! Merci de consulter [ce dépôt](https://github.com/ignf-sidc/ignf-gpf-sdk/)**
+
 # API Python pour la Géoplateforme
 
 ## Installation
