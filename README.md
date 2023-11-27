@@ -1,4 +1,4 @@
-**Dépôt déplacé ! Merci de consulter [ce dépôt](https://github.com/ignf-sidc/ignf-gpf-sdk/)**
+**Dépôt déplacé ! Merci de consulter [ce dépôt](https://github.com/Geoplateforme/sdk_entrepot/)**
 
 # API Python pour la Géoplateforme
 
